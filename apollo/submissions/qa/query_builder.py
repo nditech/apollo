@@ -219,8 +219,17 @@ def generate_qa_query(expression, form):
     return visit_parse_tree(tree, visitor)
 
 
-def get_logical_check_stats(query, form, check):
-    complete_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
+def get_logical_check_stats(query, form, condition):
+    if 'criteria' in condition:
+        complete_expression = ''
+
+        for index, cond in enumerate(condition['criteria']):
+            if index:
+                complete_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
+            else:
+                complete_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
+    else:
+        complete_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
     qa_query = generate_qa_query(complete_expression, form)
 
     # add joins as necessary
@@ -252,8 +261,17 @@ class TagVisitor(PTNodeVisitor):
         self.variables.add(node.value)
 
 
-def get_inline_qa_status(submission, check):
-    check_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
+def get_inline_qa_status(submission, condition):
+    if 'criteria' in condition:
+        check_expression = ''
+
+        for index, cond in enumerate(condition['criteria']):
+            if index:
+                check_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
+            else:
+                check_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
+    else:
+        check_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
 
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(check_expression)

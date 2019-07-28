@@ -9,6 +9,7 @@ from flask_babelex import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy_json import NestedMutableJson
 from sqlalchemy_utils import ChoiceType
 from slugify import slugify_unicode
 from unidecode import unidecode
@@ -77,7 +78,7 @@ class Form(Resource):
         onupdate=_make_version_identifer)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
-    quality_checks = db.Column(JSONB)
+    quality_checks = db.Column(NestedMutableJson)
     party_mappings = db.Column(JSONB)
     calculate_moe = db.Column(db.Boolean)
     accredited_voters_tag = db.Column(db.String)

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
 
+from arpeggio import NoMatch
+from arpeggio.cleanpeg import ParserPEG
 from flask import (
-    Blueprint, flash, g, redirect, request,
-    send_file, url_for)
+    abort, Blueprint, flash, g, redirect, request, send_file, url_for)
 from flask_babelex import lazy_gettext as _
 import json
 
@@ -13,6 +14,7 @@ from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import make_checklist_init_form
+from apollo.submissions.qa.query_builder import GRAMMAR
 from apollo.submissions.tasks import init_submissions
 from apollo.utils import generate_identifier
 
@@ -150,52 +152,194 @@ def forms_list(view):
     return view.render(template_name, **context)
 
 
-def quality_assurance(view, form_id):
-    template_name = 'admin/quality_assurance.html'
+def quality_controls(view, form_id):
+    template_name = 'admin/quality_controls.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
-        _('Quality Assurance'), form.name]
+        _('Quality Control'), form.name]
+
+    quality_controls = []
+
+    if form.quality_checks:
+        for quality_check in form.quality_checks:
+            quality_control = {}
+
+            quality_control['name'] = quality_check['name']
+            quality_control['description'] = quality_check['description']
+            quality_control['criteria'] = []
+
+            if 'criteria' in quality_check:
+                for index, criterion in enumerate(quality_check['criteria']):
+                    quality_control['criteria'].append({
+                        'lvalue': criterion['lvalue'],
+                        'comparator': criterion['comparator'],
+                        'rvalue': criterion['rvalue'],
+                        'conjunction': criterion['conjunction'],
+                        'id': str(index)
+                    })
+            else:
+                quality_control['criteria'].append({
+                    'lvalue': quality_check['lvalue'],
+                    'comparator': quality_check['comparator'],
+                    'rvalue': quality_check['rvalue'],
+                    'conjunction': '&&',
+                    'id': '0'
+                })
+
+            quality_controls.append(quality_control)
+
+    context = {
+        'breadcrumbs': breadcrumbs,
+        'form': form,
+        'quality_controls': quality_controls
+    }
+
+    return view.render(template_name, **context)
+
+
+def quality_control_edit(view, form_id, qc=None):
+    template_name = 'admin/quality_control_edit.html'
+    form = models.Form.query.filter_by(id=form_id).first_or_404()
+    breadcrumbs = [
+        {'text': _('Forms'), 'url': url_for('formsview.index')},
+        {
+            'text': _('Quality Control'),
+            'url': url_for('formsview.qc', form_id=form.id)
+        },
+        form.name
+    ]
 
     if request.method == 'POST':
         try:
             postdata = json.loads(request.form.get('postdata'))
-            form.quality_checks = []
-            for item in postdata:
-                if isinstance(item, list):
-                    desc = item[0]
-                    lhs = item[1]
-                    comp = item[2]
-                    rhs = item[3]
-                elif isinstance(item, dict):
-                    desc = item["0"]
-                    lhs = item["1"]
-                    comp = item["2"]
-                    rhs = item["3"]
+            quality_control = {}
 
-                if desc and lhs and comp and rhs:
-                    form.quality_checks.append({
-                        'name': generate_identifier(), 'description': desc,
-                        'lvalue': lhs, 'comparator': comp,
-                        'rvalue': rhs
+            if 'name' in postdata and postdata['name']:
+                # we have a quality control that should exist
+                quality_control = next(
+                    filter(
+                        lambda c: c['name'] == postdata['name'],
+                        form.quality_checks))
+
+            if not quality_control:
+                quality_control['name'] = generate_identifier()
+
+            quality_control['description'] = postdata['description']
+            quality_control['criteria'] = []
+            parser = ParserPEG(GRAMMAR, 'qa')
+
+            for condition in postdata['criteria']:
+                formula = '{lvalue} {comparator} {rvalue}'.format(**condition)
+                try:
+                    parser.parse(formula)
+
+                    # parsing succeeds so it must be good
+                    quality_control['criteria'].append({
+                        'lvalue': condition['lvalue'],
+                        'comparator': condition['comparator'],
+                        'rvalue': condition['rvalue'],
+                        'conjunction': condition['conjunction']
                     })
+                except NoMatch:
+                    pass
+
+            if 'rvalue' in quality_control:
+                del quality_control['rvalue']
+            if 'lvalue' in quality_control:
+                del quality_control['lvalue']
+            if 'comparator' in quality_control:
+                del quality_control['comparator']
+
+            if form.quality_checks:
+                for i, control in enumerate(form.quality_checks):
+                    if control['name'] == quality_control['name']:
+                        form.quality_checks[i] = quality_control
+                        break
+                else:
+                    form.quality_checks.append(quality_control)
+            else:
+                form.quality_checks = [quality_control]
+
             form.save()
 
-            return redirect(url_for('formsview.index'))
+            if request.is_xhr:
+                return 'true'
+            else:
+                return redirect(url_for('formsview.qc', form_id=form.id))
         except ValueError:
             pass
 
-    check_data = [
-        (c['description'], c['lvalue'], c['comparator'], c['rvalue'])
-        for c in form.quality_checks
-    ] if form.quality_checks else [[''] * 4]
+    if qc:
+        try:
+            quality_check = next(
+                filter(lambda c: c['name'] == qc, form.quality_checks))
+        except StopIteration:
+            abort(404)
+
+        criteria = []
+
+        if 'criteria' in quality_check:
+            for index, criterion in enumerate(quality_check['criteria']):
+                criteria.append({
+                    'lvalue': criterion['lvalue'],
+                    'comparator': criterion['comparator'],
+                    'rvalue': criterion['rvalue'],
+                    'conjunction': criterion['conjunction'],
+                    'id': str(index)
+                })
+        else:
+            criteria.append({
+                'lvalue': quality_check['lvalue'],
+                'comparator': quality_check['comparator'],
+                'rvalue': quality_check['rvalue'],
+                'conjunction': '&&',
+                'id': '0'
+            })
+
+        title = _('Edit Quality Control')
+        is_new = 0
+        quality_control = {
+            'name': quality_check['name'],
+            'description': quality_check['description'],
+            'criteria': criteria
+        }
+    else:
+        title = _('Add Quality Control')
+        is_new = 1
+        quality_control = {
+            'name': '', 'description': '', 'criteria': [{
+                'lvalue': '', 'comparator': '=', 'rvalue': '',
+                'conjunction': '&&', 'id': '0'
+            }]
+        }
 
     context = {
+        'title': title,
+        'is_new': is_new,
         'breadcrumbs': breadcrumbs,
-        'check_data': check_data
+        'form': form,
+        'participant_set': g.event.participant_set,
+        'location_set': g.event.location_set,
+        'quality_control': quality_control
     }
 
     return view.render(template_name, **context)
+
+def quality_control_delete(view, form_id, qc):
+    form = models.Form.query.filter_by(id=form_id).first_or_404()
+
+    if request.method == 'DELETE' and request.is_xhr:
+        if form.quality_checks:
+            for i, control in enumerate(form.quality_checks):
+                if control['name'] == qc:
+                    del form.quality_checks[i]
+                    break
+
+            form.save()
+            return 'true'
+
+    return 'false'
 
 
 def export_form(id):
