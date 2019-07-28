@@ -63,18 +63,8 @@
 <tr>
     {% if perms.edit_submission.can() %}
     <td class="text-monospace">
-        <div class="d-flex flex-row justify-content-between">
-            <div>
-                {% with comments_count = submission.comments|count -%}
-                {%- if comments_count == 1 -%}
-                <i class="fa fa-comment" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
-                {%- elif comments_count > 1 -%}
-                <i class="fa fa-comments" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
-                {%- endif -%}{%- endwith %}
-            </div>
-            <div class="text-right">
-                <a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a>
-            </div>
+        <div class="text-right">
+            <a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a>
         </div>
     </td>
     {% else %}
