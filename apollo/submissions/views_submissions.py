@@ -15,6 +15,7 @@ from flask_security.utils import verify_and_update_password
 from slugify import slugify_unicode
 from sqlalchemy import BigInteger, desc, func, text
 from sqlalchemy.dialects.postgresql import array
+import sqlalchemy as sa
 from sqlalchemy.sql import false
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
@@ -413,9 +414,30 @@ def submission_edit(submission_id):
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
     if questionnaire_form.form_type == 'CHECKLIST':
-        messages = models.Message.query.filter(
-            models.Message.submission==submission,  # noqa
-            models.Message.direction=='IN').order_by(desc(models.Message.received))  # noqa
+        OutboundMsg = sa.orm.aliased(models.Message, name='outbound')
+
+        messages_qs = models.Message.query.filter(
+            models.Message.participant==submission.participant)
+        split_messages = messages_qs.filter(
+            sa.or_(
+                models.Message.direction == 'IN',
+                sa.and_(
+                    models.Message.originating_message_id == None, # noqa
+                    models.Message.direction == 'OUT'
+                )
+            )
+        ).outerjoin(
+            OutboundMsg,
+            sa.and_(
+                OutboundMsg.originating_message_id == models.Message.id,
+                OutboundMsg.direction == 'OUT',
+            )
+        )
+
+        messages = split_messages.with_entities(
+            models.Message, OutboundMsg
+        ).order_by(models.Message.received.desc())
+
         incident_forms = models.Form.query.filter(
             models.Form.events.contains(submission.event),
             models.Form.form_type=='INCIDENT')  # noqa
