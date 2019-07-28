@@ -32,7 +32,8 @@ from apollo.participants.views_participants import (
     participant_edit)
 from apollo.formsframework.views_forms import (
     forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
-    quality_assurance, import_form_schema)
+    quality_controls, quality_control_delete, quality_control_edit,
+    import_form_schema)
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -489,9 +490,20 @@ class FormsView(BaseView):
     def init(self):
         return checklist_init()
 
-    @expose('/qa/<int:form_id>', methods=['GET', 'POST'])
-    def qa(self, form_id):
-        return quality_assurance(self, form_id)
+    @expose('/qa/<int:form_id>', methods=['GET'])
+    def qc(self, form_id):
+        return quality_controls(self, form_id)
+
+    @expose('/qc/<int:form_id>/<string:qc>', methods=['GET', 'POST', 'DELETE'])
+    def quality_control_edit(self, form_id, qc):
+        if request.method == 'DELETE':
+            return quality_control_delete(self, form_id, qc)
+        else:
+            return quality_control_edit(self, form_id, qc)
+
+    @expose('/qc/<int:form_id>/new', methods=['GET', 'POST'])
+    def quality_control_add(self, form_id):
+        return quality_control_edit(self, form_id)
 
 
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))

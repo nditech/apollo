@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+{% block toolbar %}
+
+{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+  <nav class="nav mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-n2">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+          {% if breadcrumb.url -%}
+          <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+          {%- else -%}
+          {{ breadcrumb.text or breadcrumb }}
+          {%- endif %}
+        </li>
+        {% endfor %}
+    </ol>
+  </nav>
+</div>
+
+<div id="app">
+  <form method="post">
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div class="table-responsive-md mb-n3">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="col-1">{{ _('ID') }}</th>
+              <th scope="col" class="col-3">{{ _('Description') }}</th>
+              <th scope="col">{{ _('Conditions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for control in quality_controls %}
+            <tr>
+              <td class="text-monospace align-middle"><a href="{{ url_for('formsview.quality_control_edit', form_id=form.id, qc=control.name) }}" class="text-decoration-none">{{ control.name }}</a></td>
+              <td class="text-monospace align-middle">{{ control.description }}</td>
+              <td class="text-monospace align-middle">
+              {%- for criterion in control.criteria %}
+                <h5>{% if loop.index > 1 %}<span class="badge badge-pill {% if criterion.conjunction == '&&' %}badge-warning{% else %}badge-info{% endif %}">{% if criterion.conjunction == '&&' %}{{ _('AND') }}{% else %}{{ _('OR') }}{% endif %}</span>{% endif %}<span class="badge badge-pill badge-primary">{{ criterion.lvalue }}</span><span class="badge badge-pill badge-secondary">{{ criterion.comparator }}</span><span class="badge badge-pill badge-primary">{{ criterion.rvalue }}</span></h5>
+              {%- endfor %}
+              </td>
+            </tr>
+            {%- else %}
+            <tr class="table-warning">
+              <td class="text-center text-muted" colspan="3">{{ _('No Data Available') }}</td>
+            {%- endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
+  <div>
+    <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
+    <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Control') }}</a>
+  </div>
+</div>
+{% endblock %}
