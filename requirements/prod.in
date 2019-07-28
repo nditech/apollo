@@ -64,6 +64,7 @@ shapely
 six==1.11.0
 sqlalchemy-utils~=0.34
 sqlalchemy~=1.2
+sqlalchemy-json
 tablib==0.13.0
 unidecode==0.4.21
 webassets==0.12.1
