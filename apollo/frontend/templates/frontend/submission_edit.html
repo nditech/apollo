@@ -294,26 +294,59 @@
         <thead class="thead-light">
           <tr>
             <th scope="col">{{ _('Text') }}</th>
+            <th scope="col" class="col-1">{{ _('Direction') }}</th>
             <th scope="col" class="col-2">{{ _('Mobile') }}</th>
             <th scope="col" class="col-2">{{ _('Date') }}</th>
             <th scope="col" class="col-1">{{ _('Time') }}</th>
           </tr>
         </thead>
         <tbody>
-          {% for message in messages %}
+          {% for (left_message, right_message) in messages %}
+          {% if left_message.direction == 'IN' %}
           <tr>
-            <td class="text-monospace">{{ message.text }}</td>
+            <td class="text-monospace">{{ left_message.text }}</td>
+            <td class="text-monospace">{{ left_message.direction.value }}</td>
             {% if perms.edit_participant.can() -%}
-            <td class="text-monospace">{% if message.participant %}<a href="{{ url_for('participants.participant_edit', id=message.participant.id) }}">{{ message.sender }}</a>{% else %}{{ message.sender }}{% endif %}</td>
+            <td class="text-monospace">{% if left_message.participant %}<a href="{{ url_for('participants.participant_edit', id=left_message.participant.id) }}">{{ left_message.sender }}</a>{% else %}{{ left_message.sender }}{% endif %}</td>
             {% else -%}
-            <td class="text-monospace">{{ message.sender }}</td>
+            <td class="text-monospace">{{ left_message.sender }}</td>
             {% endif -%}
-            <td class="text-monospace timestamp-date" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%b %d %Y') }}</td>
-            <td class="text-monospace timestamp-time" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%I:%M %p') }}</td>
+            <td class="text-monospace timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
           </tr>
+          {%- if right_message != None %}
+          <tr>
+            <td class="text-monospace">{{ right_message.text }}</td>
+            <td class="text-monospace">{{ right_message.direction.value }}</td>
+            {% if perms.edit_participant.can() -%}
+            <td class="text-monospace">{% if right_message.participant %}<a href="{{ url_for('participants.participant_edit', id=right_message.participant.id) }}">{{ right_message.sender }}</a>{% else %}{{ right_message.sender }}{% endif %}</td>
+            {% else -%}
+            <td class="text-monospace">{{ right_message.sender }}</td>
+            {% endif -%}
+            <td class="text-monospace timestamp-date" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
+          </tr>
+          {%- else %}
+          <tr>
+            <td class="text-monospace text-muted text-center" colspan="5"><em>{{ _('No Outgoing Message') }}</em></td>
+          </tr>
+          {%- endif %}
+          {% else %}
+          <tr>
+            <td class="text-monospace">{{ left_message.text }}</td>
+            <td class="text-monospace">{{ left_message.direction.value }}</td>
+            {% if perms.edit_participant.can() -%}
+            <td class="text-monospace">{% if left_message.participant %}<a href="{{ url_for('participants.participant_edit', id=left_message.participant.id) }}">{{ left_message.sender }}</a>{% else %}{{ left_message.sender }}{% endif %}</td>
+            {% else -%}
+            <td class="text-monospace">{{ left_message.sender }}</td>
+            {% endif -%}
+            <td class="text-monospace timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+          </tr>
+          {% endif %}
           {% else %}
           <tr class="table-warning">
-            <td class="text-center text-muted" colspan="4">{{ _('No Data Available') }}</td>
+            <td class="text-center text-muted" colspan="5">{{ _('No Data Available') }}</td>
           </tr>
           {% endfor %}
         </tbody>
