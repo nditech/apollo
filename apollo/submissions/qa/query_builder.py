@@ -241,16 +241,7 @@ def generate_qa_queries(form):
 
 
 def get_logical_check_stats(query, form, condition):
-    if 'criteria' in condition:
-        complete_expression = ''
-
-        for index, cond in enumerate(condition['criteria']):
-            if index:
-                complete_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
-            else:
-                complete_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
-    else:
-        complete_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
+    complete_expression = build_expression(condition)
     qa_query = generate_qa_query(complete_expression, form)
 
     # add joins as necessary
@@ -283,16 +274,7 @@ class TagVisitor(PTNodeVisitor):
 
 
 def get_inline_qa_status(submission, condition):
-    if 'criteria' in condition:
-        check_expression = ''
-
-        for index, cond in enumerate(condition['criteria']):
-            if index:
-                check_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
-            else:
-                check_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
-    else:
-        check_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
+    check_expression = build_expression(condition)
 
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(check_expression)
@@ -315,23 +297,15 @@ def get_inline_qa_status(submission, condition):
 
 
 def build_expression(logical_check):
-    if isinstance(logical_check, dict):
-        return '{lvalue} {comparator} {rvalue}'.format(**logical_check)
-    elif isinstance(logical_check, list):
-        expression = ''
-        for index, sub_check in enumerate(logical_check):
-            if index == 0:
-                expression = build_expression(sub_check)
+    if 'criteria' in logical_check:
+        check_expression = ''
+
+        for index, cond in enumerate(logical_check['criteria']):
+            if index:
+                check_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
             else:
-                boolean_op = sub_check['conjunction']
-                if boolean_op is None:
-                    raise ValueError('Invalid junction term in logical check')
-
-                expression = '{orig_expr} {boolean_op} {new_expr}'.format(
-                    orig_expr=expression, boolean_op=boolean_op,
-                    new_expr=build_expression(sub_check)
-                )
-
-        return expression
+                check_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
     else:
-        raise ValueError('Invalid logical check')
+        check_expression = '{lvalue} {comparator} {rvalue}'.format(**logical_check)
+
+    return check_expression
