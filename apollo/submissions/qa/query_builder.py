@@ -54,12 +54,10 @@ OPERATIONS = {
 }
 
 FIELD_TYPE_CASTS = {
-    'boolean': Boolean,
     'comment': String,
     'integer': Integer,
     'select': Integer,
     'multiselect': String,
-    'category': Integer,
     'string': String,
     'location': String
 }
