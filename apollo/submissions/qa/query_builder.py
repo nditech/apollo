@@ -315,11 +315,6 @@ def get_inline_qa_status(submission, condition):
 
 
 def build_expression(logical_check):
-    boolean_op_map = {
-        'AND': '&&',
-        'OR': '||'
-    }
-
     if isinstance(logical_check, dict):
         return '{lvalue} {comparator} {rvalue}'.format(**logical_check)
     elif isinstance(logical_check, list):
@@ -328,8 +323,7 @@ def build_expression(logical_check):
             if index == 0:
                 expression = build_expression(sub_check)
             else:
-                boolean_op = boolean_op_map.get(
-                    sub_check['conjunction'].upper())
+                boolean_op = sub_check['conjunction']
                 if boolean_op is None:
                     raise ValueError('Invalid junction term in logical check')
 
