@@ -104,15 +104,32 @@ def _voting_results(form_id, location_id=None):
         blank_votes_field = [form.blank_votes_tag]
     else:
         blank_votes_field = []
+    if form.accredited_voters_tag:
+        accredited_voters_field = [form.accredited_voters_tag]
+    else:
+        accredited_voters_field = []
+
+    non_null_fields = (
+        rejected_votes_field
+        + blank_votes_field
+        + accredited_voters_field)
+    non_zero_fields = (
+        result_field_labels
+        + [registered_voters_field])
+    non_zero_sum_fields = result_field_labels
 
     if not dataset.empty:
         # compute and store reporting status
-        dataset['reported'] = dataset[
-            result_field_labels + [registered_voters_field]].count(1) == len(
-            result_field_labels) + 1
-        dataset['missing'] = dataset[
-            result_field_labels + [registered_voters_field]].count(1) != len(
-            result_field_labels) + 1
+        dataset['reported'] = dataset[non_null_fields].where(
+            lambda x: x != pd.np.nan).join(
+                dataset[non_zero_fields].where(lambda x: x > 0)
+            ).assign(shares = (dataset[non_zero_sum_fields].sum(1) > 0).replace(
+                False, pd.np.nan)).count(1) == len(non_null_fields) + len(non_zero_fields) + 1  # noqa
+        dataset['missing'] = dataset[non_null_fields].where(
+            lambda x: x != pd.np.nan).join(
+                dataset[non_zero_fields].where(lambda x: x > 0)
+            ).assign(shares = (dataset[non_zero_sum_fields].sum(1) > 0).replace(
+                False, pd.np.nan)).count(1) != len(non_null_fields) + len(non_zero_fields) + 1  # noqa
 
     try:
         overall_summation = dataset.groupby(
