@@ -346,7 +346,7 @@ class FormForm(SecureForm):
         _('Blank Votes Field'), choices=[('', '')])
     invalid_votes_tag = wtforms.SelectField(
         _('Invalid Votes Field'), choices=[('', '')])
-    registered_votes_tag = wtforms.SelectField(
+    registered_voters_tag = wtforms.SelectField(
         _('Registered Voters Field'), choices=[('', '')])
 
 
