@@ -340,10 +340,14 @@ class FormForm(SecureForm):
     track_data_conflicts = wtforms.BooleanField(_('Track Data Conflicts?'))
     calculate_moe = wtforms.BooleanField(_('Calculate MOE'))
     quality_checks_enabled = wtforms.BooleanField(_('QA Enabled'))
-    accredited_voters_tag = wtforms.StringField(_('Accredited Voters Field'))
-    blank_votes_tag = wtforms.StringField(_('Blank Votes Field'))
-    invalid_votes_tag = wtforms.StringField(_('Invalid Votes Field'))
-    registered_votes_tag = wtforms.StringField(_('Registered Voters Field'))
+    accredited_voters_tag = wtforms.SelectField(
+        _('Accredited Voters Field'), choices=[('', '')])
+    blank_votes_tag = wtforms.SelectField(
+        _('Blank Votes Field'), choices=[('', '')])
+    invalid_votes_tag = wtforms.SelectField(
+        _('Invalid Votes Field'), choices=[('', '')])
+    registered_voters_tag = wtforms.SelectField(
+        _('Registered Voters Field'), choices=[('', '')])
 
 
 class FormImportForm(SecureForm):

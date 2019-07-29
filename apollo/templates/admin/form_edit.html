@@ -43,7 +43,7 @@
             {% else %}
               {{ field.label(class_='col-sm-4 control-label text-right mb-0') }}
               <div class="col-sm-8">
-                  {%- if field.name == 'form_type' %}
+                  {%- if field.name in ['form_type', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_votes_tag'] %}
                   {{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select') }}
                   {% else %}
                   {{ field(class_='form-control is-invalid' if field.errors else 'form-control') }}

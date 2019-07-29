@@ -79,6 +79,7 @@ class IncidentStatusFilter(ChoiceFilter):
             ('rejected', _('Rejected')),
             ('citizen', _('Citizen Report')),
         )
+        kwargs['default'] = 'confirmed'
         super().__init__(*args, **kwargs)
 
     def filter(self, query, value, **kwargs):
