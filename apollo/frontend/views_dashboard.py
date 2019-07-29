@@ -6,7 +6,7 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
-from sqlalchemy import func
+from sqlalchemy import false, func
 
 from ..deployments.forms import generate_event_selection_form
 from ..frontend import permissions, route
@@ -60,11 +60,12 @@ def main_dashboard(form_id=None):
     query_args = [
         Submission.event_id == event.id,
         Submission.form_id == form.id
-    ]
-    if form.track_data_conflicts:
-        query_args.append(Submission.submission_type == 'M')
-    else:
-        query_args.append(Submission.submission_type == 'O')
+    ] if form else [false()]
+    if form:
+        if form.track_data_conflicts:
+            query_args.append(Submission.submission_type == 'M')
+        else:
+            query_args.append(Submission.submission_type == 'O')
 
     query = Submission.query.filter(*query_args).join(
             Location,
