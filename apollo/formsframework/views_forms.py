@@ -118,6 +118,14 @@ def edit_form(view, form_id):
         {'text': _('Forms'), 'url': url_for('formsview.index')},
         _('Edit Form')]
     web_form = FormForm(obj=form)
+    web_form.accredited_voters_tag.choices = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
+    web_form.blank_votes_tag.choices = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
+    web_form.invalid_votes_tag.choices = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
+    web_form.registered_votes_tag.choices = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
 
     if not web_form.validate_on_submit():
         context = {
