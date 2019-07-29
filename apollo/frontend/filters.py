@@ -16,7 +16,8 @@ from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.frontend.helpers import get_event
 from apollo.helpers import _make_choices
 from apollo.submissions.models import FLAG_CHOICES
-from apollo.submissions.qa.query_builder import generate_qa_query
+from apollo.submissions.qa.query_builder import (
+    build_expression, generate_qa_query)
 from apollo.wtforms_ext import ExtendedSelectField
 
 
@@ -217,7 +218,7 @@ class QualityAssuranceFilter(ChoiceFilter):
             except (IndexError, ValueError):
                 return query
 
-            qa_expr = '{lvalue} {comparator} {rvalue}'.format(**check)
+            qa_expr = build_expression(check)
             qa_subquery, tags = generate_qa_query(qa_expr, self.qa_form)
             question_codes = array(tags)
 
