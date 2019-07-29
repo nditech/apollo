@@ -73,42 +73,22 @@ class ExpressionBuilderTestCase(TestCase):
             expression = build_expression(invalid_check)
 
     def test_multiple_checks(self):
-        invalid_checks = [
-            {
-                'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
-                'conjunction': 'and'
-            },
-            {
-                'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
-                'conjunction': 'plus'
-            },
-            {
-                'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
-                'conjunction': 'and'
-            }
-        ]
-        valid_checks = [
-            {
-                'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
-                'conjunction': 'and'
-            },
-            {
-                'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
-                'conjunction': 'and'
-            },
-            {
-                'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
-                'conjunction': 'or'
-            }
-        ]
-
-        invalid_checks_2 = set()
-
-        with self.assertRaises(ValueError):
-            expression = build_expression(invalid_checks)
+        valid_checks = {
+            'criteria': [
+                {
+                    'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
+                    'conjunction': '&&'
+                },
+                {
+                    'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
+                    'conjunction': '&&'
+                },
+                {
+                    'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
+                    'conjunction': '||'
+                }
+            ]
+        }
 
         expression = build_expression(valid_checks)
         self.assertEqual(expression, 'AA = 1 && BA = 1 || BH = EJ')
-
-        with self.assertRaises(ValueError):
-            expression = build_expression(invalid_checks_2)

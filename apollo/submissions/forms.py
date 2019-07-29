@@ -126,7 +126,7 @@ def make_submission_edit_form_class(event, form):
                         )
 
     if form.form_type == 'CHECKLIST':
-        if permissions.edit_submission_quarantine_status.can:
+        if permissions.edit_submission_quarantine_status.can():
             form_fields['quarantine_status'] = fields.SelectField(
                 choices=models.Submission.QUARANTINE_STATUSES,
                 filters=[lambda data: data if data else ''],
@@ -134,7 +134,7 @@ def make_submission_edit_form_class(event, form):
             )
         if permissions.edit_submission_quarantine_status.can():
             form_fields['verified_fields'] = fields.SelectMultipleField(
-                'Verified fields',
+                'Verified Fields',
                 choices=[(tag, tag) for tag in form.tags],
                 option_widget=widgets.CheckboxInput(),
                 validators=[validators.Optional()]

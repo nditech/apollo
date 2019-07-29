@@ -302,10 +302,10 @@ def build_expression(logical_check):
 
         for index, cond in enumerate(logical_check['criteria']):
             if index:
-                check_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
+                check_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)
             else:
-                check_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
+                check_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)
     else:
-        check_expression = '{lvalue} {comparator} {rvalue}'.format(**logical_check)
+        check_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)
 
-    return check_expression
+    return check_expression.strip()
