@@ -1,14 +1,25 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
+    {% if request.args.sort_by == 'pid' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
+    {% else %}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
+    {% endif %}
+    {%- if form.form_type == 'INCIDENT' %}
     {% if request.args.sort_by == 'id' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
     {% endif %}
+    {%- endif %}
     <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
     {% for location_type in location_types %}
     {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
@@ -70,6 +81,9 @@
     {% else %}
     <td class="text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
+    {%- if form.form_type == 'INCIDENT' %}
+    <td class="text-monospace text-right">{{ submission.id }}</td>
+    {%- endif %}
     <td class="text-center">
         {% if submission.unreachable -%}
         <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>
@@ -153,7 +167,7 @@
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set colspan = 8 + (location_types|length) + form_fields|length -%}
+{%- set colspan = 9 + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
@@ -165,7 +179,7 @@
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set colspan = 7 + (location_types|length) + form_fields|length -%}
+{%- set colspan = 8 + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
