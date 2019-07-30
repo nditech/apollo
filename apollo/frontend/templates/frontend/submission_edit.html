@@ -358,11 +358,10 @@
       <table class="table table-hover">
         <thead class="thead-light">
           <tr>
-            <th scope="col" class="col-1">{{ _('ID') }}</th>
-            <th scope="col" class="col-2">{{ _('Type') }}</th>
-            <th scope="col" class="col-1 text-center">{{ _('Code') }}</th>
+            <th scope="col" class="text-right{{ '' if incidents.count() > 0 else ' col-1' }}">{{ _('ID') }}</th>
+            <th scope="col" class="col-1">{{ _('Form') }}</th>
+            <th scope="col">{{ _('Type') }}</th>
             <th scope="col" class="col-1 text-center">{{ _('Status') }}</th>
-            <th scope="col">{{ _('Description') }}</th>
             <th scope="col" class="col-2">{{ _('Date') }}</th>
             <th scope="col" class="col-1">{{ _('Time') }}</th>
           </tr>
@@ -373,9 +372,9 @@
           {% for field in group.fields %}
           {% if field.tag in incident.data %}
           <tr>
-            <td class="text-monospace"><a href="{{ url_for('submissions.submission_edit', submission_id=incident.id) }}">{{ incident.participant.participant_id }}</a></td>
-            <td class="text-monospace">{{ incident.form.name }}</td>
-            <td class="text-monospace text-center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></td>
+            <td class="text-monospace text-right"><a href="{{ url_for('submissions.submission_edit', submission_id=incident.id) }}">{{ incident.id }}</a></td>
+            <td class="text-monospace">{{ incident.form.prefix }}</td>
+            <td class="text-monospace"><strong>{{ incident.data[field.tag] }}</strong> &mdash; {{ field.description }}</td>
             <td class="text-monospace text-center">
               {%- set status = incident.incident_status -%}
               {%- if status == 'confirmed' -%}
@@ -388,7 +387,6 @@
               <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
               {%- endif -%}
             </td>
-            <td class="text-monospace">{{ incident.incident_description }}</td>
             <td class="text-monospace timestamp-date" data-timestamp="{{ incident.created|timestamp }}">{{ incident.created.strftime('%b %d %Y') }}</td>
             <td class="text-monospace timestamp-time" data-timestamp="{{ incident.created|timestamp }}">{{ incident.created.strftime('%I:%M %p') }}</td>
           </tr>
@@ -397,7 +395,7 @@
           {% endfor %}
           {% else %}
           <tr class="table-warning">
-            <td class="text-center text-muted" colspan="7">{{ _('No Data Available') }}</td>
+            <td class="text-center text-muted" colspan="6">{{ _('No Data Available') }}</td>
           </tr>
           {% endfor %}
         </tbody>
