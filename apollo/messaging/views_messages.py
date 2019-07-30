@@ -99,14 +99,17 @@ def message_list():
 
         if 'mobile' not in filter_errors and filter_data.get('mobile'):
             search_term = filter_data.get('mobile')
-            parse_tree = number_parser.parse(search_term)
-            number_visitor = NumberSearchVisitor(
-                inbound_message_class=Message,
-                outbound_message_class=OutboundMsg
-            )
+            numbers = [
+                term.strip() for term in search_term.split(',')
+                if not term.isspace()
+            ]
 
-            query_filter = visit_parse_tree(parse_tree, number_visitor)
-            all_messages = all_messages.filter(query_filter)
+            all_messages = all_messages.filter(sa.or_(
+                *[sa.or_(
+                    Message.sender.ilike(f'%{n.replace("+", "")}%'),
+                    OutboundMsg.recipient.ilike(f'%{n.replace("+", "")}%')
+                ) for n in numbers]
+            ))
 
         if 'text' not in filter_errors and filter_data.get('text'):
             val = f"%{filter_data.get('text')}%"
