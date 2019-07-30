@@ -274,10 +274,10 @@ class TagVisitor(PTNodeVisitor):
 
 
 def get_inline_qa_status(submission, condition):
-    check_expression = build_expression(condition)
+    control_expression = build_expression(condition)
 
     parser = ParserPEG(GRAMMAR, 'qa')
-    tree = parser.parse(check_expression)
+    tree = parser.parse(control_expression)
 
     var_visitor = TagVisitor()
     visit_parse_tree(tree, var_visitor)
@@ -298,14 +298,14 @@ def get_inline_qa_status(submission, condition):
 
 def build_expression(logical_check):
     if 'criteria' in logical_check:
-        check_expression = ''
+        control_expression = ''
 
         for index, cond in enumerate(logical_check['criteria']):
             if index:
-                check_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)
+                control_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)
             else:
-                check_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)
+                control_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)
     else:
-        check_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)
+        control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)
 
-    return check_expression.strip()
+    return control_expression.strip()

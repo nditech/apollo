@@ -62,18 +62,18 @@ class AggregationTest(TestCase):
 
 
 class ExpressionBuilderTestCase(TestCase):
-    def test_single_check(self):
-        valid_check = {'lvalue': 'AA', 'comparator': '=', 'rvalue': '1'}
-        invalid_check = {'favourite_fruit': 'apples'}
+    def test_single_control(self):
+        valid_control = {'lvalue': 'AA', 'comparator': '=', 'rvalue': '1'}
+        invalid_control = {'favourite_fruit': 'apples'}
 
-        expression = build_expression(valid_check)
+        expression = build_expression(valid_control)
         self.assertEqual(expression, 'AA = 1')
 
         with self.assertRaises(KeyError):
-            expression = build_expression(invalid_check)
+            expression = build_expression(invalid_control)
 
-    def test_multiple_checks(self):
-        valid_checks = {
+    def test_multiple_controls(self):
+        valid_controls = {
             'criteria': [
                 {
                     'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
@@ -90,5 +90,5 @@ class ExpressionBuilderTestCase(TestCase):
             ]
         }
 
-        expression = build_expression(valid_checks)
+        expression = build_expression(valid_controls)
         self.assertEqual(expression, 'AA = 1 && BA = 1 || BH = EJ')
