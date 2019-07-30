@@ -2,11 +2,11 @@
 <tr>
     {% if request.args.sort_by == 'id' -%}
     {% if request.args.sort_direction == 'desc' -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}{% else -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
     {% endif -%}
     {% for location_type in location_types %}
     <th scope="col">
