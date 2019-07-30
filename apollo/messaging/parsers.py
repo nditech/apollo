@@ -25,7 +25,6 @@ class NumberSearchVisitor(PTNodeVisitor):
         num_spec = f"%{node.value.replace('+', '')}%"
         return or_(
             self.inbound_message_class.recipient.ilike(num_spec),
-            self.inbound_message_class.sender.ilike(num_spec),
             self.outbound_message_class.recipient.ilike(num_spec))
 
     def visit_term(self, node, children):
