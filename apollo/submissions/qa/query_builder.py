@@ -6,6 +6,7 @@ import operator as op
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from sqlalchemy import Boolean, Integer, String, and_, case, func, null
+from sqlalchemy.dialects.postgresql import array
 
 from apollo.models import Location, Participant, Submission
 
@@ -53,12 +54,10 @@ OPERATIONS = {
 }
 
 FIELD_TYPE_CASTS = {
-    'boolean': Boolean,
     'comment': String,
     'integer': Integer,
     'select': Integer,
     'multiselect': String,
-    'category': Integer,
     'string': String,
     'location': String
 }
@@ -161,6 +160,7 @@ class QATreeVisitor(BaseVisitor):
         self.prev_cast_type = None
         self.lock_null = False
         self.form = kwargs.pop('form')
+        self.variables = set()
         super().__init__(defaults, **kwargs)
 
     def visit_lookup(self, node, children):
@@ -179,6 +179,7 @@ class QATreeVisitor(BaseVisitor):
 
     def visit_variable(self, node, children):
         var_name = node.value
+        self.variables.add(var_name)
         if var_name not in self.form.tags:
             raise ValueError('Variable ({}) not in form'.format(var_name))
 
@@ -216,20 +217,33 @@ def generate_qa_query(expression, form):
 
     visitor = QATreeVisitor(form=form)
 
-    return visit_parse_tree(tree, visitor)
+    return visit_parse_tree(tree, visitor), visitor.variables
+
+
+def generate_qa_queries(form):
+    subqueries = []
+    tag_groups = []
+    for check in form.quality_checks:
+        expression = build_expression(check)
+        subquery, used_tags = generate_qa_query(expression, form)
+
+        tags = array(used_tags)
+
+        case_query = case([
+            (subquery == True, 'OK'),   # noqa
+            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
+            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
+            (subquery == None, 'Missing')   # noqa
+        ]).label(check['name'])
+
+        subqueries.append(case_query)
+        tag_groups.append(sorted(used_tags))
+
+    return subqueries, tag_groups
 
 
 def get_logical_check_stats(query, form, condition):
-    if 'criteria' in condition:
-        complete_expression = ''
-
-        for index, cond in enumerate(condition['criteria']):
-            if index:
-                complete_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
-            else:
-                complete_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
-    else:
-        complete_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
+    complete_expression = build_expression(condition)
     qa_query = generate_qa_query(complete_expression, form)
 
     # add joins as necessary
@@ -242,8 +256,8 @@ def get_logical_check_stats(query, form, condition):
 
     qa_case_query = case([
         (qa_query == True, 'OK'),
-        (and_(qa_query == False, Submission.verification_status == Submission.VERIFICATION_STATUSES[1][0]), 'Verified'),    # noqa
-        (and_(qa_query == False, Submission.verification_status != Submission.VERIFICATION_STATUSES[1][0]), 'Flagged'),     # noqa
+        (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
+        (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
         (qa_query == None, 'Missing')
     ])
 
@@ -262,19 +276,10 @@ class TagVisitor(PTNodeVisitor):
 
 
 def get_inline_qa_status(submission, condition):
-    if 'criteria' in condition:
-        check_expression = ''
-
-        for index, cond in enumerate(condition['criteria']):
-            if index:
-                check_expression += '{conjunction} {lvalue} {comparator} {rvalue}'.format(**cond)
-            else:
-                check_expression += '{lvalue} {comparator} {rvalue}'.format(**cond)
-    else:
-        check_expression = '{lvalue} {comparator} {rvalue}'.format(**condition)
+    control_expression = build_expression(condition)
 
     parser = ParserPEG(GRAMMAR, 'qa')
-    tree = parser.parse(check_expression)
+    tree = parser.parse(control_expression)
 
     var_visitor = TagVisitor()
     visit_parse_tree(tree, var_visitor)
@@ -291,3 +296,18 @@ def get_inline_qa_status(submission, condition):
         return None, set()
 
     return result, used_tags
+
+
+def build_expression(logical_check):
+    if 'criteria' in logical_check:
+        control_expression = ''
+
+        for index, cond in enumerate(logical_check['criteria']):
+            if index:
+                control_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)
+            else:
+                control_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)
+    else:
+        control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)
+
+    return control_expression.strip()

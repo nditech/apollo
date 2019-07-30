@@ -36,7 +36,7 @@ from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregate_dataset, aggregated_dataframe, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
-from apollo.submissions.qa.query_builder import get_inline_qa_status
+from apollo.submissions.qa.query_builder import generate_qa_queries
 from apollo.submissions.utils import make_submission_dataframe
 
 
@@ -484,11 +484,28 @@ def submission_edit(submission_id):
                 questionnaire_form.quality_checks_enabled
                     and questionnaire_form.quality_checks
             ):
-                for check in questionnaire_form.quality_checks:
-                    result, used_tags = get_inline_qa_status(submission, check)
-                    if result is False:
+                # use the QA query on this submission for the results
+                # of the individual checks.
+                # the joins are necessary to limit the number of results
+                sub_query = models.Submission.query.filter_by(
+                    id=submission.id
+                ).join(
+                    models.Submission.location
+                ).join(
+                    models.Submission.participant
+                )
+                qa_queries, tag_groups = generate_qa_queries(submission.form)
+                result = sub_query.with_entities(*qa_queries).one()._asdict()
+
+                # for checks that failed, add the description to the list
+                # of failed check descriptions
+                # for checks that failed or were verified, add the question
+                # tags to the list of failed question tags
+                for idx, check in enumerate(questionnaire_form.quality_checks):
+                    if result[check['name']] == 'Flagged':
                         failed_checks.append(check['description'])
-                        failed_check_tags.update(used_tags)
+                    if result[check['name']] in ('Flagged', 'Verified'):
+                        failed_check_tags.update(tag_groups[idx])
 
         submission_form = edit_form_class(
             data=initial_data,
@@ -756,6 +773,11 @@ def submission_edit(submission_id):
                     new_quarantine_status = submission_form.data.get(
                         'quarantine_status')
                     new_offline_status = submission_form.unreachable.data
+
+                    new_verified_fields = submission_form.verified_fields.data
+                    if new_verified_fields != submission.verified_fields:
+                        changed = True
+                        update_params['verified_fields'] = new_verified_fields
 
                     if (
                         new_quarantine_status in get_valid_values(
@@ -1063,7 +1085,14 @@ def quality_assurance_list(form_id):
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            ).order_by('location', 'contributor')
+            ).join(
+                models.Submission.location
+            ).join(
+                models.Submission.participant
+            ).order_by(
+                models.Submission.location_id,
+                models.Submission.participant_id
+            )
         else:
             queryset = models.Submission.query.filter(false())
 
@@ -1078,7 +1107,8 @@ def quality_assurance_list(form_id):
         content_disposition = 'attachment; filename=%s.csv' % basename
 
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
 
@@ -1207,6 +1237,11 @@ def quality_assurance_list(form_id):
 
     if not form.quality_checks:
         queryset = models.Submission.query.filter(false())
+    else:
+        queryset = queryset.with_entities(
+            models.Submission,
+            *generate_qa_queries(form)[0]
+        )
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form

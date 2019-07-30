@@ -125,15 +125,20 @@ def make_submission_edit_form_class(event, form):
                             validators=[validators.Optional()]
                         )
 
-    if (
-        form.form_type == 'CHECKLIST' and
-        permissions.edit_submission_quarantine_status.can()
-    ):
-        form_fields['quarantine_status'] = fields.SelectField(
-            choices=models.Submission.QUARANTINE_STATUSES,
-            filters=[lambda data: data if data else ''],
-            validators=[validators.Optional()]
-        )
+    if form.form_type == 'CHECKLIST':
+        if permissions.edit_submission_quarantine_status.can():
+            form_fields['quarantine_status'] = fields.SelectField(
+                choices=models.Submission.QUARANTINE_STATUSES,
+                filters=[lambda data: data if data else ''],
+                validators=[validators.Optional()]
+            )
+        if permissions.edit_submission_quarantine_status.can():
+            form_fields['verified_fields'] = fields.SelectMultipleField(
+                _('Verified'),
+                choices=[(tag, tag) for tag in form.tags],
+                option_widget=widgets.CheckboxInput(),
+                validators=[validators.Optional()]
+            )
 
     if form.form_type == 'INCIDENT':
         form_fields['status'] = fields.SelectField(

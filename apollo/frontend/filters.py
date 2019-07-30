@@ -5,6 +5,7 @@ from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import or_
+from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets, fields, Form
 from wtforms.compat import text_type
 from wtforms.widgets import html_params, HTMLString
@@ -15,7 +16,8 @@ from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.frontend.helpers import get_event
 from apollo.helpers import _make_choices
 from apollo.submissions.models import FLAG_CHOICES
-from apollo.submissions.qa.query_builder import generate_qa_query
+from apollo.submissions.qa.query_builder import (
+    build_expression, generate_qa_query)
 from apollo.wtforms_ext import ExtendedSelectField
 
 
@@ -216,8 +218,9 @@ class QualityAssuranceFilter(ChoiceFilter):
             except (IndexError, ValueError):
                 return query
 
-            qa_expr = '{lvalue} {comparator} {rvalue}'.format(**check)
-            qa_subquery = generate_qa_query(qa_expr, self.qa_form)
+            qa_expr = build_expression(check)
+            qa_subquery, tags = generate_qa_query(qa_expr, self.qa_form)
+            question_codes = array(tags)
 
             if '$location' in qa_expr:
                 query = query.join(
@@ -233,7 +236,8 @@ class QualityAssuranceFilter(ChoiceFilter):
             if condition == '4':
                 # verified
                 return query.filter(
-                    models.Submission.verification_status == '4')  # noqa
+                    qa_subquery == False,   # noqa
+                    models.Submission.verified_fields.has_all(question_codes))
             elif condition == '-1':
                 # missing
                 return query.filter(qa_subquery == None)  # noqa
@@ -242,7 +246,9 @@ class QualityAssuranceFilter(ChoiceFilter):
                 return query.filter(qa_subquery == True)  # noqa
             elif condition == '2':
                 # flagged
-                return query.filter(qa_subquery == False)  # noqa
+                return query.filter(
+                    qa_subquery == False,   # noqa
+                    ~models.Submission.verified_fields.has_all(question_codes))
         return query
 
 

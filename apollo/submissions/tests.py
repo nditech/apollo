@@ -9,6 +9,7 @@ from apollo.submissions.aggregation import (
     _select_field_processor,
 )
 from apollo.submissions.incidents import incidents_csv
+from apollo.submissions.qa.query_builder import build_expression
 
 
 class IncidentsTest(TestCase):
@@ -58,3 +59,36 @@ class AggregationTest(TestCase):
 
         result = _multiselect_field_processor(options, column)
         self.assertEqual(result, [4, 4, 5, 4, 4])
+
+
+class ExpressionBuilderTestCase(TestCase):
+    def test_single_control(self):
+        valid_control = {'lvalue': 'AA', 'comparator': '=', 'rvalue': '1'}
+        invalid_control = {'favourite_fruit': 'apples'}
+
+        expression = build_expression(valid_control)
+        self.assertEqual(expression, 'AA = 1')
+
+        with self.assertRaises(KeyError):
+            expression = build_expression(invalid_control)
+
+    def test_multiple_controls(self):
+        valid_controls = {
+            'criteria': [
+                {
+                    'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
+                    'conjunction': '&&'
+                },
+                {
+                    'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
+                    'conjunction': '&&'
+                },
+                {
+                    'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
+                    'conjunction': '||'
+                }
+            ]
+        }
+
+        expression = build_expression(valid_controls)
+        self.assertEqual(expression, 'AA = 1 && BA = 1 || BH = EJ')

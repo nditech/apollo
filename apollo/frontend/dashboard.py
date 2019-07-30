@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
-from itertools import chain
 from logging import getLogger
 
 from sqlalchemy import and_, func, or_, not_

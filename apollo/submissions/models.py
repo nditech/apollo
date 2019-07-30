@@ -120,6 +120,7 @@ class Submission(BaseModel):
     conflicts = db.Column(JSONB)
     unreachable = db.Column(db.Boolean, default=False, nullable=False)
     geom = db.Column(Geometry('POINT', srid=4326))
+    verified_fields = db.Column(JSONB, default=[])
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
