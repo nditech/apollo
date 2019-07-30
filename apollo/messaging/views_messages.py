@@ -18,7 +18,6 @@ from sqlalchemy.orm import aliased
 
 from apollo.frontend import route, permissions
 from apollo.messaging.filters import MessageFilterForm, MessageFilterSet
-from apollo.messaging.parsers import NumberSearchVisitor, number_parser
 from apollo.models import Event, Form, Message, Submission
 from apollo.services import events, messages
 from apollo.settings import TIMEZONE
