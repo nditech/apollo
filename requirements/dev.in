@@ -7,4 +7,3 @@ flask-testing==0.7.1
 mimesis
 nose==1.3.7
 pip-tools
-pytest==3.5.0

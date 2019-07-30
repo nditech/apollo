@@ -29,10 +29,6 @@ asn1crypto==0.24.0 \
     --hash=sha256:2f1adbb7546ed199e3c90ef23ec95c5cf3585bac7d11fb7eb562a3fe89c64e87 \
     --hash=sha256:9d5c20441baf0cb60a4ac34cc447c6c189024b6b4c6cd7877034f4965c464e49 \
     # via cryptography
-attrs==19.1.0 \
-    --hash=sha256:69c0dbf2ed392de1cb5ec704444b08a5ef81680a61cb899dc08127123af36a79 \
-    --hash=sha256:f0b870f674851ecbfbbbd364d6b5cbdff9dcedbc7f3f5e18a6891057f21fe399 \
-    # via pytest
 authlib==0.11 \
     --hash=sha256:3a226f231e962a16dd5f6fcf0c113235805ba206e294717a64fa8e04ae3ad9c4 \
     --hash=sha256:9741db6de2950a0a5cefbdb72ec7ab12f7e9fd530ff47219f1530e79183cbaaf
@@ -356,10 +352,6 @@ mccabe==0.6.1 \
 mimesis==3.2.0 \
     --hash=sha256:3310b8a761448a7bc98996723b14cd1dbbf36391db70f3c7db495ad4d4d06173 \
     --hash=sha256:c64edaa62e974746d582b6ae627875d58d63f6e11b1e42dfdadcbfb10c7bfb5b
-more-itertools==7.0.0 \
-    --hash=sha256:2112d2ca570bb7c3e53ea1a35cd5df42bb0fd10c45f0fb97178679c3c03d64c7 \
-    --hash=sha256:c3e4748ba1aad8dba30a4886b0b1a2004f9a863837b8654e7059eebf727afa5a \
-    # via pytest
 netifaces==0.10.9 \
     --hash=sha256:078986caf4d6a602a4257d3686afe4544ea74362b8928e9f4389b5cd262bc215 \
     --hash=sha256:0c4304c6d5b33fbd9b20fdc369f3a2fef1a8bbacfb6fd05b9708db01333e9e7b \
@@ -450,11 +442,6 @@ passlib==1.7.1 \
 pip-tools==3.7.0 \
     --hash=sha256:4ff38ab655bec47db2d5a82fa6c6807e231ecddf3b7cbb2f2b957a9b11f016c3 \
     --hash=sha256:6d24a58c8c6cc952c2649248bfc3381d9e817b35c89294f91b23a194faef2a34
-pluggy==0.6.0 \
-    --hash=sha256:7f8ae7f5bdf75671a718d2daf0a64b7885f74510bcd98b1a0bb420eb9a9d0cff \
-    --hash=sha256:d345c8fe681115900d6da8d048ba67c25df42973bda370783cd58826442dcd7c \
-    --hash=sha256:e160a7fcf25762bb60efc7e171d4497ff1d8d2d75a3d0df7a21b76821ecbf5c5 \
-    # via pytest
 prettyconf==1.2.3 \
     --hash=sha256:83a23f3e01a2bb3c42c938c7823e61dcaf2eab47b27f5ed1e9fb76b2afe2023e
 prometheus-client==0.6.0 \
@@ -498,10 +485,6 @@ psycopg2-binary==2.8.3 \
     --hash=sha256:e1adff53b56db9905db48a972fb89370ad5736e0450b96f91bcf99cadd96cfd7 \
     --hash=sha256:f0d43828003c82dbc9269de87aa449e9896077a71954fbbb10a614c017e65737 \
     --hash=sha256:f78e8b487de4d92640105c1389e5b90be3496b1d75c90a666edd8737cc2dbab7
-py==1.8.0 \
-    --hash=sha256:64f65755aee5b381cea27766a3a147c3f15b9b6b9ac88676de66ba2ae36793fa \
-    --hash=sha256:dc639b046a6e2cff5bbe40194ad65936d6ba360b52b3c3fe1d08a82dd50b5e53 \
-    # via pytest
 pycodestyle==2.5.0 \
     --hash=sha256:95a2219d12372f05704562a14ec30bc76b05a5b297b21a5dfe3f6fac3491ae56 \
     --hash=sha256:e40a936c9a450ad81df37f549d676d127b1b66000a6c500caa2b085bc0ca976c \
@@ -513,9 +496,6 @@ pyflakes==2.1.1 \
     --hash=sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0 \
     --hash=sha256:d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2 \
     # via flake8
-pytest==3.5.0 \
-    --hash=sha256:6266f87ab64692112e5477eba395cfedda53b1933ccd29478e671e73b420c19c \
-    --hash=sha256:fae491d1874f199537fd5872b5e1f0e74a009b979df9d53d1553fd03da1703e1
 python-dateutil==2.7.2 \
     --hash=sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df \
     --hash=sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e
