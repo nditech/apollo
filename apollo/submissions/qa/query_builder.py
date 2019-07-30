@@ -222,6 +222,7 @@ def generate_qa_query(expression, form):
 
 def generate_qa_queries(form):
     subqueries = []
+    tag_groups = []
     for check in form.quality_checks:
         expression = build_expression(check)
         subquery, used_tags = generate_qa_query(expression, form)
@@ -236,8 +237,9 @@ def generate_qa_queries(form):
         ]).label(check['name'])
 
         subqueries.append(case_query)
+        tag_groups.append(sorted(used_tags))
 
-    return subqueries
+    return subqueries, tag_groups
 
 
 def get_logical_check_stats(query, form, condition):
