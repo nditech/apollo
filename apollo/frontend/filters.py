@@ -4,7 +4,7 @@ from collections import defaultdict
 from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import and_, null, or_
+from sqlalchemy import and_, false, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets, fields, Form
 from wtforms.compat import text_type
@@ -247,7 +247,7 @@ class QualityAssuranceFilter(ChoiceFilter):
                         )
 
                     if filter_query is None:
-                        return null()
+                        return query.filter(false())
 
                     qa_subqueries.append(filter_query)
 
