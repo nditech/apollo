@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import calendar
 from datetime import datetime, timedelta
+from itertools import chain
 
 from dateutil.parser import parse
 from dateutil.tz import gettz
@@ -96,14 +97,18 @@ def message_list():
         ).order_by(Message.received.desc())
 
         if 'mobile' not in filter_errors and filter_data.get('mobile'):
-            val = f"%{filter_data.get('mobile')}%"
-            all_messages = all_messages.filter(
-                sa.or_(
-                    Message.recipient.ilike(val),
-                    Message.sender.ilike(val),
-                    OutboundMsg.recipient.ilike(val)
-                )
-            )
+            search_term = filter_data.get('mobile')
+            numbers = list(chain(*[
+                term.strip().split() for term in search_term.split(',')
+                if not term.isspace()
+            ]))
+
+            all_messages = all_messages.filter(sa.or_(
+                *[sa.or_(
+                    Message.sender.ilike(f'%{n.replace("+", "")}%'),
+                    OutboundMsg.recipient.ilike(f'%{n.replace("+", "")}%')
+                ) for n in numbers]
+            ))
 
         if 'text' not in filter_errors and filter_data.get('text'):
             val = f"%{filter_data.get('text')}%"
