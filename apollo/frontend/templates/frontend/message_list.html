@@ -68,15 +68,6 @@
     <tbody>
       {% for left_message, right_message, submission_id, form_type in pager.items %}
       {% if left_message.direction == 'IN' %}
-      <tr>
-        <td class="text-monospace">{{ left_message.sender }}</td>
-        <td class="timestamp-date text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
-        <td class="timestamp-time text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
-        <td class="text-monospace">{{ left_message.direction.value }}</td>
-        <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
-        <td class="text-monospace">{{ left_message.message_type.value }}</td>
-        <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
-      </tr>
       {% if right_message != None %}
       <tr>
         <td class="text-monospace">{{ right_message.recipient }}</td>
@@ -92,6 +83,15 @@
         <td class="text-monospace text-muted text-center" colspan="7"><em>{{ _('No Outgoing Message') }}</em></td>
       </tr>
       {% endif %}
+      <tr>
+        <td class="text-monospace">{{ left_message.sender }}</td>
+        <td class="timestamp-date text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+        <td class="timestamp-time text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+        <td class="text-monospace">{{ left_message.direction.value }}</td>
+        <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
+        <td class="text-monospace">{{ left_message.message_type.value }}</td>
+        <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+      </tr>
       {% else %}
       <tr>
         <td class="text-monospace">{{ left_message.recipient }}</td>
