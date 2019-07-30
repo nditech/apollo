@@ -263,7 +263,7 @@
               {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
               <div class="custom-control custom-checkbox">
                 <input type="checkbox" name="{{ submission_form.verified_fields.name }}" id="{{ submission_form.verified_fields.id }}_{{ field.tag }}" class="custom-control-input" value="{{ field.tag }}" {% if field.tag in submission.verified_fields %}checked{% endif %} {% if readonly %}disabled{% endif %}>
-                <label for="{{ submission_form.verified_fields.id }}_{{ field.tag }}" class="custom-control-label">{{ _('Verified') }}</label>
+                <label for="{{ submission_form.verified_fields.id }}_{{ field.tag }}" class="custom-control-label">{{ submission_form.verified_fields.label }}</label>
               </div>
               {% endif %}
               </td>

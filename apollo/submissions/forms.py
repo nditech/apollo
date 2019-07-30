@@ -134,7 +134,7 @@ def make_submission_edit_form_class(event, form):
             )
         if permissions.edit_submission_quarantine_status.can():
             form_fields['verified_fields'] = fields.SelectMultipleField(
-                'Verified Fields',
+                _('Verified'),
                 choices=[(tag, tag) for tag in form.tags],
                 option_widget=widgets.CheckboxInput(),
                 validators=[validators.Optional()]
