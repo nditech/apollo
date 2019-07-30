@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import calendar
 from datetime import datetime, timedelta
+from itertools import chain
 
-from arpeggio import visit_parse_tree
 from dateutil.parser import parse
 from dateutil.tz import gettz
 from flask import (
@@ -99,10 +99,10 @@ def message_list():
 
         if 'mobile' not in filter_errors and filter_data.get('mobile'):
             search_term = filter_data.get('mobile')
-            numbers = [
-                term.strip() for term in search_term.split(',')
+            numbers = list(chain(*[
+                term.strip().split() for term in search_term.split(',')
                 if not term.isspace()
-            ]
+            ]))
 
             all_messages = all_messages.filter(sa.or_(
                 *[sa.or_(
