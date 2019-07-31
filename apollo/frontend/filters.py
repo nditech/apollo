@@ -234,14 +234,14 @@ class QualityAssuranceFilter(ChoiceFilter):
                         )
                     elif condition == '-1':
                         # missing
-                        filter_query = (single_qa_query == None)
+                            filter_query = (single_qa_query == None)    # noqa
                     elif condition == '0':
                         # ok
-                        filter_query = (single_qa_query == True)
+                        filter_query = (single_qa_query == True)        # noqa
                     elif condition == '2':
                         # flagged
                         filter_query = and_(
-                            single_qa_query == False,
+                            single_qa_query == False,                   # noqa
                             ~models.Submission.verified_fields.has_all(
                                 array(tags))
                         )
