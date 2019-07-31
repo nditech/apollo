@@ -4,7 +4,7 @@ from collections import defaultdict
 from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import or_
+from sqlalchemy import and_, false, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets, fields, Form
 from wtforms.compat import text_type
@@ -212,6 +212,47 @@ class QualityAssuranceFilter(ChoiceFilter):
             'criterion' in value and 'condition' in value and
             value['criterion'] and value['condition']
         ):
+            if value['criterion'] == 'A':
+                # find all records for which any match the
+                # following condition
+                condition = value['condition']
+
+                qa_subqueries = []
+                for check in self.qa_form.quality_checks:
+                    qa_expr = build_expression(check)
+                    single_qa_query, tags = generate_qa_query(
+                        qa_expr, self.qa_form)
+
+                    filter_query = None
+
+                    if condition == '4':
+                        # verified
+                        filter_query = and_(
+                            single_qa_query == False,
+                            models.Submission.verified_fields.has_all(
+                                array(tags))
+                        )
+                    elif condition == '-1':
+                        # missing
+                            filter_query = (single_qa_query == None)    # noqa
+                    elif condition == '0':
+                        # ok
+                        filter_query = (single_qa_query == True)        # noqa
+                    elif condition == '2':
+                        # flagged
+                        filter_query = and_(
+                            single_qa_query == False,                   # noqa
+                            ~models.Submission.verified_fields.has_all(
+                                array(tags))
+                        )
+
+                    if filter_query is None:
+                        return query.filter(false())
+
+                    qa_subqueries.append(filter_query)
+
+                return query.filter(or_(*qa_subqueries))
+
             try:
                 index = int(value['criterion'])
                 check = self.qa_form.quality_checks[index]
@@ -419,7 +460,10 @@ def generate_submission_analysis_filter(form):
 
 
 def generate_quality_assurance_filter(form):
-    quality_check_criteria = [('', _('Quality Check Criterion'))] + \
+    quality_check_criteria = [
+        ('', _('Quality Check Criterion')),
+        ('A', _('Any Criterion'))
+    ] + \
         (
             [
                 (str(idx), qc['description'])
