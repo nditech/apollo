@@ -348,6 +348,7 @@ class FormForm(SecureForm):
         _('Invalid Votes Field'), choices=[('', '')])
     registered_voters_tag = wtforms.SelectField(
         _('Registered Voters Field'), choices=[('', '')])
+    vote_shares = wtforms.SelectMultipleField(_('Vote Shares'))
 
 
 class FormImportForm(SecureForm):

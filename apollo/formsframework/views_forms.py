@@ -126,6 +126,13 @@ def edit_form(view, form_id):
     web_form.registered_voters_tag.choices = [('', '')] + \
         [(tag, tag) for tag in form.tags]
 
+    # get tags for fields that have no analysis set
+    possible_vote_tags = [
+        tag for tag in form.tags
+        if form.get_field_by_tag(tag)['analysis_type'] == 'N/A'
+    ]
+    web_form.vote_shares.choices = [(tag, tag) for tag in possible_vote_tags]
+
     if not web_form.validate_on_submit():
         context = {
             'breadcrumbs': breadcrumbs,
