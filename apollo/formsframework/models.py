@@ -32,8 +32,17 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
 FIELD_TYPES = (
-    'boolean', 'comment', 'integer', 'select', 'multiselect',
-    'category', 'string', 'location'
+    'comment', 'integer', 'select', 'multiselect', 'string', 'location'
+)
+
+FIELD_SUMMARY_TYPES = (
+    'N/A',          # no data summary
+    'bucket',       # requires a target value. bins the data into three
+                    # buckets: less than, equal to, and greater than it,
+                    # then returns the histogram for that and reported/missing
+    'count',        # return reported/missing only
+    'histogram',    # return a histogram of values and reported/missing
+    'mean',         # return the mean, plus reported/missing
 )
 
 logger = logging.getLogger(__name__)

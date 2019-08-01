@@ -13,18 +13,26 @@ from apollo.process_analysis.common import (
 from sqlalchemy import and_, or_
 
 from apollo import models
-from apollo.services import forms, locations, location_types, submissions
+from apollo.formsframework.models import FIELD_SUMMARY_TYPES
 from apollo.frontend import route, permissions
 from apollo.frontend.helpers import (
     analysis_breadcrumb_data,
     analysis_navigation_data
 )
+from apollo.services import forms, locations, location_types, submissions
 from apollo.submissions import filters
 from apollo.submissions.utils import make_submission_dataframe
 
 
 def get_analysis_menu():
     event = g.event
+    subquery = or_(
+        *[
+            models.Form.data['groups'].op('@>')(
+                [{'fields': [{'analysis_type': s_type}]}]
+            ) for s_type in FIELD_SUMMARY_TYPES[1:]
+        ]
+    )
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
@@ -36,8 +44,7 @@ def get_analysis_menu():
             models.Form.form_type == 'INCIDENT',
             and_(
                 models.Form.form_type == 'CHECKLIST',
-                models.Form.data['groups'].op('@>')(
-                    [{'fields': [{'analysis_type': 'PROCESS'}]}]))
+                subquery)
         )
     ).order_by(models.Form.form_type, models.Form.name)]
 
@@ -45,11 +52,17 @@ def get_analysis_menu():
 def get_process_analysis_menu(form_type='CHECKLIST'):
     event = g.event
     if form_type == 'CHECKLIST':
+        subquery = or_(
+            *[
+                models.Form.data['groups'].op('@>')(
+                    [{'fields': [{'analysis_type': s_type}]}]
+                ) for s_type in FIELD_SUMMARY_TYPES[1:]
+            ]
+        )
         formlist = forms.filter(
             models.Form.events.contains(event),
             models.Form.form_type == 'CHECKLIST',
-            models.Form.data['groups'].op('@>')(
-                [{'fields': [{'analysis_type': 'PROCESS'}]}])
+            subquery
         ).order_by(models.Form.form_type, models.Form.name)
     else:
         formlist = forms.filter(
