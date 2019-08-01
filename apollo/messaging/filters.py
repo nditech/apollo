@@ -19,7 +19,7 @@ APP_TZ = gettz(TIMEZONE)
 def make_submission_type_field_choices():
     choices = [
         ('', _('Form Type')),
-        ('Invalid', _('Invalid'))
+        ('Invalid', _('Invalid Form'))
     ]
 
     choices.extend(Form.FORM_TYPES)

@@ -1,4 +1,5 @@
 {%- extends 'frontend/layout.html' -%}
+{%- from 'frontend/macros/submission_field_macros.html' import render_field -%}
 {% block content %}
 <form method="POST">
 <input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
@@ -51,9 +52,9 @@
                 {%- endif %}
               </td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}

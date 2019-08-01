@@ -111,11 +111,17 @@ def message_list():
             ))
 
         if 'text' not in filter_errors and filter_data.get('text'):
-            val = f"%{filter_data.get('text')}%"
+            value = filter_data.get('text')
             all_messages = all_messages.filter(
                 sa.or_(
-                    Message.text.ilike(val),
-                    OutboundMsg.text.ilike(val),
+                    sa.or_(
+                        Message.text.ilike(f'%{value}%'),
+                        Message.text.op('@@')(sa.func.plainto_tsquery('english', value))
+                    ),
+                    sa.or_(
+                        OutboundMsg.text.ilike(f'%{value}%'),
+                        OutboundMsg.text.op('@@')(sa.func.plainto_tsquery('english', value))
+                    )
                 )
             )
 
