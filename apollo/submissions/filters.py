@@ -198,7 +198,12 @@ class ParticipantIDFilter(CharFilter):
 class SubmissionQuarantineStatusFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value and value == 'N':
-            return (None, None)
+            return (
+                or_(
+                    models.Submission.quarantine_status == None,    # noqa
+                    models.Submission.quarantine_status == ''),
+                None
+            )
         elif value in ('A', 'R'):
             return (models.Submission.quarantine_status == value, None)
         elif value == 'AR':
@@ -210,12 +215,7 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
                 None
             )
         else:
-            return (
-                or_(
-                    models.Submission.quarantine_status == None,    # noqa
-                    models.Submission.quarantine_status == ''),
-                None
-            )
+            return (None, None)
 
 
 class SubmissionSenderVerificationFilter(ChoiceFilter):
@@ -380,11 +380,11 @@ def make_submission_list_filter(event, form):
     elif form.form_type == 'CHECKLIST':
         attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
             choices=(
-                ('', _('Quarantine None')),
+                ('', _('Quarantine Status')),
                 ('A', _('Quarantine All')),
                 ('R', _('Quarantine Results')),
                 ('AR', _('Quarantine All + Results')),
-                ('N', _('Quarantine Off')),
+                ('N', _('Quarantine None')),
             ), default='')
     attributes['sender_verification'] = SubmissionSenderVerificationFilter(
         choices=(
