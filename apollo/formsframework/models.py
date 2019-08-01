@@ -86,6 +86,7 @@ class Form(Resource):
     invalid_votes_tag = db.Column(db.String)
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
+    vote_shares = db.Column(JSONB)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
