@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from flask_babelex import lazy_gettext as _
+import sqlalchemy as sa
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
@@ -55,3 +56,10 @@ class Message(BaseModel):
     participant = db.relationship(
         'Participant', backref=db.backref('messages', passive_deletes=True))
     originating_message = db.relationship('Message', uselist=False)
+
+    __table_args__ = (
+        db.Index(
+            'ix_text_tsv',
+            sa.func.to_tsvector('english', text),
+            postgresql_using='gin'),
+    )
