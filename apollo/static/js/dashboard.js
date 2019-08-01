@@ -47,7 +47,7 @@
         }
       })
       .attr("text-anchor", "middle")
-      .text(function(d) {return d.value / total >= 0.01 ? (d.value/total * 100).toFixed(0) + '%' : '';})
+      .text(function(d) {return d.value / total >= 0.03 ? (d.value/total * 100).toFixed(0) + '%' : '';})
       .attr('fill', function (d, i) {
         var color = labels_color(i);
         if (d.value / total < 0.1) {
