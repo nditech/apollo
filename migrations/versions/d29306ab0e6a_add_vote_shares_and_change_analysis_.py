@@ -1,7 +1,7 @@
 """Add vote shares and change analysis types
 
 Revision ID: d29306ab0e6a
-Revises: 7cef3442efe1
+Revises: 1318268acd94
 Create Date: 2019-08-01 12:32:48.305478
 
 """
@@ -14,7 +14,7 @@ from apollo.formsframework.models import Form
 
 # revision identifiers, used by Alembic.
 revision = 'd29306ab0e6a'
-down_revision = '7cef3442efe1'
+down_revision = '1318268acd94'
 branch_labels = None
 depends_on = None
 
