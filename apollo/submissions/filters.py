@@ -73,11 +73,11 @@ def make_base_submission_filter(event):
 class IncidentStatusFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = (
-            ('', _('Status')),
-            ('NULL', _('Unmarked')),
-            ('confirmed', _('Confirmed')),
-            ('rejected', _('Rejected')),
-            ('citizen', _('Citizen Report')),
+            ('', _('All Incidents')),
+            ('NULL', _('Unmarked Incidents')),
+            ('confirmed', _('Confirmed Incidents')),
+            ('rejected', _('Rejected Incidents')),
+            ('citizen', _('Citizen Report Incidents')),
         )
         kwargs['default'] = ''
         super().__init__(*args, **kwargs)
