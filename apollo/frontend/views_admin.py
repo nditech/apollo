@@ -494,14 +494,14 @@ class FormsView(BaseView):
     def qc(self, form_id):
         return quality_controls(self, form_id)
 
-    @expose('/qc/<int:form_id>/<string:qc>', methods=['GET', 'POST', 'DELETE'])
-    def quality_control_edit(self, form_id, qc):
+    @expose('/qa/<int:form_id>/<string:qa>', methods=['GET', 'POST', 'DELETE'])
+    def quality_control_edit(self, form_id, qa):
         if request.method == 'DELETE':
-            return quality_control_delete(self, form_id, qc)
+            return quality_control_delete(self, form_id, qa)
         else:
-            return quality_control_edit(self, form_id, qc)
+            return quality_control_edit(self, form_id, qa)
 
-    @expose('/qc/<int:form_id>/new', methods=['GET', 'POST'])
+    @expose('/qa/<int:form_id>/new', methods=['GET', 'POST'])
     def quality_control_add(self, form_id):
         return quality_control_edit(self, form_id)
 

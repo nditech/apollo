@@ -164,11 +164,11 @@ def forms_list(view):
 
 
 def quality_controls(view, form_id):
-    template_name = 'admin/quality_controls.html'
+    template_name = 'admin/quality_assurance.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
-        _('Quality Control'), form.name]
+        _('Quality Assurance'), form.name]
 
     quality_controls = []
 
@@ -210,12 +210,12 @@ def quality_controls(view, form_id):
 
 
 def quality_control_edit(view, form_id, qc=None):
-    template_name = 'admin/quality_control_edit.html'
+    template_name = 'admin/quality_assurance_edit.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
         {
-            'text': _('Quality Control'),
+            'text': _('Quality Assurance'),
             'url': url_for('formsview.qc', form_id=form.id)
         },
         form.name
@@ -308,7 +308,7 @@ def quality_control_edit(view, form_id, qc=None):
                 'id': '0'
             })
 
-        title = _('Edit Quality Control')
+        title = _('Edit Quality Assurance')
         is_new = 0
         quality_control = {
             'name': quality_check['name'],
@@ -316,7 +316,7 @@ def quality_control_edit(view, form_id, qc=None):
             'criteria': criteria
         }
     else:
-        title = _('Add Quality Control')
+        title = _('Add Quality Assurance')
         is_new = 1
         quality_control = {
             'name': '', 'description': '', 'criteria': [{
