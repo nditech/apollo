@@ -33,13 +33,13 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ _('Delete Quality Control') }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title">{{ _('Delete Quality Assurance') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="text-center">{% trans %}Are you sure you want to delete this quality control condition?{% endtrans %}</div>
+        <div class="text-center">{% trans %}Are you sure you want to delete this quality assurance condition?{% endtrans %}</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
@@ -99,10 +99,10 @@
       {value: ')', text: ')', optgroup: 'operators'},
     ],
     optgroups: [
-      {value: 'fields', label: 'Fields'},
-      {value: 'operators', label: 'Operators'},
-      {value: 'literals', label: 'Literals'},
-      {value: 'extra', label: 'Extra'},
+      {value: 'fields', label: '{{ _('Fields') }}'},
+      {value: 'operators', label: '{{ _('Operators') }}'},
+      {value: 'literals', label: '{{ _('Literals') }}'},
+      {value: 'extra', label: '{{ _('Extra') }}'},
     ],
     plugins: ['optgroup_columns'],
     onChange: function (value) {

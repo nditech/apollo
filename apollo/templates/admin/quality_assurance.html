@@ -36,7 +36,7 @@
           <tbody>
             {%- for control in quality_controls %}
             <tr>
-              <td class="text-monospace align-middle"><a href="{{ url_for('formsview.quality_control_edit', form_id=form.id, qc=control.name) }}" class="text-decoration-none">{{ control.name }}</a></td>
+              <td class="text-monospace align-middle"><a href="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa=control.name) }}" class="text-decoration-none">{{ control.name }}</a></td>
               <td class="text-monospace align-middle">{{ control.description }}</td>
               <td class="text-monospace align-middle">
               {%- for criterion in control.criteria %}
@@ -61,7 +61,7 @@
 <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
   <div>
     <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
-    <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Control') }}</a>
+    <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Quality Assurance') }}</a>
   </div>
 </div>
 {% endblock %}

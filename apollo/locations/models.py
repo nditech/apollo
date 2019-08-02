@@ -94,6 +94,14 @@ class LocationSet(BaseModel):
 
         return fields
 
+    @property
+    def events(self):
+        return {
+            event
+            for participant_set in self.participant_sets
+            for event in participant_set.events
+        }
+
 
 samples_locations = db.Table(
     'samples_locations',

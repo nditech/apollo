@@ -39,12 +39,11 @@ def checklist_init():
 
     if form.validate_on_submit():
         flash_category = 'info'
-        flash_message = _('Checklists are being created for the form, '
-                          'role and location type you selected in the '
-                          'current event')
+        flash_message = _('Checklists are being created for the Event, Form, '
+                          'Role and Location Type you selected')
 
         init_submissions.delay(
-            g.event.id,
+            form.data['event'],
             form.data['form'],
             form.data['role'],
             form.data['location_type'])
@@ -146,12 +145,16 @@ def forms_list(view):
 
     breadcrumbs = [_('Forms')]
 
-    forms = models.Form.query.order_by('name').all()
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
 
     context = {
-        'forms': forms,
+        'forms': models.Form.query.order_by('name').all(),
+        'checklist_forms': models.Form.query.filter(
+            models.Form.form_type == 'CHECKLIST').order_by('name').all(),
+        'events': models.Event.query.order_by('name').all(),
+        'roles': models.ParticipantRole.query.order_by('name').all(),
+        'location_types': models.LocationType.query.all(),
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
@@ -161,11 +164,11 @@ def forms_list(view):
 
 
 def quality_controls(view, form_id):
-    template_name = 'admin/quality_controls.html'
+    template_name = 'admin/quality_assurance.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
-        _('Quality Control'), form.name]
+        _('Quality Assurance'), form.name]
 
     quality_controls = []
 
@@ -207,12 +210,12 @@ def quality_controls(view, form_id):
 
 
 def quality_control_edit(view, form_id, qc=None):
-    template_name = 'admin/quality_control_edit.html'
+    template_name = 'admin/quality_assurance_edit.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
         {
-            'text': _('Quality Control'),
+            'text': _('Quality Assurance'),
             'url': url_for('formsview.qc', form_id=form.id)
         },
         form.name
@@ -305,7 +308,7 @@ def quality_control_edit(view, form_id, qc=None):
                 'id': '0'
             })
 
-        title = _('Edit Quality Control')
+        title = _('Edit Quality Assurance')
         is_new = 0
         quality_control = {
             'name': quality_check['name'],
@@ -313,7 +316,7 @@ def quality_control_edit(view, form_id, qc=None):
             'criteria': criteria
         }
     else:
-        title = _('Add Quality Control')
+        title = _('Add Quality Assurance')
         is_new = 1
         quality_control = {
             'name': '', 'description': '', 'criteria': [{
