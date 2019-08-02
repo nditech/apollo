@@ -33,8 +33,8 @@ def get_result_analysis_menu():
     } for form in forms.query.filter(
         Form.events.contains(event),
         Form.form_type == 'CHECKLIST',
-        Form.data.op('@>')(
-            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
+        Form.vote_shares != None,   # noqa
+        Form.vote_shares != []
     ).order_by('name')]
 
 
@@ -45,8 +45,8 @@ bp = Blueprint('result_analysis', __name__, template_folder='templates',
 def _voting_results(form_id, location_id=None):
     event = g.event
     form = forms.filter(
-        Form.data.op('@>')(
-            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]}),
+        Form.vote_shares != None,   # noqa
+        Form.vote_shares != [],
         Form.id == form_id,
         Form.form_type == 'CHECKLIST',
         Form.events.contains(event)
