@@ -8,6 +8,7 @@ from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
 from wtforms.validators import Optional
 
 from apollo.frontend import permissions
+from apollo import models
 
 from ..locations.models import LocationType, Location
 from ..participants.models import (
@@ -252,33 +253,40 @@ def make_checklist_init_form(event):
     location_set_id = getattr(event, 'location_set_id', None)
     participant_set_id = getattr(event, 'participant_set_id', None)
 
+    event_choices = [
+        (event.id, event.name)
+        for event in models.Event.query.all()]
     form_choices = [
         (form.id, form.name)
-        for form in event.forms
+        for form in models.Form.query.all()
         if form.form_type == 'CHECKLIST'
     ]
 
-    location_type_choices = [(i.id, i.name) for i in LocationType.query.filter(
-        LocationType.location_set_id == location_set_id)]
+    location_type_choices = [
+        (i.id, i.name)
+        for i in models.LocationType.query.all()]
 
-    participant_role_choices = ParticipantRole.query.filter(
-        ParticipantRole.participant_set_id == participant_set_id
-    ).with_entities(ParticipantRole.id, ParticipantRole.name)
+    participant_role_choices = ParticipantRole.query.with_entities(
+        ParticipantRole.id, ParticipantRole.name).all()
 
     class ChecklistInitForm(WTSecureForm):
+        event = SelectField(
+            _('Event'),
+            choices=_make_choices(event_choices, _('Choose Event')),
+            validators=[validators.input_required()])
         form = SelectField(
             _('Form'),
-            choices=_make_choices(form_choices, _('Select Form')),
+            choices=_make_choices(form_choices, _('Choose Form')),
             validators=[validators.input_required()])
 
         role = SelectField(
             _('Role'),
-            choices=_make_choices(participant_role_choices, _('Select Role')),
+            choices=_make_choices(participant_role_choices, _('Choose Role')),
             validators=[validators.input_required()])
         location_type = SelectField(
             _('Location Type'),
             choices=_make_choices(location_type_choices,
-                                  _('Select Location Type')),
+                                  _('Choose Location Type')),
             validators=[validators.input_required()])
 
     return ChecklistInitForm()

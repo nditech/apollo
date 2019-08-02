@@ -98,6 +98,7 @@
   </table>
 </div>
 
+<div id="app">
 <form class="form-horizontal" method="POST" action="{{ url_for('formsview.init') }}" id="checklistInitForm">
   <div class="modal fade" id="checklistModal" tabindex="-1" role="dialog" aria-labelledby="checklistModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -109,25 +110,7 @@
           </button>          
         </div>
         <div class="modal-body">
-          {{ init_form.hidden_tag() }}
-          <div class="form-group row align-items-center">
-            {{ init_form.form.label(class_='col-sm-4 control-label text-right mb-0') }}
-            <div class="col-sm-8">
-              {{ init_form.form(class_="form-control custom-select")}}
-            </div>
-          </div>
-          <div class="form-group row align-items-center">
-            {{ init_form.role.label(class_='col-sm-4 control-label text-right mb-0') }}
-            <div class="col-sm-8">
-              {{ init_form.role(class_="form-control custom-select")}}
-            </div>
-          </div>
-          <div class="form-group row align-items-center">
-            {{ init_form.location_type.label(class_='col-sm-4 control-label text-right mb-0') }}
-            <div class="col-sm-8">
-              {{ init_form.location_type(class_="form-control custom-select")}}
-            </div>
-          </div>
+          <create-checklists-modal-body />
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
@@ -137,6 +120,7 @@
     </div>
   </div>
 </form>
+</div>
 
 <form action="{{ url_for('formsview.import_form') }}" enctype="multipart/form-data" method="post">
   <div class="modal fade" id="formImportModal" role="dialog" aria-labelledby="formImportModalLabel" aria-hidden="true">
@@ -165,3 +149,87 @@
   </div>
 </form>
 {% endblock %}
+
+{%- block tail_js %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script>
+  Vue.component('create-checklists-modal-body', {
+    template: `
+    <div>
+      {{ init_form.hidden_tag() }}
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="event">{{ init_form.event.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="event" class="form-control custom-select" name="event" v-model="event">
+            <option value="">{{ _('Choose Event') }}</option>
+            <option v-for="event in this.$parent.events" :value="event.id" :key="event.id">{{ '{{' }} event.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="form">{{ init_form.form.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="form" class="form-control custom-select" name="form">
+            <option value="">{{ _('Choose Form') }}</option>
+            <option v-for="form in forms" :value="form.id" :key="form.id">{{ '{{' }} form.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="role">{{ init_form.role.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="role" class="form-control custom-select" name="role">
+            <option value="">{{ _('Choose Role') }}</option>
+            <option v-for="role in roles" :value="role.id" :key="role.id">{{ '{{' }} role.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="location_type">{{ init_form.location_type.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="location_type" class="form-control custom-select" name="location_type">
+            <option value="">{{ _('Choose Location Type') }}</option>
+            <option v-for="location_type in location_types" :value="location_type.id" :key="location_type.id">{{ '{{' }} location_type.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    `,
+    data: function() {
+      return {
+        event: '',
+      }
+    },
+    computed: {
+      forms: function() {
+        var event = this.event;
+        return this.$parent.forms.filter(function (form) {
+          return form.events.indexOf(event) == -1 ? false : true;
+        });
+      },
+      roles: function() {
+        var event = this.event;
+        return this.$parent.roles.filter(function (role) {
+          return role.events.indexOf(event) == -1 ? false : true;
+        });
+      },
+      location_types: function() {
+        var event = this.event;
+        return this.$parent.location_types.filter(function (location_type) {
+          return location_type.events.indexOf(event) == -1 ? false : true;
+        });
+      },
+    }
+  });
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      events: [{% for event in events %}{id:{{ event.id }}, name:'{{ event.name }}'},{% endfor %}],
+      forms: [{% for form in checklist_forms %}{id:{{ form.id }}, name:'{{ form.name }}', events:[{{ form.events|join(', ', 'id') }}]},{% endfor %}],
+      roles: [{% for role in roles %}{id:{{ role.id }}, name:'{{ role.name }}', events:[{{ role.participant_set.events|join(', ', 'id') }}]},{% endfor %}],
+      location_types: [{% for location_type in location_types %}{id:{{ location_type.id }}, name:'{{ location_type.name }}', events:[{{ location_type.location_set.events|join(',', 'id') }}]},{% endfor %}],
+    },
+  });
+</script>
+{%- endblock %}

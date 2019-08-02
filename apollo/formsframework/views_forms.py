@@ -39,12 +39,11 @@ def checklist_init():
 
     if form.validate_on_submit():
         flash_category = 'info'
-        flash_message = _('Checklists are being created for the form, '
-                          'role and location type you selected in the '
-                          'current event')
+        flash_message = _('Checklists are being created for the Event, Form, '
+                          'Role and Location Type you selected')
 
         init_submissions.delay(
-            g.event.id,
+            form.data['event'],
             form.data['form'],
             form.data['role'],
             form.data['location_type'])
@@ -146,12 +145,16 @@ def forms_list(view):
 
     breadcrumbs = [_('Forms')]
 
-    forms = models.Form.query.order_by('name').all()
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
 
     context = {
-        'forms': forms,
+        'forms': models.Form.query.order_by('name').all(),
+        'checklist_forms': models.Form.query.filter(
+            models.Form.form_type == 'CHECKLIST').order_by('name').all(),
+        'events': models.Event.query.order_by('name').all(),
+        'roles': models.ParticipantRole.query.order_by('name').all(),
+        'location_types': models.LocationType.query.all(),
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
