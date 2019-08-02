@@ -5,9 +5,9 @@
   {% if icon_type == 'glyph' %}
     <i class="{{ icon_value }}"></i>
   {% elif icon_type == 'image' %}
-    <img src="{{ url_for('static', filename=icon_value) }}" alt="menu image"></img>
+    <img src="{{ url_for('static', filename=icon_value) }}" alt="{{ _('menu image') }}"></img>
   {% elif icon_type == 'image-url' %}
-    <img src="item.icon_value" alt="menu image"></img>
+    <img src="item.icon_value" alt="{{ _('menu image') }}"></img>
   {% endif %}
 {% endif %}
 {%- endmacro %}
@@ -65,7 +65,7 @@
         <div class="alert">
         {% endif %}
           {{ m }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Close') }}">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>

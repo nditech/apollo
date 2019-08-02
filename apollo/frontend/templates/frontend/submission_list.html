@@ -61,7 +61,7 @@ $(function () {
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title">{{ _('Location') }}</h6>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -89,7 +89,7 @@ $(function () {
 <div class="btn-group mr-2" role="group">
   <a class="btn btn-secondary" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Export') }}</a>
   <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="exportMenuReference" data-reference="parent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="sr-only">Toggle Dropdown</span>
+    <span class="sr-only">{{ _('Toggle Dropdown') }}</span>
   </button>
   <div class="dropdown-menu" aria-labelledby="exportMenuReference">
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>

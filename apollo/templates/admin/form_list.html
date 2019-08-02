@@ -29,7 +29,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="alert alert-success alert-dismissable">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Close') }}">
         <span aria-hidden="true">&times;</span>
       </button>
       {% for message in messages %}
@@ -46,7 +46,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="alert alert-danger alert-dismissable">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Close') }}">
         <span aria-hidden="true">&times;</span>
       </button>
       {% for message in messages %}
@@ -105,7 +105,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 id="checklistModalLabel" class="modal-title">{{ _('Create Checklists') }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="{{ _('Close') }}">
             <span aria-hidden="true">&times;</span>
           </button>          
         </div>
@@ -128,7 +128,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 id="formImportModalLabel" class="modal-title">{{ _('Import Form') }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="{{ _('Close') }}">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>

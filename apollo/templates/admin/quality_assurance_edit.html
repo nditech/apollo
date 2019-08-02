@@ -34,7 +34,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ _('Delete Quality Assurance') }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -99,10 +99,10 @@
       {value: ')', text: ')', optgroup: 'operators'},
     ],
     optgroups: [
-      {value: 'fields', label: 'Fields'},
-      {value: 'operators', label: 'Operators'},
-      {value: 'literals', label: 'Literals'},
-      {value: 'extra', label: 'Extra'},
+      {value: 'fields', label: '{{ _('Fields') }}'},
+      {value: 'operators', label: '{{ _('Operators') }}'},
+      {value: 'literals', label: '{{ _('Literals') }}'},
+      {value: 'extra', label: '{{ _('Extra') }}'},
     ],
     plugins: ['optgroup_columns'],
     onChange: function (value) {

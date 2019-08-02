@@ -462,7 +462,7 @@
             <td class="text-monospace timestamp-date" data-timestamp="{{ call.created|timestamp }}">{{ call.created.strftime('%b %d %Y') }}</td>
             <td class="text-monospace timestamp-time" data-timestamp="{{ call.created|timestamp }}">{{ call.created.strftime('%I:%M %p') }}</td>
             <td class="text-monospace">
-              {% if call.description %}{{ call.description }}{% else %}<em class="text-muted">{{ _('-') }}</em>{% endif %}
+              {% if call.description %}{{ call.description }}{% else %}<em class="text-muted">-</em>{% endif %}
             </td>
           </tr>
           {% else %}
