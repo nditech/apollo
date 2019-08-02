@@ -146,13 +146,14 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None):
                 options_generated.update(value_counts.keys())
             group_opts = options or sorted(options_generated)
 
-            histogram = [
-                (
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
                     value_counts.get(opt, 0),
                     percent_of(value_counts.get(opt, 0), reported)
                 )
                 for opt in group_opts
-            ]
+            }
 
             location_stats[group_name]['histogram'] = histogram
 
@@ -171,13 +172,14 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None):
         if not options:
             options_generated.update(value_counts.keys())
         opts = options or sorted(options_generated)
-        histogram = [
-            (
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
                 value_counts.get(opt, 0),
                 percent_of(value_counts.get(opt, 0), reported)
             )
             for opt in opts
-        ]
+        }
 
         stats = {'histogram': histogram, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -228,13 +230,14 @@ def generate_multiselect_histogram_stats(tag, dataset, options, labels=None):
             location_stats[group_name]['percent_missing'] = percent_missing
 
             value_counts = flattened_data.value_counts()
-            histogram = [
-                (
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
                     value_counts.get(opt, 0),
                     percent_of(value_counts.get(opt, 0), reported)
                 )
                 for opt in options
-            ]
+            }
 
             location_stats[group_name]['histogram'] = histogram
 
@@ -250,13 +253,14 @@ def generate_multiselect_histogram_stats(tag, dataset, options, labels=None):
         percent_missing = percent_of(missing, total)
 
         value_counts = flattened_column_data.value_counts()
-        histogram = [
-            (
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
                 value_counts.get(opt, 0),
                 percent_of(value_counts.get(opt, 0), reported)
             )
             for opt in options
-        ]
+        }
 
         stats = {'histogram': histogram, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -329,6 +333,7 @@ def generate_count_stats(tag, dataset):
 def generate_bucket_stats(tag, dataset, target):
     _cmp = partial(_fake_cmp, target)
     field_stats = {'type': 'bucket'}
+    options = [-1, 0, 1]
 
     if hasattr(dataset, 'groups'):
         location_stats = {}
@@ -342,10 +347,14 @@ def generate_bucket_stats(tag, dataset, target):
             missing = total - reported
             percent_reported = percent_of(reported, total)
             percent_missing = percent_of(missing, total)
-            histogram = [
-                (r[1], percent_of(r[1], reported))
-                for r in sorted(value_counts.items(), key=itemgetter(0))
-            ]
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
+                    value_counts.get(opt, 0),
+                    percent_of(value_counts.get(opt, 0), reported)
+                )
+                for opt in options
+            }
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -365,10 +374,14 @@ def generate_bucket_stats(tag, dataset, target):
         missing = total - reported
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
-        histogram = [
-            (r[1], percent_of(r[1], reported))
-            for r in sorted(value_counts.items(), key=itemgetter(0))
-        ]
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
+                value_counts.get(opt, 0),
+                percent_of(value_counts.get(opt, 0), reported)
+            )
+            for opt in options
+        }
 
         stats = {
             'histogram': histogram, 'reported': reported,

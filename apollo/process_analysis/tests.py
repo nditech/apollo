@@ -44,8 +44,10 @@ class ProcessAnalysisTest(TestCase):
         self.assertDictEqual(
             generate_histogram_stats('AB', self.df, [2, 3, 4, 5, 6]),
             {'type': 'histogram', 'labels': None, 'meta': [],
-             'histogram': [(1, 20.0), (1, 20.0), (1, 20.0), (1, 20.0),
-                           (1, 20.0)],
+             'histogram': {
+                2: (1, 20.0), 3: (1, 20.0), 4: (1, 20.0),
+                5: (1, 20.0), 6: (1, 20.0)
+             },
              'reported': 5, 'missing': 0, 'percent_reported': 100.0,
              'percent_missing': 0.0, 'total': 5})
         self.assertDictEqual(
@@ -54,28 +56,28 @@ class ProcessAnalysisTest(TestCase):
             {'type': 'histogram', 'labels': None, 'meta': [], 'locations':
              {'A': {'missing': 0, 'reported': 1, 'total': 1,
                     'percent_reported': 100.0, 'percent_missing': 0.0,
-                    'histogram': [(1, 100.0), (0, 0.0), (0, 0.0),
-                                  (0, 0.0), (0, 0.0)]},
+                    'histogram': {2: (1, 100.0), 3: (0, 0.0), 4: (0, 0.0),
+                                  5: (0, 0.0), 6: (0, 0.0)}},
               'B': {'missing': 0, 'reported': 2, 'total': 2,
                     'percent_reported': 100.0, 'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (1, 50.0), (1, 50.0),
-                                  (0, 0.0), (0, 0.0)]},
+                    'histogram': {2: (0, 0.0), 3: (1, 50.0), 4: (1, 50.0),
+                                  5: (0, 0.0), 6: (0, 0.0)}},
               'C': {'missing': 0, 'reported': 1, 'total': 1,
                     'percent_reported': 100.0, 'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (0, 0.0), (0, 0.0),
-                                  (1, 100.0), (0, 0.0)]},
+                    'histogram': {2: (0, 0.0), 3: (0, 0.0), 4: (0, 0.0),
+                                  5: (1, 100.0), 6: (0, 0.0)}},
               'D': {'missing': 0, 'reported': 1, 'total': 1,
                     'percent_reported': 100.0, 'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (0, 0.0), (0, 0.0),
-                                  (0, 0.0), (1, 100.0)]}}})
+                    'histogram': {2: (0, 0.0), 3: (0, 0.0), 4: (0, 0.0),
+                                  5: (0, 0.0), 6: (1, 100.0)}}}})
 
     def test_generate_multiselect_histogram_stats(self):
         opt = [1, 2, 3, 4, 5, 6]
         self.assertDictEqual(
             generate_multiselect_histogram_stats('AC', self.df, opt),
             {'type': 'histogram',
-             'histogram': [(1, 20.0), (3, 60.0), (2, 40.0),
-                           (1, 20.0), (1, 20.0), (1, 20.0)],
+             'histogram': {1: (1, 20.0), 2: (3, 60.0), 3: (2, 40.0),
+                           4: (1, 20.0), 5: (1, 20.0), 6: (1, 20.0)},
              'reported': 5, 'missing': 0, 'percent_reported': 100.0,
              'percent_missing': 0.0, 'labels': None, 'meta': []})
         self.assertDictEqual(
@@ -86,20 +88,21 @@ class ProcessAnalysisTest(TestCase):
              'locations':
              {'A': {'missing': 0, 'reported': 1, 'percent_reported': 100.0,
                     'percent_missing': 0.0,
-                    'histogram': [(1, 100.0), (1, 100.0), (0, 0.0),
-                                  (0, 0.0), (0, 0.0), (0, 0.0)]},
+                    'histogram': {1: (1, 100.0), 2: (1, 100.0), 3: (0, 0.0),
+                                  4: (0, 0.0), 5: (0, 0.0), 6: (0, 0.0)}},
               'B': {'missing': 0, 'reported': 2, 'percent_reported': 100.0,
                     'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (2, 100.0), (1, 50.0),
-                                  (1, 50.0), (0, 0.0), (0, 0.0)]},
+                    'histogram': {1: (0, 0.0), 2: (2, 100.0), 3: (1, 50.0),
+                                  4: (1, 50.0), 5: (0, 0.0), 6: (0, 0.0)}},
               'C': {'missing': 0, 'reported': 1, 'percent_reported': 100.0,
                     'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (0, 0.0), (1, 100.0),
-                                  (0, 0.0), (0, 0.0), (0, 0.0)]},
+                    'histogram': {1: (0, 0.0), 2: (0, 0.0), 3: (1, 100.0),
+                                  4: (0, 0.0), 5: (0, 0.0), 6: (0, 0.0)}},
               'D': {'missing': 0, 'reported': 1, 'percent_reported': 100.0,
                     'percent_missing': 0.0,
-                    'histogram': [(0, 0.0), (0, 0.0), (0, 0.0),
-                                  (0, 0.0), (1, 100.0), (1, 100.0)]}}})
+                    'histogram': {1: (0, 0.0), 2: (0, 0.0), 3: (0, 0.0),
+                                  4: (0, 0.0), 5: (1, 100.0), 6: (1, 100.0)
+                                  }}}})
 
     def test_generate_count_stats(self):
         self.assertDictEqual(
