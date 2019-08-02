@@ -9,8 +9,7 @@ from flask_babelex import get_locale, lazy_gettext as _
 from geoalchemy2.shape import to_shape
 import pandas as pd
 
-from apollo.process_analysis.common import (
-    dataframe_analysis, multiselect_dataframe_analysis)
+from apollo.process_analysis.common import generate_field_stats
 from apollo.submissions.models import QUALITY_STATUSES
 from apollo.submissions.qa.query_builder import get_inline_qa_status
 
@@ -21,31 +20,13 @@ def _clean(fieldname):
 
 
 def checklist_question_summary(form, field, location, dataframe):
-    field_type = field.get('type')
     stats = {'urban': {}}
-    if field_type in ('select', 'multiselect'):
-        stats['type'] = 'discrete'
-        stats['options'] = OrderedDict(
-            sorted(field.get('options').items(), key=lambda x: x[1])
-        )
-    else:
-        stats['type'] = 'continuous'
-
-    if field_type == 'multiselect':
-        stats.update(multiselect_dataframe_analysis(
-            dataframe, field['tag'], sorted(field.get('options').values())))
-    else:
-        stats.update(dataframe_analysis(stats['type'], dataframe, field['tag']))
+    stats.update(generate_field_stats(dataframe, field))
 
     try:
         for name, grp in dataframe.groupby('urban'):
-            if field_type == 'multiselect':
-                stats['urban']['Urban' if name else 'Rural'] = \
-                    multiselect_dataframe_analysis(
-                        grp, field['tag'], sorted(field.get('options').values()))
-            else:
-                stats['urban']['Urban' if name else 'Rural'] = \
-                    dataframe_analysis(stats['type'], grp, field['tag'])
+            stats['urban']['Urban' if name else 'Rural'] = \
+                    generate_field_stats(grp, field)
     except KeyError:
         pass
 
