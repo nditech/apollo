@@ -111,7 +111,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             form._populate_field_cache()
             tags.extend([
                 f['tag'] for f in form._field_cache.values()
-                if f['analysis_type'] == 'PROCESS'
+                if f['analysis_type'] != 'N/A'
             ])
             grouped = False
 
@@ -170,7 +170,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
         for group in form.data['groups']:
             process_fields = sorted([
                 field for field in group['fields']
-                if field['analysis_type'] == 'PROCESS'
+                if field['analysis_type'] != 'N/A'
                 and field['type'] != 'boolean'], key=itemgetter('tag'))
             context['field_groups'][group['name']] = process_fields
             if process_fields:
@@ -181,7 +181,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
         for group in form.data['groups']:
             process_fields = sorted([
                 field for field in group['fields']
-                if field['analysis_type'] == 'PROCESS'], key=itemgetter('tag'))
+                if field['analysis_type'] != 'N/A'], key=itemgetter('tag'))
             context['field_groups'][group['name']] = process_fields
 
         process_summary = generate_process_data(
