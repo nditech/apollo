@@ -32,6 +32,8 @@
         required: false,
         min: 0,
         max: 9999,
+        subtype: 'integer',
+        expected: 0,
         template:
         `<div class="form-group row">
           <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
@@ -58,13 +60,17 @@
             <label class="control-label">Maximum</label>
             <input type="text" ng-model="max" class="form-control" value="9999" />
           </div>
-          <div class="custom-control custom-checkbox mb-2 mt-3">
-            <input type="checkbox" id="required" class="custom-control-input" ng-model="required">
-            <label class="custom-control-label" for="required">Mark as true if present?</label>
+          <div class="form-group mb-2">
+            <label class="control-label">Type</label>
+            <select ng-model="subtype" ng-options="obj.value as obj.option for obj in subtypeOptions" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textInput', subtype)" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">Expected value</label>
+            <input type="text" ng-model="expected" class="form-control" />
           </div>
           <div class="form-group mb-2" ng-if="validationOptions.length > 0">
             <label class="control-label">Validation</label>
@@ -111,7 +117,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('radio', null)" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2" ng-if="validationOptions.length > 0">
             <label class="control-label">Validation</label>
@@ -158,7 +164,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('yesno', null)" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2" ng-if="validationOptions.length > 0">
             <label class="control-label">Validation</label>
@@ -207,7 +213,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('checkbox', null)" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2 mt-4 text-right">
             <input type="button" ng-click="popover.remove($event)" class="btn btn-danger mr-1" value="Delete"/>
@@ -247,7 +253,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textarea', null)" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2" ng-if="validationOptions.length > 0">
             <label class="control-label">Validation</label>

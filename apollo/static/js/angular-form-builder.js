@@ -19,6 +19,22 @@
     '$scope', '$injector', function($scope, $injector) {
       var $builder;
       $builder = $injector.get('$builder');
+      var analysisOptsMap = {
+        'choice': [
+          {option: 'No Analysis', value: 'N/A'},
+          {option: 'Categorical', value: 'histogram'}
+        ],
+        'numeric': [
+          {option: 'No Analysis', value: 'N/A'},
+          {option: 'Categorical (With Expected Value)', value: 'bucket'},
+          {option: 'Continuous', value: 'mean'},
+          {option: 'Count', value: 'count'}
+        ],
+        'default': [
+          {option: 'No Analysis', value: 'N/A'},
+          {option: 'Count', value: 'count'}
+        ]
+      };
       $scope.setupScope = function(formObject) {
 
         /*
@@ -30,13 +46,25 @@
          */
         var component;
         copyObjectToScope(formObject, $scope);
-        $scope.analysisOptions = [
-            {option: 'Not Applicable', value: 'N/A'},
-            {option: 'Process Analysis', value: 'PROCESS'},
-            {option: 'Results Analysis', value: 'RESULT'}
+        $scope.subtypeOptions = [
+          {option: 'Number', value: 'integer'},
+          {option: 'Text', value: 'string'}
         ];
+        $scope.getAnalysisOptions = function (componentType, subtype) {
+          if ((componentType === 'radio') || (componentType === 'yesno') || (componentType == 'checkbox')) {
+            return analysisOptsMap.choice;
+          } else if (componentType === 'textInput') {
+            if (subtype === 'integer') {
+              return analysisOptsMap.numeric;
+            } else {
+              return analysisOptsMap.default;
+            }
+          } else {
+            return analysisOptsMap.default;
+          }
+        };
         $scope.optionsText = formObject.options.join('\n');
-        $scope.$watch('[label, description, placeholder, required, min, max, options, validation, analysis]', function() {
+        $scope.$watch('[label, description, placeholder, required, min, max, options, validation, analysis, subtype, expected]', function() {
           formObject.label = $scope.label;
           formObject.description = $scope.description;
           formObject.placeholder = $scope.placeholder;
@@ -45,6 +73,8 @@
           formObject.min = $scope.min;
           formObject.max = $scope.max;
           formObject.analysis = $scope.analysis;
+          formObject.subtype = $scope.subtype;
+          formObject.expected = $scope.expected;
           return formObject.validation = $scope.validation;
         }, true);
         $scope.$watch('optionsText', function(text) {
@@ -82,7 +112,9 @@
             validation: $scope.validation,
             min: $scope.min,
             max: $scope.max,
-            analysis: $scope.analysis
+            analysis: $scope.analysis,
+            subtype: $scope.subtype,
+            expected: $scope.expected
           };
         },
         rollback: function() {
@@ -101,6 +133,8 @@
           $scope.min = this.model.min;
           $scope.max = this.model.max;
           $scope.analysis = this.model.analysis;
+          $scope.subtype = this.model.subtype;
+          $scope.expected = this.model.expected;
           return $scope.validation = this.model.validation;
         }
       };
@@ -1019,7 +1053,7 @@
       "default": []
     };
     this.convertComponent = function(name, component) {
-      var result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12;
+      var result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12, _ref13, _ref14;
       result = {
         name: name,
         group: (_ref = component.group) != null ? _ref : 'Default',
@@ -1035,6 +1069,8 @@
         min: (_ref10 = component.min) != null ? _ref10 : '',
         max: (_ref11 = component.max) != null ? _ref11 : '',
         analysis: (_ref12 = component.analysis) != null ? _ref12 : '',
+        subtype: (_ref13 = component.subtype) != null ? _ref13 : '',
+        expected: (_ref14 = component.expected) != null ? _ref14 : '',
         template: component.template,
         templateUrl: component.templateUrl,
         popoverTemplate: component.popoverTemplate,
@@ -1049,7 +1085,7 @@
       return result;
     };
     this.convertFormObject = function(name, formObject) {
-      var component, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10;
+      var component, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12;
       if (formObject == null) {
         formObject = {};
       }
@@ -1070,7 +1106,9 @@
         validation: (_ref7 = formObject.validation) != null ? _ref7 : component.validation,
         min: (_ref8 = formObject.min) != null ? _ref8 : component.min,
         max: (_ref9 = formObject.max) != null ? _ref9 : component.max,
-        analysis: (_ref10 = formObject.analysis) != null ? _ref10 : component.analysis
+        analysis: (_ref10 = formObject.analysis) != null ? _ref10 : component.analysis,
+        subtype: (_ref11 = formObject.subtype) != null ? _ref11 : component.subtype,
+        expected: (_ref12 = formObject.expected) != null ? _ref12 : component.expected
       };
       return result;
     };
