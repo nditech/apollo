@@ -124,15 +124,18 @@ def aggregate_dataset(query, form, stream=False):
         if fi and fi.get('type') in aggregate_field_types
     ]
 
-    headers = ['Level'] + location_type_names
+    headers = ['Level'] + location_type_names + ['# records']
     for field in aggregate_fields:
         if field['type'] == 'integer':
             headers.append(field['tag'])
         else:
             headers.extend(
-                '{tag} | {option}'.format(tag=field['tag'], option=opt)
+                '{tag} = {option}'.format(tag=field['tag'], option=opt)
                 for opt in sorted(field['options'].values())
             )
+        headers.append(f"{field['tag']} (Count)")
+        headers.append(f"{field['tag']} (Nulls)")
+        headers.append(f"{field['tag']} (Percentage)")
 
     if stream:
         output_stream = StringIO()
@@ -165,8 +168,17 @@ def aggregate_dataset(query, form, stream=False):
             # add location info
             padding_size = len(location_type_names) - len(group_subset)
             current_row.extend([''] * padding_size)
+            current_row.append(group.shape[0])
 
             for field in aggregate_fields:
+                reported = group[field['tag']].count()
+                total = group[field['tag']].size
+                missing = total - reported
+                try:
+                    percent_reported = round(100.0 * (reported / total), 2)
+                except ZeroDivisionError:
+                    percent_reported = 0
+
                 if field['type'] == 'integer':
                     processor = _numeric_field_processor
                     current_row.append(processor(group[field['tag']]))
@@ -179,6 +191,10 @@ def aggregate_dataset(query, form, stream=False):
                         _multiselect_field_processor,
                         field['options'].values())
                     current_row.extend(processor(group[field['tag']]))
+
+                current_row.append(reported)
+                current_row.append(missing)
+                current_row.append(percent_reported)
 
             if stream:
                 output_stream = StringIO()
