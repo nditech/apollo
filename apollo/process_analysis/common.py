@@ -332,7 +332,7 @@ def generate_count_stats(tag, dataset):
 
 def generate_bucket_stats(tag, dataset, target):
     _cmp = partial(_fake_cmp, target)
-    field_stats = {'type': 'bucket'}
+    field_stats = {'type': 'bucket', 'target': target}
     options = [-1, 0, 1]
 
     if hasattr(dataset, 'groups'):
