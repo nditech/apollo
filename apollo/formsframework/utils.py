@@ -11,8 +11,8 @@ from xlwt import Workbook
 from apollo.formsframework.models import Form
 from apollo.utils import generate_identifier
 
-gt_constraint_regex = re.compile('(?:.*\.\s*\>={0,1}\s*)(\d+)')
-lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
+gt_constraint_regex = re.compile(r'(?:.*\.\s*\>={0,1}\s*)(\d+)')
+lt_constraint_regex = re.compile(r'(?:.*\.\s*\<={0,1}\s*)(\d+)')
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +93,13 @@ def _process_survey_worksheet(sheet_data, form_data):
                     except ValueError:
                         pass
 
+            # add expected value
+            if field_dict.get('extra'):
+                try:
+                    field['expected'] = int(field_dict.get('extra'))
+                except (TypeError, ValueError):
+                    pass
+
         # text
         elif record_type == 'text':
             if field_dict.get('extra') == 'comment':
@@ -100,18 +107,16 @@ def _process_survey_worksheet(sheet_data, form_data):
             else:
                 field['type'] = 'string'
 
-        # boolean
+        # boolean - legacy
         elif 'boolean' in record_type:
-            field['type'] = 'boolean'
+            field['type'] = 'integer'
             field['min'] = 0
             field['max'] = 1
 
         # single-choice
         elif record_type.startswith('select_one'):
-            if field_dict.get('extra') == 'category':
-                field['type'] = 'category'
-            else:
-                field['type'] = 'select'
+
+            field['type'] = 'select'
 
         # multiple-choice
         elif record_type.startswith('select'):
@@ -256,7 +261,6 @@ def export_form(form):
     current_analysis_row = 1
     groups = form.data.get('groups')
     if groups and isinstance(groups, list):
-        boolean_written = False
         current_group = None
         for group in groups:
             if not group:
@@ -285,25 +289,20 @@ def export_form(form):
                             '. >= {} and . <= {}'.format(
                                 field.get('min', 0),
                                 field.get('max', 9999)))
+
+                        # write out the expected/target value if it exists
+                        # this assumes that 0 is not a valid value
+                        if field.get('expected'):
+                            survey_sheet.write(
+                                current_survey_row, 4, field['expected'])
                     elif field['type'] == 'boolean':
                         survey_sheet.write(
-                            current_survey_row, 0, 'select_one boolean')
-
-                        # write out boolean choices if they haven't been
-                        # written before
-                        if not boolean_written:
-                            choices_sheet.write(
-                                current_choices_row, 0, 'boolean')
-                            choices_sheet.write(current_choices_row, 1, 0)
-                            choices_sheet.write(
-                                current_choices_row, 2, 'False')
-                            current_choices_row += 1
-                            choices_sheet.write(
-                                current_choices_row, 0, 'boolean')
-                            choices_sheet.write(current_choices_row, 1, 1)
-                            choices_sheet.write(
-                                current_choices_row, 2, 'True')
-                            boolean_written = True
+                            current_survey_row, 0, 'integer')
+                        survey_sheet.write(
+                            current_survey_row, 3,
+                            '. >= {} and . <= {}'.format(
+                                field.get('min', 0),
+                                field.get('max', 1)))
 
                     elif field['type'] in ('comment', 'string'):
                         survey_sheet.write(current_survey_row, 0, 'text')
@@ -331,9 +330,9 @@ def export_form(form):
                             survey_sheet.write(
                                 current_survey_row, 0,
                                 'select_one {}'.format(option_list_name))
-                            if field['type'] == 'category':
+                            if field.get('expected'):
                                 survey_sheet.write(
-                                    current_survey_row, 4, 'category')
+                                    current_survey_row, 4, field['expected'])
                         else:
                             survey_sheet.write(
                                 current_survey_row, 0,

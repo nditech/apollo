@@ -290,22 +290,27 @@ class FormBuilderSerializer(object):
         data = {
             'label': field['tag'],
             'description': field['description'],
-            'analysis': field.get('analysis_type')
+            'analysis': field.get('analysis_type'),
+            'expected': field.get('expected', 0)
         }
 
         field_type = field.get('type')
-        if field_type in ('comment', 'string'):
+        if field_type in 'comment':
             data['component'] = 'textarea'
+        elif field_type == 'string':
+            data['component'] = 'textInput'
+            data['subtype'] = 'string'
         elif field_type == 'boolean':
             data['component'] = 'textInput'
-            data['required'] = True
+            data['subtype'] = 'integer'
             data['min'] = field.get('min', 0)
             data['max'] = field.get('max', 1)
         elif field_type == 'integer':
             data['component'] = 'textInput'
+            data['subtype'] = 'integer'
             data['min'] = field.get('min', 0)
             data['max'] = field.get('max', 9999)
-        elif field_type in ('select', 'multiselect', 'category'):
+        elif field_type in ('select', 'multiselect'):
             sorted_options = sorted(field['options'].items(),
                                     key=itemgetter(1))
             data['options'] = [opt[0] for opt in sorted_options]
@@ -313,8 +318,6 @@ class FormBuilderSerializer(object):
                 data['component'] = 'checkbox'
             else:
                 data['component'] = 'radio'
-        else:
-            return {}
 
         return data
 
@@ -378,17 +381,11 @@ class FormBuilderSerializer(object):
             else:
                 field['analysis_type'] = 'N/A'
 
-            # TODO: this formbuilder doesn't yet support
-            # string fields
             if f['component'] == 'textarea':
                 field['type'] = 'comment'
                 field['analysis_type'] = 'N/A'
             elif f['component'] == 'textInput':
-                if f['required']:
-                    field['type'] = 'boolean'
-                    field['min'] = 0
-                    field['max'] = 1
-                else:
+                if f['subtype'] == 'integer':
                     field['type'] = 'integer'
                     try:
                         min_limit = int(f.get('min', 0))
@@ -402,6 +399,15 @@ class FormBuilderSerializer(object):
 
                     field['min'] = min_limit
                     field['max'] = max_limit
+
+                    # add target/expected value
+                    if f.get('expected'):
+                        try:
+                            field['expected'] = int(f['expected'])
+                        except (TypeError, ValueError):
+                            pass
+                else:
+                    field['type'] = 'string'
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
