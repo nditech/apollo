@@ -21,12 +21,12 @@ def _clean(fieldname):
 
 def checklist_question_summary(form, field, location, dataframe):
     stats = {'urban': {}}
-    stats.update(generate_field_stats(dataframe, field))
+    stats.update(generate_field_stats(field, dataframe))
 
     try:
         for name, grp in dataframe.groupby('urban'):
             stats['urban']['Urban' if name else 'Rural'] = \
-                    generate_field_stats(grp, field)
+                    generate_field_stats(field, grp)
     except KeyError:
         pass
 
