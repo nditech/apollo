@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from collections import Counter, defaultdict
+from collections import Counter
 from operator import itemgetter
 import numpy as np
 import pandas as pd
@@ -96,65 +96,6 @@ def percent_of(a, b):
     return float(100 * float(a) / b)
 
 
-def generate_mean_stats(dataframe, tag):
-    result = defaultdict(_default_zero)
-    try:
-        column_data = dataframe[tag]
-    except KeyError:
-        return result
-
-    reported = column_data.count()
-    total = column_data.size
-    missing = total - reported
-    percent_reported = percent_of(reported, total)
-    percent_missing = percent_of(missing, total)
-    mean = column_data.mean() if total != 0 else 0
-
-    result.update(
-        mean=mean,
-        missing=missing,
-        reported=reported,
-        total=total,
-        percent_missing=percent_missing,
-        percent_reported=percent_reported
-    )
-
-    return result
-
-
-def generate_mean_stats_grouped(dataframe_groupby, tag):
-    result = defaultdict(_default_zero)
-    try:
-        series_groupby = dataframe_groupby[tag]
-    except KeyError:
-        return result
-
-    result['locations'] = {}
-
-    for group_key in series_groupby.groups:
-        location_stats = {}
-        group = series_groupby.get_group(group_key)
-
-        reported = group.count()
-        total = group.size
-        missing = total - reported
-        percent_reported = percent_of(reported, total)
-        percent_missing = percent_of(missing, total)
-        mean = group.mean() if total != 0 else 0
-
-        location_stats.update(
-            mean=mean,
-            missing=missing,
-            reported=reported,
-            total=total,
-            percent_missing=percent_missing,
-            percent_reported=percent_reported
-        )
-        result['locations'].update({group_key: location_stats})
-
-    return result
-
-
 def generate_numeric_field_stats(tag, dataset):
     '''Returns statistics (mean, standard deviation, number/percentage
     of actual reports, number/percentage of missing reports) for a
@@ -226,47 +167,6 @@ def generate_numeric_field_stats(tag, dataset):
         field_stats.update(stats)
 
     return field_stats
-
-
-def generate_histogram_stats(dataframe, tag, options=[], labels=None):
-    result = defaultdict(_default_zero)
-
-    try:
-        column_data = dataframe[tag]
-    except KeyError:
-        result.update(options=options, labels=labels)
-        return result
-
-    if options == []:
-        options = column_data.dropna().unique()
-
-    option_counts = defaultdict(_default_zero)
-    option_counts.update(column_data.value_counts.to_dict())
-
-    reported = column_data.count()
-    total = column_data.size
-    missing = total - reported
-    percent_reported = percent_of(reported, total)
-    percent_missing = percent_of(missing, total)
-
-    option_percentages = {
-        option: percent_of(count, reported)
-        for option, count in option_counts.items()
-    }
-
-    result.update(
-        value_counts=option_counts,
-        value_count_percentages=option_percentages,
-        reported=reported,
-        missing=missing,
-        total=total,
-        percent_reported=percent_reported,
-        percent_missing=percent_missing,
-        options=options,
-        labels=labels or []
-    )
-
-    return result
 
 
 def generate_single_choice_field_stats(tag, dataset, options, labels=None):
