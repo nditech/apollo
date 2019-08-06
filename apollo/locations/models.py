@@ -254,6 +254,12 @@ class Location(BaseModel):
             if p.depth != 0
         ]
 
+    def parents(self):
+        return [
+            p.ancestor_location for p in self.ancestor_paths
+            if p.depth == 1
+        ]
+
     def descendants(self):
         return [
             p.descendant_location for p in self.descendant_paths
