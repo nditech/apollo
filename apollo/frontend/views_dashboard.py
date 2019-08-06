@@ -2,7 +2,7 @@
 from functools import partial
 
 from flask import (
-    Blueprint, abort, g, redirect, render_template, request, url_for)
+    Blueprint, abort, g, redirect, render_template, request, url_for, session)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
@@ -19,6 +19,7 @@ from ..deployments.models import Event
 from ..submissions.filters import make_dashboard_filter
 from ..submissions.models import Submission
 from ..formsframework.models import Form
+from apollo import models
 from apollo.services import events
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
@@ -71,6 +72,32 @@ def main_dashboard(form_id=None):
             Location,
             Submission.location_id == Location.id
         )
+
+    if 'participant' in session:
+        participant = models.Participant.query.get(session['participant'])
+
+        if participant:
+            if group_slug:
+                _location_query = models.Location.query.with_entities(
+                    models.Location.id
+                ).join(
+                    models.LocationPath,
+                    models.Location.id == models.LocationPath.descendant_id
+                ).filter(
+                    models.LocationPath.ancestor_id.in_(
+                        [loc.id for loc in participant.location.parents()]))
+            else:
+                _location_query = models.Location.query.with_entities(
+                    models.Location.id
+                ).join(
+                    models.LocationPath,
+                    models.Location.id == models.LocationPath.descendant_id
+                ).filter(
+                    models.LocationPath.ancestor_id == participant.location_id)
+
+            query = query.filter(
+                models.Submission.location_id.in_(_location_query))
+
     query_filterset = filter_class(query, request.args)
 
     location = None
@@ -81,7 +108,6 @@ def main_dashboard(form_id=None):
 
     if not group_slug:
         data = get_coverage(query_filterset.qs, form)
-        # obs_data = get_coverage(obs_queryset)
     else:
         group = next(
             (grp for grp in form.data['groups']
@@ -96,8 +122,8 @@ def main_dashboard(form_id=None):
         ).join(
             LocationType.ancestor_paths
         ).group_by(
-            LocationType.id
-        ).order_by(func.count(LocationType.ancestor_paths)).all()
+            LocationType.id, models.LocationTypePath.depth
+        ).order_by(models.LocationTypePath.depth).all()
 
         location_type = None
         if location_type_id:
@@ -124,23 +150,6 @@ def main_dashboard(form_id=None):
 
         data = get_coverage(
             query, form, group, location_type)
-
-    #     # get the requisite location type - the way the aggregation
-    #     # works, passing in a 'State' location type won't retrieve
-    #     # data for the level below the 'State' type, it will retrieve
-    #     # it for the 'State' type. in general, this isn't the behaviour
-    #     # we want, so we need to find the lower level types and get the
-    #     # one we want (the first of the children)
-    #     le_temp = [lt for lt in location_type.children
-    #                if lt.is_administrative]
-
-    #     try:
-    #         next_location_type = le_temp[0]
-    #     except IndexError:
-    #         next_location_type = None
-
-    #     data = get_coverage(queryset, group, location_type)
-    #     obs_data = get_coverage(obs_queryset, group, location_type)
 
     context = {
         'args': {},
