@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, redirect, render_template, url_for, abort
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import encrypt_password
@@ -13,6 +13,9 @@ bp = Blueprint('users', __name__)
 @route(bp, '/user/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
+    if current_user.has_role('field-coordinator'):
+        abort(403)
+
     breadcrumbs = [_('Edit Profile')]
     user = current_user._get_current_object()
     form = forms.UserDetailsForm(instance=user)
