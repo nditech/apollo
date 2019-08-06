@@ -66,6 +66,8 @@ PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 SECURITY_USER_IDENTITY_ATTRIBUTES = config(
     'USER_IDENTITY_ATTRIBUTES', cast=config.tuple,
     default=('email,username'))
+APOLLO_FIELD_COORDINATOR_EMAIL = config(
+    'APOLLO_FIELD_COORDINATOR_EMAIL', default='fc@example.com')
 
 CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
     host=config('REDIS_HOSTNAME', default='redis'),

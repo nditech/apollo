@@ -428,6 +428,14 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
 
         return form
 
+    def after_model_change(self, form, model, is_created):
+        _role = models.ParticipantRole.query.filter(
+            models.ParticipantRole.name == '$FC',
+            models.ParticipantRole.participant_set == model).first()
+        if not _role:
+            _role = models.ParticipantRole.create(
+                name='$FC', participant_set=model)
+
     @expose('/participants/<int:participant_set_id>', methods=['GET', 'POST'])
     def participants_list(self, participant_set_id):
         return participant_list(participant_set_id, self)
