@@ -425,7 +425,8 @@ def generate_field_stats(field, dataset, all_tags=None):
         return generate_mean_stats(field['tag'], dataset)
 
     if summary_type == 'bucket':
-        return generate_bucket_stats(field['tag'], dataset, field['expected'])
+        return generate_bucket_stats(
+            field['tag'], dataset, field.get('expected', 0))
 
 
 def generate_incidents_data(form, queryset, location_root, grouped=True,
