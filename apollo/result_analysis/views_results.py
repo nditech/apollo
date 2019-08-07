@@ -75,11 +75,9 @@ def _voting_results(form_id, location_id=None):
 
     # define the condition for which a submission should be included
     result_fields = [
-        field for field in [
-            field for group in form.data['groups']
-            for field in group['fields']
-        ] if field['analysis_type'] == 'RESULT']
-    result_field_labels = [field['tag'] for field in result_fields]
+        form.get_field_by_tag(tag) for tag in form.vote_shares
+    ] if form.vote_shares else []
+    result_field_labels = form.vote_shares or []
     result_field_descriptions = [
         field['description'] for field in result_fields]
 
