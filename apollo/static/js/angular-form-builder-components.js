@@ -68,7 +68,7 @@
             <label class="control-label">Analysis</label>
             <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textInput', subtype)" class="form-control custom-select"></select>
           </div>
-          <div class="form-group mb-2">
+          <div class="form-group mb-2" ng-show="analysis == 'bucket'">
             <label class="control-label">Expected value</label>
             <input type="text" ng-model="expected" class="form-control" />
           </div>
