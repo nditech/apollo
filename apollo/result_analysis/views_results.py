@@ -451,7 +451,7 @@ def _voting_results(form_id, location_id=None):
         for component in result_field_labels:
             chart_data[component] = [
                 (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
-                for ts_f in convergence_df.as_matrix(['updated', component])]
+                for ts_f in convergence_df[['updated', component]].values]
 
     context = {
         'page_title': page_title,
