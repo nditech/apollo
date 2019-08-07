@@ -497,6 +497,12 @@ def upgrade():
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('role', 'id'))
     """)
+    conn.execute(text("""INSERT INTO role (
+        id, deployment_id, name, uuid) VALUES (4, 1, 'field-coordinator', :uuid)"""),
+                 uuid=uuid4().hex)
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('role', 'id'))
+    """)
     password = encrypt_password('admin')
     conn.execute(text("""INSERT INTO \"user\" (
         id, deployment_id, email, username, password, active, uuid)

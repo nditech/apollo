@@ -5,7 +5,7 @@ from functools import partial
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
-    redirect, render_template, request, stream_with_context, url_for
+    redirect, render_template, request, stream_with_context, url_for, session
 )
 from flask_babelex import lazy_gettext as _
 from flask_httpauth import HTTPBasicAuth
@@ -108,6 +108,29 @@ def submission_list(form_id):
     page = int(data.pop('page', [1])[0])
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=event.location_set_id)
+    query = models.Submission.query
+    _location_query = None
+
+    # if the user is a field-coordinator (i.e. there's a participant in the
+    # session) then define the _location_query (which will be reused) and the
+    # query to be used for the exports. Naturally, exports will not be
+    # available to the field-coordinator but just in case the admin gives the
+    # field-coordinator export access (by mistake)
+
+    if 'participant' in session:
+        participant = models.Participant.query.get(session['participant'])
+
+        if participant:
+            _location_query = models.Location.query.with_entities(
+                models.Location.id
+            ).join(
+                models.LocationPath,
+                models.Location.id == models.LocationPath.descendant_id
+            ).filter(
+                models.LocationPath.ancestor_id == participant.location_id)
+
+            query = query.filter(
+                models.Submission.location_id.in_(_location_query))
 
     location = None
     if request.args.get('location'):
@@ -118,7 +141,7 @@ def submission_list(form_id):
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
-            queryset = services.submissions.find(
+            queryset = query.filter_by(
                 submission_type='M',
                 form=form, event=event
             ).join(
@@ -126,7 +149,7 @@ def submission_list(form_id):
                 models.Submission.location_id == models.Location.id
             ).order_by(models.Location.code)
         else:
-            queryset = services.submissions.find(
+            queryset = query.filter_by(
                 submission_type='O',
                 form=form, event=event
             ).join(
@@ -248,6 +271,10 @@ def submission_list(form_id):
             models.Participant,
             models.Submission.participant_id == models.Participant.id
         )
+
+    if _location_query:
+        queryset = queryset.filter(
+            models.Submission.location_id.in_(_location_query))
 
     if request.args.get('sort_by') == 'pid':
         if request.args.get('sort_direction') == 'desc':
