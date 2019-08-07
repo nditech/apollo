@@ -117,18 +117,15 @@ def aggregate_dataset(query, form, stream=False):
     location_type_names = [
         a.location_type.name for a in query.first().location.ancestors()]
 
-    aggregate_field_types = ['integer', 'select', 'multiselect']
-    aggregate_fields = [
-        fi for grp in form.data.get('groups', [])
-        for fi in grp.get('fields', [])
-        if fi and fi.get('type') in aggregate_field_types
+    fields = [
+        form.get_field_by_tag(tag) for tag in form.tags
     ]
 
-    headers = ['Level'] + location_type_names + ['# records']
-    for field in aggregate_fields:
+    headers = ['Level'] + location_type_names + ['Total']
+    for field in fields:
         if field['type'] == 'integer':
             headers.append(field['tag'])
-        else:
+        elif field['type'] in ('multiselect', 'select'):
             headers.extend(
                 '{tag} = {option}'.format(tag=field['tag'], option=opt)
                 for opt in sorted(field['options'].values())
@@ -170,7 +167,7 @@ def aggregate_dataset(query, form, stream=False):
             current_row.extend([''] * padding_size)
             current_row.append(group.shape[0])
 
-            for field in aggregate_fields:
+            for field in fields:
                 reported = group[field['tag']].count()
                 total = group[field['tag']].size
                 missing = total - reported
@@ -186,7 +183,7 @@ def aggregate_dataset(query, form, stream=False):
                     processor = partial(
                         _select_field_processor, field['options'].values())
                     current_row.extend(processor(group[field['tag']]))
-                else:
+                elif field['type'] == 'multiselect':
                     processor = partial(
                         _multiselect_field_processor,
                         field['options'].values())
