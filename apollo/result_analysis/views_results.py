@@ -33,8 +33,8 @@ def get_result_analysis_menu():
     } for form in forms.query.filter(
         Form.events.contains(event),
         Form.form_type == 'CHECKLIST',
-        Form.data.op('@>')(
-            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
+        Form.vote_shares != None,   # noqa
+        Form.vote_shares != []
     ).order_by('name')]
 
 
@@ -45,8 +45,8 @@ bp = Blueprint('result_analysis', __name__, template_folder='templates',
 def _voting_results(form_id, location_id=None):
     event = g.event
     form = forms.filter(
-        Form.data.op('@>')(
-            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]}),
+        Form.vote_shares != None,   # noqa
+        Form.vote_shares != [],
         Form.id == form_id,
         Form.form_type == 'CHECKLIST',
         Form.events.contains(event)
@@ -75,11 +75,9 @@ def _voting_results(form_id, location_id=None):
 
     # define the condition for which a submission should be included
     result_fields = [
-        field for field in [
-            field for group in form.data['groups']
-            for field in group['fields']
-        ] if field['analysis_type'] == 'RESULT']
-    result_field_labels = [field['tag'] for field in result_fields]
+        form.get_field_by_tag(tag) for tag in form.vote_shares
+    ] if form.vote_shares else []
+    result_field_labels = form.vote_shares or []
     result_field_descriptions = [
         field['description'] for field in result_fields]
 
@@ -453,7 +451,7 @@ def _voting_results(form_id, location_id=None):
         for component in result_field_labels:
             chart_data[component] = [
                 (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
-                for ts_f in convergence_df.as_matrix(['updated', component])]
+                for ts_f in convergence_df[['updated', component]].values]
 
     context = {
         'page_title': page_title,

@@ -125,6 +125,8 @@ def edit_form(view, form_id):
         [(tag, tag) for tag in form.tags]
     web_form.registered_voters_tag.choices = [('', '')] + \
         [(tag, tag) for tag in form.tags]
+    web_form.vote_shares.choices = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
 
     if not web_form.validate_on_submit():
         context = {

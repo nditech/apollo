@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from collections import Counter
+from collections import defaultdict
+from functools import partial
+from itertools import chain
 from operator import itemgetter
 import numpy as np
 import pandas as pd
@@ -7,86 +9,19 @@ import pandas as pd
 from apollo.submissions.utils import make_submission_dataframe
 
 
-def dataframe_analysis(kind, dataframe, col):
-    column_data = dataframe.get(col)
-    if kind == 'discrete':
-        if column_data is None:
-            result = {'value_counts': pd.np.nan, 'value_counts_sum': 0}
-        else:
-            result = {
-                'value_counts': dict(column_data.value_counts()),
-                'value_counts_sum': column_data.value_counts().sum()}
-    else:
-        if column_data is None:
-            result = {'mean': pd.np.nan}
-        else:
-            result = {'mean': column_data.mean()}
-
-    if column_data is None:
-        result.update({'count': 0, 'size': 0, 'diff': 0})
-    else:
-        result['count'] = column_data.count()
-        result['size'] = column_data.size
-        result['diff'] = result['size'] - result['count']
-
-    return result
+def _default_zero():
+    return 0
 
 
-def multiselect_dataframe_analysis(dataframe, col, options):
-    column_data = dataframe.get(col)
-    option_summary = summarize_options(options, column_data)
-    result = {
-        'value_counts': dict(list(zip(options, option_summary))),
-        'value_counts_sum': column_data.count(),
-    }
+def _replace_empty_lists(value):
+    if isinstance(value, list) and len(value) == 0:
+        return None
 
-    result['count'] = column_data.count()
-    result['size'] = column_data.size
-    result['diff'] = result['size'] - result['count']
-
-    return result
+    return value
 
 
-def make_histogram(options, dataset, multi=False):
-    '''This function simply returns the number of occurrences of each option
-    in the given dataset as a list.
-
-    For example, say options is 'abcde', and dataset is 'capable', it would
-    return [2, 1, 1, 0, 1], because there are 2 occurrences of 'a' in
-    'capable', 1 of 'b', and so on.
-
-    Please note that both options and dataset must be homogenous iterables
-    of the same type.
-    '''
-    if multi:
-        if not isinstance(dataset, list) and pd.isnull(dataset):
-            return [0] * len(options)
-
-    counter = Counter(dataset if hasattr(dataset, '__iter__') else [dataset])
-
-    histogram = [counter[option] for option in options]
-
-    return histogram
-
-
-def summarize_options(options, series):
-    '''This function returns a summary of the number of occurrences of each
-    option in a pandas Series of lists (although it can be used for any 2D
-    iterable).
-
-
-    For example, if the series contains these lists: [1, 2], [2, 5] and
-    [2, 3, 4] and options is [1, 2, 3, 4, 5, 6], it would return
-    [1, 3, 1, 1, 1, 0].
-
-    Since this merely uses make_histogram(), the same rules apply.
-    '''
-    placeholder = []
-    for row in series:
-        placeholder.append(make_histogram(options, row, True))
-
-    # sum the number of occurrences by column and return as a list
-    return np.array(placeholder).sum(axis=0).tolist()
+def _fake_cmp(target, value):
+    return ((value > target) - (value < target))
 
 
 def percent_of(a, b):
@@ -96,7 +31,7 @@ def percent_of(a, b):
     return float(100 * float(a) / b)
 
 
-def generate_numeric_field_stats(tag, dataset):
+def generate_mean_stats(tag, dataset):
     '''Returns statistics (mean, standard deviation, number/percentage
     of actual reports, number/percentage of missing reports) for a
     single form field tag in a set of submissions.
@@ -110,13 +45,9 @@ def generate_numeric_field_stats(tag, dataset):
     - a dictionary of the requested statistics. if the dataset is a series
     group, the result will be a nested dictionary
     '''
-    field_stats = {'type': 'numeric'}
+    field_stats = {'type': 'mean'}
 
     if hasattr(dataset, 'groups'):
-        # if we need grouped data, say, by a certain location type, for example
-        group_names = list(dataset.groups.keys())
-        group_names.sort()
-
         # generate the per-group statistics
         # the transpose and to_dict ensures that the output looks similar to
         # ['item']['mean'] for every item in the group
@@ -124,12 +55,9 @@ def generate_numeric_field_stats(tag, dataset):
         #     'mean': np.mean,
         #     'std': lambda x: np.std(x)
         # }).replace(np.nan, 0).transpose().to_dict()
-        location_stats = dataset[tag].agg(
-            [np.mean, np.std]).replace(np.nan, 0).transpose().to_dict()
+        location_stats = {}
 
-        field_stats['locations'] = location_stats
-
-        for group_name in group_names:
+        for group_name in dataset.groups:
             temp = dataset[tag].get_group(group_name)
             total = temp.size
             reported = temp.count()
@@ -137,13 +65,18 @@ def generate_numeric_field_stats(tag, dataset):
             percent_reported = percent_of(reported, total)
             percent_missing = percent_of(missing, total)
 
-            field_stats['locations'][group_name]['reported'] = reported
-            field_stats['locations'][group_name]['missing'] = missing
-            field_stats['locations'][group_name]['percent_reported'] = \
+            location_stats[group_name] = {}
+            location_stats[group_name]['reported'] = reported
+            location_stats[group_name]['missing'] = missing
+            location_stats[group_name]['percent_reported'] = \
                 percent_reported
-            field_stats['locations'][group_name]['percent_missing'] = \
+            location_stats[group_name]['percent_missing'] = \
                 percent_missing
+            mean = temp.mean()
+            location_stats[group_name]['mean'] = \
+                mean if not pd.isnull(mean) else 0
 
+        field_stats['locations'] = location_stats
     else:
         # generate the statistics over the entire data set
         # this means there will be one set of statistics for the entire
@@ -158,8 +91,7 @@ def generate_numeric_field_stats(tag, dataset):
         stats = {'reported': reported, 'missing': missing,
                  'percent_reported': percent_reported,
                  'percent_missing': percent_missing,
-                 'mean': dataset[tag].mean(),
-                 'std': np.std(dataset[tag])}
+                 'mean': dataset[tag].mean()}
 
         if np.isnan(stats['mean']):
             stats['mean'] = 0
@@ -169,7 +101,7 @@ def generate_numeric_field_stats(tag, dataset):
     return field_stats
 
 
-def generate_single_choice_field_stats(tag, dataset, options, labels=None):
+def generate_histogram_stats(tag, dataset, options=[], labels=None):
     '''Returns statistics (frequency histogram, number/percentage of actual
     reports, number/percentage of missing reports) for a specified form field
     tag. The associated form field takes one value of several options.
@@ -185,18 +117,15 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
     above statistics, as well as the labels for each of the options. Both the
     histogram and the labels are generated as lists, so they are ordered.'''
 
-    field_stats = {
-        'type': 'single-choice', 'labels': labels,
-        'meta': list(zip(labels or [], options))}
+    options_generated = set()
+
+    field_stats = {'type': 'histogram', 'labels': labels}
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
-        group_names = list(dataset.groups.keys())
-        group_names.sort()
-
         location_stats = {}
 
-        for group_name in group_names:
+        for group_name in dataset.groups:
             temp = dataset.get_group(group_name).get(tag)
 
             reported = temp.count()
@@ -212,11 +141,21 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
-            histogram = make_histogram(options, temp)
-            histogram_mod = lambda x: (x, percent_of(x, reported))
-            histogram2 = list(map(histogram_mod, histogram))
+            value_counts = temp.dropna().astype(int).value_counts().to_dict()
+            if not options:
+                options_generated.update(value_counts.keys())
+            group_opts = options or sorted(options_generated)
 
-            location_stats[group_name]['histogram'] = histogram2
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
+                    value_counts.get(opt, 0),
+                    percent_of(value_counts.get(opt, 0), reported)
+                )
+                for opt in group_opts
+            }
+
+            location_stats[group_name]['histogram'] = histogram
 
         field_stats['locations'] = location_stats
     else:
@@ -228,21 +167,34 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
 
-        histogram = make_histogram(options, dataset[tag])
-        histogram_mod = lambda x: (x, percent_of(x, reported))
-        histogram2 = list(map(histogram_mod, histogram))
+        value_counts = dataset[tag].dropna().astype(
+            int).value_counts().to_dict()
+        if not options:
+            options_generated.update(value_counts.keys())
+        opts = options or sorted(options_generated)
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
+                value_counts.get(opt, 0),
+                percent_of(value_counts.get(opt, 0), reported)
+            )
+            for opt in opts
+        }
 
-        stats = {'histogram': histogram2, 'reported': reported,
+        stats = {'histogram': histogram, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
                  'percent_missing': percent_missing,
                  'total': reported + missing}
 
         field_stats.update(stats)
 
+    options = options if options else sorted(options_generated)
+    field_stats.update(meta=list(zip(labels or [], options)))
+
     return field_stats
 
 
-def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
+def generate_multiselect_histogram_stats(tag, dataset, options, labels=None):
     '''Returns statistics for a form field which can take more than one
     option of several. Statistics returned are frequency histogram,
     number/percentage of actual reports, number/percentage of missing
@@ -256,24 +208,18 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     Returns
     - a dictionary (nested in the case of dataset being a group series)
     of the relevant statistics.'''
-    field_stats = {
-        'type': 'multiple-choice', 'labels': labels,
-        'meta': list(zip(labels or [], options))}
+    field_stats = {'type': 'histogram', 'labels': labels}
 
     if hasattr(dataset, 'groups'):
-        group_names = list(dataset.groups.keys())
-        group_names.sort()
-
         location_stats = {}
 
-        for group_name in group_names:
-            temp = dataset.get_group(group_name).get(tag)
-
-            t = [0 if not isinstance(x, float) and x else 1 for x
-                 in temp]
-            missing = sum(t)
-            reported = temp.size - missing
+        for group_name in dataset.groups:
+            temp = dataset.get_group(group_name).get(tag).apply(
+                _replace_empty_lists)
+            flattened_data = pd.Series(list(chain(*temp.dropna().values)))
+            reported = temp.count()
             total = temp.size
+            missing = total - reported
             percent_missing = percent_of(missing, total)
             percent_reported = percent_of(reported, total)
 
@@ -283,39 +229,51 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
-            histogram = summarize_options(options, temp)
+            value_counts = flattened_data.value_counts()
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
+                    value_counts.get(opt, 0),
+                    percent_of(value_counts.get(opt, 0), reported)
+                )
+                for opt in options
+            }
 
-            histogram_mod = lambda x: (x, percent_of(x, reported))
-
-            histogram2 = list(map(histogram_mod, histogram))
-
-            location_stats[group_name]['histogram'] = histogram2
+            location_stats[group_name]['histogram'] = histogram
 
         field_stats['locations'] = location_stats
     else:
-        t = [0 if not isinstance(x, float) and x else 1 for x in dataset[tag]]
-        missing = sum(t)
-        total = dataset[tag].size
-        reported = total - missing
+        column_data = dataset[tag].apply(_replace_empty_lists)
+        flattened_column_data = pd.Series(
+            list(chain(*column_data.dropna().values)))
+        reported = column_data.count()
+        total = column_data.size
+        missing = total - reported
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
 
-        histogram = summarize_options(options, dataset[tag])
+        value_counts = flattened_column_data.value_counts()
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
+                value_counts.get(opt, 0),
+                percent_of(value_counts.get(opt, 0), reported)
+            )
+            for opt in options
+        }
 
-        histogram_mod = lambda x: (x, percent_of(x, reported))
-
-        histogram2 = list(map(histogram_mod, histogram))
-
-        stats = {'histogram': histogram2, 'reported': reported,
+        stats = {'histogram': histogram, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
                  'percent_missing': percent_missing}
 
         field_stats.update(stats)
 
+    field_stats.update(meta=list(zip(labels or [], options)))
+
     return field_stats
 
 
-def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
+def generate_count_stats(tag, dataset):
     '''Returns statistics (frequency histogram, number/percentage of actual
     reports, number/percentage of missing reports) for a specified form field
     tag. The associated form field takes one value of several options.
@@ -330,18 +288,15 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
     above statistics, as well as the labels for each of the options. Both the
     histogram and the labels are generated as lists, so they are ordered.'''
 
-    field_stats = {'type': 'incidents', 'labels': labels}
+    field_stats = {'type': 'count'}
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
-        group_names = list(dataset.groups.keys())
-        group_names.sort()
-
         location_stats = {}
 
-        for group_name in group_names:
+        for group_name in dataset.groups:
             reported = dataset.get_group(group_name).get(tag).count()
-            total = dataset.get_group(group_name).shape[0]
+            total = dataset[tag].get_group(group_name).size
             missing = total - reported
 
             percent_reported = percent_of(reported, total)
@@ -359,7 +314,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
         # ungrouped data, statistics for the entire data set will be generated
 
         reported = dataset[tag].count()
-        total = dataset.shape[0]
+        total = dataset[tag].size
         missing = total - reported
 
         percent_reported = percent_of(reported, total)
@@ -375,29 +330,102 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
     return field_stats
 
 
+def generate_bucket_stats(tag, dataset, target):
+    _cmp = partial(_fake_cmp, target)
+    field_stats = {'type': 'bucket', 'target': target}
+    options = [-1, 0, 1]
+
+    if hasattr(dataset, 'groups'):
+        location_stats = {}
+
+        for group_name in dataset.groups:
+            column_data = dataset.get_group(group_name)[tag]
+            transformed_data = column_data.dropna().apply(_cmp)
+            value_counts = transformed_data.value_counts().to_dict()
+            reported = column_data.count()
+            total = column_data.size
+            missing = total - reported
+            percent_reported = percent_of(reported, total)
+            percent_missing = percent_of(missing, total)
+            histogram = defaultdict(lambda: (0, 0.0))
+            histogram = {
+                opt: (
+                    value_counts.get(opt, 0),
+                    percent_of(value_counts.get(opt, 0), reported)
+                )
+                for opt in options
+            }
+
+            location_stats[group_name] = {}
+            location_stats[group_name]['missing'] = missing
+            location_stats[group_name]['reported'] = reported
+            location_stats[group_name]['total'] = total
+            location_stats[group_name]['percent_reported'] = percent_reported
+            location_stats[group_name]['percent_missing'] = percent_missing
+            location_stats[group_name]['histogram'] = histogram
+
+        field_stats['locations'] = location_stats
+    else:
+        column_data = dataset[tag]
+        transformed_data = column_data.dropna().apply(_cmp)
+        value_counts = transformed_data.value_counts().to_dict()
+        reported = column_data.count()
+        total = column_data.size
+        missing = total - reported
+        percent_reported = percent_of(reported, total)
+        percent_missing = percent_of(missing, total)
+        histogram = defaultdict(lambda: (0, 0.0))
+        histogram = {
+            opt: (
+                value_counts.get(opt, 0),
+                percent_of(value_counts.get(opt, 0), reported)
+            )
+            for opt in options
+        }
+
+        stats = {
+            'histogram': histogram, 'reported': reported,
+            'missing': missing, 'percent_reported': percent_reported,
+            'percent_missing': percent_missing
+        }
+
+        field_stats.update(stats)
+
+    return field_stats
+
+
 def generate_field_stats(field, dataset, all_tags=None):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    field_type = field.get('type')
-    if field_type == 'boolean':
-        return generate_incident_field_stats(field['tag'], dataset, all_tags)
+    summary_type = field.get('analysis_type')
+    if summary_type == 'count':
+        return generate_count_stats(field['tag'], dataset)
 
-    if field_type in ('select', 'multiselect'):
-        sorted_options = sorted(field.get('options').items(), key=itemgetter(1))
-        options = [i[1] for i in sorted_options]
-        labels = [i[0] for i in sorted_options]
+    if summary_type == 'histogram':
+        field_options = field.get('options')
+        if field_options:
+            sorted_options = sorted(field_options.items(), key=itemgetter(1))
+            options = [i[1] for i in sorted_options]
+            labels = [i[0] for i in sorted_options]
+        else:
+            options = []
+            labels = None
 
-        if field_type == 'multiselect':
-            return generate_mutiple_choice_field_stats(
+        if field['type'] == 'multiselect':
+            return generate_multiselect_histogram_stats(
                 field['tag'], dataset, options=options, labels=labels
             )
         else:
-            return generate_single_choice_field_stats(
+            return generate_histogram_stats(
                 field['tag'], dataset, options=options, labels=labels
             )
 
-    return generate_numeric_field_stats(field['tag'], dataset)
+    if summary_type == 'mean':
+        return generate_mean_stats(field['tag'], dataset)
+
+    if summary_type == 'bucket':
+        return generate_bucket_stats(field['tag'], dataset, field['expected'])
 
 
 def generate_incidents_data(form, queryset, location_root, grouped=True,
@@ -420,9 +448,11 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
     }
 
     if not tags:
-        tags = [field['tag'] for group in form.data['groups'] for field in
-                group['fields'] if field['analysis_type'] == 'PROCESS'
-                and not field.get('is_comment')]
+        tags = [
+            field['tag'] for group in form.data['groups']
+            for field in group['fields']
+            if field['analysis_type'] != 'N/A'
+        ]
 
     try:
         data_frame = make_submission_dataframe(queryset, form)
@@ -533,9 +563,11 @@ def generate_process_data(form, queryset, location_root, grouped=True,
     }
 
     if not tags:
-        tags = [field['tag'] for group in form.data['groups'] for field
-                in group['fields'] if field['analysis_type'] == 'PROCESS'
-                and not field.get('is_comment')]
+        tags = [
+            field['tag'] for group in form.data['groups']
+            for field in group['fields']
+            if field['analysis_type'] != 'N/A'
+        ]
 
     try:
         data_frame = make_submission_dataframe(queryset, form)

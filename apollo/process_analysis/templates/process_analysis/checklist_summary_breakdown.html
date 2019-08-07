@@ -22,46 +22,66 @@
 				{% for tag, question, tag_stats in process_summary.top %}
 				<table id="mytable" class="table table-striped table-bordered">
 					<tr>
-						<td colspan="{%- if tag_stats.type == 'numeric' -%}4{% else %}{{ tag_stats.labels|count + 3 }}{%- endif -%}"><strong>{{ tag }}</strong> &middot; {{ question }}</td>
+						<td colspan="{%- if tag_stats.type == 'mean' -%}6{% elif tag_stats.type != 'count' %}{{ (tag_stats.labels|count * 2) + 5 }}{% else %}5{%- endif -%}"><strong>{{ tag }}</strong> &middot; {{ question }}</td>
 					</tr>
 					<tr>
 						<th></th>
-						{%- if tag_stats.type == 'numeric' %}
+						{%- if tag_stats.type == 'mean' %}
 						<th width="80">{{ _('Mean') }}</th>
-						{% else %}
+						{% elif tag_stats.type == 'histogram' %}
 						{% for label, option in tag_stats.meta %}
-						<th>{{ _('%(label)s', label=label) }} ({{ option }})</th>
+						<th colspan="2">{{ _('%(label)s', label=label) }} ({{ option }})</th>
 						{% endfor %}
+						{% elif tag_stats.type == 'bucket' %}
+						<th colspan="2">&lt; {{ tag_stats.target }}</th>
+						<th colspan="2">= {{ tag_stats.target }}</th>
+						<th colspan="2">&gt; {{ tag_stats.target }}</th>
 						{% endif %}
-						<th width="80">{{ _('Reported') }}</th>
-						<th width="80">{{ _('Missing') }}</th>
+						<th width="80" colspan="2">{{ _('Reported') }}</th>
+						<th width="80" colspan="2">{{ _('Missing') }}</th>
 					</tr>
 					<tr>
 						<td><strong>{{ location }}</strong></td>
-						{% if tag_stats.type == 'numeric' %}
+						{% if tag_stats.type == 'mean' %}
 						<td>{{ tag_stats.mean|mean_filter }}</td>
-						{% else %}
-						{% for value, percentage in tag_stats.histogram %}
-						<td>{{ percentage|round|int }}% ({{ value }})</td>
+						{% elif tag_stats.type == 'histogram' %}
+						{% for label, option in tag_stats.meta %}
+						<td>{{ tag_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
+						{% endfor %}
+						{% elif tag_stats.type == 'bucket' %}
+						{% for label, option in tag_stats.meta %}
+						<td>{{ tag_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% endif %}
-						<td>{{ tag_stats.percent_reported|round|int }}% ({{ tag_stats.reported }})</td>
-						<td>{{ tag_stats.percent_missing|round|int }}% ({{ tag_stats.missing }})</td>
+						<td>{{ tag_stats.percent_reported|round|int }}%</td>
+						<td>{{ tag_stats.reported }}</td>
+						<td>{{ tag_stats.percent_missing|round|int }}%</td>
+						<td>{{ tag_stats.missing }}</td>
 					</tr>
 					{% for location_type, location_type_summary in process_summary.groups %}
 					{% for tag, question, tag_stats in location_type_summary %}
 					{% for location, location_stats in tag_stats.locations|dictsort %}
 					<tr>
 						<td><span style="margin-left:2em">{{ location }}</span> &middot; <span class="text-muted"><em>{{ _('%(loc_type)s', loc_type=location_type) }}</em></span></td>
-						{% if tag_stats.type == 'numeric' %}
+						{% if tag_stats.type == 'mean' %}
 						<td>{{ location_stats.mean|mean_filter }}</td>
-						{% else %}
-						{% for value, percentage in location_stats.histogram %}
-						<td>{{ percentage|round|int}}% ({{ value }})</td>
+						{% elif tag_stats.type == 'histogram' %}
+						{% for label, option in location_stats.meta %}
+						<td>{{ location_stats.histogram.get(option)[1]|round|int}}%</td>
+						<td>{{ location_stats.histogram.get(option)[0] }}</td>
+						{% endfor %}
+						{% elif tag_stats.type == 'bucket' %}
+						{% for option in [-1, 0, 1] %}
+						<td>{{ location_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ location_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% endif %}
-						<td>{{ location_stats.percent_reported|round|int }}% ({{ location_stats.reported }})</td>
-						<td>{{ location_stats.percent_missing|round|int }}% ({{ location_stats.missing }})</td>
+						<td>{{ location_stats.percent_reported|round|int }}%</td>
+						<td>{{ location_stats.reported }}</td>
+						<td>{{ location_stats.percent_missing|round|int }}%</td>
+						<td>{{ location_stats.missing }}</td>
 					</tr>
 					{% endfor %}
 					{% endfor %}
