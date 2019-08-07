@@ -257,7 +257,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     - a dictionary (nested in the case of dataset being a group series)
     of the relevant statistics.'''
     field_stats = {
-        'type': 'multiple-choice', 'labels': labels, 
+        'type': 'multiple-choice', 'labels': labels,
         'meta': list(zip(labels or [], options))}
 
     if hasattr(dataset, 'groups'):
