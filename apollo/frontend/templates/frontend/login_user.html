@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
     {%- endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset_url_for('text-security.css') }}">
   </head>
   <body class="h-100">
     <form class="h-100" name="login_user_form" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8" autocomplete="off" autocorrect="off" autocapitalize="off">
@@ -40,7 +41,7 @@
                   <label class="sr-only" for="{{ login_user_form.email.id }}">{{ _('Username') }}</label>
                   <input class="form-control mb-3 bg-light" id="{{ login_user_form.email.id }}" name="{{ login_user_form.email.name }}" type="text" placeholder="{{ _('Username') }}" autofocus>
                   <label class="sr-only" for="{{ login_user_form.password.id }}">{{ _('Password') }}</label>
-                  <input class="form-control my-3 bg-light" id="{{ login_user_form.password.id }}" name="{{ login_user_form.password.name }}" type="password" placeholder="{{ _('Password') }}">
+                  <input class="form-control my-3 bg-light masked" id="{{ login_user_form.password.id }}" name="{{ login_user_form.password.name }}" type="text" placeholder="{{ _('Password') }}">
                   <div class="row d-flex align-items-center px-3">
                     <button type="submit" class="btn btn-primary btn-block col-5">{{ _('Sign In') }}</button>
                     <div class="col-7 text-right"><a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">{{ _('Forgot Password?') }}</a></div>
