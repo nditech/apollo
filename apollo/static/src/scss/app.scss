@@ -54,3 +54,18 @@
         }
     }
 }
+
+input.masked {
+    font-family: 'text-security-disc';
+    text-security: disc !important;
+    -webkit-text-security: disc !important;
+    -moz-text-security: disc !important;
+}
+
+$placeholder-pseudo-classes: "::placeholder", "::-webkit-input-placeholder", "::-moz-placeholder", ":-ms-input-placeholder", ":-moz-placeholder";
+
+@each $placeholder-pseudo-class in $placeholder-pseudo-classes {
+    input.masked#{$placeholder-pseudo-class} {
+        font-family: $font-family-base;
+    }
+}
