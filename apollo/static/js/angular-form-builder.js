@@ -22,12 +22,12 @@
       var analysisOptsMap = {
         'choice': [
           {option: 'No Analysis', value: 'N/A'},
-          {option: 'Categorical', value: 'histogram'}
+          {option: 'Histogram', value: 'histogram'}
         ],
         'numeric': [
           {option: 'No Analysis', value: 'N/A'},
-          {option: 'Categorical (With Expected Value)', value: 'bucket'},
-          {option: 'Continuous', value: 'mean'},
+          {option: 'Categorical', value: 'bucket'},
+          {option: 'Mean', value: 'mean'},
           {option: 'Count', value: 'count'}
         ],
         'default': [
