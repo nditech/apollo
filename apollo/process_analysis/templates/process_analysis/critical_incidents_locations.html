@@ -1,68 +1,65 @@
-{% extends 'frontend/_layout.html' %}{% from 'process_analysis/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'process_analysis/macros/analysis_navigation.html' import render_analysis_navigation %}
+{% extends 'frontend/layout.html' %}{% from 'process_analysis/macros/analysis_navigation.html' import render_analysis_navigation %}
+{%- block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
+  <form class="form-inline" method="GET" accept-charset="utf-8">
+    <div class="form-group mr-sm-2">
+      <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
+      {{ filter_form.sample(class_='form-control custom-select') }}
+    </div>
+	<div class="form-group mr-sm-2">
+      <label for="{{ filter_form.status.id }}" class="sr-only">{{ filter_form.status.label.text }}</label>
+      {{ filter_form.status(class_='form-control custom-select') }}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ _('Filter') }}</button>
+  </form>
+</div>
+{%- endblock %}
+
 {% block content %}
 <div class="row">
-  <div class="col-md-5">
-    {{ render_analysis_breadcrumb(breadcrumb_data) }}
-  </div>
-  <div class="col-md-7">
-    <form class="form-inline pull-right" method="GET" accept-charset="utf-8">
-      <div class="form-group form-container">
-        {{ filter_form.status(class_='form-control span2 input-sm') }} {{ filter_form.sample(class_='form-control span2 input-sm') }}
-      </div>
-      <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {{ _('Filter') }}</button>
-    </form>
-  </div>
   <div class="col-md-12">
     {{ render_analysis_navigation(navigation_data) }}
   </div>
 </div>
+
 <div class="row">
   <div class="col-md-12">
     {% if incidents %}
-    <div class="tabbable">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#table" data-toggle="tab">{{ _('Table') }}</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane active" id="table">
-          <table class="table table-bordered table-striped">
-            <tr>
-              <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.tag }}</strong> &middot; {{ form_field.description }}</td>
-            </tr>
-            <tr>
-              <th>{{ _('Observer ID') }}</th>
-              <th>{{ _('Name') }}</th>
-              {% for lt in location_types %}
-              <th>{{ lt.name }}</th>
-              {% endfor %}
-              <th>{{ _('Location') }}</th>
-              <th style="text-align:center" width="50">{{ _('Status') }}</th>
-              <th>{{ _('Description') }}</th>
-            </tr>
-            {% for incident in incidents %}
-            <tr>
-              <td>{{ incident.participant.participant_id|default }}</td>
-              <td>{{ incident.participant.name|default }}</td>
-              {% for lt in location_types %}
-              <td>{{ incident|get_location_for_type(lt) }}</td>
-              {% endfor %}
-              <td>{{ incident.location.name }} &middot; <em class"muted">{{ incident.location.location_type }}</em></td>
-              <td style="text-align:center">
-              {% if incident.incident_status == 'confirmed' %}
-              <img src="{{ url_for('static', filename='img/tick.png') }}" title="{{ _('Confirmed') }}" alt="{{ _('Confirmed') }}" />
-              {% elif incident.status == 'rejected' %}
-              <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{{ _('Rejected') }}" alt="{{ _('Rejected') }}" />
-              {% else %}
-              <img src="{{ url_for('static', filename='img/caution.png') }}" title="{{ _('Unmarked') }}" alt="{{ _('Unmarked') }}" />
-              {% endif %}
-              </td>
-              <td>{{ incident.incident_description|default('', true) }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-      </div>
-    </div>
+    <table class="table table-bordered table-striped mt-4">
+      <tr>
+        <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.tag }}</strong> &middot; {{ form_field.description }}</td>
+      </tr>
+      <tr>
+        <th>{{ _('PID') }}</th>
+        <th>{{ _('Name') }}</th>
+        {% for lt in location_types %}
+        <th>{{ lt.name }}</th>
+        {% endfor %}
+        <th>{{ _('Location') }}</th>
+        <th style="text-align:center" width="50">{{ _('Status') }}</th>
+        <th>{{ _('Description') }}</th>
+      </tr>
+      {% for incident in incidents %}
+      <tr>
+        <td>{{ incident.participant.participant_id|default }}</td>
+        <td>{{ incident.participant.name|default }}</td>
+        {% for lt in location_types %}
+        <td>{{ incident|get_location_for_type(lt) }}</td>
+        {% endfor %}
+        <td>{{ incident.location.name }} &middot; <em class"muted">{{ incident.location.location_type }}</em></td>
+        <td style="text-align:center">
+        {% if incident.incident_status == 'confirmed' %}
+        <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
+        {% elif incident.status == 'rejected' %}
+        <i class="fa fa-circle text-danger" aria-hidden="true" title="{{ _('Rejected') }}"></i>
+        {% else %}
+        <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
+        {% endif %}
+        </td>
+        <td>{{ incident.incident_description|default('', true) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
     {% endif %}
   </div>
 </div>

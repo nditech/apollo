@@ -1,21 +1,23 @@
-{% extends 'frontend/_layout.html' %}{% from 'process_analysis/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'process_analysis/macros/analysis_navigation.html' import render_analysis_navigation %}{% block content %}
-<div class="row">
-	<div class="col-md-9">
-		{{ render_analysis_breadcrumb(breadcrumb_data) }}
-	</div>
-	<div class="col-md-3">
-		<form class="form-inline pull-right" action="" method="GET" accept-charset="utf-8">
-			<div class="form-group form-container">{{ filter_form.sample(class_='form-control span2 input-sm') }}</div>
-			<button class="btn btn-sm btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {{ _('Filter') }}</button>
-		</form>
-	</div>
+{% extends 'frontend/layout.html' %}{% from 'process_analysis/macros/analysis_navigation.html' import render_analysis_navigation %}
+{%- block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
+  <form class="form-inline" method="GET" accept-charset="utf-8">
+    <div class="form-group mr-sm-2">
+      <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
+      {{ filter_form.sample(class_='form-control custom-select') }}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ _('Filter') }}</button>
+  </form>
 </div>
+{%- endblock %}
+
+{% block content %}
 <div class="row">
 	<div class="col-md-12">
 		{{ render_analysis_navigation(navigation_data) }}
 	</div>
 </div>
-<div class="row">
+<div class="row mt-4">
 	<div class="col-md-12">
 		<div class="tab-content">
 			<div class="tab-pane active" id="table">

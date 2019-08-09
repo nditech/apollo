@@ -36,8 +36,7 @@ def get_analysis_menu():
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
-        'text': form.name,
-        'icon': '<i class="glyphicon glyphicon-stats"></i>'
+        'text': form.name
     } for form in forms.filter(
         models.Form.events.contains(event),
         or_(
@@ -73,8 +72,7 @@ def get_process_analysis_menu(form_type='CHECKLIST'):
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
-        'text': form.name,
-        'icon': '<i class="glyphicon glyphicon-stats"></i>'
+        'text': form.name
     } for form in formlist]
 
 
@@ -89,7 +87,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     template_name = ''
     tags = []
-    page_title = _('%(form)s Summary', form=form.name)
+    breadcrumbs = [_('Process Data'), form.name]
     grouped = False
     display_tag = None
     event = g.event
@@ -139,18 +137,36 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     # create data filter
     filter_set = filter_class(queryset, request.args)
+    breadcrumb_data = analysis_breadcrumb_data(form, location, display_tag)
+
+    if breadcrumb_data['tag']:
+        breadcrumbs.extend([
+            {'text': location.name, 'url': url_for(
+                'process_analysis.process_analysis_with_location_and_tag',
+                form_id=breadcrumb_data['form'].id,
+                location_id=location.id, tag=breadcrumb_data['tag'])
+                if idx < len(breadcrumb_data.get('locations', [])) - 1 else ''}
+            for idx, location in enumerate(breadcrumb_data.get('locations', []))
+        ])
+    else:
+        breadcrumbs.extend([
+            {'text': location.name, 'url': url_for(
+                'process_analysis.process_analysis_with_location',
+                form_id=breadcrumb_data['form'].id,
+                location_id=location.id)
+                if idx < len(breadcrumb_data.get('locations', [])) - 1 else ''}
+            for idx, location in enumerate(breadcrumb_data.get('locations', []))
+        ])
 
     # set up template context
     context = {}
     context['dataframe'] = make_submission_dataframe(filter_set.qs, form)
-    context['page_title'] = page_title
+    context['breadcrumbs'] = breadcrumbs
     context['display_tag'] = display_tag
     context['filter_form'] = filter_set.form
     context['form'] = form
     context['location'] = location
     context['field_groups'] = OrderedDict()
-    context['breadcrumb_data'] = analysis_breadcrumb_data(
-        form, location, display_tag)
     context['navigation_data'] = analysis_navigation_data(
         form, location, display_tag)
 
@@ -195,20 +211,17 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 @register_menu(
     bp, 'main.analyses',
     _('Data Summary'), order=4,
-    icon='<i class="glyphicon glyphicon-stats"></i>',
     visible_when=lambda: len(get_analysis_menu()) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.incidents_analysis',
     _('Incidents Data'),
-    icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu, 'INCIDENT'),
     visible_when=lambda: len(get_process_analysis_menu('INCIDENT')) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
     _('Process Data'),
-    icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu, 'CHECKLIST'),
     visible_when=lambda: len(get_process_analysis_menu('CHECKLIST')) > 0
     and permissions.view_process_analysis.can())
