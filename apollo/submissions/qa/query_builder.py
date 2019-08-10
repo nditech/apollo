@@ -244,7 +244,7 @@ def generate_qa_queries(form):
 
 def get_logical_check_stats(query, form, condition):
     complete_expression = build_expression(condition)
-    qa_query = generate_qa_query(complete_expression, form)
+    qa_query, question_codes = generate_qa_query(complete_expression, form)
 
     # add joins as necessary
     if '$location' in complete_expression:
