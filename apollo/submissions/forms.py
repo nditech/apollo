@@ -20,6 +20,36 @@ class HiddenQuerySelectField(QuerySelectField):
             return '__None'
 
 
+class NumberStringRange(validators.NumberRange):
+    def __call__(self, form, field):
+        try:
+            data = float(field.data)
+        except ValueError:
+            raise validators.ValidationError(
+                field.gettext("Not a valid integer value"))
+
+        if (
+            data is None
+            or (self.min is not None and data < self.min)
+            or (self.max is not None and data > self.max)
+        ):
+            message = self.message
+            if message is None:
+                # we use %(min)s interpolation to support floats, None, and
+                # Decimals without throwing a formatting exception.
+                if self.max is None:
+                    message = field.gettext("Number must be at least %(min)s.")
+                elif self.min is None:
+                    message = field.gettext("Number must be at most %(max)s.")
+                else:
+                    message = field.gettext(
+                        "Number must be between %(min)s and %(max)s."
+                    )
+
+            raise validators.ValidationError(
+                message % dict(min=self.min, max=self.max))
+
+
 def single_choice_coerce(value):
     if value == '':
         return None
@@ -75,12 +105,21 @@ def make_submission_edit_form_class(event, form):
         for index, group in enumerate(form.data['groups']):
             for field in group['fields']:
                 field_type = field.get('type')
-                if field_type in ('comment', 'string'):
+                if field_type == 'comment':
                     form_fields[field['tag']] = fields.StringField(
                         field['tag'],
                         description=field['description'],
                         validators=[validators.Optional()],
                         widget=widgets.TextArea()
+                    )
+                elif field_type == 'string':
+                    form_fields[field['tag']] = fields.StringField(
+                        field['tag'],
+                        description=field['description'],
+                        validators=[validators.Optional(),
+                                    NumberStringRange(
+                                    min=field.get('min', 0),
+                                    max=field.get('max', 9999))]
                     )
                 elif field_type in ('select', 'multiselect'):
                     choices = [(v, '{} — {}'.format(v, k)) for k, v in sorted(

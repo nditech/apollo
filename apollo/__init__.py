@@ -87,7 +87,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     # Register custom error handlers
     if not app.debug:
         for e in [500, 404, 403]:
-            app.errorhandler(e)(handle_error)
+            app.register_error_handler(e, handle_error)
 
     # register deployment selection middleware
     app.before_request(set_request_presets)
@@ -178,5 +178,7 @@ def handle_error(e):
     if code == 403:
         session['redirected_from'] = request.url
         return redirect(url_for('security.login'))
+    elif code == 404:
+        return render_template('404.html'), code
     else:
-        return render_template('{code}.html'.format(code=code)), code
+        return render_template('500.html'.format(code=code)), 500
