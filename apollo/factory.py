@@ -121,10 +121,10 @@ def create_celery_app(app=None):
         def on_failure(self, exc, task_id, args, kwargs, einfo):
             with app.app_context():
                 channel = kwargs.get('channel')
-                task_metadata = self.backend.get_task_meta(self.request.id)
                 payload = {
                     'id': task_id,
-                    'status': task_metadata.get('status'),
+                    'status': 'FAILED',
+                    'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task)
                 }
 
@@ -134,11 +134,10 @@ def create_celery_app(app=None):
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
                 channel = kwargs.get('channel')
-                task_metadata = self.backend.get_task_meta(task_id)
                 payload = {
                     'id': task_id,
-                    'status': task_metadata.get('status'),
-                    'info': retval,
+                    'status': 'COMPLETED',
+                    'progress': retval,
                     'description': TASK_DESCRIPTIONS.get(self.request.task)
                 }
 
@@ -154,7 +153,7 @@ def create_celery_app(app=None):
             task_metadata = self.backend.get_task_meta(request.id)
             payload = {
                 'id': request.id,
-                'status': task_metadata.get('status'),
+                'status': 'RUNNING',
                 'progress': task_metadata.get('result'),
                 'description': TASK_DESCRIPTIONS.get(self.request.task)
             }

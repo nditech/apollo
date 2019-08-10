@@ -8,27 +8,31 @@
 {{ super() }}
 <template id="task-info">
   <div class="card">
-    <div class="card-header">[[ taskInfo.description ]]</div>
-    <div class="card-body" v-if="taskInfo">
-      <div class="card-text">[[ taskInfo.progress.total_records || 0 ]] {{ _('Records') }}</div>
-      <div class="progress">
-        <div class="progress-bar" :style="processedProgressStyle">[[ taskInfo.progress.processed_records || 0 ]] ([[ processedProgressNum ]]%)</div>
+    <div class="card-header">[[ taskInfo.description ]] ([[ taskInfo.status ]])</div>
+    <div class="card-body">
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.processed_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ processedPercentNum ]]%)</div>
+        </div>
+        <p class="card-text">{{ _('Successful') }}</p>
       </div>
-      <div class="progress">
-        <div class="progress-bar bg-danger" :style="errorProgressStyle">[[ taskInfo.progress.error_records || 0 ]]  ([[ errorProgressNum ]]%)</div>
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.error_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ errorPercentNum ]]%)</div>
+        </div>
+        <p class="card-text">{{ _('Error') }}</p>
       </div>
-      <div class="progress">
-        <div class="progress-bar bg-warning" :style="warningProgressStyle">[[ taskInfo.progress.warning_records || 0]] ([[ warningProgressNum ]]%)</div>
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.warning_records || 0]] / [[ taskInfo.progress.total_records || 0 ]] ([[ warningPercentNum ]]%)</div>
+        </div>
+        <p class="card-text">{{ _('Warning') }}</p>
       </div>
     </div>
   </div>
 </template>
 <template id="default">
-  <div class="card">
-    <div class="card-body">
-      <div class="alert alert-warning">{{ _('No Active Task') }}</div>
-    </div>
-  </div>
+  <div class="alert alert-warning">{{ _('No Active Task') }}</div>
 </template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script>
@@ -37,7 +41,7 @@ Vue.component('default', {
 });
 Vue.component('task-info', {
   computed: {
-    processedProgressNum: function() {
+    processedPercentNum: function() {
       const totalRecords = this.taskInfo.progress.total_records;
       const processedRecords = this.taskInfo.progress.processed_records;
       let processedPercent;
@@ -47,7 +51,7 @@ Vue.component('task-info', {
         processedPercent = 0;
       return processedPercent;
     },
-    errorProgressNum: function() {
+    errorPercentNum: function() {
       const totalRecords = this.taskInfo.progress.total_records;
       const errorRecords = this.taskInfo.progress.error_records;
       let errorPercent;
@@ -57,7 +61,7 @@ Vue.component('task-info', {
         errorPercent = 0;
       return errorPercent;
     },
-    warningProgressNum: function() {
+    warningPercentNum: function() {
       const totalRecords = this.taskInfo.progress.total_records;
       const warningRecords = this.taskInfo.progress.warning_records;
       let warningPercent;
@@ -68,13 +72,13 @@ Vue.component('task-info', {
       return warningPercent;
     },
     processedProgressStyle: function() {
-      return {width: this.processedPercentNum + ' %'};
+      return {width: this.processedPercentNum + '%'};
     },
     errorProgressStyle: function() {
-      return {width: this.errorPercentNum + ' %'};
+      return {width: this.errorPercentNum + '%'};
     },
     warningProgressStyle: function() {
-      return {width: this.warningPercentNum + ' %'};
+      return {width: this.warningPercentNum + '%'};
     }
   },
   delimiters: ['[[', ']]'],
