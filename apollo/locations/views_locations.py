@@ -211,7 +211,8 @@ def locations_headers(view, location_set_id, upload_id):
                 kwargs = {
                     'upload_id': upload.id,
                     'mappings': data,
-                    'location_set_id': location_set_id
+                    'location_set_id': location_set_id,
+                    'channel': session.get('_id')
                 }
                 tasks.import_locations.apply_async(kwargs=kwargs)
 

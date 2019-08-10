@@ -73,7 +73,7 @@ def generate_password(length):
         for _ in range(length))
 
 
-def update_participants(dataframe, header_map, participant_set):
+def update_participants(dataframe, header_map, participant_set, task):
     """
     Given a Pandas `class`DataFrame that has participant information loaded,
     create or update the participant database with the info contained therein.
@@ -101,6 +101,13 @@ def update_participants(dataframe, header_map, participant_set):
     unresolved_supervisors = set()
     errors = set()
     warnings = set()
+
+    total_records = dataframe.shape[0]
+    processed_records = 0
+    error_records = 0
+    warning_records = 0
+    error_log = []
+    description = str(_('Import Participants'))
 
     location_set = participant_set.location_set
     locales = location_set.deployment.locale_codes
@@ -240,6 +247,11 @@ def update_participants(dataframe, header_map, participant_set):
                 _('Invalid location id (%(loc_id)s)',
                     loc_id=record[LOCATION_ID_COL])
             ))
+            error_records += 1
+            error_log.append({
+                'label': 'ERROR',
+                'record': record.tolist()
+            })
             continue
         except NoResultFound:
             warnings.add((
@@ -247,6 +259,11 @@ def update_participants(dataframe, header_map, participant_set):
                 _('Location with id %(loc_id)s not found',
                     loc_id=record[LOCATION_ID_COL])
             ))
+            warning_records += 1
+            error_log.append({
+                'label': 'WARNING',
+                'record': record.tolist()
+            })
 
         if location:
             participant.location = location
@@ -390,6 +407,7 @@ def update_participants(dataframe, header_map, participant_set):
 
         # finally done with first pass
         participant.save()
+        processed_records += 1
 
         # if we have extra data, update the participant
         if extra_data:
@@ -402,6 +420,14 @@ def update_participants(dataframe, header_map, participant_set):
             else:
                 participant.groups = groups
             participant.save()
+
+        task.update_task_info(
+            total_records=total_records,
+            error_records=error_records,
+            processed_records=processed_records,
+            warning_records=warning_records,
+            error_log=error_log
+        )
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
@@ -419,6 +445,12 @@ def update_participants(dataframe, header_map, participant_set):
             errors.add((
                 participant_id,
                 _('Supervisor with ID %(id)s not found', id=supervisor_id)))
+            processed_records -= 1
+            error_records += 1
+            error_log.append({
+                'label': 'ERROR',
+                'record': (participant_id, supervisor_id)
+            })
         else:
             participant.supervisor_id = supervisor.id
             participant.save()
@@ -442,8 +474,9 @@ def generate_response_email(count, errors, warnings):
     )
 
 
-@celery.task
-def import_participants(upload_id, mappings, participant_set_id):
+@celery.task(bind=True)
+def import_participants(
+        self, upload_id, mappings, participant_set_id, channel=None):
     upload = services.user_uploads.find(id=upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -470,7 +503,8 @@ def import_participants(upload_id, mappings, participant_set_id):
     count, errors, warnings = update_participants(
         dataframe,
         mappings,
-        participant_set
+        participant_set,
+        self
     )
 
     # delete uploaded file
@@ -480,6 +514,8 @@ def import_participants(upload_id, mappings, participant_set_id):
     msg_body = generate_response_email(count, errors, warnings)
 
     send_email(_('Import report'), msg_body, [upload.user.email])
+
+    return self.task_info
 
 
 def _cleanup_upload(filepath, upload):
