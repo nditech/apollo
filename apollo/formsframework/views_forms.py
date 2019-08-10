@@ -87,6 +87,7 @@ def new_form(view):
         _('Create Form')]
 
     web_form = FormForm()
+    web_form.vote_shares.choices = [('', '')]
 
     if not web_form.validate_on_submit():
         context = {
