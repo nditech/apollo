@@ -23,6 +23,9 @@ class ParticipantService(Service):
     __model__ = Participant
 
     def export_list(self, query):
+        if query.count() == 0:
+            raise StopIteration
+
         participant = query.first()
         participant_set = participant.participant_set
         location_set = participant_set.location_set
