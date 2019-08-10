@@ -1,6 +1,6 @@
 {% macro render_analysis_navigation(navigation_data) %}
 {% if navigation_data.locations %}
-<ul class="nav nav-pills nav-style">
+<ul class="nav nav-pills">
   {% for location in navigation_data.locations %}
     {% if navigation_data.analysis_type == 'process' %}
       {% if navigation_data.tag %}
@@ -8,9 +8,9 @@
       {% else %}
         {% set linkto = url_for('process_analysis.process_analysis_with_location', form_id=navigation_data.form.id, location_id=location.id) %}
       {% endif %}
-  <li><a href="{{ linkto }}">{{ location.name }}</a></li>
+  <li class="nav-item"><a class="nav-link" href="{{ linkto }}">{{ location.name }}</a></li>
   {%- elif navigation_data.analysis_type == 'results' -%}
-  <li><a href="{{ url_for('process_analysis.results_analysis_with_location', form_id=navigation_data.form.id, location_id=location.id) }}">{{ location.name }}</a></li>
+  <li class="nav-item"><a class="nav-link" href="{{ url_for('process_analysis.results_analysis_with_location', form_id=navigation_data.form.id, location_id=location.id) }}">{{ location.name }}</a></li>
     {% endif %}
   {% endfor %}
 </ul>

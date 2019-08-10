@@ -29,7 +29,6 @@ def get_result_analysis_menu():
         'url': url_for(
             'result_analysis.results_analysis', form_id=form.id),
         'text': form.name,
-        'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.query.filter(
         Form.events.contains(event),
         Form.form_type == 'CHECKLIST',
@@ -61,7 +60,7 @@ def _voting_results(form_id, location_id=None):
         location = locations.fget_or_404(pk=location_id)
 
     template_name = 'result_analysis/results.html'
-    page_title = _('%(form_name)s Voting Results', form_name=form.name)
+    breadcrumbs = [_('Results Data'), form.name]
     filter_class = filters.generate_submission_analysis_filter(form)
 
     loc_types = [lt for lt in location_types.root(
@@ -453,8 +452,19 @@ def _voting_results(form_id, location_id=None):
                 (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
                 for ts_f in convergence_df[['updated', component]].values]
 
+    breadcrumb_data = analysis_breadcrumb_data(
+        form, location, analysis_type='results')
+    breadcrumbs.extend([
+        {'text': location.name, 'url': url_for(
+            'result_analysis.results_analysis_with_location',
+            form_id=breadcrumb_data['form'].id,
+            location_id=location.id)
+         if idx < len(breadcrumb_data.get('locations', [])) - 1 else ''}
+        for idx, location in enumerate(breadcrumb_data.get('locations', []))
+    ])
+
     context = {
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'filter_form': filter_set.form,
         'location': location,
         'dataframe': dataset,
@@ -466,11 +476,7 @@ def _voting_results(form_id, location_id=None):
         'chart_data': chart_data,
         'chart_series': result_field_labels,
         'location_types': loc_types,
-        'location_tree': location_tree,
-        'breadcrumb_data': analysis_breadcrumb_data(
-            form, location, analysis_type='results'),
-        'navigation_data': analysis_navigation_data(
-            form, location, analysis_type='results')
+        'location_tree': location_tree
     }
 
     return render_template(template_name, **context)
@@ -480,7 +486,6 @@ def _voting_results(form_id, location_id=None):
 @register_menu(
     bp, 'main.analyses.results_analysis',
     _('Results Data'),
-    icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_result_analysis_menu),
     visible_when=lambda: len(get_result_analysis_menu()) > 0
     and permissions.view_result_analysis.can())
