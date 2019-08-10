@@ -114,6 +114,9 @@ def _multiselect_field_processor(options, column):
 def aggregate_dataset(query, form, stream=False):
     data_frame = make_submission_dataframe(query, form)
 
+    if data_frame.empty:
+        raise StopIteration
+
     location_type_names = [
         a.location_type.name for a in query.first().location.ancestors()]
 
