@@ -247,10 +247,6 @@
             <label class="control-label">Description</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
-          <div class="custom-control custom-checkbox mb-2 mt-3">
-            <input type="checkbox" id="required" class="custom-control-input" ng-model="required">
-            <label class="custom-control-label" for="required">Mark as true if present?</label>
-          </div>
           <div class="form-group mb-2">
             <label class="control-label">Analysis</label>
             <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textarea', null)" class="form-control custom-select"></select>
