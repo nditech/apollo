@@ -36,9 +36,9 @@
         expected: 0,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{label}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
-            <input type="text" ng-model="inputText" validator-required="{{required}}" validator-group="{{formName}}" id="{{formName+index}}" class="form-control" placeholder="{{placeholder}}"/>
+            <input type="text" ng-model="inputText" validator-required="{{required}}" validator-group="{{formName}}" id="{{label}}" class="form-control" placeholder="{{placeholder}}"/>
             <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
@@ -85,18 +85,18 @@
       });
       $builderProvider.registerComponent("radio", {
         group: "Default",
-        label: "AA",
+        label: "BB",
         description: "Single Choice Question",
         placeholder: "",
         required: false,
         options: ["Option 1", "Option 2"],
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{label}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <div class="custom-control custom-radio" ng-repeat="item in options track by $index">
-              <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
-              <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
+              <input id="{{label}}" name="{{label}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
+              <label class="custom-control-label" for="{{label+$index}}">{{item}}</label>
             </div>
             <p class="form-text mb-1">{{description}}</p>
           </div>
@@ -132,18 +132,18 @@
       });
       $builderProvider.registerComponent("yesno", {
         group: "Default",
-        label: "AA",
+        label: "CC",
         description: "Yes/No Question",
         placeholder: "",
         required: false,
         options: ["Yes", "No"],
         template:
           `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{label}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <div class="custom-control custom-radio" ng-repeat="item in options track by $index">
-              <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
-              <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
+              <input id="{{label}}" name="{{label}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
+              <label class="custom-control-label" for="{{label+$index}}">{{item}}</label>
             </div>
             <p class="form-text mb-1">{{description}}</p>
           </div>
@@ -180,7 +180,7 @@
       
       $builderProvider.registerComponent("checkbox", {
         group: "Default",
-        label: "AA",
+        label: "DD",
         description: "Multiple Choices Question",
         placeholder: "",
         required: false,
@@ -188,11 +188,11 @@
         arrayToText: true,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{label}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <div class="custom-control custom-checkbox" ng-repeat="item in options track by $index">
-              <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="checkbox"/>
-              <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
+              <input id="{{label}}" name="{{label}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="checkbox"/>
+              <label class="custom-control-label" for="{{label+$index}}">{{item}}</label>
             </div>
             <p class="form-text mb-1">{{description}}</p>
           </div>
@@ -231,9 +231,9 @@
         required: false,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{label}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
-            <textarea ng-model="inputText" rows="1" validator-required="{{required}}" validator-group="{{formName}}" id="{{formName+index}}" class="form-control" placeholder="{{placeholder}}"></textarea>
+            <textarea ng-model="inputText" rows="1" validator-required="{{required}}" validator-group="{{formName}}" id="{{label}}" class="form-control" placeholder="{{placeholder}}"></textarea>
             <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
