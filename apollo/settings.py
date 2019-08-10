@@ -29,7 +29,7 @@ API_PAGE_SIZE = config('API_PAGE_SIZE', cast=int, default=100)
 TIMEZONE = config('TIMEZONE', default='UTC')
 
 SSL_REQUIRED = config('SSL_REQUIRED', cast=config.boolean, default=True)
-ENABLE_MOE = config('ENABLE_MOE', cast=config.boolean, default=False)
+ENABLE_MOE = config('ENABLE_MOE', cast=config.boolean, default=True)
 X_FRAME_OPTIONS = config('X_FRAME_OPTIONS', default='DENY')
 
 # This setting informs the application server of the number of
