@@ -16,7 +16,11 @@ class LocationService(Service):
 
     def export_list(self, query):
         headers = []
-        location_set = query.first().location_set
+        sample_location = query.first()
+        if not sample_location:
+            raise StopIteration
+
+        location_set = sample_location.location_set
         location_types = LocationTypeService().find(
             location_set_id=location_set.id
         ).join()
