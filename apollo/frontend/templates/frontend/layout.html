@@ -2,7 +2,7 @@
 <html lang="en"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
-    <title>{{ breadcrumbs|join(' · ') }}</title>
+    <title>{% for breadcrumb in breadcrumbs %}{{ breadcrumb.text if breadcrumb.text else breadcrumb }}{{ ' · ' if not loop.last else '' }}{% endfor %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -35,7 +35,7 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     {%- endif %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
                 {% if g.deployment.logo %}

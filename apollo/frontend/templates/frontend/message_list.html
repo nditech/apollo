@@ -13,16 +13,20 @@
     <form class="mb-n2 ml-n2 mr-n2">
       <div class="form-row">
         <div class="col-md-2 mb-2">
+          <label for="{{ filter_form.mobile.id }}" class="sr-only">{{ filter_form.mobile.label.text }}</label>
           {{ filter_form.mobile(class_="form-control", placeholder=_("Mobile")) }}
         </div>
         <div class="col-md-4 mb-2">
+          <label for="{{ filter_form.text.id }}" class="sr-only">{{ filter_form.text.label.text }}</label>
           {{ filter_form.text(class_="form-control", placeholder=_("Text")) }}
         </div>
         <div class="col-md-2 mb-2">
+          <label for="{{ filter_form.form_type.id }}" class="sr-only">{{ filter_form.form_type.label.text }}</label>
           {{ filter_form.form_type(class_="form-control custom-select", placeholder=_("Type")) }}
         </div>
         <div class="col-md-2 mb-2">
           <div class="input-group date" id="datepicker" data-target-input="nearest">
+            <label for="{{ filter_form.date.id }}" class="sr-only">{{ filter_form.date.label.text }}</label>
             {{ filter_form.date(class_="form-control datetimepicker-input", placeholder=_("Date"), **{'data-target': '#datepicker'}) }}
             <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
               <div class="input-group-text"><i class="fa fa-calendar"></i></div>

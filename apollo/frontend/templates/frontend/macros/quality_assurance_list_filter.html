@@ -4,24 +4,31 @@
         <form class="mb-n2 ml-n2 mr-n2">
             <div class="form-row">
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ filter_form.participant_id.id }}" class="sr-only">{{ filter_form.participant_id.label.text }}</label>
                     {{ filter_form.participant_id(class_='form-control', placeholder=_('Participant ID')) }}
                 </div>
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
                     {{ filter_form.sample(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-8 mb-2">
+                    <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>
                 <div class="col-md-4 mb-2">
+                    <label for="{{ filter_form.quality_check.criterion.id }}" class="sr-only">{{ filter_form.quality_check.criterion.label.text }}</label>
                     {{ filter_form.quality_check.criterion(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.quality_check.condition.id }}" class="sr-only">{{ filter_form.quality_check.condition.label.text }}</label>
                     {{ filter_form.quality_check.condition(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.quarantine_status.id }}" class="sr-only">{{ filter_form.quarantine_status.label.text }}</label>
                     {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.online_status.id }}" class="sr-only">{{ filter_form.online_status.label.text }}</label>
                     {{ filter_form.online_status(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">

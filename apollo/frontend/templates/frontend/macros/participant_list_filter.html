@@ -4,26 +4,33 @@
         <form class="mb-n2 ml-n2 mr-n2">
             <div class="form-row">
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ form.participant_id.id }}" class="sr-only">{{ form.participant_id.label.text }}</label>
                     {{ form.participant_id(class_='form-control', placeholder=_('Participant ID')) }}
                 </div>
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ form.name.id }}" class="sr-only">{{ form.name.label.text }}</label>
                     {{ form.name(class_='form-control', placeholder=_('Name')) }}
                 </div>
                 {% if location_set_id -%}
                 <div class="col-md-6 mb-2">
+                    <label for="{{ form.location.id }}" class="sr-only">{{ form.location.label.text }}</label>
                     {{ form.location(class_='form-control select2 select2-locations') }}
                 </div>
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ form.sample.id }}" class="sr-only">{{ form.sample.label.text }}</label>
                     {{ form.sample(class_='form-control custom-select') }}
                 </div>
                 {%- endif %}
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ form.phone.id }}" class="sr-only">{{ form.phone.label.text }}</label>
                     {{ form.phone(class_='form-control', placeholder=_('Phone')) }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ form.role.id }}" class="sr-only">{{ form.role.label.text }}</label>
                     {{ form.role(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ form.partner.id }}" class="sr-only">{{ form.partner.label.text }}</label>
                     {{ form.partner(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">

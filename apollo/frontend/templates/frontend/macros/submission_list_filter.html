@@ -4,25 +4,31 @@
         <form class="mb-n2 ml-n2 mr-n2">
             <div class="form-row">
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ filter_form.participant_id.id }}" class="sr-only">{{ filter_form.participant_id.label.text }}</label>
                     {{ filter_form.participant_id(class_='form-control', placeholder=_('Participant ID')) }}
                 </div>
                 <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
                     {{ filter_form.sample(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-6 mb-2">
+                    <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>
             {%- if form.form_type == 'CHECKLIST' -%}
                 <div class="col-md-2 mb-2 d-flex">
+                    <label for="{{ filter_form.conjunction.id }}" class="sr-only">{{ filter_form.conjunction.label.text }}</label>
                     {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
                 </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form[field].id }}" class="sr-only">{{ filter_form[field].label.text }}</label>
                     {{ filter_form[field](class_='form-control custom-select') }}
                 </div>
                 {%- endfor -%}
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.quarantine_status.id }}" class="sr-only">{{ filter_form.quarantine_status.label.text }}</label>
                     {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
             {%- else -%}
@@ -30,19 +36,23 @@
                 {%- for field in group.fields -%}
                 {%- if field['type'] == 'select' -%}
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form[field.tag].id }}" class="sr-only">{{ filter_form[field.tag].label.text }}</label>
                     {{ filter_form[field.tag](class_='form-control custom-select') }}
                 </div>
                 {%- endif -%}
                 {%- endfor -%}
                 {%- endfor -%}
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.status.id }}" class="sr-only">{{ filter_form.status.label.text }}</label>
                     {{ filter_form.status(class_='form-control custom-select select2-container select2', placeholder=_('All Statuses')) }}
                 </div>
             {%- endif %}
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.sender_verification.id }}" class="sr-only">{{ filter_form.sender_verification.label.text }}</label>
                     {{ filter_form.sender_verification(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.online_status.id }}" class="sr-only">{{ filter_form.online_status.label.text }}</label>
                     {{ filter_form.online_status(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">

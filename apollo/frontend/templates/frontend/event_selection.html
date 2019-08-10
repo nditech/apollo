@@ -8,6 +8,7 @@
         <legend>{{ page_title }}</legend>
         <form class="form-vertical" action="" method="POST">{{ form.csrf_token }}
           <div class="form-group">
+            <label for="{{ form.event.id }}" class="sr-only">{{ form.event.label.text }}</label>
             {{ form.event(class_='form-control custom-select') }}
           </div>
               <button class="btn btn-primary col-3" type="submit">{{ _('Go') }}</button>

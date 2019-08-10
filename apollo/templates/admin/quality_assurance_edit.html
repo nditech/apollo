@@ -148,7 +148,6 @@
       });
     })
   });
-{% raw %}
   Vue.component('predicate', {
     template: `
       <input type="text" class="form-control selectize" v-bind:class="{'col-4': direction == 'left'}" ref="input" :placeholder="direction == 'left' ? 'Left' : 'Right'" :value="value" @input="changed(index)" />
@@ -219,14 +218,14 @@
         <div class="row mb-2" v-for="(criterion, index) in control.criteria" :key="criterion.id">
           <div class="col-12">
             <div class="input-group">
-              <select class="form-control custom-select col-1" :class="{ invisible: index == 0 }" v-model="criterion.conjunction">
+              <select class="form-control custom-select col-1" :class="{ invisible: index == 0 }" v-model="criterion.conjunction" aria-label="{{ _('Conjunction') }}">
                 <option value="&&">AND</option>
                 <option value="||">OR</option>
               </select>
 
               <predicate :direction="'left'" :value="criterion.lvalue" :index="index" />
 
-              <select class="form-control custom-select col-2" v-model="criterion.comparator">
+              <select class="form-control custom-select col-2" v-model="criterion.comparator" aria-label="{{ _('Comparator') }}">
                 <option value="=">Equal To</option>
                 <option value="!=">Not Equal To</option>
                 <option value="<">Less Than</option>
@@ -238,8 +237,8 @@
               <predicate :direction="'right'" :value="criterion.rvalue" :index="index" />
 
               <div class="input-group-append">
-                <button class="btn btn-success" v-if="index == (control.criteria.length - 1)" @click.prevent="addCriterion"><i class="fa fa-plus-circle"></i></button>
-                <button class="btn btn-danger" @click.prevent="removeCriterion(index)" v-if="control.criteria.length > 1"><i class="fa fa-minus-circle"></i></button>
+                <button class="btn btn-success" v-if="index == (control.criteria.length - 1)" @click.prevent="addCriterion" aria-label="{{ _('Add Criterion') }}"><i class="fa fa-plus-circle"></i></button>
+                <button class="btn btn-danger" @click.prevent="removeCriterion(index)" v-if="control.criteria.length > 1" aria-label="{{ _('Delete Criterion') }}"><i class="fa fa-minus-circle"></i></button>
               </div>
             </div>
           </div>
@@ -276,7 +275,6 @@
     `,
     props: ['control', 'title']
   });
-{% endraw %}
   var vm = new Vue({
     el: '#app',
     data: {
