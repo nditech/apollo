@@ -79,7 +79,6 @@ class IncidentStatusFilter(ChoiceFilter):
             ('rejected', _('Rejected Incidents')),
             ('citizen', _('Citizen Report Incidents')),
         )
-        kwargs['default'] = ''
         super().__init__(*args, **kwargs)
 
     def filter(self, query, value, **kwargs):
@@ -95,7 +94,7 @@ class IncidentStatusFilter(ChoiceFilter):
 def make_submission_analysis_filter(event, form):
     attributes = {}
     if form.form_type == 'INCIDENT':
-        attributes['status'] = IncidentStatusFilter()
+        attributes['status'] = IncidentStatusFilter(default='confirmed')
 
     return type(
         'SubmissionAnalysisFilterSet',
