@@ -1,0 +1,111 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+<div id="app">
+  <component :is="currentComponent" :task-info="currentState"></component>
+</div>
+{% endblock %}
+{% block tail_js %}
+{{ super() }}
+<template id="task-info">
+  <div class="card">
+    <div class="card-header">[[ taskInfo.description ]]</div>
+    <div class="card-body" v-if="taskInfo">
+      <div class="card-text">[[ taskInfo.progress.total_records || 0 ]] {{ _('Records') }}</div>
+      <div class="progress">
+        <div class="progress-bar" :style="processedProgressStyle">[[ taskInfo.progress.processed_records || 0 ]] ([[ processedProgressNum ]]%)</div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar bg-danger" :style="errorProgressStyle">[[ taskInfo.progress.error_records || 0 ]]  ([[ errorProgressNum ]]%)</div>
+      </div>
+      <div class="progress">
+        <div class="progress-bar bg-warning" :style="warningProgressStyle">[[ taskInfo.progress.warning_records || 0]] ([[ warningProgressNum ]]%)</div>
+      </div>
+    </div>
+  </div>
+</template>
+<template id="default">
+  <div class="card">
+    <div class="card-body">
+      <div class="alert alert-warning">{{ _('No Active Task') }}</div>
+    </div>
+  </div>
+</template>
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script>
+Vue.component('default', {
+  template: '#default'
+});
+Vue.component('task-info', {
+  computed: {
+    processedProgressNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const processedRecords = this.taskInfo.progress.processed_records;
+      let processedPercent;
+      if (totalRecords !== 0)
+        processedPercent = Math.round(100 * processedRecords / totalRecords);
+      else
+        processedPercent = 0;
+      return processedPercent;
+    },
+    errorProgressNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const errorRecords = this.taskInfo.progress.error_records;
+      let errorPercent;
+      if (totalRecords !== 0)
+        errorPercent = Math.round(100 * errorRecords / totalRecords);
+      else
+        errorPercent = 0;
+      return errorPercent;
+    },
+    warningProgressNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const warningRecords = this.taskInfo.progress.warning_records;
+      let warningPercent;
+      if (totalRecords !== 0)
+        warningPercent = Math.round(100 * warningRecords / totalRecords);
+      else
+        warningPercent = 0;
+      return warningPercent;
+    },
+    processedProgressStyle: function() {
+      return {width: this.processedPercentNum + ' %'};
+    },
+    errorProgressStyle: function() {
+      return {width: this.errorPercentNum + ' %'};
+    },
+    warningProgressStyle: function() {
+      return {width: this.warningPercentNum + ' %'};
+    }
+  },
+  delimiters: ['[[', ']]'],
+  props: ['taskInfo'],
+  template: '#task-info'
+});
+const vm = new Vue({
+  el: '#app',
+  data: {
+    eventSource: null,
+    currentState: null,
+  },
+  computed: {
+    currentComponent: function () {
+      if (this.currentState === null)
+        return 'default';
+      else
+        return 'task-info';
+    }
+  },
+  created: function () {
+    const self = this;
+    self.eventSource = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+    self.eventSource.onmessage = function(event) {
+      let data = JSON.parse(event.data);
+      self.currentState = data;
+    };
+    self.eventSource.addEventListener('error', function(event) {
+      console.log(event);
+    });
+  }
+});
+</script>
+{% endblock tail_js %}

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import flash, g, send_file, redirect, request
+from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
 from flask_admin.actions import action
@@ -633,6 +633,30 @@ class FormsView(BaseView):
         return quality_control_edit(self, form_id)
 
 
+class TaskView(BaseView):
+    def is_accessible(self):
+        '''For checking if the admin view is accessible.'''
+        if current_user.is_anonymous:
+            return False
+
+        deployment = current_user.deployment
+        role = models.Role.query.filter_by(
+            deployment_id=deployment.id, name='admin').first()
+        return current_user.has_role(role)
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for_security('login', next=request.url))
+
+    @expose('/')
+    def index(self):
+        context = {
+            'channel': session.get('_id')
+            }
+        template_name = 'admin/tasks.html'
+
+        return self.render(template_name, **context)
+
+
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(
     EventAdminView(models.Event, db.session, _('Events')))
@@ -643,4 +667,5 @@ admin.add_view(
 admin.add_view(
     ParticipantSetAdminView(
         models.ParticipantSet, db.session, _('Participant Sets')))
-admin.add_view(FormsView(name="Forms"))
+admin.add_view(FormsView(name=_("Forms")))
+admin.add_view(TaskView(name=_('Tasks')))

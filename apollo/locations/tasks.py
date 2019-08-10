@@ -299,8 +299,7 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
         dataframe,
         mappings,
         location_set,
-        self,
-        channel
+        self
     )
 
     os.remove(filepath)

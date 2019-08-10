@@ -119,30 +119,31 @@ def create_celery_app(app=None):
                 return TaskBase.__call__(self, *args, **kwargs)
 
         def on_failure(self, exc, task_id, args, kwargs, einfo):
-            channel = kwargs.get('channel')
-            task_metadata = self.backend.get_task_meta(self.request.id)
-            payload = {
-                'id': task_id,
-                'status': task_metadata.get('status'),
-                'info': task_metadata.get('result'),
-                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
-            }
+            with app.app_context():
+                channel = kwargs.get('channel')
+                task_metadata = self.backend.get_task_meta(self.request.id)
+                payload = {
+                    'id': task_id,
+                    'status': task_metadata.get('status'),
+                    'description': TASK_DESCRIPTIONS.get(self.request.task)
+                }
 
-            if channel is not None:
-                sse.publish(payload, channel=channel)
+                if channel is not None:
+                    sse.publish(payload, channel=channel)
 
         def on_success(self, retval, task_id, args, kwargs):
-            channel = kwargs.get('channel')
-            task_metadata = self.backend.get_task_meta(task_id)
-            payload = {
-                'id': task_id,
-                'status': task_metadata.get('status'),
-                'info': retval,
-                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
-            }
+            with app.app_context():
+                channel = kwargs.get('channel')
+                task_metadata = self.backend.get_task_meta(task_id)
+                payload = {
+                    'id': task_id,
+                    'status': task_metadata.get('status'),
+                    'info': retval,
+                    'description': TASK_DESCRIPTIONS.get(self.request.task)
+                }
 
-            if channel is not None:
-                sse.publish(payload, channel=channel)
+                if channel is not None:
+                    sse.publish(payload, channel=channel)
 
         def update_task_info(self, **kwargs):
             request = self.request
@@ -155,7 +156,7 @@ def create_celery_app(app=None):
                 'id': request.id,
                 'status': task_metadata.get('status'),
                 'progress': task_metadata.get('result'),
-                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
+                'description': TASK_DESCRIPTIONS.get(self.request.task)
             }
 
             if channel is not None:
