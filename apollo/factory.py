@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from cachetools import cached
 from celery import Celery
-from flask import Flask, request
+from flask import Flask, abort, request, session
 from flask_security import current_user
+from flask_sse import sse
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
@@ -13,6 +14,15 @@ from apollo.core import (
     uploads)
 from apollo.helpers import register_blueprints
 from importlib import import_module
+
+
+@sse.before_request
+def limit_access():
+    if not current_user.is_authenticated:
+        abort(403)
+
+    if request.args.get('channel') != session.get('_id'):
+        abort(403)
 
 
 def create_app(
@@ -73,6 +83,8 @@ def create_app(
             register_blueprints(
                 app, configured_app, import_module(configured_app).__path__)
 
+    app.register_blueprint(sse, url_prefix='/stream')
+
     return app
 
 
@@ -91,10 +103,40 @@ def create_celery_app(app=None):
 
     class ContextTask(TaskBase):
         abstract = True
+        task_info = {}
+        track_started = True
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
+
+        def on_failure(self, exc, task_id, args, kwargs, einfo):
+            channel = kwargs.get('channel')
+            task_metadata = self.backend.get_task_meta(self.request.id)
+            payload = {
+                'id': task_id,
+                'status': task_metadata.get('status'),
+                'info': task_metadata.get()
+            }
+
+            if channel is not None:
+                sse.publish(payload, channel=channel)
+
+        def update_task_info(self, **kwargs):
+            request = self.request
+            channel = request.kwargs.get('channel')
+            self.task_info.update(**kwargs)
+            self.update_state(meta=self.task_info)
+
+            task_metadata = self.backend.get_task_meta(request.id)
+            payload = {
+                'id': request.id,
+                'status': task_metadata.get('status'),
+                'progress': task_metadata.get('result')
+            }
+
+            if channel is not None:
+                sse.publish(payload, channel=channel)
 
     celery.Task = ContextTask
     return celery
