@@ -2,6 +2,7 @@
 from cachetools import cached
 from celery import Celery
 from flask import Flask, abort, request, session
+from flask_babelex import gettext as _
 from flask_security import current_user
 from flask_sse import sse
 from flask_sslify import SSLify
@@ -14,6 +15,13 @@ from apollo.core import (
     uploads)
 from apollo.helpers import register_blueprints
 from importlib import import_module
+
+
+TASK_DESCRIPTIONS = {
+    'apollo.locations.tasks.import_locations': _('Import Locations'),
+    'apollo.participants.tasks.import_participants': _('Import Participants'),
+    'apollo.submissions.tasks.init_submissions': _('Create Checklists')
+}
 
 
 @sse.before_request
@@ -116,7 +124,21 @@ def create_celery_app(app=None):
             payload = {
                 'id': task_id,
                 'status': task_metadata.get('status'),
-                'info': task_metadata.get()
+                'info': task_metadata.get('result'),
+                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
+            }
+
+            if channel is not None:
+                sse.publish(payload, channel=channel)
+
+        def on_success(self, retval, task_id, args, kwargs):
+            channel = kwargs.get('channel')
+            task_metadata = self.backend.get_task_meta(task_id)
+            payload = {
+                'id': task_id,
+                'status': task_metadata.get('status'),
+                'info': retval,
+                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
             }
 
             if channel is not None:
@@ -132,7 +154,8 @@ def create_celery_app(app=None):
             payload = {
                 'id': request.id,
                 'status': task_metadata.get('status'),
-                'progress': task_metadata.get('result')
+                'progress': task_metadata.get('result'),
+                'description': TASK_DESCRIPTIONS.get(self.request.task_name)
             }
 
             if channel is not None:
