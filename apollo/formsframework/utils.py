@@ -26,6 +26,9 @@ def _make_form_instance(metadata):
     form.blank_votes_tag = metadata.get('blank_votes_tag')
     form.invalid_votes_tag = metadata.get('invalid_votes_tag')
     form.registered_voters_tag = metadata.get('registered_voters_tag')
+    vote_shares = metadata.get('vote_shares')
+    if vote_shares is not None:
+        form.vote_shares = sorted(vote_shares.split(','))
 
     try:
         form.calculate_moe = bool(int(metadata.get('calculate_moe')))
@@ -100,6 +103,12 @@ def _process_survey_worksheet(sheet_data, form_data):
                 except (TypeError, ValueError):
                     pass
 
+        # legacy boolean
+        elif record_type == 'boolean':
+            field['type'] = 'integer'
+            field['max'] = 1
+            field['min'] = 0
+
         # text
         elif record_type == 'text':
             if field_dict.get('extra') == 'comment':
@@ -145,9 +154,26 @@ def _process_choices_worksheet(choices_data, form_schema):
 
 
 def _process_analysis_worksheet(analysis_data, form_schema):
+    vote_shares = []
     for analysis_dict in analysis_data:
         field = form_schema['field_cache'][analysis_dict['name']]
-        field['analysis_type'] = analysis_dict['analysis']
+        analysis_type = analysis_dict['analysis']
+
+        # handle legacy cases
+        if analysis_type == 'PROCESS':
+            if field['type'] == 'integer':
+                field['analysis_type'] = 'mean'
+            elif field['type'] in ('multiselect', 'select'):
+                field['analysis_type'] = 'histogram'
+            else:
+                field['analysis_type'] = 'N/A'
+        elif analysis_type == 'RESULT':
+            vote_shares.append(field['tag'])
+            field['analysis_type'] = 'N/A'
+        else:
+            field['analysis_type'] = analysis_type
+
+    return vote_shares
 
 
 def _process_qa_worksheet(qa_data):
@@ -194,7 +220,8 @@ def import_form(sourcefile):
 
     # go over the analysis worksheet
     if analysis_data:
-        _process_analysis_worksheet(analysis_data, form.data)
+        vote_shares = _process_analysis_worksheet(analysis_data, form.data)
+        form.vote_shares = vote_shares
 
     # go over the quality checks
     if qa_data:
@@ -227,7 +254,7 @@ def export_form(form):
                        'require_exclamation', 'calculate_moe',
                        'accredited_voters_tag', 'invalid_votes_tag',
                        'registered_voters_tag', 'blank_votes_tag',
-                       'quality_checks_enabled']
+                       'quality_checks_enabled', 'vote_shares']
     qa_header = ['description', 'left', 'relation', 'right']
 
     # output headers
@@ -254,6 +281,8 @@ def export_form(form):
     metadata_sheet.write(1, 7, form.registered_voters_tag)
     metadata_sheet.write(1, 8, form.blank_votes_tag)
     metadata_sheet.write(1, 9, 1 if form.quality_checks_enabled else 0)
+    vote_shares = ','.join(form.vote_shares) if form.vote_shares else ''
+    metadata_sheet.write(1, 10, vote_shares)
 
     # write out form structure
     current_survey_row = 1
