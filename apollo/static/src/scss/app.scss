@@ -69,3 +69,7 @@ $placeholder-pseudo-classes: "::placeholder", "::-webkit-input-placeholder", "::
         font-family: $font-family-base;
     }
 }
+
+.select2-container {
+    background-color: $input-bg;
+}
