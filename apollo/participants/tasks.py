@@ -108,6 +108,7 @@ def update_participants(dataframe, header_map, participant_set, task):
     error_records = 0
     warning_records = 0
     error_log = []
+    rows_processed = 0
 
     location_set = participant_set.location_set
     locales = location_set.deployment.locale_codes
@@ -427,13 +428,22 @@ def update_participants(dataframe, header_map, participant_set, task):
                 participant.groups = groups
             participant.save()
 
-        task.update_task_info(
-            total_records=total_records,
-            error_records=error_records,
-            processed_records=processed_records,
-            warning_records=warning_records,
-            error_log=error_log
-        )
+        if rows_processed % 50 == 0:
+            task.update_task_info(
+                total_records=total_records,
+                error_records=error_records,
+                processed_records=processed_records,
+                warning_records=warning_records,
+                error_log=error_log
+            )
+
+    task.update_task_info(
+        total_records=total_records,
+        error_records=error_records,
+        processed_records=processed_records,
+        warning_records=warning_records,
+        error_log=error_log
+    )
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
