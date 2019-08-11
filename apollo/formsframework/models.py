@@ -383,7 +383,6 @@ class FormBuilderSerializer(object):
 
             if f['component'] == 'textarea':
                 field['type'] = 'comment'
-                field['analysis_type'] = 'N/A'
             elif f['component'] == 'textInput':
                 if f['subtype'] == 'integer':
                     field['type'] = 'integer'
