@@ -5,7 +5,7 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import Boolean, Integer, String, and_, case, func, null
+from sqlalchemy import Integer, String, and_, case, func, null
 from sqlalchemy.dialects.postgresql import array
 
 from apollo.models import Location, Participant, Submission
