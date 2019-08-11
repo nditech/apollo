@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from geoalchemy2 import Geometry  # noqa
 import sqlalchemy as sa
@@ -151,8 +152,10 @@ class Submission(BaseModel):
             if not participant.location_id:
                 error_records += 1
                 error_log.append({
-                    'label': 'WARNING',
-                    'record': participant.participant_id
+                    'label': 'ERROR',
+                    'message': gettext(
+                        'Participant ID %(part_id)s has no location',
+                        part_id=participant.participant_id)
                 })
                 continue
 

@@ -6,6 +6,7 @@ import numbers
 import os
 
 from flask import render_template_string
+from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from pandas import isnull
 from slugify import slugify
@@ -114,7 +115,10 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 error_records += 1
                 error_log.append({
                     'label': 'ERROR',
-                    'record': current_row.tolist()
+                    'message': gettext(
+                        'No code or name column present for row %(row)d',
+                        row=(idx + 1)
+                    )
                 })
                 continue
 

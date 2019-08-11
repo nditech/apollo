@@ -28,6 +28,9 @@
         </div>
         <p class="card-text">{{ _('Warning') }}</p>
       </div>
+      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log">
+        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">[[ report.message ]]<span class="badge badge-dark">[[ report.label ]]</span></li>
+      </ul>  
     </div>
   </div>
 </template>
@@ -36,6 +39,9 @@
 </template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script>
+const roundTo = function(num) {
+  return Math.round((num + 0.00001) * 100) / 100;
+};
 Vue.component('default', {
   template: '#default'
 });
@@ -46,7 +52,7 @@ Vue.component('task-info', {
       const processedRecords = this.taskInfo.progress.processed_records;
       let processedPercent;
       if (totalRecords !== 0)
-        processedPercent = Math.round(100 * processedRecords / totalRecords);
+        processedPercent = roundTo(100 * processedRecords / totalRecords);
       else
         processedPercent = 0;
       return processedPercent;
@@ -56,7 +62,7 @@ Vue.component('task-info', {
       const errorRecords = this.taskInfo.progress.error_records;
       let errorPercent;
       if (totalRecords !== 0)
-        errorPercent = Math.round(100 * errorRecords / totalRecords);
+        errorPercent = roundTo(100 * errorRecords / totalRecords);
       else
         errorPercent = 0;
       return errorPercent;
@@ -66,7 +72,7 @@ Vue.component('task-info', {
       const warningRecords = this.taskInfo.progress.warning_records;
       let warningPercent;
       if (totalRecords !== 0)
-        warningPercent = Math.round(100 * warningRecords / totalRecords);
+        warningPercent = roundTo(100 * warningRecords / totalRecords);
       else
         warningPercent = 0;
       return warningPercent;
