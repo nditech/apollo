@@ -525,8 +525,6 @@ def import_participants(
 
     send_email(_('Import report'), msg_body, [upload.user.email])
 
-    return self.task_info
-
 
 def _cleanup_upload(filepath, upload):
     os.remove(filepath)

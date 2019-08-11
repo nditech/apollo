@@ -137,7 +137,7 @@ def create_celery_app(app=None):
                 payload = {
                     'id': task_id,
                     'status': 'COMPLETED',
-                    'progress': retval,
+                    'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task)
                 }
 

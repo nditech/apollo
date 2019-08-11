@@ -18,5 +18,3 @@ def init_submissions(
         return
 
     models.Submission.init_submissions(event, form, role, location_type, self)
-
-    return self.task_info

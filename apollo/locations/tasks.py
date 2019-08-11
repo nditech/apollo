@@ -314,5 +314,3 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     )
 
     send_email(_('Locations Import Report'), msg_body, [upload.user.email])
-
-    return self.task_info
