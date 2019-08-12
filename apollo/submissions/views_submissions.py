@@ -1044,7 +1044,7 @@ def submission_version(submission_id, version_id):
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_dashboard(form_id):
     form = services.forms.fget_or_404(id=form_id, form_type='CHECKLIST')
-    page_title = _('Quality Assurance — %(name)s', name=form.name)
+    breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
@@ -1071,7 +1071,7 @@ def quality_assurance_dashboard(form_id):
         'args': data,
         'location_types': loc_types,
         'location': location,
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'check_data': check_data
     }
 

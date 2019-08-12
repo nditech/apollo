@@ -1,32 +1,29 @@
-{% extends "frontend/_layout.html" %}
+{% extends "frontend/layout.html" %}
 {%- from 'frontend/macros/quality_assurance_dashboard_filter.html' import render_filter_form -%}
 
-{% block toolbar %}
+{%- block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if perms.export_submissions.can() %}
-<div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-</div>
+<a class="btn btn-secondary" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
-{% endblock %}
+</div>
+{%- endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col-md-12">
     {{ render_filter_form(form, filter_form, location) }}
   </div>
 </div>
+
 <div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
-  <section v-for="check in checks">
-    <check :check="check"></check>
-  </section>
+  <check :check="check" v-for="check in checks"></check>
 </div>
+
 <template id="chart-component">
-  <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <div class="panel-title"><h4><%= check.description %></h4></div>
-      </div>
-      <div class="panel-body" :id="htmlID"></div>
-    </div>
+  <div class="col-md-6 mb-2 mt-4">
+    <h5 class="text-center"><%= check.description %></h5>
+    <div :id="htmlID"></div>
   </div>
 </template>
 {% endblock %}
@@ -34,7 +31,6 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dimple.v2.2.0.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script>
 var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
 
@@ -61,10 +57,10 @@ Vue.component('check', {
       ], true);
 
       chart.addSeries('label', dimple.plot.bar);
-      chart.assignColor('OK', '#8ae234');
-      chart.assignColor('Verified', '#fcaf3e');
-      chart.assignColor('Flagged', '#ef2929');
-      chart.assignColor('Missing', '#babdb6');
+      chart.assignColor('OK', '#28a745');
+      chart.assignColor('Verified', '#007bff');
+      chart.assignColor('Flagged', '#dc3545');
+      chart.assignColor('Missing', '#6c757d');
 
       chart.draw();
     });
@@ -75,6 +71,16 @@ Vue.component('check', {
 var app = new Vue({
   el: '#check_breakdown',
   data: {checks: check_data}
+});
+</script>
+<script type="text/javascript">
+$(function () {
+	$('#filter_reset').on('click', function() {
+		var $form = $(this).parents('form').first();
+		$form.find(':input').not('button').each(function() { $(this).val(''); })
+		$form.submit();
+	});
+	$('select.select2-locations').select2(LocationOptions);
 });
 </script>
 {% endblock %}
