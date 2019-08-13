@@ -12,19 +12,19 @@
     <div class="card-body">
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.processed_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ processedPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.processed_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ processedPercentNum ]]%)</div>
         </div>
         <p class="card-text">{{ _('Successful') }}</p>
       </div>
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.error_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ errorPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.error_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ errorPercentNum ]]%)</div>
         </div>
         <p class="card-text">{{ _('Error') }}</p>
       </div>
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.warning_records || 0]] / [[ taskInfo.progress.total_records || 0 ]] ([[ warningPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.warning_records || 0]] / [[ taskInfo.progress.total_records || 0 ]] ([[ warningPercentNum ]]%)</div>
         </div>
         <p class="card-text">{{ _('Warning') }}</p>
       </div>
