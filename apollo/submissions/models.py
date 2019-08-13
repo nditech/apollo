@@ -147,10 +147,8 @@ class Submission(BaseModel):
         error_records = 0
         warning_records = 0
         error_log = []
-        rows_processed = 0
 
         for participant in participants:
-            rows_processed += 1
             if not participant.location_id:
                 error_records += 1
                 error_log.append({
@@ -217,22 +215,13 @@ class Submission(BaseModel):
 
             processed_records += 1
             if task:
-                if rows_processed % 50 == 0:
-                    task.update_task_info(
-                        total_records=total_records,
-                        processed_records=processed_records,
-                        error_records=error_records,
-                        warning_records=warning_records,
-                        error_log=error_log
-                    )
-        if task:
-            task.update_task_info(
-                total_records=total_records,
-                processed_records=processed_records,
-                error_records=error_records,
-                warning_records=warning_records,
-                error_log=error_log
-            )
+                task.update_task_info(
+                    total_records=total_records,
+                    processed_records=processed_records,
+                    error_records=error_records,
+                    warning_records=warning_records,
+                    error_log=error_log
+                )
 
     def update_related(self, data):
         '''

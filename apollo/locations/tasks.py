@@ -82,7 +82,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
     error_records = 0
     warning_records = 0
     error_log = []
-    rows_processed = 0
 
     location_types = LocationType.query.filter(
         LocationType.location_set == location_set).join(
@@ -101,7 +100,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
     for idx in data_frame.index:
         current_row = data_frame.ix[idx]
-        rows_processed += 1
         row_ids = {}
         for loc_type in location_types:
             name_column_keys = [
@@ -272,22 +270,13 @@ def update_locations(data_frame, header_mapping, location_set, task):
             db.session.commit()
 
         processed_records += 1
-        if (rows_processed % 50 == 0):
-            task.update_task_info(
-                total_records=total_records,
-                processed_records=processed_records,
-                error_records=error_records,
-                warning_records=warning_records,
-                error_log=error_log
-            )
-
-    task.update_task_info(
-        total_records=total_records,
-        processed_records=processed_records,
-        error_records=error_records,
-        warning_records=warning_records,
-        error_log=error_log
-    )
+        task.update_task_info(
+            total_records=total_records,
+            processed_records=processed_records,
+            error_records=error_records,
+            warning_records=warning_records,
+            error_log=error_log
+        )
 
 
 @celery.task(bind=True)
