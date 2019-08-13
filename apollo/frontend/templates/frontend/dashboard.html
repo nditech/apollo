@@ -1,7 +1,7 @@
 {% extends 'frontend/layout.html' %}
 {% block stylesheets %}
 <style type="text/css">
-.piechart svg{height:300px; margin-top: .8em;}
+.chart svg{height:300px; margin-top: .8em;}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
@@ -20,7 +20,7 @@
   {%- else -%}
     <h5 class="text-center">{% if not location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if not location %}</a>{% endif %}</h5>
   {% endif %}
-    <div class="piechart text-center" data-chart='{{ row|tojson }}'>
+    <div class="chart text-center" data-chart='{{ row|tojson }}'>
     </div>
   </div>
 {% endfor %}
@@ -32,7 +32,7 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script type="text/javascript">
   var time = new Date().getTime();
