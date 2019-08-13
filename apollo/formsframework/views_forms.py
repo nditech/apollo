@@ -340,6 +340,7 @@ def quality_control_edit(view, form_id, qc=None):
 
     return view.render(template_name, **context)
 
+
 def quality_control_delete(view, form_id, qc):
     form = models.Form.query.filter_by(id=form_id).first_or_404()
 

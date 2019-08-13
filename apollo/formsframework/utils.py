@@ -178,17 +178,44 @@ def _process_analysis_worksheet(analysis_data, form_schema):
 
 def _process_qa_worksheet(qa_data):
     quality_checks = []
+    current_check = None
+    current_name = None
     for qa_dict in qa_data:
-        if (qa_dict['description'] and qa_dict['left'] and qa_dict['relation']
-                and qa_dict['right']):
-            qa_check = {
-                'name': generate_identifier(),
-                'description': qa_dict['description'],
-                'lvalue': qa_dict['left'],
-                'comparator': qa_dict['relation'],
-                'rvalue': qa_dict['right']
-            }
-            quality_checks.append(qa_check)
+        if 'name' in qa_dict:
+            if current_name != qa_dict['name']:
+                if current_check is not None:
+                    quality_checks.append(current_check)
+                current_name = qa_dict['name']
+                current_check = {
+                    'name': qa_dict['name'],
+                    'description': qa_dict['description'],
+                    'criteria': []
+                }
+
+            if (qa_dict['left'] and qa_dict['relation'] and qa_dict['right']
+                    and qa_dict['conjunction']):
+                current_check['criteria'].append({
+                    'lvalue': qa_dict['left'],
+                    'comparator': qa_dict['relation'],
+                    'rvalue': qa_dict['right'],
+                    'conjunction': qa_dict['conjunction'],
+                })
+                continue
+        else:
+            # process legacy import
+            if (qa_dict['description'] and qa_dict['left']
+                    and qa_dict['relation'] and qa_dict['right']):
+                qa_check = {
+                    'name': generate_identifier(),
+                    'description': qa_dict['description'],
+                    'lvalue': qa_dict['left'],
+                    'comparator': qa_dict['relation'],
+                    'rvalue': qa_dict['right']
+                }
+                quality_checks.append(qa_check)
+
+    if current_check is not None:
+        quality_checks.append(current_check)
 
     return quality_checks
 
@@ -255,7 +282,8 @@ def export_form(form):
                        'accredited_voters_tag', 'invalid_votes_tag',
                        'registered_voters_tag', 'blank_votes_tag',
                        'quality_checks_enabled', 'vote_shares']
-    qa_header = ['description', 'left', 'relation', 'right']
+    qa_header = ['name', 'description', 'left', 'relation', 'right',
+                 'conjunction']
 
     # output headers
     for col, value in enumerate(survey_header):
@@ -386,10 +414,24 @@ def export_form(form):
 
     quality_checks = form.quality_checks
     if quality_checks and qa_sheet:
-        for row, check in enumerate(quality_checks, 1):
-            qa_sheet.write(row, 0, check['description'])
-            qa_sheet.write(row, 1, check['lvalue'])
-            qa_sheet.write(row, 2, check['comparator'])
-            qa_sheet.write(row, 3, check['rvalue'])
+        row = 1
+        for check in quality_checks:
+            if 'criteria' in check:
+                for term in check['criteria']:
+                    qa_sheet.write(row, 0, check['name'])
+                    qa_sheet.write(row, 1, check['description'])
+                    qa_sheet.write(row, 2, term['lvalue'])
+                    qa_sheet.write(row, 3, term['comparator'])
+                    qa_sheet.write(row, 4, term['rvalue'])
+                    qa_sheet.write(row, 5, term['conjunction'])
+                    row += 1
+            else:
+                qa_sheet.write(row, 0, check['name'])
+                qa_sheet.write(row, 1, check['description'])
+                qa_sheet.write(row, 2, check['lvalue'])
+                qa_sheet.write(row, 3, check['comparator'])
+                qa_sheet.write(row, 4, check['rvalue'])
+                qa_sheet.write(row, 5, '&&')
+                row += 1
 
     return book
