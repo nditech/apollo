@@ -6,8 +6,8 @@
 
     var json = JSON.parse(el.dataset.chart);
     var data = [json.Missing + (json.Conflict || 0), json.Partial, json.Complete, json.Offline];
-    var color = d3.scale.ordinal().range(["#dc3545", "#ffc107", "#007bff", "#aaaaaa"]); // Conflict color #E83992
-    var labels_color = d3.scale.ordinal().range(["#ffffff", "#000000", "#ffffff", "#000000"]);
+    var color = d3.scaleOrdinal().range(["#dc3545", "#ffc107", "#007bff", "#aaaaaa"]); // Conflict color #E83992
+    var labels_color = d3.scaleOrdinal().range(["#ffffff", "#000000", "#ffffff", "#000000"]);
     var labels = ['Missing', 'Partial', 'Complete', 'No Signal']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
@@ -18,7 +18,7 @@
 
     //Draw arc paths
     svg.selectAll("g.pieArc")
-      .data(d3.layout.pie()(data))
+      .data(d3.pie()(data))
       .enter()
       .append("g")
       .attr("class", "arc")
@@ -28,11 +28,11 @@
       .attr("fill", function(d, i) {
         return color(i);
       })
-      .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius - 10));
+      .attr("d", d3.arc().innerRadius(innerRadius).outerRadius(outerRadius - 10));
 
     //Labels
     svg.selectAll("g.pieLabel")
-      .data(d3.layout.pie()(data))
+      .data(d3.pie()(data))
       .enter()
       .append("g")
       .attr("class", "arc")
@@ -41,9 +41,9 @@
       .append("text")
       .attr("transform", function(d) {
         if (d.value / total >= 0.1) {
-          return "translate(" + d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.2).centroid(d) + ")";
+          return "translate(" + d3.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.2).centroid(d) + ")";
         } else {
-          return "translate(" + d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.8).centroid(d) + ")";
+          return "translate(" + d3.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.8).centroid(d) + ")";
         }
       })
       .attr("text-anchor", "middle")
@@ -116,7 +116,7 @@
   }
 
   $(function () {
-    $('.piechart').each(function(idx, el) {
+    $('.chart').each(function(idx, el) {
       drawPieChart(el);
     });
   });

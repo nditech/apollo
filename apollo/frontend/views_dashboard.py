@@ -34,6 +34,10 @@ def main_dashboard(form_id=None):
     group = None
     location_type_id = args.pop('locationtype', None)
     next_location_type = None
+    chart_type = args.pop('chart', None)
+    if chart_type:
+        session['dashboard_chart_type'] = chart_type if chart_type in [
+            'pie', 'bar'] else 'pie'
 
     template_name = 'frontend/dashboard.html'
     breadcrumbs = [_('Dashboard')]

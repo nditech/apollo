@@ -1,10 +1,31 @@
 {% extends 'frontend/layout.html' %}
 {% block stylesheets %}
 <style type="text/css">
-.piechart svg{height:300px; margin-top: .8em;}
+.chart svg{height:300px; margin-top: .8em;}
+.axis text {
+  font: 8px sans-serif;
+  fill: #666;
+  text-anchor: start;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
+
+{%- block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
+  <div class="btn-group" role="group" aria-label="{{ _('Chart Selection') }}">
+    <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] != 'bar' else  '' }}" href="{{ modify_query(chart='pie') }}" title="{{ _('Pie Chart') }}" aria-label="{{ _('Pie Chart') }}"><i class="fa fa-chart-pie"></i></a>
+    <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] == 'bar' else  '' }}" href="{{ modify_query(chart='bar') }}" title="{{ _('Bar Chart') }}" aria-label="{{ _('Bar Chart') }}"><i class="fa fa-chart-bar"></i></a>
+  </div>
+</div>
+{%- endblock %}
+
 {% block content %}
 <div class="row">
   <div class="col-md-12">
@@ -20,7 +41,7 @@
   {%- else -%}
     <h5 class="text-center">{% if not location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if not location %}</a>{% endif %}</h5>
   {% endif %}
-    <div class="piechart text-center" data-chart='{{ row|tojson }}'>
+    <div class="chart text-center" data-chart='{{ row|tojson }}'>
     </div>
   </div>
 {% endfor %}
@@ -32,8 +53,12 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+{%- if session['dashboard_chart_type'] == 'bar' %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard-bar.js') }}"></script>
+{%- else %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{%- endif %}
 <script type="text/javascript">
   var time = new Date().getTime();
 
