@@ -36,7 +36,7 @@
         <div fb-builder="default"></div>
       </div>
     </div>
-    <div class="col-md-6 sticky-top h-100" style="top: 5em">
+    <div class="col-md-6 sticky-top h-100 d-none d-md-block" style="top: 5em">
       <div class="card border-light bg-light">
         <div class="card-body p-2">
           <div fb-components></div>
@@ -51,7 +51,7 @@
 {% endblock %}
 
 {% block footer %}
-<div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
+<div class="mt-n2 pb-2 d-flex justify-content-end">
   <div>
     <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
     <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>

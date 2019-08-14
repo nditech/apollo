@@ -52,12 +52,10 @@
 {% endblock %}
 
 {% block footer %}
-<div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
-  <div>
-    <a href="{{ url_for('formsview.qc', form_id=form.id) }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
-    {% if not is_new %}<button type="button" id="deleteBtn" class="btn btn-danger">{{ _('Delete') }}</button>{% endif %}
-    <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
-  </div>
+<div class="mt-n2 pb-2 ml-2 d-flex justify-content-end align-items-center flex-nowrap">
+  <a href="{{ url_for('formsview.qc', form_id=form.id) }}" class="btn btn-secondary mr-2">{{ _('Cancel') }}</a>
+  {% if not is_new %}<button type="button" id="deleteBtn" class="btn btn-danger mr-2">{{ _('Delete') }}</button>{% endif %}
+  <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
 </div>
 {% endblock %}
 

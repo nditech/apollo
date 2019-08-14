@@ -164,8 +164,8 @@
 </form>
 
 
-<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
-  <nav class="nav mb-4" aria-label="breadcrumb">
+<div class="d-flex justify-content-between align-items-md-center flex-row mb-n2">
+  <nav class="nav mb-2" aria-label="breadcrumb">
     <ol class="breadcrumb mb-n2">
         {% for breadcrumb in breadcrumbs %}
         <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
@@ -178,10 +178,10 @@
         {% endfor %}
     </ol>
   </nav>
-  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
-    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+  <div class="d-flex justify-content-between align-items-center flex-row mt-1 mb-1">
+    <div class="btn-toolbar d-md-flex flex-nowrap ml-2" role="toolbar">
       <button type="button" id="addDivisionButton" class="btn btn-secondary mr-2">{{ _('Add Division') }}</button>
-      <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary mr-2">{{ _('Export') }}</a>
+      <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary mr-2 d-none d-md-block">{{ _('Export') }}</a>
       {% if not has_admin_divisions %}
       <button type="button" id="exportBtn" class="btn btn-secondary mr-2" data-toggle="modal" data-target="#importModal">{{ _('Import') }}</button>
       {% endif %}

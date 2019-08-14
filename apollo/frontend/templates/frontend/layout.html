@@ -35,8 +35,8 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     {%- endif %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-        <div class="container">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top mr-n3 ml-n3">
             <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
                 {% if g.deployment.logo %}
                 <img src="{{ g.deployment.logo }}" title="Apollo" class="navbrand-logo">
@@ -47,7 +47,7 @@
                     class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="d-flex flex-column flex-lg-row align-items-start justify-content-between w-100">
-                    <ul class="navbar-nav order-2 order-lg-1">
+                    <ul class="navbar-nav order-1">
                     {%- autoescape False -%}
                     {%- for menu_item in current_menu.submenu('main').children %}
                         {%- if not menu_item.has_visible_child() and menu_item.visible -%}
@@ -76,7 +76,7 @@
                         {%- endif %}
                     {%- endfor -%}{% endautoescape %}
                     </ul>
-                    <ul class="navbar-nav order-1 order-lg-2">
+                    <ul class="navbar-nav order-2">
                         <li class="nav-item"><a class="nav-link text-primary {%- if not current_menu.submenu('user.events').visible %} disabled{% endif %}" href="{{ current_menu.submenu('user.events').url if current_menu.submenu('user.events').visible else '' }}"><strong>{{ g.event.name }}</strong></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
@@ -100,12 +100,12 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
     <main role="main">
         <div class="container mt-2">
-            <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+            <div class="d-flex justify-content-between align-items-md-center flex-row mb-n2">
                 <nav class="nav mb-2" aria-label="breadcrumb">
                 {% block title -%}
                     <ol class="breadcrumb mb-n2">
@@ -121,7 +121,7 @@
                     </ol>
                 {%- endblock %}
                 </nav>
-                <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+                <div class="d-flex justify-content-end align-items-center flex-row">
                     {% block toolbar %}{% endblock %}
                 </div>
             </div>

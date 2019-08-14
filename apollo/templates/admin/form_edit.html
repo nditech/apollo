@@ -18,7 +18,7 @@
 
 <form class="form-horizontal" method="POST">
   <div class="row">
-    <div class="col-md-6 offset-md-3">
+    <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
       <div class="card border-light bg-light mt-2">
         <h5 class="card-header">
           {{ _('Edit Form') }}
@@ -29,7 +29,7 @@
           {%- if field.type != 'CSRFTokenField' -%}
           <div class="form-group row align-items-center">
             {% if field.name in ['require_exclamation', 'track_data_conflicts', 'calculate_moe', 'quality_checks_enabled'] %}
-              <div class="col-sm-8 offset-sm-4">
+              <div class="col-8 offset-4">
                 <div class="custom-control custom-checkbox">
                   {{ field(class_='custom-control-input is-invalid' if field.errors else 'custom-control-input') }}
                   {{ field.label(class_='custom-control-label') }}
@@ -41,8 +41,8 @@
                 </div>
               </div>
             {% else %}
-              {{ field.label(class_='col-sm-4 control-label text-right mb-0') }}
-              <div class="col-sm-8">
+              {{ field.label(class_='col-4 control-label text-right mb-0') }}
+              <div class="col-8">
                   {%- if field.name in ['form_type', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_voters_tag'] %}
                   {{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select') }}
                   {% elif field.name == 'vote_shares' %}

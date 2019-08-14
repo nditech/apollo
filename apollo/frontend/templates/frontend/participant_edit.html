@@ -2,7 +2,7 @@
 {% block content %}
 <form method="POST">
 <div class="row">
-  <div class="col-md-6 offset-md-3">
+  <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
     <div class="card border-light bg-light mt-4">
       <h5 class="card-header">
         {{ _('Edit Participant') }}
@@ -12,8 +12,8 @@
         {%- for field in form -%}
         <div class="form-group row align-items-center">
         {%- if field.type != 'CSRFTokenField' -%}
-            {{ field.label(class_='col-sm-4 control-label text-right mb-0') }}
-            <div class="col-sm-8">
+            {{ field.label(class_='col-4 control-label text-right mb-0') }}
+            <div class="col-8">
                 {% if field.name == 'supervisor' %}
                     {{ field(class_='form-control select2 select2-participants tracked') }}
                 {% elif field.name == 'location' %}

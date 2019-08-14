@@ -1,7 +1,7 @@
 {%- extends 'frontend/layout.html' -%}
 {% block content %}
 <div class="row p-4 m-4">
-	<div class="col-md-4 offset-md-4 text-center">
+	<div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4 text-center">
 		<div class="card border-light bg-light">
 			<h5 class="card-header">{{ _('Choose Event') }}</h5>
       <div class="card-body">
@@ -11,7 +11,7 @@
             <label for="{{ form.event.id }}" class="sr-only">{{ form.event.label.text }}</label>
             {{ form.event(class_='form-control custom-select') }}
           </div>
-              <button class="btn btn-primary col-3" type="submit">{{ _('Go') }}</button>
+              <button class="btn btn-primary col-6" type="submit">{{ _('Go') }}</button>
         </form>
       </div>
 		</div>
