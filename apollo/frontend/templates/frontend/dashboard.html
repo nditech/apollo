@@ -18,7 +18,7 @@
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
 
 {%- block toolbar %}
-<div class="btn-toolbar d-none d-md-flex" role="toolbar">
+<div class="btn-toolbar mt-md-0 mt-1" role="toolbar">
   <div class="btn-group" role="group" aria-label="{{ _('Chart Selection') }}">
     <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] != 'bar' else  '' }}" href="{{ modify_query(chart='pie') }}" title="{{ _('Pie Chart') }}" aria-label="{{ _('Pie Chart') }}"><i class="fa fa-chart-pie"></i></a>
     <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] == 'bar' else  '' }}" href="{{ modify_query(chart='bar') }}" title="{{ _('Bar Chart') }}" aria-label="{{ _('Bar Chart') }}"><i class="fa fa-chart-bar"></i></a>
