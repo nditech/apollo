@@ -117,7 +117,7 @@
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
-  <div class="form-group row{{ ' has-error' if direct_error else '' }}">
+  <div class="form-group row{{ ' has-error' if direct_error else '' }} align-items-center">
     <label for="{{ field.id }}" class="col-md-2 col-form-label text-right">{{ field.label.text }}
         {% if h.is_required_form_field(field) %}
           <strong style="color: red">&#42;</strong>
@@ -188,13 +188,13 @@
     <div class="form-group row">
       <label class="col-md-2 col-form-label">&nbsp;</label>
       <div class="col-md-offset-2 col-md-10 submit-row">
-        <input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
+        {% if cancel_url %}
+          <a href="{{ cancel_url }}" class="btn btn-secondary" role="button" {% if is_modal %}data-dismiss="modal"{% endif %}>{{ _gettext('Cancel') }}</a>
+        {% endif %}
         {% if extra %}
         {{ extra }}
         {% endif %}
-        {% if cancel_url %}
-          <a href="{{ cancel_url }}" class="btn btn-danger" role="button" {% if is_modal %}data-dismiss="modal"{% endif %}>{{ _gettext('Cancel') }}</a>
-        {% endif %}
+        <input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
       </div>
     </div>
 {% endmacro %}
@@ -248,9 +248,9 @@
 
 {% macro extra() %}
   {% if admin_view.can_create %}
-  <input name="_add_another" type="submit" class="btn btn-secondary" value="{{ _gettext('Save and Add Another') }}" />
+  <input name="_add_another" type="submit" class="btn btn-primary" value="{{ _gettext('Save and Add Another') }}" />
   {% endif %}
   {% if admin_view.can_edit %}
-  <input name="_continue_editing" type="submit" class="btn btn-secondary" value="{{ _gettext('Save and Continue Editing') }}" />
+  <input name="_continue_editing" type="submit" class="btn btn-primary" value="{{ _gettext('Save and Continue Editing') }}" />
   {% endif %}
 {% endmacro %}
