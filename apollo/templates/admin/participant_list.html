@@ -9,8 +9,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-2">
-  <nav class="nav mb-4" aria-label="breadcrumb">
+<div class="d-flex justify-content-between align-items-center flex-row mb-2">
+  <nav class="nav mb-2" aria-label="breadcrumb">
     <ol class="breadcrumb mb-n2">
         {% for breadcrumb in breadcrumbs %}
         <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
@@ -23,7 +23,7 @@
         {% endfor %}
     </ol>
   </nav>
-  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+  <div class="d-flex justify-content-between align-items-center flex-row mt-1 mb-1">
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
       {%- if perms.export_participants.can() -%}
       {% if args.participant_set_id -%}
@@ -57,7 +57,7 @@
   {%- endif %}
 </div>
 
-<div class="table-responsive-md mb-n3">
+<div class="table-responsive mb-n3">
   <table class="table table-sm table-hover">
     <thead class="thead-light">
       <tr>

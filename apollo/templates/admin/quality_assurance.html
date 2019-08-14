@@ -58,10 +58,8 @@
 {% endblock %}
 
 {% block footer %}
-<div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
-  <div>
-    <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
-    <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Quality Assurance') }}</a>
-  </div>
+<div class="mt-n2 ml-2 pb-2 d-flex justify-content-end align-items-center flex-nowrap">
+  <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary mr-2">{{ _('Cancel') }}</a>
+  <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Quality Assurance') }}</a>
 </div>
 {% endblock %}

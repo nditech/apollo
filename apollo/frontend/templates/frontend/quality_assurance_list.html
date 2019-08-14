@@ -19,7 +19,7 @@ $(function () {
 {% block toolbar %}
 <div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if perms.export_submissions.can() %}
-<a class="btn btn-secondary mr-2" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
+<a class="btn btn-secondary" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
 </div>
 {% endblock %}
@@ -35,7 +35,7 @@ $(function () {
   {{ render_pager(pager, 'submissions.quality_assurance_list', args) }}
 </div>
 
-<div class="table-responsive-md mb-n3">
+<div class="table-responsive mb-n3">
   <table class="table table-sm table-hover">
     <thead class="thead-light">
       {{ submission_header(form, form_fields, location_types, perms) }}

@@ -264,7 +264,7 @@
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle obs-on">
                 <div class="d-flex align-items-center justify-content-between">
-                  <div>{{ field.description }}</div>
+                  <div class="mr-1">{{ field.description }}</div>
                   {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
                   <div class="custom-control custom-checkbox">
                     <input type="checkbox" name="{{ submission_form.verified_fields.name }}" id="{{ submission_form.verified_fields.id }}_{{ field.tag }}" class="custom-control-input" value="{{ field.tag }}"{{ ' checked' if field.tag in submission.verified_fields else '' }}{{ ' disabled' if readonly else '' }}>
@@ -303,7 +303,7 @@
     {% endfor %}
   </div>
   <div class="tab-pane fade" id="messages-panel" role="tabpanel" aria-labelledby="messages-tab">
-    <div class="table-responsive-md">
+    <div class="table-responsive">
       <table class="table table-hover">
         <thead class="thead-light">
           <tr>
@@ -368,7 +368,7 @@
     </div>
   </div>
   <div class="tab-pane fade" id="critical-incidents-panel" role="tabpanel" aria-labelledby="critical-incidents-tab">
-    <div class="table-responsive-md">
+    <div class="table-responsive">
       <table class="table table-hover">
         <thead class="thead-light">
           <tr>
@@ -417,7 +417,7 @@
     </div>
   </div>
   <div class="tab-pane fade" id="changelog-panel" role="tabpanel" aria-labelledby="changelog-tab">
-    <div class="table-responsive-md">
+    <div class="table-responsive">
       <table class="table table-hover">
         <thead class="thead-light">
           <tr>
@@ -449,7 +449,7 @@
     </div>
   </div>
   <div class="tab-pane fade" id="calllog-panel" role="tabpanel" aria-labelledby="calllog-tab">
-    <div class="table-responsive-md">
+    <div class="table-responsive">
       <table class="table table-hover">
         <thead class="thead-light">
           <tr>
@@ -556,14 +556,14 @@
               <td class="text-right">
                 <strong>{{ _('Description')}}</strong>
               </td>
-              <td class="col-4"><label for="{{ submission_form.description.id }}" class="sr-only">{{ submission_form.description.label.text }}</label>{{ submission_form.description(class_='form-control tracked', rows=4) }}</td>
+              <td class="col-6"><label for="{{ submission_form.description.id }}" class="sr-only">{{ submission_form.description.label.text }}</label>{{ submission_form.description(class_='form-control tracked', rows=4) }}</td>
             </tr>
             <tr>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;">&nbsp;&nbsp;</td>
               <td class="align-middle text-right">
                 <strong>{{ _('Status')}}</strong>
               </td>
-              <td class="col-4 align-middle"><label for="{{ submission_form.status.id }}" class="sr-only">{{ submission_form.status.label.text }}</label>{{ submission_form.status(class_='form-control tracked') }}</td>
+              <td class="col-6 align-middle"><label for="{{ submission_form.status.id }}" class="sr-only">{{ submission_form.status.label.text }}</label>{{ submission_form.status(class_='form-control tracked custom-select') }}</td>
             </tr>
           </tbody>
         </table>
@@ -603,9 +603,9 @@
 
 
 {%- block footer -%}
-  <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
+  <div class="mt-n2 pb-2 d-flex justify-content-end">
     <div>
-      <button type="button" id="addCallLogBtn" class="btn btn-success" data-toggle="modal" data-target="#addCallLogModal">{{ _('Add Call Log') }}</button>
+      <button type="button" id="addCallLogBtn" class="btn btn-success d-none d-md-inline-block" data-toggle="modal" data-target="#addCallLogModal">{{ _('Add Call Log') }}</button>
       <button type="button" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</button>
       <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
     </div>
