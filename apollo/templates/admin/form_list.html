@@ -69,7 +69,7 @@
     </thead>
     <tbody>
     {% for form in forms %}
-      <tr>
+      <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
         <td>{{ form.name }}</td>
         <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
         <td class="align-middle">

@@ -68,7 +68,7 @@
     <div class="table-responsive-md">
     <table class="table table-bordered table-hover" style="margin-top: -1px">
         <thead>
-            <tr>
+            <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
                 {% block list_header scoped %}
                     {% if actions %}
                     <th class="list-checkbox-column shrink">
@@ -108,7 +108,7 @@
             </tr>
         </thead>
         {% for row in data %}
-        <tr>
+        <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
             {% block list_row scoped %}
                 {% if actions %}
                 <td class="align-middle">

@@ -26,7 +26,7 @@
   </nav>
 </div>
 
-<div id="app" ng-app="app">
+<div id="app" ng-app="app" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <div class="row mt-3 d-flex" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">
     <div class="col-md-6">
       <div class="card border-light bg-light">

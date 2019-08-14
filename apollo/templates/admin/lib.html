@@ -146,7 +146,7 @@
 {% endmacro %}
 
 {% macro render_header(form, text) %}
-    <h3>{{ text }}</h3>
+    <h3 class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ text }}</h3>
 {% endmacro %}
 
 {% macro render_form_fields(form, form_opts=None) %}

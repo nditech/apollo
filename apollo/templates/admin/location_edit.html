@@ -20,7 +20,7 @@
 <div class="row">
   <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
     <div class="card border-light bg-light mt-4">
-      <h5 class="card-header">
+      <h5 class="card-header{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
         {{ _('Edit Location') }}
       </h5>
       <div class="card-body">

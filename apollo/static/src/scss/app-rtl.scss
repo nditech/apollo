@@ -76,3 +76,24 @@ $placeholder-pseudo-classes: "::placeholder", "::-webkit-input-placeholder", "::
 .select2-container {
     background-color: $input-bg;
 }
+
+.select2-container--bootstrap4[dir="rtl"] .select2-selection--single .select2-selection__clear {
+  float: left; }
+
+.select2-container--bootstrap4[dir="rtl"] .select2-selection--single .select2-selection__arrow {
+  border: none;
+  border-right: 1px solid #aaa;
+  border-radius: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  left: 3px;
+  right: auto; }
+
+.select2-container--bootstrap4[dir="rtl"] .select2-selection--multiple .select2-selection__choice {
+  float: right;
+  margin-left: 5px;
+  margin-right: auto; }
+
+.select2-container--bootstrap4[dir="rtl"] .select2-selection--multiple .select2-selection__choice__remove {
+  margin-left: 3px;
+  margin-right: auto; }
