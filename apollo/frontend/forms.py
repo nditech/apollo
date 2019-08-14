@@ -10,7 +10,7 @@ from wtforms.validators import Optional
 from apollo.frontend import permissions
 from apollo import models
 
-from ..locations.models import LocationType, Location
+from ..locations.models import Location
 from ..participants.models import (
     Participant, ParticipantRole, ParticipantPartner)
 from ..submissions.models import Submission
@@ -27,8 +27,8 @@ def _make_choices(qs, placeholder=None):
 def generate_location_edit_form(location, data=None):
     initial_data = {
         'name': location.name,
-        'lat': to_shape(location.geom).y,
-        'lon': to_shape(location.geom).x
+        'lat': to_shape(location.geom).y if hasattr(location.geom, 'desc') else None,  # noqa
+        'lon': to_shape(location.geom).x if hasattr(location.geom, 'desc') else None,  # noqa
     }
 
     class LocationEditForm(WTSecureForm):
