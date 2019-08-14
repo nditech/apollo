@@ -27,9 +27,15 @@
     {% if incidents %}
     <table class="table table-bordered table-striped mt-4">
       <tr>
-        <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.tag }}</strong> &middot; {{ form_field.description }}</td>
+        <td colspan="{{ 5 + location_types.count() }}" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+          <div class="d-flex justify-content-start align-items-center">
+            <div class="mr-2"><strong>{{ form_field.tag }}</strong></div>
+            <div class="mr-2">&middot;</div>
+            <div>{{ form_field.description }}</div>
+          </div> 
+        </td>
       </tr>
-      <tr>
+      <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
         <th>{{ _('PID') }}</th>
         <th>{{ _('Name') }}</th>
         {% for lt in location_types %}
@@ -40,7 +46,7 @@
         <th>{{ _('Description') }}</th>
       </tr>
       {% for incident in incidents %}
-      <tr>
+      <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
         <td>{{ incident.participant.participant_id|default }}</td>
         <td>{{ incident.participant.name|default }}</td>
         {% for lt in location_types %}

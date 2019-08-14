@@ -25,7 +25,7 @@
   </nav>
 </div>
 
-<div id="app">
+<div id="app" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <edit-quality-control :control="control" :title="title" />
 </div>
 

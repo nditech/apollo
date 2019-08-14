@@ -10,7 +10,7 @@ from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
-from flask_babelex import gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
@@ -113,6 +113,7 @@ class DeploymentAdminView(BaseAdminView):
     can_delete = False
     can_edit = True
     column_list = ('name', 'hostnames')
+    column_labels = {'name': _('Name'), 'hostnames': _('Hostnames')}
     form_edit_rules = [
         rules.FieldSet(
             (
@@ -164,6 +165,10 @@ class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
     column_list = ('name', 'start', 'end', 'location_set', 'participant_set',
                    'archive')
+    column_labels = {
+        'name': _('Name'), 'start': _('Start'), 'end': _('End'),
+        'location_set': _('Location Set'),
+        'participant_set': _('Participant Set'), 'archive': _('Archive')}
     form_columns = ('name', 'start', 'end', 'forms', 'participant_set')
     form_rules = [
         rules.FieldSet(
@@ -241,6 +246,7 @@ class UserAdminView(BaseAdminView):
     https://github.com/mrjoes/flask-admin/issues/173
     '''
     column_list = ('email', 'roles', 'active')
+    column_labels = {'roles': _('Roles'), 'active': _('Active')}
     column_searchable_list = ('email',)
     form_columns = (
         'email', 'username', 'active', 'roles', 'permissions', 'locale')
@@ -318,6 +324,7 @@ class UserAdminView(BaseAdminView):
 class RoleAdminView(BaseAdminView):
     can_delete = False
     column_list = ('name', 'description')
+    column_labels = {'name': _('Name'), 'description': _('Description')}
     form_columns = ('name', 'description', 'permissions', 'resources')
 
     def create_form(self, obj=None):
@@ -353,6 +360,11 @@ class SetViewMixin(object):
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'administrative_divisions', 'locations')
+    column_labels = {
+        'name': _('Name'),
+        'administrative_divisions': _('Administrative Divisions'),
+        'locations': _('Locations')
+    }
     column_formatters = {
         'administrative_divisions': macro('locations_builder'),
         'locations': macro('locations_list'),
@@ -403,6 +415,11 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'location_set', 'participants')
+    column_labels = {
+        'name': _('Name'),
+        'location_set': _('Location Set'),
+        'participants': _('Participants')
+    }
     form_columns = ('name', 'location_set',)
     column_formatters = {
         'participants': macro('participants_list')

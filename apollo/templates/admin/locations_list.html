@@ -30,7 +30,7 @@
       <a class="btn btn-secondary mr-2" href="{{ url_for('locationset.locations_list', export='true', location_set_id=location_set_id, **request.args) }}">{{ _('Export') }}</a>
       {%- endif -%}
       {%- if perms.import_locations.can() -%}
-      <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Locations') }}</button>
+      <button id="open-wizard" class="btn btn-primary">{{ _('Import Locations') }}</button>
       {%- endif -%}
     </div>
   </div>
@@ -63,7 +63,7 @@
       </thead>
       <tbody>
         {% for location in locations.items %}
-        <tr>
+        <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
           <td class="text-right text-monospace"><a href="{{ url_for('locationset.location_edit', id=location.id) }}">{{ location.code }}</a></td>
           <td class="text-monospace">{{ location.name }}</td>
           <td class="text-monospace">{{ location.location_type.name }}</td>

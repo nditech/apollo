@@ -36,7 +36,7 @@
       <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
       {%- endif -%}
       {%- if perms.send_messages.can() -%}
-      <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
+      <button class="btn btn-success" id="send_message_modal_btn">{{ _('Send Message') }}</button>
       {%- endif -%}
     </div>
   </div>
@@ -161,18 +161,18 @@
         <td class="text-right text-monospace">{{ participant.participant_id }}</td>
         {%- endif -%}
         {%- for location_type in location_types -%}
-        <td class="text-monospace">{{ participant.location.make_path()[location_type.name] }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.make_path()[location_type.name] }}</td>
         {%- endfor -%}
-        <td class="text-monospace">{{ participant.location.name|default('N/A', true) }}</td>
-        <td class="text-monospace">{{ participant.name|default('', true) }}</td>
-        <td class="text-monospace">{{ participant.primary_phone|default('', true) }}</td>
-        <td class="text-monospace">{{ participant.gender_display }}</td>
-        <td class="text-monospace">{{ participant.role.name|default('N/A', true) }}</td>
-        <td class="text-monospace">{{ participant.partner|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.name|default('N/A', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.name|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.primary_phone|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.gender_display }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.role.name|default('N/A', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.partner|default('', true) }}</td>
         {% for field in extra_fields %}
         {% if perms.can_access_resource(field) %}
         {%- if participant.extra_data -%}
-        <td class="text-monospace">{{ participant.extra_data.get(field.name)|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.extra_data.get(field.name)|default('', true) }}</td>
         {%- else -%}
         <td></td>
         {%- endif -%}
