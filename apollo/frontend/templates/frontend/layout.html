@@ -35,8 +35,8 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     {%- endif %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-        <div class="container">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top mr-n3 ml-n3">
             <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
                 {% if g.deployment.logo %}
                 <img src="{{ g.deployment.logo }}" title="Apollo" class="navbrand-logo">
@@ -100,12 +100,12 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
     <main role="main">
         <div class="container mt-2">
-            <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+            <div class="d-flex justify-content-between align-items-md-center flex-row mb-n2">
                 <nav class="nav mb-2" aria-label="breadcrumb">
                 {% block title -%}
                     <ol class="breadcrumb mb-n2">
