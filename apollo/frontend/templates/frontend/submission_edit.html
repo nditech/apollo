@@ -484,7 +484,7 @@
 {# comments #}
 <a name="comments"></a>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-12 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
     <table class="table table-bordered" id="comments">
     {% for comment in comments %}
       <tr>
@@ -574,7 +574,7 @@
 {%- endif %}
 </form>
 
-<div class="modal fade" id="addCallLogModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="addCallLogModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
