@@ -49,10 +49,27 @@ def generate_participant_edit_form(participant, data=None):
             ParticipantPartner.id, ParticipantPartner.name)
     languages = participant.participant_set.deployment.languages
 
-    attributes = {
-        f'name_{locale}': StringField(_('Name (%(language)s)', language=lang))
+    attributes = {}
+    attributes.update({
+        f'full_name_{locale}': StringField(
+            _('Full Name (%(language)s)', language=lang))
         for locale, lang in languages.items()
-    }
+    })
+    attributes.update({
+        f'first_name_{locale}': StringField(
+            _('First Name (%(language)s)', language=lang))
+        for locale, lang in languages.items()
+    })
+    attributes.update({
+        f'last_name_{locale}': StringField(
+            _('Last Name (%(language)s)', language=lang))
+        for locale, lang in languages.items()
+    })
+    attributes.update({
+        f'other_name_{locale}': StringField(
+            _('Other Name(s) (%(language)s)', language=lang))
+        for locale, lang in languages.items()
+    })
     attributes['gender'] = SelectField(_('Gender'), choices=Participant.GENDER)
     attributes['role'] = SelectField(
         _('Role'), choices=_make_choices(role_choices),
@@ -96,10 +113,30 @@ def generate_participant_edit_form(participant, data=None):
         'password': participant.password,
     }
     kwargs.update({
-        f'name_{locale}': participant.name_translations.get(locale)
+        f'full_name_{locale}': participant.full_name_translations.get(locale)
         for locale in languages.keys()
-        if participant.name_translations.get(locale)
+        if participant.full_name_translations and
+        participant.full_name_translations.get(locale)
     })
+    kwargs.update({
+        f'first_name_{locale}': participant.first_name_translations.get(locale)
+        for locale in languages.keys()
+        if participant.first_name_translations and
+        participant.first_name_translations.get(locale)
+    })
+    kwargs.update({
+        f'last_name_{locale}': participant.last_name_translations.get(locale)
+        for locale in languages.keys()
+        if participant.last_name_translations and
+        participant.last_name_translations.get(locale)
+    })
+    kwargs.update({
+        f'other_name_{locale}': participant.other_name_translations.get(locale)
+        for locale in languages.keys()
+        if participant.other_name_translations and
+        participant.other_name_translations.get(locale)
+    })
+
     if participant_set.extra_fields and participant.extra_data:
         kwargs.update({
             f.name: participant.extra_data.get(f.name, '')

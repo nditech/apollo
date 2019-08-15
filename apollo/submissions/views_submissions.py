@@ -258,8 +258,9 @@ def submission_list(form_id):
     else:
         queryset = models.Submission.query.select_from(
             models.Submission, models.Location, models.Participant,
-            func.jsonb_each_text(models.Participant.name_translations).alias(
-                'participant_name')
+            func.jsonb_each_text(
+                models.Participant.full_name_translations
+            ).alias('participant_name')
         ).filter(
             models.Submission.submission_type == 'O',
             models.Submission.form == form,
@@ -1240,7 +1241,9 @@ def quality_assurance_list(form_id):
     else:
         queryset = models.Submission.query.select_from(
             models.Submission, models.Location, models.Participant,
-            func.jsonb_each_text(models.Participant.name_translations).alias(
+            func.jsonb_each_text(
+                models.Participant.full_name_translations
+            ).alias(
                 'participant_name')
         ).filter(
             models.Submission.submission_type == 'O',

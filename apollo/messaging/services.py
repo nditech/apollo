@@ -3,6 +3,8 @@ import csv
 from datetime import datetime
 from io import StringIO
 
+from flask_babelex import gettext
+
 from apollo import constants
 from apollo.dal.service import Service
 from apollo.messaging.models import Message
@@ -28,7 +30,8 @@ class MessageService(Service):
 
     def export_list(self, query):
         headers = [
-            'Mobile', 'Text', 'Direction', 'Created', 'Delivered', 'Type'
+            gettext('Mobile'), gettext('Text'), gettext('Direction'),
+            gettext('Created'), gettext('Delivered'), gettext('Type')
         ]
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)

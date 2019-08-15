@@ -32,7 +32,7 @@ class ParticipantNameFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
             return query.filter(
-                text('translations.value ILIKE :name')).params(
+                text('full_name_translations.value ILIKE :name')).params(
                     name=f'%{value}%')
         return query
 

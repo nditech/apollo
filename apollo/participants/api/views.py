@@ -9,7 +9,9 @@ from apollo.api.decorators import login_or_api_key_required
 from apollo.deployments.models import Event
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
-    Participant, ParticipantSet, ParticipantTranslations)
+    Participant, ParticipantSet, ParticipantFullNameTranslations,
+    ParticipantFirstNameTranslations, ParticipantLastNameTranslations,
+    ParticipantOtherNameTranslations)
 
 
 @marshal_with(ParticipantSchema)
@@ -72,7 +74,9 @@ class ParticipantListResource(BaseListResource):
             participant_set_id = None
 
         queryset = Participant.query.select_from(
-            Participant, ParticipantTranslations).join(
+            Participant, ParticipantFullNameTranslations,
+            ParticipantFirstNameTranslations, ParticipantLastNameTranslations,
+            ParticipantOtherNameTranslations).join(
                 Participant.participant_set
             ).filter(
                 Participant.participant_set_id == participant_set_id,
@@ -82,7 +86,10 @@ class ParticipantListResource(BaseListResource):
         if lookup_item:
             queryset = queryset.filter(
                 or_(
-                    text('translations.value ILIKE :name'),
+                    text('full_name_translations.value ILIKE :name'),
+                    text('first_name_translations.value ILIKE :name'),
+                    text('last_name_translations.value ILIKE :name'),
+                    text('other_name_translations.value ILIKE :name'),
                     Participant.participant_id.ilike(bindparam('pid'))
                 )
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')

@@ -3,6 +3,8 @@ import csv
 from io import StringIO
 import re
 
+from flask_babelex import gettext
+
 from apollo import constants
 from apollo.core import db
 from apollo.dal.service import Service
@@ -33,12 +35,16 @@ class ParticipantService(Service):
         location_types = location_set.location_types
 
         # build headers
-        headers = ['ID', 'Name', 'Partner', 'Role', 'Location ID']
+        headers = [
+            gettext('ID'), gettext('Full Name'), gettext('First Name'),
+            gettext('Last Name'), gettext('Other Name(s)'), gettext('Partner'),
+            gettext('Role'), gettext('Location ID')]
         headers.extend(lt.name for lt in location_types)
 
         headers.extend([
-            'Supervisor ID', 'Gender', 'Email', 'Password',
-            'Phone #1', 'Phone #2', 'Phone #3'
+            gettext('Supervisor ID'), gettext('Gender'), gettext('Email'),
+            gettext('Password'), gettext('Phone #1'), gettext('Phone #2'),
+            gettext('Phone #3')
         ])
 
         samples = location_set.samples
@@ -63,7 +69,10 @@ class ParticipantService(Service):
 
             record = [
                 participant.participant_id,
-                participant.name,
+                participant.full_name,
+                participant.first_name,
+                participant.last_name,
+                participant.other_name,
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
                 participant.location.code,
