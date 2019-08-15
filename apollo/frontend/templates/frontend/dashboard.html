@@ -54,11 +54,7 @@
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-{%- if session['dashboard_chart_type'] == 'bar' %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard-bar.js') }}"></script>
-{%- else %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-{%- endif %}
 <script type="text/javascript">
   var time = new Date().getTime();
 
@@ -72,6 +68,31 @@
     else
       setTimeout(refresh, 10000);
   }
+
+  $(function () {
+      $('.chart').each(function(idx, el) {
+        var json = JSON.parse(el.dataset.chart);
+        var dataMap = d3.map()
+          .set('Missing', json.Missing + (json.Conflict || 0))
+          .set('Partial', json.Partial)
+          .set('Complete', json.Complete)
+          .set('No Signal', json.Offline);
+        var labels = ['Missing', 'Partial', 'Complete', 'No Signal'];
+        var labelsMap = d3.map()
+          .set('Missing', "{{ _('Missing') }}")
+          .set('Partial', "{{ _('Partial') }}")
+          .set('Complete', "{{ _('Complete') }}")
+          .set('No Signal', "{{ _('No Signal') }}");
+        var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
+        var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
+
+      {%- if session['dashboard_chart_type'] == 'bar' %}
+        drawBarChart(el, dataMap, labels, labelsMap, colors);
+      {%- else %}
+        drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors);
+      {%- endif %}
+      });
+  });
 </script>
 <script type="text/javascript">
 $(function () {
