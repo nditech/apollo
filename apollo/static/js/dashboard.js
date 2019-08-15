@@ -14,7 +14,8 @@
     var svg = d3.select(el)
       .append("svg")
       .attr("width", w)
-      .attr("height", h/2)
+      .attr("height", h)
+      .attr("direction", window.rtl ? "rtl" : "ltr");
 
     //Draw arc paths
     svg.selectAll("g.pieArc")
@@ -60,14 +61,14 @@
     //Legend
     var legend = svg.append("g")
       .attr("width", w)
-      .attr("height", h/2)
+      .attr("height", h)
       .selectAll("g")
       .data(color.domain().slice().reverse())
       .enter().append("g")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
     legend.append("circle")
-      .attr("cx", 10)
+      .attr("cx", window.rtl ? w - 10 : 10)
       .attr("cy", h/2 + 32)
       .attr("r", 5)
       .style("fill", color.domain(labels));
@@ -75,7 +76,7 @@
     //Legend Label
     legend.append("text")
       .data(labels)
-      .attr("x", 25)
+      .attr("x", window.rtl ? w - 25 : 25)
       .attr("y", h/2 + 32)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace')
@@ -84,7 +85,7 @@
     //Legend data
     legend.append("text")
       .data(data)
-      .attr("x", 105)
+      .attr("x", window.rtl ? w - 105 : 105)
       .attr("y", h/2 + 32)
       .attr("dy", ".29em")
       .attr("class", "text-monospace")
@@ -100,7 +101,7 @@
 
     totals.append("text")
       .data(["Total"])
-      .attr("x", 25)
+      .attr("x", window.rtl ? w - 25 : 25)
       .attr("y", h/2 + 32 + (data.length + 1) * 16)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace font-weight-bold')
@@ -108,7 +109,7 @@
 
     totals.append("text")
       .data([total])
-      .attr("x", 105)
+      .attr("x", window.rtl ? w - 105 : 105)
       .attr("y", h / 2 + 32 + (data.length + 1) * 16)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace font-weight-bold')
