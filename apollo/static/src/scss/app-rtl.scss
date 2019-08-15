@@ -97,3 +97,7 @@ $placeholder-pseudo-classes: "::placeholder", "::-webkit-input-placeholder", "::
 .select2-container--bootstrap4[dir="rtl"] .select2-selection--multiple .select2-selection__choice__remove {
   margin-left: 3px;
   margin-right: auto; }
+
+[dir="rtl"] .dropdown-menu-left {
+  right: auto;
+  left: 0; }
