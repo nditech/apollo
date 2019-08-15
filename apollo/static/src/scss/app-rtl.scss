@@ -101,3 +101,9 @@ $placeholder-pseudo-classes: "::placeholder", "::-webkit-input-placeholder", "::
 [dir="rtl"] .dropdown-menu-left {
   right: auto;
   left: 0; }
+
+// Pagination
+
+.page-link {
+  margin-right: -$pagination-border-width;
+}
