@@ -101,14 +101,41 @@
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_value='', sort_direction='', page='') }}">{{ _('Location') }}</a></th>
         {% endif -%}
 
-        {% if request.args.sort_by == 'name' -%}
+        {% if request.args.sort_by == 'full_name' -%}
         {% if request.args.sort_direction == 'desc' -%}
-        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='asc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-down"></i></a></th>
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='full_name', sort_direction='asc', page='') }}">{{ _('Full Name') }} <i class="fa fa-chevron-down"></i></a></th>
         {% else -%}
-        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='desc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-up"></i></a></th>
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='full_name', sort_direction='desc', page='') }}">{{ _('Full Name') }} <i class="fa fa-chevron-up"></i></a></th>
         {% endif -%}
         {% else -%}
-        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_value='', sort_direction='', page='') }}">{{ _('Name') }}</a></th>
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='full_name', sort_value='', sort_direction='', page='') }}">{{ _('Full Name') }}</a></th>
+        {% endif -%}
+        {% if request.args.sort_by == 'first_name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='first_name', sort_direction='asc', page='') }}">{{ _('First Name') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='first_name', sort_direction='desc', page='') }}">{{ _('First Name') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='first_name', sort_value='', sort_direction='', page='') }}">{{ _('First Name') }}</a></th>
+        {% endif -%}
+        {% if request.args.sort_by == 'last_name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='last_name', sort_direction='asc', page='') }}">{{ _('Last Name') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='last_name', sort_direction='desc', page='') }}">{{ _('Last Name') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='last_name', sort_value='', sort_direction='', page='') }}">{{ _('Last Name') }}</a></th>
+        {% endif -%}
+        {% if request.args.sort_by == 'other_name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='other_name', sort_direction='asc', page='') }}">{{ _('Other Name(s)') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='other_name', sort_direction='desc', page='') }}">{{ _('Other Name(s)') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='other_name', sort_value='', sort_direction='', page='') }}">{{ _('Other Name(s)') }}</a></th>
         {% endif -%}
         {% if request.args.sort_by == 'phone' -%}
         {% if request.args.sort_direction == 'desc' -%}
@@ -169,7 +196,10 @@
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.make_path()[location_type.name] }}</td>
         {%- endfor -%}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.name|default('N/A', true) }}</td>
-        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.name|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.full_name|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.first_name|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.last_name|default('', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.other_name|default('', true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.primary_phone|default('', true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.gender_display }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.role.name|default('N/A', true) }}</td>

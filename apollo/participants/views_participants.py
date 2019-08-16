@@ -184,24 +184,40 @@ def participant_list(participant_set_id=0, view=None):
             models.PhoneContact.participant_id == models.Participant.id
         )
     else:
+        location_subquery = func.jsonb_each_text(
+            models.Location.name_translations
+        ).lateral('translation')
+        full_name_subquery = ParticipantFullNameTranslations.lateral(
+            'full_name_translations')
+        first_name_subquery = ParticipantFirstNameTranslations.lateral(
+            'first_name_translations')
+        last_name_subquery = ParticipantLastNameTranslations.lateral(
+            'last_name_translations')
+        other_name_subquery = ParticipantOtherNameTranslations.lateral(
+            'other_name_translations')
         queryset = models.Participant.query.select_from(
-            models.Participant, ParticipantFullNameTranslations,
-            models.Location,
-            func.jsonb_each_text(models.Location.name_translations).alias(
-                'translation'),
-            models.ParticipantRole,
-            models.ParticipantPartner
+            models.Participant,
         ).filter(
             models.Participant.participant_set_id == participant_set.id
         ).join(
             models.Location,
             models.Participant.location_id == models.Location.id
+        ).join(
+            location_subquery, true()
         ).outerjoin(
             models.ParticipantRole,
             models.Participant.role_id == models.ParticipantRole.id
         ).outerjoin(
             models.ParticipantPartner,
             models.Participant.partner_id == models.ParticipantPartner.id
+        ).outerjoin(
+            full_name_subquery, true()
+        ).outerjoin(
+            first_name_subquery, true()
+        ).outerjoin(
+            last_name_subquery, true()
+        ).outerjoin(
+            other_name_subquery, true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -223,6 +239,24 @@ def participant_list(participant_set_id=0, view=None):
                 desc(text('full_name_translations.value')))
         else:
             queryset = queryset.order_by(text('full_name_translations.value'))
+    elif request.args.get('sort_by') == 'first_name':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('first_name_translations.value')))
+        else:
+            queryset = queryset.order_by(text('first_name_translations.value'))
+    elif request.args.get('sort_by') == 'last_name':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('last_name_translations.value')))
+        else:
+            queryset = queryset.order_by(text('last_name_translations.value'))
+    elif request.args.get('sort_by') == 'other_name':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('other_name_translations.value')))
+        else:
+            queryset = queryset.order_by(text('other_name_translations.value'))
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
