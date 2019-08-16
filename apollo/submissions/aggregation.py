@@ -72,18 +72,11 @@ def _qa_counts(query, form):
     data = []
     if form.quality_checks:
         for check in form.quality_checks:
-            d = {
-                'name': check['name'],
-                'description': check['description'],
-                'counts': [], 'total': 0}
+            d = {'name': check['name'], 'description': check['description']}
 
             results = get_logical_check_stats(query, form, check)
             for label, count in results:
-                d['counts'].append({
-                    'count': count,
-                    'label': label
-                })
-                d['total'] += count
+                d[label] = count
 
             data.append(d)
 

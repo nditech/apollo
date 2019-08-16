@@ -35,7 +35,7 @@
 {% if data %}
 <div class="row">
 {% for row in data %}
-  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4">
+  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4 p-0">
   {%- if group -%}
     <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location=row.get('id', ''), **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if next_location %}</a>{% endif %}</h5>
   {%- else -%}
@@ -85,11 +85,12 @@
           .set('No Signal', "{{ _('No Signal') }}");
         var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
         var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
+        var total_label = "{{ _('Total') }}";
 
       {%- if session['dashboard_chart_type'] == 'bar' %}
-        drawBarChart(el, dataMap, labels, labelsMap, colors);
+        drawBarChart(el, dataMap, labels, labelsMap, colors, total_label);
       {%- else %}
-        drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors);
+        drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
       {%- endif %}
       });
   });
