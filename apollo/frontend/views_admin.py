@@ -237,8 +237,10 @@ class EventAdminView(BaseAdminView):
             model.location_set = form.participant_set.data.location_set
 
         # convert to the app time zone
-        model.start = model.start.astimezone(app_time_zone)
-        model.end = model.end.astimezone(app_time_zone)
+        model.start = model.start.astimezone(
+            app_time_zone).astimezone(utc_time_zone)
+        model.end = model.end.astimezone(
+            app_time_zone).astimezone(utc_time_zone)
 
 
 class UserAdminView(BaseAdminView):
