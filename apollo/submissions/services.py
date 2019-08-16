@@ -3,6 +3,8 @@ import csv
 from geoalchemy2.shape import to_shape
 from io import StringIO
 
+from flask_babelex import gettext
+
 from apollo import constants
 from apollo.dal.service import Service
 from apollo.locations.models import LocationType, Sample
@@ -44,19 +46,21 @@ class SubmissionService(Service):
         sample_headers = [s.name for s in samples]
 
         dataset_headers = [
-            'Participant ID', 'Name', 'DB Phone', 'Recent Phone'
+            gettext('Participant ID'), gettext('Name'), gettext('DB Phone'),
+            gettext('Recent Phone')
         ] + [
             loc_type.name for loc_type in location_types
         ] + [
-            'Location', 'Location Code', 'Latitude', 'Longitude'
-        ] + extra_field_headers + ['RV'] + tags + ['Timestamp']
+            gettext('Location'), gettext('Location Code'), gettext('Latitude'),
+            gettext('Longitude')
+        ] + extra_field_headers + ['RV'] + tags + [gettext('Timestamp')]
 
         if form.form_type == 'INCIDENT':
-            dataset_headers.extend(['Status', 'Description'])
+            dataset_headers.extend([gettext('Status'), gettext('Description')])
         else:
             dataset_headers.extend(sample_headers)
             if submission.submission_type == 'O':
-                dataset_headers.append('Comment')
+                dataset_headers.append(gettext('Comment'))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -78,7 +82,7 @@ class SubmissionService(Service):
                 record = [
                     submission.participant.participant_id
                     if submission.participant else '',
-                    submission.participant.name
+                    submission.participant.full_name
                     if submission.participant else '',
                     submission.participant.primary_phone
                     if submission.participant else '',
@@ -125,7 +129,7 @@ class SubmissionService(Service):
                 record = [
                     sib.participant.participant_id
                     if sib.participant else '',
-                    sib.participant.name
+                    sib.participant.full_name
                     if sib.participant else '',
                     sib.participant.primary_phone
                     if sib.participant else '',

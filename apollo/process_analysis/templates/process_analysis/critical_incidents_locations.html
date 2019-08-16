@@ -48,7 +48,7 @@
       {% for incident in incidents %}
       <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
         <td>{{ incident.participant.participant_id|default }}</td>
-        <td>{{ incident.participant.name|default }}</td>
+        <td>{{ incident.participant.full_name|default }}</td>
         {% for lt in location_types %}
         <td>{{ incident|get_location_for_type(lt) }}</td>
         {% endfor %}

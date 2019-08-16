@@ -21,12 +21,12 @@
   <table class="table table-bordered">
   <tr>
     <th class="col-2">{{ _('Participant') }}</th>
-    <td>{% if submission.participant %}<strong>{{ submission.participant.name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.primary_phone %} ({{ submission.participant.primary_phone }}){%- endif %}
+    <td>{% if submission.participant %}<strong>{{ submission.participant.full_name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.primary_phone %} ({{ submission.participant.primary_phone }}){%- endif %}
     <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
     {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {%- for sib in siblings -%}
-    <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong> &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% if sib.participant.primary_phone %} ({{ sib.participant.primary_phone }}){% endif %}{% endif %}</td>
+    <td>{% if sib.participant %}<strong>{{ sib.participant.full_name }}</strong> &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% if sib.participant.primary_phone %} ({{ sib.participant.primary_phone }}){% endif %}{% endif %}</td>
     {%- endfor -%}
     {%- endif -%}
   </tr>
