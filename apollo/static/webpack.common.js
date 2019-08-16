@@ -14,6 +14,7 @@ module.exports = {
         'styles-rtl': './src/styles-rtl.js',
         'messagelog': './src/messagelog.js',
         'text-security': './src/text-security.js',
+        'gettext': './src/gettext.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
