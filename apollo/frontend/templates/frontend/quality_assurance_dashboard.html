@@ -86,12 +86,13 @@
 </script>
 <script type="text/javascript">
 $(function () {
-	$('#filter_reset').on('click', function() {
-		var $form = $(this).parents('form').first();
-		$form.find(':input').not('button').each(function() { $(this).val(''); })
-		$form.submit();
-	});
-	$('select.select2-locations').select2(LocationOptions);
+  $('#filter_reset').on('click', function() {
+    var $form = $(this).parents('form').first();
+    $form.find(':input').not('button').each(function() { $(this).val(''); })
+    $form.submit();
+  });
+  LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
+  $('select.select2-locations').select2(LocationOptions);
 });
 </script>
 {% endblock %}

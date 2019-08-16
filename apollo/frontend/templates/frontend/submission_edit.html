@@ -17,7 +17,7 @@
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
 {%- endif %}
 
-<div class="table-responsive">
+<div class="table-responsive {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <table class="table table-bordered">
   <tr>
     <th class="col-2">{{ _('Participant') }}</th>
@@ -141,7 +141,7 @@
 </ul>
 
   {%- if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
-<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0" role="alert">
+<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
   <h5 class="alert-heading">{{ _('Quality Assurance Warnings') }}</h5>
   <p>{{ _('The following quality assurance conditions were flagged while validating this submission. Please confirm with the participant that the submitted data is correct. If you find the data to be as reported by the participant, mark the data point as confirmed.') }}
   </p>
@@ -168,7 +168,7 @@
 </div>
 {%- endif %}
 
-<div class="card-body tab-content px-0" id="tabbed-content">
+<div class="card-body tab-content px-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="tabbed-content">
   <div class="tab-pane fade show active" id="checklist-panel" role="tabpanel" aria-labelledby="checklist-tab">
     <div class="card bg-light mb-3">
       <div class="card-header py-0 px-0">
@@ -247,7 +247,7 @@
 
     {% for group in form.data.groups %}
     {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
-    <div class="card bg-light {%- if not loop.last %} mb-3{% endif %}">
+    <div class="card bg-light {%- if not loop.last %} mb-3{% endif %} {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
       <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}" aria-expanded="{% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %}false{% else %}true{% endif %}" aria-controls="{{ group.name }}">
         <h5 class="mb-0">{{ group.name }}</h5>
       </div>
@@ -512,7 +512,7 @@
 {%- else %}
 {#- Critical Incidents #}
 {%- if submission_form.errors %}
-<div class="alert alert-danger alert-dismissible fade show mt-2 mb-0" role="alert">
+<div class="alert alert-danger alert-dismissible fade show mt-2 mb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
   <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>
   <div>{{ _('The data you entered are not valid. Please check the affected questions and correct them.') }}</div>
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -521,7 +521,7 @@
 </div>
 {%- endif %}
 
-<div class="card-body tab-content px-0">
+<div class="card-body tab-content px-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <div>
     {% for group in form.data.groups %}
     <div class="card bg-light mb-3">

@@ -148,7 +148,7 @@
   });
   Vue.component('predicate', {
     template: `
-      <input type="text" class="form-control selectize" v-bind:class="{'col-4': direction == 'left'}" ref="input" :placeholder="direction == 'left' ? 'Left' : 'Right'" :value="value" @input="changed(index)" />
+      <input type="text" class="form-control selectize" v-bind:class="{'col-4': direction == 'left'}" ref="input" :placeholder="direction == 'left' ? '{{ _("Left") }}' : '{{ _("Right") }}'" :value="value" @input="changed(index)" />
     `,
     props: ['value', 'direction', 'index'],
     created: function () {
@@ -209,7 +209,7 @@
       <div>
         <div class="form-row align-items-center mb-2">
           <div class="form-group col-md-12">
-            <label for="description">Description</label>
+            <label for="description">{{ _('Description') }}</label>
             <input type="text" id="description" name="description" v-model="control.description" class="form-control">
           </div>
         </div>
@@ -217,19 +217,19 @@
           <div class="col-12">
             <div class="input-group">
               <select class="form-control custom-select col-1" :class="{ invisible: index == 0 }" v-model="criterion.conjunction" aria-label="{{ _('Conjunction') }}">
-                <option value="&&">AND</option>
-                <option value="||">OR</option>
+                <option value="&&">{{ _('AND') }}</option>
+                <option value="||">{{ _('OR') }}</option>
               </select>
 
               <predicate :direction="'left'" :value="criterion.lvalue" :index="index" />
 
               <select class="form-control custom-select col-2" v-model="criterion.comparator" aria-label="{{ _('Comparator') }}">
-                <option value="=">Equal To</option>
-                <option value="!=">Not Equal To</option>
-                <option value="<">Less Than</option>
-                <option value="<=">Less Than or Equal</option>
-                <option value=">">Greater Than</option>
-                <option value=">=">Greater Than or Equal</option>
+                <option value="=">{{ _('Equal To') }}</option>
+                <option value="!=">{{ _('Not Equal To') }}</option>
+                <option value="<">{{ _('Less Than') }}</option>
+                <option value="<=">{{ _('Less Than or Equal') }}</option>
+                <option value=">">{{ _('Greater Than') }}</option>
+                <option value=">=">{{ _('Greater Than or Equal') }}</option>
               </select>
 
               <predicate :direction="'right'" :value="criterion.rvalue" :index="index" />

@@ -6,7 +6,7 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
-from sqlalchemy import false, func
+from sqlalchemy import false
 
 from ..deployments.forms import generate_event_selection_form
 from ..frontend import permissions, route
