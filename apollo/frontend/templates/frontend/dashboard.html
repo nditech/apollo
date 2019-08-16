@@ -35,7 +35,7 @@
 {% if data %}
 <div class="row">
 {% for row in data %}
-  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4">
+  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4 p-0">
   {%- if group -%}
     <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location=row.get('id', ''), **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if next_location %}</a>{% endif %}</h5>
   {%- else -%}
@@ -54,11 +54,7 @@
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-{%- if session['dashboard_chart_type'] == 'bar' %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard-bar.js') }}"></script>
-{%- else %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-{%- endif %}
 <script type="text/javascript">
   var time = new Date().getTime();
 
@@ -72,15 +68,42 @@
     else
       setTimeout(refresh, 10000);
   }
+
+  $(function () {
+      $('.chart').each(function(idx, el) {
+        var json = JSON.parse(el.dataset.chart);
+        var dataMap = d3.map()
+          .set('Missing', json.Missing + (json.Conflict || 0))
+          .set('Partial', json.Partial)
+          .set('Complete', json.Complete)
+          .set('No Signal', json.Offline);
+        var labels = ['Missing', 'Partial', 'Complete', 'No Signal'];
+        var labelsMap = d3.map()
+          .set('Missing', "{{ _('Missing') }}")
+          .set('Partial', "{{ _('Partial') }}")
+          .set('Complete', "{{ _('Complete') }}")
+          .set('No Signal', "{{ _('No Signal') }}");
+        var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
+        var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
+        var total_label = "{{ _('Total') }}";
+
+      {%- if session['dashboard_chart_type'] == 'bar' %}
+        drawBarChart(el, dataMap, labels, labelsMap, colors, total_label);
+      {%- else %}
+        drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
+      {%- endif %}
+      });
+  });
 </script>
 <script type="text/javascript">
 $(function () {
-	$('#filter_reset').on('click', function() {
-		var $form = $(this).parents('form').first();
-		$form.find(':input').not('button').each(function() { $(this).val(''); })
-		$form.submit();
-	});
-	$('select.select2-locations').select2(LocationOptions);
+  $('#filter_reset').on('click', function() {
+    var $form = $(this).parents('form').first();
+    $form.find(':input').not('button').each(function() { $(this).val(''); })
+    $form.submit();
+  });
+  LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
+  $('select.select2-locations').select2(LocationOptions);
 });
 </script>
 {% endblock %}

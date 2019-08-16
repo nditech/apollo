@@ -130,7 +130,7 @@
 
   $(function () {
     // load the data
-    var data = $('#container').data('chart');
+    var data = $('#container').data('chart') || {};
 
     Highcharts.setOptions({
       global: {

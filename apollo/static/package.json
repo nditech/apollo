@@ -15,7 +15,7 @@
     "@fortawesome/fontawesome-free": "^5.8.2",
     "@ttskch/select2-bootstrap4-theme": "^1.2.2",
     "bootstrap": "^4.3.1",
-    "bootstrap-v4-rtl": "^4.3.1-0",
+    "bootstrap-v4-rtl": "^4.3.1-5",
     "bs-custom-file-input": "^1.3.2",
     "highcharts": "^7.1.1",
     "jquery": "^3.4.1",

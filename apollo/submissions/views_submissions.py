@@ -1051,6 +1051,11 @@ def quality_assurance_dashboard(form_id):
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=g.event.location_set_id)
 
+    chart_type = data.pop('chart', None)
+    if chart_type:
+        session['dashboard_chart_type'] = chart_type if chart_type in [
+            'pie', 'bar'] else 'pie'
+
     location = None
     if request.args.get('location'):
         location = services.locations.find(
@@ -1072,7 +1077,7 @@ def quality_assurance_dashboard(form_id):
         'location_types': loc_types,
         'location': location,
         'breadcrumbs': breadcrumbs,
-        'check_data': check_data
+        'data': check_data
     }
 
     return render_template(template_name, **context)

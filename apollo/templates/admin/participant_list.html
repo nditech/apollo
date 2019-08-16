@@ -337,6 +337,7 @@ $(function(){
         wizard.show();
     });
 
+    LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
     $('select.select2-locations').select2(LocationOptions);
     $('#group.select2').select2({
       theme: 'bootstrap4',

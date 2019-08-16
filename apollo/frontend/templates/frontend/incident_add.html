@@ -27,7 +27,7 @@
 </div>
 {%- endif %}
 
-<div class="card-body tab-content px-0">
+<div class="card-body tab-content px-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <div>
     {% for group in form.data.groups %}
     <div class="card bg-light mb-3">
@@ -79,7 +79,7 @@
               <td class="align-middle text-right">
                 <strong>{{ _('Status')}}</strong>
               </td>
-              <td class="col-4 align-middle">{{ submission_form.status(class_='form-control tracked') }}</td>
+              <td class="col-4 align-middle">{{ submission_form.status(class_='form-control tracked custom-select') }}</td>
             </tr>
           </tbody>
         </table>
@@ -110,6 +110,10 @@
     addIncidentLocationOptions.placeholder = {
       id: "__None",
       text: "{{ _('Location') }}"
+    };
+    addIncidentParticipantOptions.placeholder = {
+      id: '__None',
+      text: '{{ _("Participant") }}'
     };
 
     $('.select2-locations').select2(addIncidentLocationOptions);

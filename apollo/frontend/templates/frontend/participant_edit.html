@@ -1,7 +1,7 @@
 {% extends 'frontend/layout.html' %}
 {% block content %}
 <form method="POST">
-<div class="row">
+<div class="row {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
     <div class="card border-light bg-light mt-4">
       <h5 class="card-header">
@@ -65,6 +65,8 @@
 {% block scripts %}
 <script type="text/javascript" charset="utf-8">
   $(function(){
+    LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
+    ParticipantOptions.placeholder = { id: '__None', text: '{{ _("Participant") }}'};
     $('.select2-locations').select2(LocationOptions);
     $('.select2-participants').select2(ParticipantOptions);
 

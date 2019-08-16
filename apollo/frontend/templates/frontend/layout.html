@@ -81,7 +81,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">{{ _('Settings') }}</a>
-                            <div class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown-menu {{ 'dropdown-menu-left' if g.locale.text_direction == 'rtl' else 'dropdown-menu-right' }}">
                                 <a class="dropdown-item disabled" href="#">{{ current_user.email }}</a>
                                 <div class="dropdown-divider"></div>
                                 {%- if current_menu.submenu('user.events').visible %}
@@ -142,6 +142,9 @@
     </footer>
 
     {% if g.locale.text_direction == 'rtl' -%}
+    <script type="text/javascript">
+      window.rtl = true;
+    </script>
     <script type="text/javascript" src="{{ asset_url_for('scripts-rtl.js') }}" charset="utf-8"></script>
     {%- else -%}
     <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>

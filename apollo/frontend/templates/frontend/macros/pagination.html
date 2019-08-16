@@ -15,8 +15,8 @@
     <div class="align-self-center">
         <nav aria-label="Page navigation example">
             <ul class="pagination mb-0 ml-2">
-                <li class="page-item {%- if not pager.has_prev %} disabled{% endif %}"><a class="page-link" href="{% if not pager.has_prev %}javascript:;{% else %}{{ url_for(endpoint, page=pager.prev_num, **args) }}{% endif %}" title="{{ _('Previous') }}"><i class="fa fa-chevron-left"></i></a></li>
-                <li class="page-item {%- if not pager.has_next %} disabled{% endif %}"><a class="page-link" href="{% if not pager.has_next %}javascript:;{% else %}{{ url_for(endpoint, page=pager.next_num, **args) }}{% endif %}" title="{{ _('Next') }}"><i class="fa fa-chevron-right"></i></a></li>
+                <li class="page-item {%- if not pager.has_prev %} disabled{% endif %}"><a class="page-link" href="{% if not pager.has_prev %}javascript:;{% else %}{{ url_for(endpoint, page=pager.prev_num, **args) }}{% endif %}" title="{{ _('Previous') }}"><i class="fa {{ 'fa-chevron-right' if g.locale.text_direction == 'rtl' else 'fa-chevron-left' }}"></i></a></li>
+                <li class="page-item {%- if not pager.has_next %} disabled{% endif %}"><a class="page-link" href="{% if not pager.has_next %}javascript:;{% else %}{{ url_for(endpoint, page=pager.next_num, **args) }}{% endif %}" title="{{ _('Next') }}"><i class="fa {{ 'fa-chevron-left' if g.locale.text_direction == 'rtl' else 'fa-chevron-right' }}"></i></a></li>
             </ul>
         </nav>
     </div>

@@ -1,11 +1,32 @@
 {% extends "frontend/layout.html" %}
 {%- from 'frontend/macros/quality_assurance_dashboard_filter.html' import render_filter_form -%}
 
+{% block stylesheets %}
+<style type="text/css">
+.chart svg{height:300px; margin-top: .8em;}
+.axis text {
+  font: 8px sans-serif;
+  fill: #666;
+  text-anchor: start;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #666;
+  shape-rendering: crispEdges;
+}
+</style>
+{% endblock %}
+
 {%- block toolbar %}
 <div class="btn-toolbar d-none d-md-flex" role="toolbar">
-{% if perms.export_submissions.can() %}
-<a class="btn btn-secondary" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
-{% endif %}
+  {% if perms.export_submissions.can() %}
+  <a class="btn btn-secondary mr-2" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
+  {% endif %}
+  <div class="btn-group" role="group" aria-label="{{ _('Chart Selection') }}">
+    <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] != 'bar' else  '' }}" href="{{ modify_query(chart='pie') }}" title="{{ _('Pie Chart') }}" aria-label="{{ _('Pie Chart') }}"><i class="fa fa-chart-pie"></i></a>
+    <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] == 'bar' else  '' }}" href="{{ modify_query(chart='bar') }}" title="{{ _('Bar Chart') }}" aria-label="{{ _('Bar Chart') }}"><i class="fa fa-chart-bar"></i></a>
+  </div>
 </div>
 {%- endblock %}
 
@@ -16,71 +37,62 @@
   </div>
 </div>
 
-<div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
-  <check :check="check" v-for="check in checks"></check>
-</div>
-
-<template id="chart-component">
-  <div class="col-md-6 mb-2 mt-4">
-    <h5 class="text-center"><%= check.description %></h5>
-    <div :id="htmlID"></div>
+{% if data %}
+<div class="row">
+{% for row in data %}
+  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4 p-0">
+    <h5 class="text-center">{% if row.description|count > 11 %}<abbr title="{{ row.description }}">{{ row.description|truncate(11, True) }}</abbr>{% else %}{{ row.description }}{% endif %}</h5>
+    <div class="chart text-center" data-chart='{{ row|tojson }}'>
+    </div>
   </div>
-</template>
+{% endfor %}
+</div>
+{% else %}
+<div class="card border-light">
+  <div class="card-header text-center">{{ _('No Data Available') }}</div>
+</div>
+{% endif %}
+
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/dimple.v2.3.0.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
-var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
+  $(function () {
+      $('.chart').each(function(idx, el) {
+        var json = JSON.parse(el.dataset.chart);
+        var dataMap = d3.map()
+          .set('Flagged', json.Flagged || 0)
+          .set('Verified', json.Verified || 0)
+          .set('OK', json.OK || 0)
+          .set('Missing', json.Missing || 0);
+        var labels = ['Missing', 'Verified', 'OK', 'Flagged'];
+        var labelsMap = d3.map()
+          .set('Flagged', "{{ _('Flagged') }}")
+          .set('Verified', "{{ _('Verified') }}")
+          .set('OK', "{{ _('OK') }}")
+          .set('Missing', "{{ _('Missing') }}");
+        var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
+        var label_colors = ["#000000", "#000000", "#ffffff", "#ffffff"];
+        var total_label = "{{ _('Total') }}";
 
-Vue.component('check', {
-  delimiters: [ '<%=', '%>' ],
-  props: ['check'],
-  computed: {
-    htmlID: function () {
-      return 'qa_' + this.check.name;
-    }
-  },
-  mounted: function() {
-    this.$nextTick(function (){
-      var compSvg = dimple.newSvg('#' + this.htmlID, '100%', '250px');
-      var chart = new dimple.chart(compSvg, this.check.counts);
-
-      var x_axis = chart.addMeasureAxis('x', 'count');
-      x_axis.tickFormat = 'd';
-      x_axis.overrideMax = this.check.total;
-
-      chart.setMargins(100, 50, 50, 50);
-      chart.addCategoryAxis('y', 'label').addOrderRule([
-        'OK', 'Verified', 'Flagged', 'Missing'
-      ], true);
-
-      chart.addSeries('label', dimple.plot.bar);
-      chart.assignColor('OK', '#28a745');
-      chart.assignColor('Verified', '#007bff');
-      chart.assignColor('Flagged', '#dc3545');
-      chart.assignColor('Missing', '#6c757d');
-
-      chart.draw();
-    });
-  },
-  template: '#chart-component'
-});
-
-var app = new Vue({
-  el: '#check_breakdown',
-  data: {checks: check_data}
-});
+      {%- if session['dashboard_chart_type'] == 'bar' %}
+        drawBarChart(el, dataMap, labels, labelsMap, colors, total_label);
+      {%- else %}
+        drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
+      {%- endif %}
+      });
+  });
 </script>
 <script type="text/javascript">
 $(function () {
-	$('#filter_reset').on('click', function() {
-		var $form = $(this).parents('form').first();
-		$form.find(':input').not('button').each(function() { $(this).val(''); })
-		$form.submit();
-	});
-	$('select.select2-locations').select2(LocationOptions);
+  $('#filter_reset').on('click', function() {
+    var $form = $(this).parents('form').first();
+    $form.find(':input').not('button').each(function() { $(this).val(''); })
+    $form.submit();
+  });
+  LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
+  $('select.select2-locations').select2(LocationOptions);
 });
 </script>
 {% endblock %}

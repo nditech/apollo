@@ -15,6 +15,7 @@
 $(function () {
   var marker = undefined;
   var map = undefined;
+  LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
 
   $('#filter_reset').on('click', function() {
     var $form = $(this).parents('form').first();

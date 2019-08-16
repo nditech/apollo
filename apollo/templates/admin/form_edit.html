@@ -29,7 +29,8 @@
           {%- if field.type != 'CSRFTokenField' -%}
           <div class="form-group row align-items-center">
             {% if field.name in ['require_exclamation', 'track_data_conflicts', 'calculate_moe', 'quality_checks_enabled'] %}
-              <div class="col-8 offset-4">
+              <div class="col-4">&nbsp;</div>
+              <div class="col-8">
                 <div class="custom-control custom-checkbox">
                   {{ field(class_='custom-control-input is-invalid' if field.errors else 'custom-control-input') }}
                   {{ field.label(class_='custom-control-label') }}

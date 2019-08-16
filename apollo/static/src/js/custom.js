@@ -28,14 +28,22 @@ window.LocationOptions = {
     },
     templateResult: function (location) {
         if (location.location_type) {
-            return safe_string(location.name) + ' · ' + safe_string(location.location_type);
+            if (window.rtl) {
+                return safe_string(location.location_type) + ' · ' + safe_string(location.name);
+            } else {
+                return safe_string(location.name) + ' · ' + safe_string(location.location_type);
+            }
         } else {
             return safe_string(location.text);
         }
     },
     templateSelection: function (location) {
         if (location.location_type) {
-            return safe_string(location.name) + ' · ' + safe_string(location.location_type);
+            if (window.rtl){
+                return safe_string(location.location_type) + ' · ' + safe_string(location.name);
+            } else {
+                return safe_string(location.name) + ' · ' + safe_string(location.location_type);
+            }
         } else {
             return safe_string(location.text);
         }
@@ -74,14 +82,22 @@ window.ParticipantOptions = {
     },
     templateResult: function (participant) {
         if (participant.participant_id) {
-            return safe_string(participant.participant_id) + ' · ' + safe_string(participant.name);
+            if (window.rtl) {
+                return safe_string(participant.name) + ' · ' + safe_string(participant.participant_id);
+            } else {
+                return safe_string(participant.participant_id) + ' · ' + safe_string(participant.name);
+            }
         } else {
             return safe_string(participant.text);
         }
     },
     templateSelection: function (participant) {
         if (participant.participant_id) {
-            return safe_string(participant.participant_id) + ' · ' + safe_string(participant.name);
+            if (window.rtl) {
+                return safe_string(participant.name) + ' · ' + safe_string(participant.participant_id);
+            } else {
+                return safe_string(participant.participant_id) + ' · ' + safe_string(participant.name);
+            }
         } else {
             return safe_string(participant.text);
         }
