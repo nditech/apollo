@@ -29,11 +29,18 @@ def get_default_locale(obj, attr):
         raise
 
     if isinstance(obj, db.Model):
+        attribute = getattr(obj, attr)
+        if attribute is None or attribute == {}:
+            return ''
+
         # checking for the default locale for a model instance
-        if locale in getattr(obj, attr).keys():
+        if locale in attribute.keys():
             return locale
         else:
-            return sorted(getattr(obj, attr).keys())[0]
+            try:
+                return sorted(attribute.keys())[0]
+            except IndexError:
+                return ''
 
     # return default deployment locale
     return locale
