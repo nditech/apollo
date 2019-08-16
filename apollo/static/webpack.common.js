@@ -90,6 +90,7 @@ module.exports = {
         ],
         alias: {
             jquery: 'jquery/dist/jquery.min.js',
+            'jquery-mousewheel': 'jquery/dist/jquery.min.js',
             moment: 'moment/min/moment-with-locales.min.js'
         }
     },
