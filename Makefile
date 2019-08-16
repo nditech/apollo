@@ -15,3 +15,5 @@ babel-init:
 babel-update:
 	pybabel update -i apollo/translations/messages.pot -d apollo/translations/
 	pybabel update -i apollo/translations/javascript.pot -D javascript -d apollo/translations/
+po2json:
+	./convert-po2json

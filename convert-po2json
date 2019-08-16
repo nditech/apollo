@@ -1,0 +1,6 @@
+#!/bin/bash
+for i in apollo/translations/*; do
+    if [[ -a $i/LC_MESSAGES/javascript.po ]]; then 
+        apollo/static/node_modules/gettext.js/bin/po2json $i/LC_MESSAGES/javascript.po apollo/static/js/i18n/$(basename $i).json;
+    fi;
+done
