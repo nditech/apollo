@@ -21,18 +21,18 @@
       $builder = $injector.get('$builder');
       var analysisOptsMap = {
         'choice': [
-          {option: 'No Analysis', value: 'N/A'},
-          {option: 'Histogram', value: 'histogram'}
+          {option: i18n.gettext('No Analysis'), value: 'N/A'},
+          {option: i18n.gettext('Histogram'), value: 'histogram'}
         ],
         'numeric': [
-          {option: 'No Analysis', value: 'N/A'},
-          {option: 'Categorical', value: 'bucket'},
-          {option: 'Mean', value: 'mean'},
-          {option: 'Count', value: 'count'}
+          { option: i18n.gettext('No Analysis'), value: 'N/A'},
+          { option: i18n.gettext('Categorical'), value: 'bucket'},
+          { option: i18n.gettext('Mean'), value: 'mean'},
+          { option: i18n.gettext('Count'), value: 'count'}
         ],
         'default': [
-          {option: 'No Analysis', value: 'N/A'},
-          {option: 'Count', value: 'count'}
+          { option: i18n.gettext('No Analysis'), value: 'N/A'},
+          { option: i18n.gettext('Count'), value: 'count'}
         ]
       };
       $scope.setupScope = function(formObject) {
@@ -46,6 +46,20 @@
          */
         var component;
         copyObjectToScope(formObject, $scope);
+
+        $scope.deleteLabel = i18n.gettext('Delete');
+        $scope.cancelLabel = i18n.gettext('Cancel');
+        $scope.saveLabel = i18n.gettext('Save');
+        $scope.nameLabel = i18n.gettext('Name');
+        $scope.descriptionLabel = i18n.gettext('Description');
+        $scope.optionsLabel = i18n.gettext('Options');
+        $scope.analysisLabel = i18n.gettext('Analysis');
+        $scope.minimumLabel = i18n.gettext('Minimum');
+        $scope.maximumLabel = i18n.gettext('Maximum');
+        $scope.typeLabel = i18n.gettext('Type');
+        $scope.expectedValueLabel = i18n.gettext('Expected Value');
+        $scope.validationLabel = i18n.gettext('Validation');
+
         $scope.subtypeOptions = [
           {option: 'Number', value: 'integer'},
           {option: 'Text', value: 'string'}

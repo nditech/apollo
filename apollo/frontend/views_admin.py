@@ -237,8 +237,10 @@ class EventAdminView(BaseAdminView):
             model.location_set = form.participant_set.data.location_set
 
         # convert to the app time zone
-        model.start = model.start.astimezone(app_time_zone)
-        model.end = model.end.astimezone(app_time_zone)
+        model.start = app_time_zone.localize(
+            model.start).astimezone(utc_time_zone)
+        model.end = app_time_zone.localize(
+            model.end).astimezone(utc_time_zone)
 
 
 class UserAdminView(BaseAdminView):
@@ -363,7 +365,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_labels = {
         'name': _('Name'),
         'administrative_divisions': _('Administrative Divisions'),
-        'locations': _('Locations')
+        'locations': _('Location Data')
     }
     column_formatters = {
         'administrative_divisions': macro('locations_builder'),

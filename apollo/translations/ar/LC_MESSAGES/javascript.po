@@ -1,0 +1,134 @@
+# Arabic translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-08-17 07:52+0000\n"
+"PO-Revision-Date: 2019-08-16 16:47+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ar\n"
+"Language-Team: ar <LL@li.org>\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
+"n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.3\n"
+
+#: apollo/static/js/angular-form-builder-components.js:6
+msgid "Section"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:30
+msgid "Numeric Question"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:89
+msgid "Single Choice Question"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:92
+#: apollo/static/js/angular-form-builder-components.js:187
+msgid "Option 1"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:92
+#: apollo/static/js/angular-form-builder-components.js:187
+msgid "Option 2"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:136
+msgid "Yes/No Question"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:139
+msgid "Yes"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:139
+msgid "No"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:184
+msgid "Multiple Choices Question"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder-components.js:229
+msgid "Comment Question"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:24
+#: apollo/static/js/angular-form-builder.js:28
+#: apollo/static/js/angular-form-builder.js:34
+msgid "No Analysis"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:25
+msgid "Histogram"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:29
+msgid "Categorical"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:30
+msgid "Mean"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:31
+#: apollo/static/js/angular-form-builder.js:35
+msgid "Count"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:50
+msgid "Delete"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:51
+msgid "Cancel"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:52
+msgid "Save"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:53
+msgid "Name"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:54
+msgid "Description"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:55
+msgid "Options"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:56
+msgid "Analysis"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:57
+msgid "Minimum"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:58
+msgid "Maximum"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:59
+msgid "Type"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:60
+msgid "Expected Value"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:61
+msgid "Validation"
+msgstr ""
+

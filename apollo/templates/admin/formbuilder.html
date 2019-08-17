@@ -61,6 +61,7 @@
 
 {% block tail_js %}
 {{ super() }}
+<script type="text/javascript" src="{{ asset_url_for('gettext.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/simply-toast.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular-form-builder.js') }}"></script>
@@ -74,36 +75,69 @@
       return $builder;
     }
   ]).controller('BuilderController', [
-    '$scope', '$builder', '$validator', function($scope, $builder, $validator) {
+    '$scope', '$builder', '$validator', '$http', function($scope, $builder, $validator, $http) {
       var datasets = document.getElementById('formbuilder').dataset;
       var bootstrapData = JSON.parse(datasets.form);
 
-      for (var i = 0; i < bootstrapData.fields.length; i++)
-        $builder.addFormObject('default', bootstrapData.fields[i]);
-      $scope.form = $builder.forms['default'];
-      $scope.input = [];
-      $scope.defaultValue = {};
-      return $scope.submit = function() {
-        return $validator.validate($scope, 'default').success(function() {
-          $.ajax({
-            beforeSend: function(xhr, settings) {
-              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
-                xhr.setRequestHeader('X-CSRFToken', datasets.csrf);
-              }
-            },
-            contentType: 'application/json; charset=utf-8',
-            async: false,
-            data: JSON.stringify({fields: $scope.form}),
-            error: function(obj, status, error) {
-              $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
-            },
-            type: 'POST',
-          });
-          window.location.href = "{{ url_for('formsview.index') }}";
-        }).error(function() {
-          return console.log('error');
-        });
-      };
+      // load translation file if available
+      $http.get("{{ url_for('static', filename='js/i18n/') }}" + i18n.getLocale() + ".json")
+      .then(function (response) {
+        i18n.loadJSON(response.data, 'messages');
+
+        for (var i = 0; i < bootstrapData.fields.length; i++)
+          $builder.addFormObject('default', bootstrapData.fields[i]);
+
+        $scope.form = $builder.forms['default'];
+        $scope.input = [];
+        $scope.defaultValue = {};
+
+        return $scope.submit = function() {
+          return $validator.validate($scope, 'default').success(function() {
+            $.ajax({
+              beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
+                  xhr.setRequestHeader('X-CSRFToken', datasets.csrf);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              async: false,
+              data: JSON.stringify({fields: $scope.form}),
+              error: function(obj, status, error) {
+                $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
+              },
+              type: 'POST',
+            });
+            window.location.href = "{{ url_for('formsview.index') }}";
+          }).error(function() {});
+        };
+      }, function (response) {
+        for (var i = 0; i < bootstrapData.fields.length; i++)
+          $builder.addFormObject('default', bootstrapData.fields[i]);
+
+        $scope.form = $builder.forms['default'];
+        $scope.input = [];
+        $scope.defaultValue = {};
+
+        return $scope.submit = function() {
+          return $validator.validate($scope, 'default').success(function() {
+            $.ajax({
+              beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
+                  xhr.setRequestHeader('X-CSRFToken', datasets.csrf);
+                }
+              },
+              contentType: 'application/json; charset=utf-8',
+              async: false,
+              data: JSON.stringify({fields: $scope.form}),
+              error: function(obj, status, error) {
+                $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
+              },
+              type: 'POST',
+            });
+            window.location.href = "{{ url_for('formsview.index') }}";
+          }).error(function() {});
+        };
+      });
     }
   ]);
 
