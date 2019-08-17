@@ -226,7 +226,11 @@
               <td class="align-middle"><strong>{{ _('Quarantine Status') }}</strong></td>
               <td class="col-2 align-middle obs-on">
                 <label for="{{ submission_form.quarantine_status.id }}" class="sr-only">{{ submission_form.quarantine_status.label.text }}</label>
+                {%- if readonly %}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {%- else %}
                 {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {%- endif %}
               </td>
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
@@ -236,7 +240,11 @@
               {% endfor %}
               <td class="col-2 align-middle ps-on">
                 <label for="{{ master_form.quarantine_status.id }}" class="sr-only">{{ master_form.quarantine_status.label.text }}</label>
+                {%- if readonly %}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {%- else %}
                 {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {%- endif %}
               </td>
             </tr>
             {% endif %}
