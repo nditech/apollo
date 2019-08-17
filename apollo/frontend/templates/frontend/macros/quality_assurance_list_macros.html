@@ -41,7 +41,7 @@
     <th scope="col" class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
     {% endfor %}
     {% endif %}
-    <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Phone Confirmation') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
 </tr>
 {% endmacro %}
@@ -76,7 +76,7 @@
     </td>
     {% endfor %}
     {% endif %}
-    <td class="text-center">{% if submission.sender_verified %}<i class="fa fa-check text-success" title="{{ _('Verified') }}"></i>{% else %}<i class="fa fa-exclamation-triangle text-warning" title="{{ _('Unverified') }}"></i>{% endif %}</td>
+    <td class="text-center">{% if submission.sender_verified %}<i class="fa fa-check text-success" title="{{ _('Confirmed') }}"></i>{% else %}<i class="fa fa-exclamation-triangle text-warning" title="{{ _('Unconfirmed') }}"></i>{% endif %}</td>
     <td class="text-center">
         {% if submission.unreachable -%}
         <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>

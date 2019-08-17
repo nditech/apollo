@@ -716,6 +716,7 @@ def submission_edit(submission_id):
                     overridden_fields = \
                         master_submission.overridden_fields[:] \
                         if master_submission.overridden_fields else []
+                    overridden_fields = set(overridden_fields)
 
                     new_verification_status = master_form.data.get(
                         'verification_status')
@@ -765,14 +766,24 @@ def submission_edit(submission_id):
                                 form_field not in
                                 ["quarantine_status",
                                     "verification_status"]
+                                and master_form.data.get(form_field)
                             ):
-                                overridden_fields.append(form_field)
+                                overridden_fields.add(form_field)
+                            else:
+                                # if the value was manually removed, then reset
+                                # the overridden status for that field
+                                try:
+                                    overridden_fields.remove(form_field)
+                                except KeyError:
+                                    pass
                             changed = True
                     if changed:
                         update_params['data'] = data
                         if overridden_fields:
-                            update_params['overridden_fields'] = array(set(
-                                overridden_fields))     # remove duplicates
+                            update_params['overridden_fields'] = array(
+                                overridden_fields)     # remove duplicates
+                        else:
+                            update_params['overridden_fields'] = []
 
                         services.submissions.find(
                             id=master_submission.id).update(

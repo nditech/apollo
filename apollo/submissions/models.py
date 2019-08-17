@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geometry  # noqa
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
@@ -231,9 +231,9 @@ class Submission(BaseModel):
                         set(self.form.vote_tags)))
                 subset.update(
                     {k: sibling.data[k]
-                    for k in sibling_data_keys.difference(subset_keys)
-                    if k not in conflict_tags
-                    and k not in self.form.vote_tags})
+                     for k in sibling_data_keys.difference(subset_keys)
+                     if k not in conflict_tags
+                     and k not in self.form.vote_tags})
             else:
                 if self.quarantine_status == 'R':
                     conflict_tags = sibling.compute_conflict_tags(
@@ -245,8 +245,8 @@ class Submission(BaseModel):
 
                 subset.update(
                     {k: sibling.data[k]
-                    for k in sibling_data_keys.difference(subset_keys)
-                    if k not in conflict_tags})
+                     for k in sibling_data_keys.difference(subset_keys)
+                     if k not in conflict_tags})
 
             sibling.conflicts = trim_conflicts(
                 sibling, conflict_tags, combined_data.keys())
@@ -324,9 +324,9 @@ class Submission(BaseModel):
         if not any_conflict_query:
             return []
         siblings_no_quarantine = self.__siblings().filter(
-            Submission.quarantine_status=='')
+            Submission.quarantine_status == '')
         siblings_with_results_quarantine = self.__siblings().filter(
-            Submission.quarantine_status=='R')
+            Submission.quarantine_status == 'R')
 
         results_conflict = siblings_no_quarantine.with_entities(
             *any_conflict_query)

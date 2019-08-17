@@ -179,7 +179,7 @@
               <td class="col-2 align-middle text-center">
               {%- if perms.edit_both_submissions.can() %}
                 <div class="custom-control custom-radio">
-                  <input type="radio" id="{{ submission.id }}" name="submission_selection" class="custom-control-input obs1" value="obs"{% if not readonly %} checked="checked"{% endif %}>
+                  <input type="radio" id="{{ submission.id }}" name="submission_selection" class="custom-control-input obs1" value="obs"{% if not readonly %} checked="checked"{% else %} disabled="disabled"{% endif %}>
                   <label class="custom-control-label" for="{{ submission.id }}"><strong>{{ submission.participant.participant_id }}</strong></label>
                 </div>
               {% else %}
@@ -212,7 +212,11 @@
               <td class="align-middle"><strong>{{ _('Signal') }}</strong></td>
               <td class="col-2 align-middle obs-on text-center">
                 <label for="{{ submission_form.unreachable.id }}" class="sr-only">{{ submission_form.unreachable.label.text }}</label>
+                {%- if readonly %}
+                {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm', 'disabled': 'disabled'}) }}
+                {%- else %}
                 {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm'}) }}
+                {%- endif %}
               </td>
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
@@ -226,7 +230,11 @@
               <td class="align-middle"><strong>{{ _('Quarantine Status') }}</strong></td>
               <td class="col-2 align-middle obs-on">
                 <label for="{{ submission_form.quarantine_status.id }}" class="sr-only">{{ submission_form.quarantine_status.label.text }}</label>
+                {%- if readonly %}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {%- else %}
                 {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {%- endif %}
               </td>
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
@@ -236,7 +244,11 @@
               {% endfor %}
               <td class="col-2 align-middle ps-on">
                 <label for="{{ master_form.quarantine_status.id }}" class="sr-only">{{ master_form.quarantine_status.label.text }}</label>
+                {%- if readonly %}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {%- else %}
                 {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {%- endif %}
               </td>
             </tr>
             {% endif %}
@@ -248,7 +260,7 @@
     {% for group in form.data.groups %}
     {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
     <div class="card bg-light {%- if not loop.last %} mb-3{% endif %} {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
-      <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}" aria-expanded="{% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %}false{% else %}true{% endif %}" aria-controls="{{ group.name }}">
+      <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#grp{{ loop.index }}" aria-expanded="{% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %}false{% else %}true{% endif %}" aria-controls="grp{{ loop.index }}">
         <h5 class="mb-0">{{ group.name }}</h5>
       </div>
       {# check for data validation or quality assurance errors #}
@@ -256,7 +268,7 @@
       {%- if submission_form[field.tag].errors %}{% set ns.has_form_error = true %}{% endif %}
       {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() -%}{% set ns.has_qa_error = true %}{% endif %}
       {%- endfor %}
-      <div id="{{ group.name }}" class="card-body {% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %} collapse{% else %} show{% endif %} py-0 px-0">
+      <div id="grp{{ loop.index }}" class="card-body {% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %} collapse{% else %} show{% endif %} py-0 px-0">
         <table class="table table-borderless mb-0 table-responsive">
           <tbody>
           {% for field in group.fields %}
@@ -289,10 +301,10 @@
               {% if master_form[field.tag].errors -%}
               <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
