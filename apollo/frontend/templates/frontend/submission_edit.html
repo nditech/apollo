@@ -212,7 +212,11 @@
               <td class="align-middle"><strong>{{ _('Signal') }}</strong></td>
               <td class="col-2 align-middle obs-on text-center">
                 <label for="{{ submission_form.unreachable.id }}" class="sr-only">{{ submission_form.unreachable.label.text }}</label>
+                {%- if readonly %}
+                {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm', 'disabled': 'disabled'}) }}
+                {%- else %}
                 {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm'}) }}
+                {%- endif %}
               </td>
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
