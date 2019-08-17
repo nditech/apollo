@@ -15,6 +15,7 @@ module.exports = {
         'messagelog': './src/messagelog.js',
         'text-security': './src/text-security.js',
         'gettext': './src/gettext.js',
+        'datetimepicker': './src/datetimepicker.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
