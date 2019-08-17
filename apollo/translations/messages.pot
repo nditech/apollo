@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-16 16:45+0000\n"
+"POT-Creation-Date: 2019-08-17 06:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -414,6 +414,8 @@ msgstr ""
 #: apollo/frontend/forms.py:75
 #: apollo/frontend/templates/frontend/login_user.html:44
 #: apollo/frontend/templates/frontend/login_user.html:45
+#: apollo/frontend/templates/frontend/reset_password.html:46
+#: apollo/frontend/templates/frontend/reset_password.html:48
 #: apollo/participants/models.py:54 apollo/users/forms.py:15
 msgid "Password"
 msgstr ""
@@ -717,27 +719,26 @@ msgstr ""
 #: apollo/frontend/templates/frontend/forgot_password.html:40
 msgid ""
 "An error occured while attempting to reset the password for the supplied "
-"account.\n"
-"                                Please check the email address and try "
-"again."
+"account. Please check the email address and try again."
 msgstr ""
 
-#: apollo/frontend/templates/frontend/forgot_password.html:44
-#: apollo/frontend/templates/frontend/forgot_password.html:46
+#: apollo/frontend/templates/frontend/forgot_password.html:43
+#: apollo/frontend/templates/frontend/forgot_password.html:45
 #: apollo/participants/models.py:53 apollo/users/forms.py:12
 msgid "Email"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/forgot_password.html:48
-#: apollo/frontend/templates/frontend/reset_password.html:36
+#: apollo/frontend/templates/frontend/forgot_password.html:47
+#: apollo/frontend/templates/frontend/reset_password.html:5
 msgid "Reset Password"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/forgot_password.html:50
+#: apollo/frontend/templates/frontend/forgot_password.html:49
 #: apollo/frontend/templates/frontend/incident_add.html:96
 #: apollo/frontend/templates/frontend/macros/send_message.html:32
 #: apollo/frontend/templates/frontend/participant_edit.html:57
 #: apollo/frontend/templates/frontend/participant_list.html:258
+#: apollo/frontend/templates/frontend/reset_password.html:55
 #: apollo/frontend/templates/frontend/submission_edit.html:609
 #: apollo/frontend/templates/frontend/userprofile.html:31
 #: apollo/templates/admin/form_create.html:65
@@ -1089,9 +1090,20 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/reset_password.html:6
-#: apollo/frontend/templates/frontend/reset_password.html:17
-msgid "Reset password"
+#: apollo/frontend/templates/frontend/reset_password.html:37
+#: apollo/frontend/templates/frontend/reset_password.html:53
+msgid "Change Password"
+msgstr ""
+
+#: apollo/frontend/templates/frontend/reset_password.html:42
+msgid ""
+"An error occured while attempting to reset the password for the supplied "
+"account. Please ensure that both values are the same."
+msgstr ""
+
+#: apollo/frontend/templates/frontend/reset_password.html:49
+#: apollo/frontend/templates/frontend/reset_password.html:51
+msgid "Retype Password"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:34
