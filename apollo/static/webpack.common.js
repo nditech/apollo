@@ -12,7 +12,6 @@ module.exports = {
         styles: './src/styles.js',
         'scripts-rtl': './src/scripts-rtl.js',
         'styles-rtl': './src/styles-rtl.js',
-        'messagelog': './src/messagelog.js',
         'text-security': './src/text-security.js',
         'gettext': './src/gettext.js',
         'datetimepicker': './src/datetimepicker.js',
