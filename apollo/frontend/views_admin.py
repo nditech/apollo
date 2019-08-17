@@ -365,7 +365,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_labels = {
         'name': _('Name'),
         'administrative_divisions': _('Administrative Divisions'),
-        'locations': _('Locations')
+        'locations': _('Location Data')
     }
     column_formatters = {
         'administrative_divisions': macro('locations_builder'),
