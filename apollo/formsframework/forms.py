@@ -330,16 +330,22 @@ class FormForm(SecureForm):
     name = wtforms.StringField(
         _('Name'), validators=[wtforms.validators.InputRequired()])
     prefix = wtforms.StringField(
-        _('Prefix'), validators=[wtforms.validators.InputRequired()])
+        _('Prefix'), validators=[wtforms.validators.InputRequired()],
+        description=_('What code to identify this form in text messages.'))
     form_type = wtforms.SelectField(
         _('Form Type'), choices=Form.FORM_TYPES,
         coerce=choice_type_coerce_factory(
             Form.form_type.type),
         validators=[wtforms.validators.InputRequired()])
-    require_exclamation = wtforms.BooleanField(_('Require Exclamation'))
-    track_data_conflicts = wtforms.BooleanField(_('Track Data Conflicts?'))
-    calculate_moe = wtforms.BooleanField(_('Calculate MOE'))
-    quality_checks_enabled = wtforms.BooleanField(_('QA Enabled'))
+    track_data_conflicts = wtforms.BooleanField(
+        _('Track Data Conflicts'),
+        description=_('Whether data conflicts between observers in the same location are tracked or not.'))  # noqa
+    calculate_moe = wtforms.BooleanField(
+        _('Calculate MOE'),
+        description=_('Whether to display margin of error calculations or not.'))  # noqa
+    quality_checks_enabled = wtforms.BooleanField(
+        _('QA Enabled'),
+        description=_('Whether to enable quality assurance or not.'))
     accredited_voters_tag = wtforms.SelectField(
         _('Accredited Voters Field'), choices=[('', '')])
     blank_votes_tag = wtforms.SelectField(
@@ -348,7 +354,9 @@ class FormForm(SecureForm):
         _('Invalid Votes Field'), choices=[('', '')])
     registered_voters_tag = wtforms.SelectField(
         _('Registered Voters Field'), choices=[('', '')])
-    vote_shares = wtforms.SelectMultipleField(_('Vote Shares'))
+    vote_shares = wtforms.SelectMultipleField(
+        _('Vote Shares'),
+        description=_('Questions representing election results.'))  # noqa
 
 
 class FormImportForm(SecureForm):
