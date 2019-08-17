@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from cachetools import cached
 from celery import Celery
-from flask import Flask, abort, request, session
+from flask import (
+    Flask, abort, current_app, json, request, session, stream_with_context)
 from flask_babelex import gettext as _
 from flask_security import current_user
-from flask_sse import sse
+from flask_sse import Message, ServerSentEventsBlueprint
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
@@ -22,6 +23,35 @@ TASK_DESCRIPTIONS = {
     'apollo.participants.tasks.import_participants': _('Import Participants'),
     'apollo.submissions.tasks.init_submissions': _('Create Checklists')
 }
+
+
+class SSEBlueprint(ServerSentEventsBlueprint):
+    def messages(self, channel='sse'):
+        self.pubsub = self.redis.pubsub()
+        self.pubsub.subscribe(channel)
+        for pubsub_message in self.pubsub.listen():
+            if pubsub_message['type'] == 'message':
+                msg_dict = json.loads(pubsub_message['data'])
+                yield Message(**msg_dict)
+
+    def stream(self):
+        channel = request.args.get('channel') or 'sse'
+
+        @stream_with_context
+        def generator():
+            for message in self.messages(channel=channel):
+                yield str(message)
+            response = current_app.response_class(
+                generator(),
+                mimetype='text/event-stream'
+            )
+            response.call_on_close(self.pubsub.close)
+
+            return response
+
+
+sse = SSEBlueprint('sse', __name__)
+sse.add_url_rule(rule='', endpoint='stream', view_func=sse.stream)
 
 
 @sse.before_request
