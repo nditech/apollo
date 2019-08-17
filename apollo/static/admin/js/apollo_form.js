@@ -323,6 +323,10 @@
                         });
                     }
 
+                    if (window.rtl) {
+                        opts['dir'] = 'rtl';
+                    }
+
                     $el.select2(opts);
                     return true;
                 case 'select2-tags':
@@ -336,9 +340,9 @@
                     // default to a comma for separating list items
                     // allows using spaces as a token separator
                     if ($el.attr('data-token-separators')) {
-                        var tokenSeparators = JSON.parse($el.attr('data-tags'));
+                        var tokenSeparators = JSON.parse($el.attr('data-token-separators'));
                     } else {
-                        var tokenSeparators = [','];
+                        var tokenSeparators = [',', ' '];
                     }
 
                     var opts = {
@@ -346,10 +350,11 @@
                         theme: 'bootstrap4',
                         tags: tags,
                         tokenSeparators: tokenSeparators,
-                        formatNoMatches: function () {
-                            return 'Enter comma separated values';
-                        }
                     };
+
+                    if (window.rtl) {
+                        opts['dir'] = 'rtl';
+                    }
 
                     $el.select2(opts);
 
