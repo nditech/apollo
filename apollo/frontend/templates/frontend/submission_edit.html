@@ -179,7 +179,7 @@
               <td class="col-2 align-middle text-center">
               {%- if perms.edit_both_submissions.can() %}
                 <div class="custom-control custom-radio">
-                  <input type="radio" id="{{ submission.id }}" name="submission_selection" class="custom-control-input obs1" value="obs"{% if not readonly %} checked="checked"{% endif %}>
+                  <input type="radio" id="{{ submission.id }}" name="submission_selection" class="custom-control-input obs1" value="obs"{% if not readonly %} checked="checked"{% else %} disabled="disabled"{% endif %}>
                   <label class="custom-control-label" for="{{ submission.id }}"><strong>{{ submission.participant.participant_id }}</strong></label>
                 </div>
               {% else %}
