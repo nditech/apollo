@@ -16,15 +16,15 @@ class EventService(Service):
     __model__ = Event
 
     def default(self):
-        now = current_timestamp().astimezone(app_time_zone)
+        now = current_timestamp()
 
         lower_bound = datetime.combine(now, datetime.min.time())
         upper_bound = datetime.combine(now, datetime.max.time())
 
         # convert back to UTC because datetime.combine() returns
         # naive objects
-        lower_bound = app_time_zone.localize(lower_bound).astimezone(pytz.utc)
-        upper_bound = app_time_zone.localize(upper_bound).astimezone(pytz.utc)
+        lower_bound = pytz.utc.localize(lower_bound)
+        upper_bound = pytz.utc.localize(upper_bound)
 
         event = self.filter(
             Event.start <= upper_bound, Event.end >= lower_bound

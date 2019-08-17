@@ -9,13 +9,17 @@ from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
 from apollo.utils import current_timestamp
 
+import pytz
+
 
 def _default_event_start():
-    return datetime.combine(current_timestamp(), datetime.min.time())
+    return pytz.utc.localize(
+        datetime.combine(current_timestamp(), datetime.min.time()))
 
 
 def _default_event_end():
-    return datetime.combine(current_timestamp(), datetime.max.time())
+    return pytz.utc.localize(
+        datetime.combine(current_timestamp(), datetime.max.time()))
 
 
 class Deployment(BaseModel):
