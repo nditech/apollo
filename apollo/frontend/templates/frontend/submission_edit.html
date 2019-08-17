@@ -289,10 +289,10 @@
               {% if master_form[field.tag].errors -%}
               <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}

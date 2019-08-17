@@ -7,7 +7,7 @@
 </div>
 {% endfor %}
 {% elif field_type == 'select' %}
-{{ form_field(class_="custom-select {{ klass_ }}", disabled=disabled) }}
+{{ form_field(class_="custom-select " + klass_, disabled=disabled) }}
 {% else %}
 {{ form_field(class_=klass_, disabled=disabled) }}
 {% endif %}
