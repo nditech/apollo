@@ -398,9 +398,9 @@
                         timePicker12Hour: false,
                         format: $el.attr('data-date-format')
                     },
-                        function (start, end) {
-                            $('.filter-val').trigger("change");
-                        });
+                    function (start, end) {
+                        $('.filter-val').trigger("change");
+                    });
                     $el.on('show.daterangepicker', function (event, data) {
                         if ($el.val() == "") {
                             var now = moment().seconds(0); // set seconds to 0

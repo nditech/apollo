@@ -185,7 +185,6 @@
     {% endif %}
 
     <script type="text/javascript" src="{{ url_for('static', filename='admin/js/apollo_filters.js') }}" charset="utf-8"></script>
-    {# <script src="{{ admin_static.url(filename='admin/js/filters.js', v='1.0.0') }}"></script> #}
     {{ lib.form_js() }}
 
     {{ actionlib.script(_gettext('Please select at least one record.'),
