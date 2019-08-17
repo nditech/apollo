@@ -10,7 +10,7 @@ class ParticipantSchema(BaseModelSchema):
 
     class Meta:
         model = Participant
-        fields = ('id', 'full_name', 'first_name', 'last_name', 'other_name',
+        fields = ('id', 'full_name', 'first_name', 'last_name', 'other_names',
                   'participant_id', 'role')
 
     def get_role(self, obj):

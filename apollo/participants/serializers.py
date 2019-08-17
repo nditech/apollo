@@ -63,9 +63,9 @@ class ParticipantSerializer(object):
                 locale: name
                 for locale, name in obj.last_name_translations.items()
             },
-            'other_name': {
+            'other_names': {
                 locale: name
-                for locale, name in obj.other_name_translations.items()
+                for locale, name in obj.other_names_translations.items()
             },
             'participant_id': obj.participant_id,
             'email': obj.email,

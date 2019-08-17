@@ -60,8 +60,8 @@ class ParticipantSet(BaseModel):
                 'First Name (%(language)s)', language=language)
             fields[f'last_name_{locale}'] = _(
                 'Last Name (%(language)s)', language=language)
-            fields[f'other_name_{locale}'] = _(
-                'Other Name(s) (%(language)s)', language=language)
+            fields[f'other_names_{locale}'] = _(
+                'Other Names (%(language)s)', language=language)
 
         extra_fields = ParticipantDataField.query.filter_by(
             participant_set_id=self.id).all()
@@ -193,7 +193,7 @@ class Participant(BaseModel):
     full_name_translations = db.Column(JSONB)
     first_name_translations = db.Column(JSONB)
     last_name_translations = db.Column(JSONB)
-    other_name_translations = db.Column(JSONB)
+    other_names_translations = db.Column(JSONB)
     participant_id = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'participant_role.id', ondelete='SET NULL'))
@@ -217,7 +217,7 @@ class Participant(BaseModel):
     full_name = translation_hybrid(full_name_translations)
     first_name = translation_hybrid(first_name_translations)
     last_name = translation_hybrid(last_name_translations)
-    other_name = translation_hybrid(other_name_translations)
+    other_names = translation_hybrid(other_names_translations)
 
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
@@ -312,7 +312,7 @@ ParticipantFirstNameTranslations = func.jsonb_each_text(
 ParticipantLastNameTranslations = func.jsonb_each_text(
     Participant.last_name_translations).alias('last_name_translations')
 ParticipantOtherNameTranslations = func.jsonb_each_text(
-    Participant.other_name_translations).alias('other_name_translations')
+    Participant.other_names_translations).alias('other_names_translations')
 
 
 class PhoneContact(BaseModel):

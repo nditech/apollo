@@ -193,8 +193,8 @@ def participant_list(participant_set_id=0, view=None):
             'first_name_translations')
         last_name_subquery = ParticipantLastNameTranslations.lateral(
             'last_name_translations')
-        other_name_subquery = ParticipantOtherNameTranslations.lateral(
-            'other_name_translations')
+        other_names_subquery = ParticipantOtherNameTranslations.lateral(
+            'other_names_translations')
         queryset = models.Participant.query.select_from(
             models.Participant,
         ).filter(
@@ -217,7 +217,7 @@ def participant_list(participant_set_id=0, view=None):
         ).outerjoin(
             last_name_subquery, true()
         ).outerjoin(
-            other_name_subquery, true()
+            other_names_subquery, true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -251,12 +251,12 @@ def participant_list(participant_set_id=0, view=None):
                 desc(text('last_name_translations.value')))
         else:
             queryset = queryset.order_by(text('last_name_translations.value'))
-    elif request.args.get('sort_by') == 'other_name':
+    elif request.args.get('sort_by') == 'other_names':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(text('other_name_translations.value')))
+                desc(text('other_names_translations.value')))
         else:
-            queryset = queryset.order_by(text('other_name_translations.value'))
+            queryset = queryset.order_by(text('other_names_translations.value'))
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -407,11 +407,11 @@ def participant_edit(id, participant_set_id=0, view=None):
                 field_name = f'last_name_{locale}'
                 last_name_translations[locale] = getattr(form, field_name).data
             participant.last_name_translations = last_name_translations
-            other_name_translations = {}
+            other_names_translations = {}
             for locale in deployment.locale_codes:
-                field_name = f'other_name_{locale}'
-                other_name_translations[locale] = getattr(form, field_name).data
-            participant.other_name_translations = other_name_translations
+                field_name = f'other_names_{locale}'
+                other_names_translations[locale] = getattr(form, field_name).data
+            participant.other_names_translations = other_names_translations
             participant.gender = form.gender.data
             if form.role.data:
                 participant.role_id = ParticipantRole.query.get_or_404(

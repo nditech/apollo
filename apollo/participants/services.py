@@ -37,7 +37,7 @@ class ParticipantService(Service):
         # build headers
         headers = [
             gettext('ID'), gettext('Full Name'), gettext('First Name'),
-            gettext('Last Name'), gettext('Other Name(s)'), gettext('Partner'),
+            gettext('Last Name'), gettext('Other Names'), gettext('Partner'),
             gettext('Role'), gettext('Location ID')]
         headers.extend(lt.name for lt in location_types)
 
@@ -72,7 +72,7 @@ class ParticipantService(Service):
                 participant.full_name,
                 participant.first_name,
                 participant.last_name,
-                participant.other_name,
+                participant.other_names,
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
                 participant.location.code,

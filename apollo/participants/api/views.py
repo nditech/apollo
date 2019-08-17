@@ -89,7 +89,7 @@ class ParticipantListResource(BaseListResource):
                     text('full_name_translations.value ILIKE :name'),
                     text('first_name_translations.value ILIKE :name'),
                     text('last_name_translations.value ILIKE :name'),
-                    text('other_name_translations.value ILIKE :name'),
+                    text('other_names_translations.value ILIKE :name'),
                     Participant.participant_id.ilike(bindparam('pid'))
                 )
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')

@@ -66,8 +66,8 @@ def generate_participant_edit_form(participant, data=None):
         for locale, lang in languages.items()
     })
     attributes.update({
-        f'other_name_{locale}': StringField(
-            _('Other Name(s) (%(language)s)', language=lang))
+        f'other_names_{locale}': StringField(
+            _('Other Names (%(language)s)', language=lang))
         for locale, lang in languages.items()
     })
     attributes['gender'] = SelectField(_('Gender'), choices=Participant.GENDER)
@@ -131,10 +131,10 @@ def generate_participant_edit_form(participant, data=None):
         participant.last_name_translations.get(locale)
     })
     kwargs.update({
-        f'other_name_{locale}': participant.other_name_translations.get(locale)
+        f'other_names_{locale}': participant.other_names_translations.get(locale)
         for locale in languages.keys()
-        if participant.other_name_translations and
-        participant.other_name_translations.get(locale)
+        if participant.other_names_translations and
+        participant.other_names_translations.get(locale)
     })
 
     if participant_set.extra_fields and participant.extra_data:

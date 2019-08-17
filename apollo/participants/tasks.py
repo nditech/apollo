@@ -119,8 +119,8 @@ def update_participants(dataframe, header_map, participant_set):
         f'last_name_{locale}'
         for locale in locales
     ]
-    other_name_column_keys = [
-        f'other_name_{locale}'
+    other_names_column_keys = [
+        f'other_names_{locale}'
         for locale in locales
     ]
 
@@ -142,8 +142,8 @@ def update_participants(dataframe, header_map, participant_set):
         header_map.get(col) for col in first_name_column_keys]
     last_name_columns = [
         header_map.get(col) for col in last_name_column_keys]
-    other_name_columns = [
-        header_map.get(col) for col in other_name_column_keys]
+    other_names_columns = [
+        header_map.get(col) for col in other_names_column_keys]
 
     extra_field_names = [f.name for f in participant_set.extra_fields] \
         if participant_set.extra_fields else []
@@ -179,12 +179,12 @@ def update_participants(dataframe, header_map, participant_set):
                 for locale, name in zip(locales, participant_last_names)
                 if _is_valid(name)
             }
-        participant_other_names = [
-            record.get(col) for col in other_name_columns]
-        if participant_other_names:
-            participant.other_name_translations = {
+        participant_other_namess = [
+            record.get(col) for col in other_names_columns]
+        if participant_other_namess:
+            participant.other_names_translations = {
                 locale: name
-                for locale, name in zip(locales, participant_other_names)
+                for locale, name in zip(locales, participant_other_namess)
                 if _is_valid(name)
             }
         participant_full_names = [record.get(col) for col in full_name_columns]
@@ -192,7 +192,7 @@ def update_participants(dataframe, header_map, participant_set):
             participant_full_names = []
             for name_set in zip_longest(
                     participant_last_names, participant_first_names,
-                    participant_other_names):
+                    participant_other_namess):
                 names = [n for n in name_set if n]
                 concat_names = whitespace_pattern.sub(
                     ' ', ' '.join(names)).strip()
