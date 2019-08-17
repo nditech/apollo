@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elections DemTool\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-16 16:45+0000\n"
+"POT-Creation-Date: 2019-08-17 07:52+0000\n"
 "PO-Revision-Date: 2016-09-14 16:27+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
 "Language: es\n"
@@ -41,7 +41,7 @@ msgstr "'%(value)s' no es una opción válida para este campo"
 msgid "Choose Event"
 msgstr "Elegir evento"
 
-#: apollo/deployments/models.py:85
+#: apollo/deployments/models.py:89
 #, python-format
 msgid "Event - %(name)s"
 msgstr ""
@@ -56,8 +56,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/participant_list.html:108
 #: apollo/frontend/templates/frontend/participant_list.html:111
 #: apollo/frontend/views_admin.py:116 apollo/frontend/views_admin.py:169
-#: apollo/frontend/views_admin.py:327 apollo/frontend/views_admin.py:364
-#: apollo/frontend/views_admin.py:419
+#: apollo/frontend/views_admin.py:329 apollo/frontend/views_admin.py:366
+#: apollo/frontend/views_admin.py:421
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:40
 #: apollo/templates/admin/administrative_divisions.html:25
 #: apollo/templates/admin/administrative_divisions.html:82
@@ -418,6 +418,8 @@ msgstr "Teléfono"
 #: apollo/frontend/forms.py:75
 #: apollo/frontend/templates/frontend/login_user.html:44
 #: apollo/frontend/templates/frontend/login_user.html:45
+#: apollo/frontend/templates/frontend/reset_password.html:46
+#: apollo/frontend/templates/frontend/reset_password.html:48
 #: apollo/participants/models.py:54 apollo/users/forms.py:15
 msgid "Password"
 msgstr ""
@@ -483,7 +485,7 @@ msgstr ""
 msgid "End"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:170 apollo/frontend/views_admin.py:420
+#: apollo/frontend/views_admin.py:170 apollo/frontend/views_admin.py:422
 msgid "Location Set"
 msgstr ""
 
@@ -495,65 +497,65 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:249 apollo/frontend/views_admin.py:538
+#: apollo/frontend/views_admin.py:251 apollo/frontend/views_admin.py:540
 msgid "Roles"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:249
+#: apollo/frontend/views_admin.py:251
 msgid "Active"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:302
+#: apollo/frontend/views_admin.py:304
 msgid "New password"
 msgstr "Nueva contraseña"
 
-#: apollo/frontend/views_admin.py:304 apollo/users/forms.py:21
+#: apollo/frontend/views_admin.py:306 apollo/users/forms.py:21
 msgid "Language"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:307
+#: apollo/frontend/views_admin.py:309
 msgid "Disable"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:308
+#: apollo/frontend/views_admin.py:310
 msgid "Are you sure you want to disable the selected users?"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:313
+#: apollo/frontend/views_admin.py:315
 msgid "User(s) successfully disabled."
 msgstr ""
 
-#: apollo/frontend/views_admin.py:315
+#: apollo/frontend/views_admin.py:317
 msgid "Enable"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:316
+#: apollo/frontend/views_admin.py:318
 msgid "Are you sure you want to enable the selected users?"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:321
+#: apollo/frontend/views_admin.py:323
 msgid "User(s) successfully enabled."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/incident_add.html:73
 #: apollo/frontend/templates/frontend/submission_edit.html:427
 #: apollo/frontend/templates/frontend/submission_edit.html:557
-#: apollo/frontend/views_admin.py:327
+#: apollo/frontend/views_admin.py:329
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:46
 #: apollo/templates/admin/quality_assurance.html:32
 #: apollo/templates/admin/quality_assurance_edit.html:212
 msgid "Description"
 msgstr "Descripción"
 
-#: apollo/frontend/views_admin.py:365 apollo/locations/views_locations.py:231
+#: apollo/frontend/views_admin.py:367 apollo/locations/views_locations.py:231
 msgid "Administrative Divisions"
 msgstr "Divisiones administrativas"
 
-#: apollo/frontend/views_admin.py:366 apollo/locations/views_locations.py:75
-msgid "Locations"
-msgstr "Ubicaciones"
+#: apollo/frontend/views_admin.py:368
+msgid "Location Data"
+msgstr ""
 
-#: apollo/frontend/views_admin.py:421
+#: apollo/frontend/views_admin.py:423
 #: apollo/participants/views_participants.py:65
 #: apollo/participants/views_participants.py:82
 #: apollo/participants/views_participants.py:86
@@ -561,21 +563,21 @@ msgstr "Ubicaciones"
 msgid "Participants"
 msgstr "Participantes"
 
-#: apollo/frontend/views_admin.py:536 apollo/frontend/views_dashboard.py:217
+#: apollo/frontend/views_admin.py:538 apollo/frontend/views_dashboard.py:217
 msgid "Events"
 msgstr "Eventos"
 
-#: apollo/frontend/views_admin.py:537
+#: apollo/frontend/views_admin.py:539
 msgid "Users"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:540 apollo/locations/views_locations.py:74
+#: apollo/frontend/views_admin.py:542 apollo/locations/views_locations.py:74
 #: apollo/locations/views_locations.py:115
 #: apollo/locations/views_locations.py:230
 msgid "Location Sets"
 msgstr ""
 
-#: apollo/frontend/views_admin.py:543
+#: apollo/frontend/views_admin.py:545
 #: apollo/participants/views_participants.py:80
 msgid "Participant Sets"
 msgstr ""
@@ -684,6 +686,7 @@ msgid "No Data Available"
 msgstr "No hay datos disponibles"
 
 #: apollo/frontend/templates/frontend/dashboard.html:82
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:74
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:104
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:74
 #: apollo/process_analysis/templates/process_analysis/checklist_summary.html:46
@@ -721,27 +724,26 @@ msgstr ""
 #: apollo/frontend/templates/frontend/forgot_password.html:40
 msgid ""
 "An error occured while attempting to reset the password for the supplied "
-"account.\n"
-"                                Please check the email address and try "
-"again."
+"account. Please check the email address and try again."
 msgstr ""
 
-#: apollo/frontend/templates/frontend/forgot_password.html:44
-#: apollo/frontend/templates/frontend/forgot_password.html:46
+#: apollo/frontend/templates/frontend/forgot_password.html:43
+#: apollo/frontend/templates/frontend/forgot_password.html:45
 #: apollo/participants/models.py:53 apollo/users/forms.py:12
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apollo/frontend/templates/frontend/forgot_password.html:48
-#: apollo/frontend/templates/frontend/reset_password.html:36
+#: apollo/frontend/templates/frontend/forgot_password.html:47
+#: apollo/frontend/templates/frontend/reset_password.html:5
 msgid "Reset Password"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/forgot_password.html:50
+#: apollo/frontend/templates/frontend/forgot_password.html:49
 #: apollo/frontend/templates/frontend/incident_add.html:96
 #: apollo/frontend/templates/frontend/macros/send_message.html:32
 #: apollo/frontend/templates/frontend/participant_edit.html:57
 #: apollo/frontend/templates/frontend/participant_list.html:258
+#: apollo/frontend/templates/frontend/reset_password.html:55
 #: apollo/frontend/templates/frontend/submission_edit.html:609
 #: apollo/frontend/templates/frontend/userprofile.html:31
 #: apollo/templates/admin/form_create.html:65
@@ -1093,9 +1095,20 @@ msgstr "Informado"
 msgid "OK"
 msgstr "Aceptar"
 
-#: apollo/frontend/templates/frontend/reset_password.html:6
-#: apollo/frontend/templates/frontend/reset_password.html:17
-msgid "Reset password"
+#: apollo/frontend/templates/frontend/reset_password.html:37
+#: apollo/frontend/templates/frontend/reset_password.html:53
+msgid "Change Password"
+msgstr ""
+
+#: apollo/frontend/templates/frontend/reset_password.html:42
+msgid ""
+"An error occured while attempting to reset the password for the supplied "
+"account. Please ensure that both values are the same."
+msgstr ""
+
+#: apollo/frontend/templates/frontend/reset_password.html:49
+#: apollo/frontend/templates/frontend/reset_password.html:51
+msgid "Retype Password"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:34
@@ -1300,10 +1313,6 @@ msgstr "ID del participante"
 msgid "Sender Verification"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:74
-msgid "Insufficient Data"
-msgstr ""
-
 #: apollo/frontend/templates/frontend/macros/send_message.html:17
 msgid "Sending to"
 msgstr ""
@@ -1444,6 +1453,10 @@ msgstr ""
 #: apollo/locations/tasks.py:285
 msgid "Locations Import Report"
 msgstr "Informe de importación de ubicaciones"
+
+#: apollo/locations/views_locations.py:75
+msgid "Locations"
+msgstr "Ubicaciones"
 
 #: apollo/locations/views_locations.py:116
 #: apollo/templates/admin/location_edit.html:24
@@ -2554,4 +2567,18 @@ msgstr ""
 
 #~ msgid "Quality Assurance — %(name)s"
 #~ msgstr "Control de calidad: %(name)s"
+
+#~ msgid ""
+#~ "An error occured while attempting to "
+#~ "reset the password for the supplied "
+#~ "account.\n"
+#~ "                                Please check the "
+#~ "email address and try again."
+#~ msgstr ""
+
+#~ msgid "Reset password"
+#~ msgstr ""
+
+#~ msgid "Insufficient Data"
+#~ msgstr ""
 
