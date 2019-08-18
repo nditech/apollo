@@ -7,7 +7,7 @@ import os
 from flask import (Blueprint, current_app, flash, g, redirect,
                    request, Response, url_for, abort, stream_with_context,
                    send_file)
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_security import current_user
 from slugify import slugify
 from sqlalchemy import not_, or_
@@ -301,6 +301,8 @@ def import_divisions(location_set_id):
         if not db.session.query(query).scalar():
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
+
+            flash(_('Your changes have been saved.'), category='info')
 
             return redirect(url_for('locationset.builder',
                                     location_set_id=location_set_id))
