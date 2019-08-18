@@ -44,7 +44,7 @@
 
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-12 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
     {{ render_filter_form(filter_form, location, location_set_id) }}
   </div>
 </div>
