@@ -64,7 +64,7 @@
     {% endfor %}
     <th scope="col" class="text-center"><abbr title="{{ _('Status') }}"><i class="fa fa-eye"></i></abbr></th>
     {% endif %}
-    <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Phone Confirmation') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="fa fa-exclamation-triangle"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Geolocation') }}"><i class="fa fa-globe"></i></abbr></th>
 </tr>
@@ -139,9 +139,9 @@
     {% endif %}
     <td class="text-center">
       {% if submission.sender_verified -%}
-      <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Verified') }}"></i>
+      <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
       {%- else -%}
-      <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unverified') }}"></i>
+      <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unconfirmed') }}"></i>
       {% endif %}
     </td>
     <td class="text-center">

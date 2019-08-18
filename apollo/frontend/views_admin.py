@@ -7,7 +7,7 @@ from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
-from flask_admin.form import rules
+from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
@@ -16,7 +16,7 @@ from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
 import pytz
-from slugify import slugify_unicode
+from slugify import slugify
 from wtforms import PasswordField, SelectField, SelectMultipleField, validators
 from zipfile import ZipFile, ZIP_DEFLATED
 
@@ -44,6 +44,41 @@ excluded_perm_actions = ['view_forms', 'access_event']
 DATETIME_FORMAT_SPEC = '%Y-%m-%d %H:%M:%S %Z'
 
 
+class MultipleSelect2Field(fields.Select2Field):
+    def iter_choices(self):
+        if self.allow_blank:
+            yield (u'__None', self.blank_text, self.data is None)
+
+        for value in self.data:
+            yield (value, value, True)
+
+    def process_data(self, value):
+        """This is called when you create the form with existing data."""
+        if value is None:
+            self.data = []
+        else:
+            try:
+                self.data = [self.coerce(value) for value in value]
+            except (ValueError, TypeError):
+                self.data = []
+
+    def process_formdata(self, valuelist):
+        """Process posted data."""
+        if not valuelist:
+            return
+
+        if valuelist[0] == '__None':
+            self.data = []
+        else:
+            try:
+                self.data = [self.coerce(value) for value in valuelist]
+            except ValueError:
+                raise ValueError()
+
+    def pre_validate(self, form):
+        pass
+
+
 class BaseAdminView(ModelView):
     page_size = settings.PAGE_SIZE
 
@@ -63,11 +98,22 @@ class BaseAdminView(ModelView):
 
 class ExtraDataInlineFormAdmin(InlineFormAdmin):
     form_columns = ('id', 'name', 'label', 'visible_in_lists')
+    column_labels = {
+        'name': _('Name'),
+        'label': _('Label'),
+        'visible_in_lists': _('Visible In Lists'),
+    }
+    column_descriptions = {
+        'label': _('The display label to use for this field.'),
+        'name': _('Internal name to use for this attribute. Avoid using spaces in the name.'),  # noqa
+        'visible_in_lists': _('Specifies whether to display this field on data lists or not.'),  # noqa
+    }
 
     def on_model_change(self, form, model, is_created):
         if is_created:
             model.deployment = g.deployment
             model.resource_type = model.__mapper_args__['polymorphic_identity']
+        model.name = slugify(model.name, separator="_")
 
     def on_model_delete(self, model):
         # if this model has a resource attached to it, delete it as well
@@ -113,7 +159,18 @@ class DeploymentAdminView(BaseAdminView):
     can_delete = False
     can_edit = True
     column_list = ('name', 'hostnames')
-    column_labels = {'name': _('Name'), 'hostnames': _('Hostnames')}
+    column_labels = {
+        'name': _('Name'), 'hostnames': _('Hostnames'),
+        'allow_observer_submission_edit': _('Allow Observer Submission Edit'),
+        'dashboard_full_locations': _('Dashboard Full Locations'),
+        'enable_partial_response_for_messages': _('Enable Partial Response For Messages'),  # noqa
+    }
+    column_descriptions = {
+        'allow_observer_submission_edit': _('Specifies whether to allow the editing of observer data.'),  # noqa
+        'dashboard_full_locations': _('Specifies whether to show all locations at an administrative division on the dashboard.'),  # noqa
+        'enable_partial_response_for_messages': _('Specifies whether to respond with an error when a partial response is received for a text message.'),  # noqa
+        'hostnames': _('An example of a hostname is "example.com". Used internally to determine what deployment to access.'),  # noqa
+    }
     form_edit_rules = [
         rules.FieldSet(
             (
@@ -125,6 +182,15 @@ class DeploymentAdminView(BaseAdminView):
             _('Deployment')
         )
     ]
+    form_overrides = {
+        'hostnames': MultipleSelect2Field
+    }
+    form_args = {
+        'hostnames': {
+            'render_kw': {"multiple": "multiple", "data-role": "select2-tags"},
+            'choices': []
+        }
+    }
 
     form_columns = ['name', 'hostnames', 'dashboard_full_locations',
                     'enable_partial_response_for_messages',
@@ -150,13 +216,15 @@ class DeploymentAdminView(BaseAdminView):
         # item is the choice for Arabic
         form_class.primary_locale = SelectField(
             _('Primary Language'), choices=LANGUAGE_CHOICES,
-            validators=[validators.optional()])
+            validators=[validators.optional()],
+            description=_('Specifies the primary language that will be supported for data uploads.'))  # noqa
         # stripping the first item for the other locales
         # so that we avoid the "None is not a valid choice"
         # error when it is selected by mistake
         form_class.other_locales = SelectMultipleField(
             _('Other Languages'), choices=LANGUAGE_CHOICES,
-            validators=[validators.optional()])
+            validators=[validators.optional()],
+            description=_('Specifies other languages that will be supported for data uploads.'))  # noqa
 
         return form_class
 
@@ -169,6 +237,11 @@ class EventAdminView(BaseAdminView):
         'name': _('Name'), 'start': _('Start'), 'end': _('End'),
         'location_set': _('Location Set'),
         'participant_set': _('Participant Set'), 'archive': _('Archive')}
+    column_descriptions = {
+        'start': _('What time the event is to start in the local time.'),
+        'end': _('What time the event is to end in the local time.'),
+        'forms': _('What forms should be enabled for this event.')
+    }
     form_columns = ('name', 'start', 'end', 'forms', 'participant_set')
     form_rules = [
         rules.FieldSet(
@@ -189,7 +262,7 @@ class EventAdminView(BaseAdminView):
             eas.serialize(event, zf)
 
         fp.seek(0)
-        fname = slugify_unicode(
+        fname = slugify(
             f'event archive {event.name.lower()} {datetime.utcnow().strftime("%Y %m %d %H%M%S")}')  # noqa
 
         return send_file(
@@ -250,6 +323,10 @@ class UserAdminView(BaseAdminView):
     column_list = ('email', 'roles', 'active')
     column_labels = {'roles': _('Roles'), 'active': _('Active')}
     column_searchable_list = ('email',)
+    column_descriptions = {
+        'roles': _('What roles are assigned to this user.'),
+        'permissions': _('Explicitly specifies which non-role permissions (in addition) to assign to the user.'),  # noqa
+    }
     form_columns = (
         'email', 'username', 'active', 'roles', 'permissions', 'locale')
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
@@ -301,9 +378,10 @@ class UserAdminView(BaseAdminView):
 
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
-        form_class.password2 = PasswordField(_('New password'))
+        form_class.password2 = PasswordField(_('New Password'))
         form_class.locale = SelectField(
-            _('Language'), choices=LANGUAGE_CHOICES)
+            _('Language'), choices=LANGUAGE_CHOICES,
+            description=_("Specifies the user's default language."))
         return form_class
 
     @action('disable', _('Disable'),
@@ -327,6 +405,11 @@ class RoleAdminView(BaseAdminView):
     can_delete = False
     column_list = ('name', 'description')
     column_labels = {'name': _('Name'), 'description': _('Description')}
+    column_descriptions = {
+        'description': _('Optional description for the role.'),
+        'permissions': _('Specifies which permissions to assign to users with this role.'),  # noqa
+        'resources': _('Specifies which resources (e.g. forms) to allow users with this role to access.'),  # noqa
+    }
     form_columns = ('name', 'description', 'permissions', 'resources')
 
     def create_form(self, obj=None):

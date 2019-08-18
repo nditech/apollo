@@ -12,7 +12,7 @@ from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
-from slugify import slugify_unicode
+from slugify import slugify
 from sqlalchemy import BigInteger, desc, func, text
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
@@ -162,7 +162,7 @@ def submission_list(form_id):
 
         # TODO: fix this. no exports yet. nor aggregation
         # query_filterset = filter_class(queryset, request.args)
-        basename = slugify_unicode('%s %s %s %s' % (
+        basename = slugify('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),
@@ -716,6 +716,7 @@ def submission_edit(submission_id):
                     overridden_fields = \
                         master_submission.overridden_fields[:] \
                         if master_submission.overridden_fields else []
+                    overridden_fields = set(overridden_fields)
 
                     new_verification_status = master_form.data.get(
                         'verification_status')
@@ -765,14 +766,24 @@ def submission_edit(submission_id):
                                 form_field not in
                                 ["quarantine_status",
                                     "verification_status"]
+                                and master_form.data.get(form_field)
                             ):
-                                overridden_fields.append(form_field)
+                                overridden_fields.add(form_field)
+                            else:
+                                # if the value was manually removed, then reset
+                                # the overridden status for that field
+                                try:
+                                    overridden_fields.remove(form_field)
+                                except KeyError:
+                                    pass
                             changed = True
                     if changed:
                         update_params['data'] = data
                         if overridden_fields:
-                            update_params['overridden_fields'] = array(set(
-                                overridden_fields))     # remove duplicates
+                            update_params['overridden_fields'] = array(
+                                overridden_fields)     # remove duplicates
+                        else:
+                            update_params['overridden_fields'] = []
 
                         services.submissions.find(
                             id=master_submission.id).update(
@@ -1138,7 +1149,7 @@ def quality_assurance_list(form_id):
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
             query_filterset.qs)
-        basename = slugify_unicode('%s %s %s %s' % (
+        basename = slugify('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),

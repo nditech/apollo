@@ -7,9 +7,9 @@ import os
 from flask import (Blueprint, current_app, flash, g, redirect,
                    request, Response, url_for, abort, stream_with_context,
                    send_file)
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_security import current_user
-from slugify import slugify_unicode
+from slugify import slugify
 from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -84,7 +84,7 @@ def locations_list(view, location_set_id):
     if request.args.get('export') and permissions.export_locations.can():
         # Export requested
         dataset = services.locations.export_list(queryset_filter.qs)
-        basename = slugify_unicode('%s locations %s' % (
+        basename = slugify('%s locations %s' % (
             g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
@@ -250,7 +250,7 @@ def locations_builder(view, location_set_id):
                 flash(_('Administrative level %(name)s has locations assigned '
                         'and cannot be deleted.', name=unused_lt.name),
                       category='danger')
-                continue
+                break
 
             # explicitly doing this because we didn't add a cascade
             # to the backref
@@ -259,13 +259,14 @@ def locations_builder(view, location_set_id):
                 LocationTypePath.descendant_id == unused_lt.id
             )).delete()
             unused_lt.delete()
+        else:
+            # only import the graph if the loop succeeds
+            import_graph(divisions_graph, location_set)
 
-        import_graph(divisions_graph, location_set)
-
-        flash(
-            _('Your changes have been saved.'),
-            category='info'
-        )
+            flash(
+                _('Your changes have been saved.'),
+                category='info'
+            )
 
     return view.render(
         template_name, breadcrumbs=breadcrumbs, location_set=location_set,
@@ -281,7 +282,7 @@ def export_divisions(location_set_id):
     graph_as_bytes = json.dumps(graph, indent=2).encode()
     graph_buffer = BytesIO(graph_as_bytes)
     graph_buffer.seek(0)
-    filename = 'admin-divisions-{}.json'.format(slugify_unicode(
+    filename = 'admin-divisions-{}.json'.format(slugify(
         location_set.name))
 
     return send_file(graph_buffer, mimetype='application/json',
@@ -300,6 +301,8 @@ def import_divisions(location_set_id):
         if not db.session.query(query).scalar():
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
+
+            flash(_('Your changes have been saved.'), category='info')
 
             return redirect(url_for('locationset.builder',
                                     location_set_id=location_set_id))

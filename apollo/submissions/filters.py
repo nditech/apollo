@@ -387,9 +387,9 @@ def make_submission_list_filter(event, form):
             ), default='')
     attributes['sender_verification'] = SubmissionSenderVerificationFilter(
         choices=(
-            ('', _('Sender Verification')),
-            ('1', _('Sender Verified')),
-            ('2', _('Sender Unverified'))
+            ('', _('Phone Confirmation')),
+            ('1', _('Phone Confirmed')),
+            ('2', _('Phone Unconfirmed'))
         ))
 
     attributes['participant_id'] = ParticipantIDFilter()

@@ -214,6 +214,8 @@ def update_locations(data_frame, header_mapping, location_set):
                             value = int(value)
                         else:
                             value = float(value)
+                    else:
+                        value = str(value)
                     extra_data[extra_field_cache[field_id]] = value
 
             if extra_data:

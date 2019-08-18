@@ -124,7 +124,7 @@
 {% block scripts %}
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('highcharts.js') }}" charset="utf-8"></script>
-<script type="text/javascript" src="{{ asset_url_for('messagelog.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
@@ -176,15 +176,51 @@
         }
     });
 
-    $('#datepicker').datetimepicker({
-      locale: '{{ g.locale }}',
+    $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
       format: 'DD-MM-YYYY',
-      allowInputToggle: true
+      widgetPositioning: {
+        horizontal: "{{ 'right' if g.locale.text_direction == 'rtl' else 'left' }}"
+      },
+      allowInputToggle: true,
+      icons: {
+        time: 'far fa-clock',
+        date: 'far fa-calendar',
+        up: 'fas fa-arrow-up',
+        down: 'fas fa-arrow-down',
+        previous: 'fas {{ 'fa-chevron-right' if g.locale.text_direction == 'rtl' else 'fa-chevron-left' }}',
+        next: 'fas {{ 'fa-chevron-left' if g.locale.text_direction == 'rtl' else 'fa-chevron-right' }}',
+        today: 'far fa-calendar-check',
+        clear: 'fas fa-trash',
+        close: 'fas fa-times'
+      }
+    });
+
+    $('#filter_reset').on('click', function () {
+        var $form = $(this).parents('form').first();
+        $form.find(':input').not('button').each(function () { $(this).val(''); })
+        $form.submit();
+    });
+
+    $('.tonow').each(function (index) {
+        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        this.innerText = timestamp.fromNow();
+    });
+    $('.timestamp').each(function (index) {
+        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        this.innerText = timestamp.format('llll');
+    });
+    $('.timestamp-date').each(function (index) {
+        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        this.innerText = timestamp.format('ll');
+    });
+    $('.timestamp-time').each(function (index) {
+        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        this.innerText = timestamp.format('LT');
     });
   });
 </script>
 {% endblock %}
 
 {% block stylesheets -%}
-<link rel="stylesheet" href="{{ asset_url_for('messagelog.css') }}">
+<link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 {%- endblock %}
