@@ -250,7 +250,7 @@ def locations_builder(view, location_set_id):
                 flash(_('Administrative level %(name)s has locations assigned '
                         'and cannot be deleted.', name=unused_lt.name),
                       category='danger')
-                continue
+                break
 
             # explicitly doing this because we didn't add a cascade
             # to the backref
@@ -259,13 +259,14 @@ def locations_builder(view, location_set_id):
                 LocationTypePath.descendant_id == unused_lt.id
             )).delete()
             unused_lt.delete()
+        else:
+            # only import the graph if the loop succeeds
+            import_graph(divisions_graph, location_set)
 
-        import_graph(divisions_graph, location_set)
-
-        flash(
-            _('Your changes have been saved.'),
-            category='info'
-        )
+            flash(
+                _('Your changes have been saved.'),
+                category='info'
+            )
 
     return view.render(
         template_name, breadcrumbs=breadcrumbs, location_set=location_set,
