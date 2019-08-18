@@ -9,7 +9,7 @@ from flask import (Blueprint, current_app, flash, g, redirect,
                    send_file)
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
-from slugify import slugify_unicode
+from slugify import slugify
 from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -84,7 +84,7 @@ def locations_list(view, location_set_id):
     if request.args.get('export') and permissions.export_locations.can():
         # Export requested
         dataset = services.locations.export_list(queryset_filter.qs)
-        basename = slugify_unicode('%s locations %s' % (
+        basename = slugify('%s locations %s' % (
             g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
@@ -281,7 +281,7 @@ def export_divisions(location_set_id):
     graph_as_bytes = json.dumps(graph, indent=2).encode()
     graph_buffer = BytesIO(graph_as_bytes)
     graph_buffer.seek(0)
-    filename = 'admin-divisions-{}.json'.format(slugify_unicode(
+    filename = 'admin-divisions-{}.json'.format(slugify(
         location_set.name))
 
     return send_file(graph_buffer, mimetype='application/json',

@@ -4,8 +4,7 @@ import re
 
 from pyxform import xls2json
 from pyxform.errors import PyXFormError
-from slugify import slugify_unicode
-from unidecode import unidecode
+from slugify import slugify
 from xlwt import Workbook
 
 from apollo.formsframework.models import Form
@@ -54,7 +53,7 @@ def _process_survey_worksheet(sheet_data, form_data):
         if field_dict['type'] == 'begin group':
             current_group = {
                 'name': field_dict['label'],
-                'slug': unidecode(slugify_unicode(field_dict['name'])),
+                'slug': slugify(field_dict['name']),
                 'fields': []
             }
             form_data['groups'].append(current_group)
@@ -329,7 +328,7 @@ def export_form(form):
                 current_survey_row += 1
             survey_sheet.write(current_survey_row, 0, 'begin group')
             survey_sheet.write(
-                current_survey_row, 1, slugify_unicode(group['name']))
+                current_survey_row, 1, slugify(group['name']))
             survey_sheet.write(current_survey_row, 2, group['name'])
             current_survey_row += 1
             current_group = group

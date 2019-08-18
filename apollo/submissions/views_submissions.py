@@ -12,7 +12,7 @@ from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
-from slugify import slugify_unicode
+from slugify import slugify
 from sqlalchemy import BigInteger, desc, func, text
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
@@ -162,7 +162,7 @@ def submission_list(form_id):
 
         # TODO: fix this. no exports yet. nor aggregation
         # query_filterset = filter_class(queryset, request.args)
-        basename = slugify_unicode('%s %s %s %s' % (
+        basename = slugify('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),
@@ -1149,7 +1149,7 @@ def quality_assurance_list(form_id):
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
             query_filterset.qs)
-        basename = slugify_unicode('%s %s %s %s' % (
+        basename = slugify('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),

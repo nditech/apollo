@@ -10,7 +10,7 @@ from flask import (abort, Blueprint, current_app, g, redirect,
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
-from slugify import slugify_unicode
+from slugify import slugify
 
 from apollo import models, services, utils
 from apollo.core import docs, sentry, uploads
@@ -107,7 +107,7 @@ def participant_list(participant_set_id=0, view=None):
     if request.args.get('export') and permissions.export_participants.can():
         # Export requested
         dataset = services.participants.export_list(queryset_filter.qs)
-        basename = slugify_unicode('%s participants %s' % (
+        basename = slugify('%s participants %s' % (
             participant_set.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
