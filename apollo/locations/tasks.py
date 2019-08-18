@@ -209,7 +209,14 @@ def update_locations(data_frame, header_mapping, location_set):
                     value = current_row.get(column)
                     if isnull(value):
                         continue
-                    extra_data[extra_field_cache[field_id]] = str(value)
+                    if isinstance(value, numbers.Number):
+                        if isinstance(value, numbers.Integral):
+                            value = int(value)
+                        else:
+                            value = float(value)
+                    else:
+                        value = str(value)
+                    extra_data[extra_field_cache[field_id]] = value
 
             if extra_data:
                 Location.query.filter(Location.id == location.id).update(
