@@ -11,8 +11,7 @@ from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_json import NestedMutableJson
 from sqlalchemy_utils import ChoiceType
-from slugify import slugify_unicode
-from unidecode import unidecode
+from slugify import slugify
 
 from apollo.core import db
 from apollo.dal.models import Resource
@@ -354,7 +353,7 @@ class FormBuilderSerializer(object):
                 # no group was created, create a default
                 group = {
                     'name': str(_('SMS 1')),
-                    'slug': unidecode(slugify_unicode(str(_('SMS 1')))),
+                    'slug': slugify(_('SMS 1')),
                     'fields': []
                 }
                 groups.append(group)
@@ -364,7 +363,7 @@ class FormBuilderSerializer(object):
             if f['component'] == 'group':
                 group = {
                     'name': f['label'],
-                    'slug': unidecode(slugify_unicode(f['label'])),
+                    'slug': slugify(f['label']),
                     'fields': []
                 }
                 current_group = group

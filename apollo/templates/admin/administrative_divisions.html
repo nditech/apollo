@@ -10,7 +10,7 @@
 
 
 {% block body %}
-<div class="modal fade" id="addDivision" role="dialog">
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="addDivision" role="dialog">
 <form role="form" class="form-horizontal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -21,39 +21,46 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-group row">
-          <label for="name" class="col-sm-2 control-label text-right">{{ _('Name') }}</label>
-          <div class="col-sm-10">
+        <div class="form-group row align-items-center">
+          <label for="name" class="col-2 control-label text-right">{{ _('Name') }}</label>
+          <div class="col-10">
             <input type="text" class="form-control" id="addDivisionName">
           </div>
         </div>
-        <div class="form-group row">
-          <label for="parents" class="col-sm-2 control-label text-right">{{ _('Parents') }}</label>
-          <div class="col-sm-10">
+        <div class="form-group row align-items-center">
+          <label for="parents" class="col-2 control-label text-right">{{ _('Parents') }}</label>
+          <div class="col-10">
             <select multiple="multiple" class="form-control" name="parents" id="addDivisionParents"></select>
+            <small class="form-text text-muted">{{ _('All administrative divisions that this is a child of.') }}</small>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10 ">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="addDivisionAdministrative" name="is_administrative" value="true">
               <label class="custom-control-label" for="addDivisionAdministrative">{{ _('Display on dashboard and in tables') }}</label>
+              <small class="form-text text-muted">{{ _('Whether to show location data of this division on the dashboard and other tables.') }}</small>
             </div>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="addDivisionPolitical" name="is_political" value="true">
               <label class="custom-control-label" for="addDivisionPolitical">{{ _('Use in data summary') }}</label>
+              <small class="form-text text-muted">{{ _('Whether to show aggregated data summaries at this administrative level.') }}</small>
             </div>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="addDivisionRegisteredVoters" name="has_registered_voters" value="true">
-              <label class="custom-control-label" for="addDivisionRegisteredVoters">{{ _('Has Registered Voters') }}</label>
+              <label class="custom-control-label" for="addDivisionRegisteredVoters">{{ _('Has registered voters') }}</label>
+              <small class="form-text text-muted">{{ _('Indicates whether your location data will have registered voters at this administrative level.') }}</small>
             </div>
           </div>
         </div>
@@ -67,7 +74,7 @@
 </form>
 </div><!-- /.modal -->
 
-<div class="modal fade" id="updateDivision" role="dialog">
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="updateDivision" role="dialog">
 <form role="form" class="form-horizontal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -78,41 +85,48 @@
         </button>
       </div>
       <div class="modal-body" style="padding-bottom:5px">
-        <div class="form-group row">
-          <label for="name" class="col-sm-2 control-label text-right">{{ _('Name') }}</label>
-          <div class="col-sm-10">
+        <div class="form-group row align-items-center">
+          <label for="name" class="col-2 control-label text-right">{{ _('Name') }}</label>
+          <div class="col-10">
             <input type="text" class="form-control" id="updateDivisionName" name="name">
           </div>
         </div>
-        <div class="form-group row">
-          <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
-          <div class="col-sm-10">
+        <div class="form-group row align-items-center">
+          <label for="parents" class="col-2 control-label text-right">{{ _('Parents') }}</label>
+          <div class="col-10">
             <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents"></select>
+            <small class="form-text text-muted">{{ _('All administrative divisions that this is a child of.') }}</small>
             <input type="hidden" class="form-control" id="updateDivisionId" name="id">
           </div>
         </div>
 
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="updateDivisionAdministrative" name="is_administrative" value="true">
               <label class="custom-control-label" for="updateDivisionAdministrative">{{ _('Display on dashboard and in tables') }}</label>
+              <small class="form-text text-muted">{{ _('Whether to show location data of this division on the dashboard and other tables.') }}</small>
             </div>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="updateDivisionPolitical" name="is_political" value="true">
               <label class="custom-control-label" for="updateDivisionPolitical">{{ _('Use in data summary') }}</label>
+              <small class="form-text text-muted">{{ _('Whether to show aggregated data summaries at this administrative level.') }}</small>
             </div>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-10 offset-sm-2">
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" id="updateDivisionRegisteredVoters" name="has_registered_voters" value="true">
-              <label class="custom-control-label" for="updateDivisionRegisteredVoters">{{ _('Has Registered Voters') }}</label>
+              <label class="custom-control-label" for="updateDivisionRegisteredVoters">{{ _('Has registered voters') }}</label>
+              <small class="form-text text-muted">{{ _('Indicates whether your location data will have registered voters at this administrative level.') }}</small>
             </div>
           </div>
         </div>
@@ -130,7 +144,7 @@
 
 {% if not has_admin_divisions %}
 <form action="{{ url_for('locationset.import_divisions', location_set_id=location_set.id) }}" enctype="multipart/form-data" method="post">
-<div class="modal fade" id="importModal" role="dialog" aria-labelledby="importModalLabel">
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="importModal" role="dialog" aria-labelledby="importModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

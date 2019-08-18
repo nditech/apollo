@@ -60,9 +60,9 @@
     {% if messages %}
       {% for category, m in messages %}
         {% if category %}
-        <div class="alert alert-{{ category }}">
+        <div class="alert alert-{{ category }} {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
         {% else %}
-        <div class="alert">
+        <div class="alert {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
         {% endif %}
           {{ m }}
           <button type="button" class="close" data-dismiss="alert" aria-label="{{ _('Close') }}">

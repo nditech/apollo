@@ -58,12 +58,12 @@ def import_graph(graph, location_set, fresh_import=False):
 
             location_type.save()
 
-            # update the edges
-            for edge in edges:
-                if edge[0] == node.get('id'):
-                    edge[0] = location_type.id
-                if edge[1] == node.get('id'):
-                    edge[1] = location_type.id
+        # update the edges
+        for edge in edges:
+            if edge[0] == node.get('id'):
+                edge[0] = location_type.id
+            if edge[1] == node.get('id'):
+                edge[1] = location_type.id
 
     # build graph for the closure table
     nx_graph.add_edges_from(edges)

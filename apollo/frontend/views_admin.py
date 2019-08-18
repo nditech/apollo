@@ -16,7 +16,7 @@ from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
 import pytz
-from slugify import slugify_unicode
+from slugify import slugify
 from wtforms import PasswordField, SelectField, SelectMultipleField, validators
 from zipfile import ZipFile, ZIP_DEFLATED
 
@@ -113,6 +113,7 @@ class ExtraDataInlineFormAdmin(InlineFormAdmin):
         if is_created:
             model.deployment = g.deployment
             model.resource_type = model.__mapper_args__['polymorphic_identity']
+        model.name = slugify(model.name, separator="_")
 
     def on_model_delete(self, model):
         # if this model has a resource attached to it, delete it as well
@@ -261,7 +262,7 @@ class EventAdminView(BaseAdminView):
             eas.serialize(event, zf)
 
         fp.seek(0)
-        fname = slugify_unicode(
+        fname = slugify(
             f'event archive {event.name.lower()} {datetime.utcnow().strftime("%Y %m %d %H%M%S")}')  # noqa
 
         return send_file(

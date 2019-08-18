@@ -12,7 +12,7 @@ from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 import pandas as pd
-from slugify import slugify_unicode
+from slugify import slugify
 import sqlalchemy as sa
 from sqlalchemy.orm import aliased
 
@@ -53,7 +53,7 @@ def message_list():
         # Export requested
         queryset_filter = MessageFilterSet(qs, request.args)
         dataset = messages.export_list(queryset_filter.qs)
-        basename = slugify_unicode('%s messages %s' % (
+        basename = slugify('%s messages %s' % (
             g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
