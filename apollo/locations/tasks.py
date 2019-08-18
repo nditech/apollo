@@ -209,7 +209,7 @@ def update_locations(data_frame, header_mapping, location_set):
                     value = current_row.get(column)
                     if isnull(value):
                         continue
-                    extra_data[extra_field_cache[field_id]] = value
+                    extra_data[extra_field_cache[field_id]] = str(value)
 
             if extra_data:
                 Location.query.filter(Location.id == location.id).update(
