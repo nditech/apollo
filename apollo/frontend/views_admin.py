@@ -113,6 +113,7 @@ class ExtraDataInlineFormAdmin(InlineFormAdmin):
         if is_created:
             model.deployment = g.deployment
             model.resource_type = model.__mapper_args__['polymorphic_identity']
+        model.name = slugify(model.name, separator="_")
 
     def on_model_delete(self, model):
         # if this model has a resource attached to it, delete it as well
