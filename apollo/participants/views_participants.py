@@ -24,7 +24,7 @@ from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, PhoneContact
 from .models import (
     ParticipantFullNameTranslations, ParticipantFirstNameTranslations,
-    ParticipantLastNameTranslations, ParticipantOtherNameTranslations)
+    ParticipantLastNameTranslations, ParticipantOtherNamesTranslations)
 from ..locations.models import Location
 from ..submissions.models import Submission
 from ..users.models import UserUpload
@@ -193,7 +193,7 @@ def participant_list(participant_set_id=0, view=None):
             'first_name_translations')
         last_name_subquery = ParticipantLastNameTranslations.lateral(
             'last_name_translations')
-        other_names_subquery = ParticipantOtherNameTranslations.lateral(
+        other_names_subquery = ParticipantOtherNamesTranslations.lateral(
             'other_names_translations')
         queryset = models.Participant.query.select_from(
             models.Participant,

@@ -311,7 +311,7 @@ ParticipantFirstNameTranslations = func.jsonb_each_text(
     Participant.first_name_translations).alias('first_name_translations')
 ParticipantLastNameTranslations = func.jsonb_each_text(
     Participant.last_name_translations).alias('last_name_translations')
-ParticipantOtherNameTranslations = func.jsonb_each_text(
+ParticipantOtherNamesTranslations = func.jsonb_each_text(
     Participant.other_names_translations).alias('other_names_translations')
 
 

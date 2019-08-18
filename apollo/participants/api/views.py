@@ -11,7 +11,7 @@ from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
     Participant, ParticipantSet, ParticipantFullNameTranslations,
     ParticipantFirstNameTranslations, ParticipantLastNameTranslations,
-    ParticipantOtherNameTranslations)
+    ParticipantOtherNamesTranslations)
 
 
 @marshal_with(ParticipantSchema)
@@ -76,7 +76,7 @@ class ParticipantListResource(BaseListResource):
         queryset = Participant.query.select_from(
             Participant, ParticipantFullNameTranslations,
             ParticipantFirstNameTranslations, ParticipantLastNameTranslations,
-            ParticipantOtherNameTranslations).join(
+            ParticipantOtherNamesTranslations).join(
                 Participant.participant_set
             ).filter(
                 Participant.participant_set_id == participant_set_id,
