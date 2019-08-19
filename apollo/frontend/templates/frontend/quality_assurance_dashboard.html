@@ -40,7 +40,7 @@
 {% if data %}
 <div class="row">
 {% for row in data %}
-  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4 p-0">
+  <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-2 mt-4 p-0">
     <h5 class="text-center">{% if row.description|count > 11 %}<abbr title="{{ row.description }}">{{ row.description|truncate(11, True) }}</abbr>{% else %}{{ row.description }}{% endif %}</h5>
     <div class="chart text-center" data-chart='{{ row|tojson }}'>
     </div>
