@@ -35,7 +35,7 @@
 {% if data %}
 <div class="row">
 {% for row in data %}
-  <div class="col-6 col-sm-4 col-lg-2 mb-2 mt-4 p-0">
+  <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-2 mt-4 p-0">
   {%- if group -%}
     <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location=row.get('id', ''), **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if next_location %}</a>{% endif %}</h5>
   {%- else -%}
