@@ -600,7 +600,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
         # per-location level summaries
         for location_type in location_types:
             try:
-                if location_type in data_frame.columns:
+                if location_type not in data_frame.columns:
                     continue
                 data_group = data_frame.groupby(location_type)
             except KeyError:

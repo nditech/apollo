@@ -22,9 +22,9 @@
 		<div class="tab-content">
 			<div class="tab-pane active" id="table">
 				{% for tag, question, tag_stats in process_summary.top %}
-				<table id="mytable" class="table table-striped table-bordered">
+				<table id="mytable" class="table table-striped table-bordered {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
 					<tr>
-						<td colspan="{%- if tag_stats.type == 'mean' -%}6{% elif tag_stats.type != 'count' %}{{ (tag_stats.labels|count * 2) + 5 }}{% else %}5{%- endif -%}" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+						<td colspan="{%- if tag_stats.type == 'mean' -%}6{% elif tag_stats.type == 'bucket' %}11{% elif tag_stats.type != 'count' %}{{ (tag_stats.labels|count * 2) + 5 }}{% else %}5{%- endif -%}" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
 							<div class="d-flex justify-content-start align-items-center">
 								<div class="mr-2"><strong>{{ tag }}</strong></div>
 								<div class="mr-2">&middot;</div>
@@ -32,7 +32,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+					<tr>
 						<th></th>
 						{%- if tag_stats.type == 'mean' %}
 						<th width="80">{{ _('Mean') }}</th>
@@ -48,7 +48,7 @@
 						<th width="80" colspan="2">{{ _('Reported') }}</th>
 						<th width="80" colspan="2">{{ _('Missing') }}</th>
 					</tr>
-					<tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+					<tr>
 						<td><strong>{{ location }}</strong></td>
 						{% if tag_stats.type == 'mean' %}
 						<td>{{ tag_stats.mean|mean_filter }}</td>
@@ -58,7 +58,7 @@
 						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% elif tag_stats.type == 'bucket' %}
-						{% for label, option in tag_stats.meta %}
+						{% for option in [-1, 0, 1] %}
 						<td>{{ tag_stats.histogram.get(option)[1]|round|int }}%</td>
 						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
@@ -72,11 +72,17 @@
 					{% for tag, question, tag_stats in location_type_summary %}
 					{% for location, location_stats in tag_stats.locations|dictsort %}
 					<tr>
-						<td><span style="margin-left:2em">{{ location }}</span> &middot; <span class="text-muted"><em>{{ _('%(loc_type)s', loc_type=location_type) }}</em></span></td>
+						<td>
+							<div class="d-flex justify-content-start align-items-center">
+								<div class="mr-1">{{ location }}</div>
+								<div class="mr-1">&middot;</div>
+								<div class="text-muted"><em>{{ _('%(loc_type)s', loc_type=location_type) }}</em></div>
+							</div>
+						</td>
 						{% if tag_stats.type == 'mean' %}
 						<td>{{ location_stats.mean|mean_filter }}</td>
 						{% elif tag_stats.type == 'histogram' %}
-						{% for label, option in location_stats.meta %}
+						{% for label, option in tag_stats.meta %}
 						<td>{{ location_stats.histogram.get(option)[1]|round|int}}%</td>
 						<td>{{ location_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
