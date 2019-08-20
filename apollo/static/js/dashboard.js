@@ -39,14 +39,14 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
       .enter()
       .append("g")
       .attr("class", "arc")
-      .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")")
+      .attr("transform", "translate(" + (outerRadius + 7) + "," + outerRadius + ")")
 
       .append("text")
       .attr("transform", function(d) {
         if (d.value / total >= 0.1) {
           return "translate(" + d3.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.2).centroid(d) + ")";
         } else {
-          return "translate(" + d3.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.8).centroid(d) + ")";
+          return "translate(" + d3.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.85).centroid(d) + ")";
         }
       })
       .attr("text-anchor", "middle")

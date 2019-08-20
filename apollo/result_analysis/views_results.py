@@ -14,10 +14,7 @@ from sqlalchemy import not_
 from apollo import models
 from apollo.formsframework.models import Form
 from apollo.frontend import route, permissions, filters
-from apollo.frontend.helpers import (
-    analysis_breadcrumb_data,
-    analysis_navigation_data
-)
+from apollo.frontend.helpers import analysis_breadcrumb_data
 from apollo.services import forms, locations, location_types, submissions
 from apollo.submissions.models import FLAG_STATUSES
 from apollo.submissions.utils import make_submission_dataframe
