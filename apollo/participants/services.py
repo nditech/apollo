@@ -33,7 +33,8 @@ class ParticipantService(Service):
         location_types = location_set.location_types
 
         # build headers
-        headers = ['ID', 'Name', 'Partner', 'Role', 'Location ID']
+        headers = ['ID', 'Full Name', 'First Name', 'Other Names', 'Last Name',
+                   'Partner', 'Role', 'Location ID']
         headers.extend(lt.name for lt in location_types)
 
         headers.extend([
@@ -63,7 +64,10 @@ class ParticipantService(Service):
 
             record = [
                 participant.participant_id,
-                participant.name,
+                participant.full_name,
+                participant.first_name,
+                participant.other_names,
+                participant.last_name,
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
                 participant.location.code,
