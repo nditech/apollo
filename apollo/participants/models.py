@@ -54,8 +54,17 @@ class ParticipantSet(BaseModel):
             'password': _('Password')
         }
         for locale, language in self.deployment.languages.items():
-            fields[f'name_{locale}'] = _(
-                'Name (%(language)s)', language=language)
+            fields[f'full_name_{locale}'] = _(
+                'Full Name (%(language)s)', language=language)
+        for locale, language in self.deployment.languages.items():
+            fields[f'first_name_{locale}'] = _(
+                'First Name (%(language)s)', language=language)
+        for locale, language in self.deployment.languages.items():
+            fields[f'other_names_{locale}'] = _(
+                'Other Names (%(language)s)', language=language)
+        for locale, language in self.deployment.languages.items():
+            fields[f'last_name_{locale}'] = _(
+                'Last Name (%(language)s)', language=language)
 
         extra_fields = ParticipantDataField.query.filter_by(
             participant_set_id=self.id).all()
@@ -183,7 +192,10 @@ class Participant(BaseModel):
     __tablename__ = 'participant'
 
     id = db.Column(db.Integer, primary_key=True)
-    name_translations = db.Column(JSONB)
+    full_name_translations = db.Column(JSONB)
+    first_name_translations = db.Column(JSONB)
+    other_names_translations = db.Column(JSONB)
+    last_name_translations = db.Column(JSONB)
     participant_id = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'participant_role.id', ondelete='SET NULL'))
@@ -204,7 +216,10 @@ class Participant(BaseModel):
     password = db.Column(db.String)
     extra_data = db.Column(JSONB)
 
-    name = translation_hybrid(name_translations)
+    full_name = translation_hybrid(full_name_translations)
+    first_name = translation_hybrid(first_name_translations)
+    other_names = translation_hybrid(other_names_translations)
+    last_name = translation_hybrid(last_name_translations)
 
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
@@ -283,7 +298,7 @@ class Participant(BaseModel):
     @property
     def last_contacted(self):
         contact = ContactHistory.query.filter(
-            ContactHistory.participant==self
+            ContactHistory.participant == self
         ).order_by(ContactHistory.created.desc()).first()
 
         if contact:
@@ -291,8 +306,25 @@ class Participant(BaseModel):
         else:
             return None
 
-ParticipantTranslations = func.jsonb_each_text(
-    Participant.name_translations).alias('translations')
+    @property
+    def name(self):
+        if self.full_name:
+            return self.full_name
+
+        names = [self.first_name, self.other_names, self.last_name]
+        names = [n for n in names if n]
+
+        return ' '.join(names)
+
+
+ParticipantFullNameTranslations = func.jsonb_each_text(
+    Participant.full_name_translations).alias('translations')
+ParticipantFirstNameTranslations = func.jsonb_each_text(
+    Participant.first_name_translations).alias('first_name_translations')
+ParticipantOtherNamesTranslations = func.jsonb_each_text(
+    Participant.other_names_translations).alias('other_names_translations')
+ParticipantLastNameTranslations = func.jsonb_each_text(
+    Participant.last_name_translations).alias('last_translations')
 
 
 class PhoneContact(BaseModel):
