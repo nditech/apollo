@@ -104,8 +104,20 @@ def update_participants(dataframe, header_map, participant_set):
 
     location_set = participant_set.location_set
     locales = location_set.deployment.locale_codes
-    name_column_keys = [
-        f'name_{locale}'
+    full_name_column_keys = [
+        f'full_name_{locale}'
+        for locale in locales
+    ]
+    first_name_column_keys = [
+        f'first_name_{locale}'
+        for locale in locales
+    ]
+    other_names_column_keys = [
+        f'other_names_{locale}'
+        for locale in locales
+    ]
+    last_name_column_keys = [
+        f'last_name_{locale}'
         for locale in locales
     ]
 
@@ -121,8 +133,14 @@ def update_participants(dataframe, header_map, participant_set):
     phone_columns = header_map.get('phone', [])
     group_columns = header_map.get('group', [])
     sample_columns = header_map.get('sample', [])
-    name_columns = [
-        header_map.get(col) for col in name_column_keys]
+    full_name_columns = [
+        header_map.get(col) for col in full_name_column_keys]
+    first_name_columns = [
+        header_map.get(col) for col in first_name_column_keys]
+    other_names_columns = [
+        header_map.get(col) for col in other_names_column_keys]
+    last_name_columns = [
+        header_map.get(col) for col in last_name_column_keys]
 
     extra_field_names = [f.name for f in participant_set.extra_fields] \
         if participant_set.extra_fields else []
@@ -143,12 +161,42 @@ def update_participants(dataframe, header_map, participant_set):
                 participant_set_id=participant_set.id
             )
 
-        participant_names = [record.get(col) for col in name_columns]
 
-        if participant_names:
-            participant.name_translations = {
+        participant_full_names = [record.get(col) for col in full_name_columns]
+
+        if participant_full_names:
+            participant.full_name_translations = {
                 locale: name
-                for locale, name in zip(locales, participant_names)
+                for locale, name in zip(locales, participant_full_names)
+                if _is_valid(name)
+            }
+
+        participant_first_names = [
+            record.get(col) for col in first_name_columns]
+
+        if participant_first_names:
+            participant.first_name_translations = {
+                locale: name
+                for locale, name in zip(locales, participant_first_names)
+                if _is_valid(name)
+            }
+
+        participant_other_names = [
+            record.get(col) for col in other_names_columns]
+
+        if participant_other_names:
+            participant.other_names_translations = {
+                locale: name
+                for locale, name in zip(locales, participant_other_names)
+                if _is_valid(name)
+            }
+
+        participant_last_names = [record.get(col) for col in last_name_columns]
+
+        if participant_last_names:
+            participant.last_name_translations = {
+                locale: name
+                for locale, name in zip(locales, participant_last_names)
                 if _is_valid(name)
             }
 
