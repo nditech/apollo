@@ -11,6 +11,7 @@ from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify
+from sqlalchemy import BigInteger, case, desc, func, text, true
 
 from apollo import models, services, utils
 from apollo.core import docs, sentry, uploads
@@ -22,12 +23,12 @@ from apollo.participants.api import views as api_views
 
 from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, PhoneContact
-from .models import ParticipantTranslations
+from .models import (
+    ParticipantFirstNameTranslations, ParticipantFullNameTranslations,
+    ParticipantLastNameTranslations, ParticipantOtherNamesTranslations)
 from ..locations.models import Location
 from ..submissions.models import Submission
 from ..users.models import UserUpload
-
-from sqlalchemy import BigInteger, desc, func, text
 
 
 phone_number_cleaner = re.compile(r'[^0-9]')
@@ -94,8 +95,26 @@ def participant_list(participant_set_id=0, view=None):
         location = Location.query.filter(
             Location.id == request.args.get('location')).first()
 
+    full_name_lat_query = ParticipantFullNameTranslations.lateral(
+        'full_name_translations')
+    first_name_lat_query = ParticipantFirstNameTranslations.lateral(
+        'first_name_translations')
+    last_name_lat_query = ParticipantLastNameTranslations.lateral(
+        'last_name_translations')
+    other_names_lat_query = ParticipantOtherNamesTranslations.lateral(
+        'other_names_translations')
+
     queryset = Participant.query.select_from(
-        Participant, ParticipantTranslations).filter(
+        Participant
+    ).outerjoin(
+        full_name_lat_query, true()
+    ).outerjoin(
+        first_name_lat_query, true()
+    ).outerjoin(
+        last_name_lat_query, true()
+    ).outerjoin(
+        other_names_lat_query, true()
+    ).filter(
         Participant.participant_set_id == participant_set.id)
 
     # load the location set linked to the participant set
@@ -181,25 +200,32 @@ def participant_list(participant_set_id=0, view=None):
             models.PhoneContact.participant_id == models.Participant.id
         )
     else:
+        location_lat_query = func.jsonb_each_text(
+            models.Location.name_translations
+        ).lateral('translation')
         queryset = models.Participant.query.select_from(
-            models.Participant, ParticipantTranslations,
-            models.Location,
-            func.jsonb_each_text(models.Location.name_translations).alias(
-                'translation'),
-            func.jsonb_each_text(models.Participant.name_translations).alias(
-                'participant_name'), models.ParticipantRole,
-            models.ParticipantPartner
+            models.Participant,
         ).filter(
             models.Participant.participant_set_id == participant_set.id
         ).join(
             models.Location,
             models.Participant.location_id == models.Location.id
+        ).join(
+            location_lat_query, true()
         ).outerjoin(
             models.ParticipantRole,
             models.Participant.role_id == models.ParticipantRole.id
         ).outerjoin(
             models.ParticipantPartner,
             models.Participant.partner_id == models.ParticipantPartner.id
+        ).outerjoin(
+            full_name_lat_query, true()
+        ).outerjoin(
+            first_name_lat_query, true()
+        ).outerjoin(
+            other_names_lat_query, true()
+        ).outerjoin(
+            last_name_lat_query, true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -216,11 +242,29 @@ def participant_list(participant_set_id=0, view=None):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'name':
+        # specify the conditions for the order term
+        condition1 = text('full_name_translations IS NULL')
+        condition2 = text('full_name_translations IS NOT NULL')
+
+        # concatenation for the full name
+        full_name_concat = func.concat_ws(
+            ' ',
+            text('first_name_translations.value'),
+            text('other_names_translations.value'),
+            text('last_name_translations.value'),
+        ).alias('full_name_concat')
+
+        # if the full name is empty, order by the concatenated
+        # name, else order by the full name
+        order_term = case([
+            (condition1, full_name_concat),
+            (condition2, text('full_name_translations.value')),
+        ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(text('participant_name.value')))
+                desc(order_term))
         else:
-            queryset = queryset.order_by(text('participant_name.value'))
+            queryset = queryset.order_by(order_term)
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -322,8 +366,8 @@ def toggle_phone_verification():
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(participant_id)
         phone_contact = PhoneContact.query.filter(
-            PhoneContact.participant==participant,
-            PhoneContact.number==phone).first()
+            PhoneContact.participant == participant,
+            PhoneContact.number == phone).first()
         phone_contact.verified = not phone_contact.verified
         submission.sender_verified = phone_contact.verified
         phone_contact.save()
@@ -356,11 +400,28 @@ def participant_edit(id, participant_set_id=0, view=None):
             # participant.participant_id = form.participant_id.data
             participant_set = participant.participant_set
             deployment = participant_set.deployment
-            name_translations = {}
+            full_name_translations = {}
             for locale in deployment.locale_codes:
-                field_name = f'name_{locale}'
-                name_translations[locale] = getattr(form, field_name).data
-            participant.name_translations = name_translations
+                field_name = f'full_name_{locale}'
+                full_name_translations[locale] = getattr(form, field_name).data
+            participant.full_name_translations = full_name_translations
+            first_name_translations = {}
+            for locale in deployment.locale_codes:
+                field_name = f'first_name_{locale}'
+                first_name_translations[locale] = getattr(
+                    form, field_name).data
+            participant.first_name_translations = first_name_translations
+            other_names_translations = {}
+            for locale in deployment.locale_codes:
+                field_name = f'other_names_{locale}'
+                other_names_translations[locale] = getattr(
+                    form, field_name).data
+            participant.other_names_translations = other_names_translations
+            last_name_translations = {}
+            for locale in deployment.locale_codes:
+                field_name = f'last_name_{locale}'
+                last_name_translations[locale] = getattr(form, field_name).data
+            participant.last_name_translations = last_name_translations
             participant.gender = form.gender.data
             if form.role.data:
                 participant.role_id = ParticipantRole.query.get_or_404(

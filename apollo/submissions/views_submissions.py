@@ -13,7 +13,7 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from slugify import slugify
-from sqlalchemy import BigInteger, desc, func, text
+from sqlalchemy import BigInteger, case, desc, func, text
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
 from sqlalchemy.sql import false
@@ -256,10 +256,20 @@ def submission_list(form_id):
             models.PhoneContact.participant_id == models.Participant.id
         )
     else:
+        full_name_lat_query = func.jsonb_each_text(
+            models.Participant.full_name_translations).lateral(
+                'participant_full_name')
+        first_name_lat_query = func.jsonb_each_text(
+            models.Participant.first_name_translations).lateral(
+                'participant_first_name')
+        other_names_lat_query = func.jsonb_each_text(
+            models.Participant.other_names_translations).lateral(
+                'participant_other_names')
+        last_name_lat_query = func.jsonb_each_text(
+            models.Participant.last_name_translations).lateral(
+                'participant_last_name')
         queryset = models.Submission.query.select_from(
-            models.Submission, models.Location, models.Participant,
-            func.jsonb_each_text(models.Participant.name_translations).alias(
-                'participant_name')
+            models.Submission, models.Location, models.Participant
         ).filter(
             models.Submission.submission_type == 'O',
             models.Submission.form == form,
@@ -270,6 +280,14 @@ def submission_list(form_id):
         ).join(
             models.Participant,
             models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            full_name_lat_query, sa.true()
+        ).outerjoin(
+            first_name_lat_query, sa.true()
+        ).outerjoin(
+            other_names_lat_query, sa.true()
+        ).outerjoin(
+            last_name_lat_query, sa.true()
         )
 
     if _location_query:
@@ -297,11 +315,29 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
+        # specify the conditions for the order term
+        condition1 = text('full_name_translations IS NULL')
+        condition2 = text('full_name_translations IS NOT NULL')
+
+        # concatenation for the full name
+        full_name_concat = func.concat_ws(
+            ' ',
+            text('first_name_translations.value'),
+            text('other_names_translations.value'),
+            text('last_name_translations.value'),
+        ).alias('full_name_concat')
+
+        # if the full name is empty, order by the concatenated
+        # name, else order by the full name
+        order_term = case([
+            (condition1, full_name_concat),
+            (condition2, text('full_name_translations.value')),
+        ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(text('participant_name.value')))
+                desc(order_term))
         else:
-            queryset = queryset.order_by(text('participant_name.value'))
+            queryset = queryset.order_by(order_term)
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -1238,10 +1274,20 @@ def quality_assurance_list(form_id):
             participant_phones.c.participant_id == models.Participant.id
         )
     else:
+        full_name_lat_query = func.jsonb_each_text(
+            models.Participant.full_name_translations).lateral(
+                'participant_full_name')
+        first_name_lat_query = func.jsonb_each_text(
+            models.Participant.first_name_translations).lateral(
+                'participant_first_name')
+        other_names_lat_query = func.jsonb_each_text(
+            models.Participant.other_names_translations).lateral(
+                'participant_other_names')
+        last_name_lat_query = func.jsonb_each_text(
+            models.Participant.last_name_translations).lateral(
+                'participant_last_name')
         queryset = models.Submission.query.select_from(
             models.Submission, models.Location, models.Participant,
-            func.jsonb_each_text(models.Participant.name_translations).alias(
-                'participant_name')
         ).filter(
             models.Submission.submission_type == 'O',
             models.Submission.form == form,
@@ -1252,6 +1298,14 @@ def quality_assurance_list(form_id):
         ).join(
             models.Participant,
             models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            full_name_lat_query, sa.true()
+        ).outerjoin(
+            first_name_lat_query, sa.true()
+        ).outerjoin(
+            other_names_lat_query, sa.true()
+        ).outerjoin(
+            last_name_lat_query, sa.true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -1268,11 +1322,29 @@ def quality_assurance_list(form_id):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
+        # specify the conditions for the order term
+        condition1 = text('full_name_translations IS NULL')
+        condition2 = text('full_name_translations IS NOT NULL')
+
+        # concatenation for the full name
+        full_name_concat = func.concat_ws(
+            ' ',
+            text('first_name_translations.value'),
+            text('other_names_translations.value'),
+            text('last_name_translations.value'),
+        ).alias('full_name_concat')
+
+        # if the full name is empty, order by the concatenated
+        # name, else order by the full name
+        order_term = case([
+            (condition1, full_name_concat),
+            (condition2, text('full_name_translations.value')),
+        ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(text('participant_name.value')))
+                desc(order_term))
         else:
-            queryset = queryset.order_by(text('participant_name.value'))
+            queryset = queryset.order_by(order_term)
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
