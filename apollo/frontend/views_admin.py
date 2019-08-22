@@ -308,6 +308,8 @@ class EventAdminView(BaseAdminView):
 
         if form.participant_set.data:
             model.location_set = form.participant_set.data.location_set
+        else:
+            model.location_set = None
 
         # convert to the app time zone
         model.start = app_time_zone.localize(
