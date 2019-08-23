@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
-from sqlalchemy import text
-
 from cgi import escape
+from collections import OrderedDict
+
 from flask_babelex import lazy_gettext as _
+from sqlalchemy import func, or_, text
 from wtforms import widgets
 from wtforms.compat import text_type
 from wtforms.widgets import html_params, HTMLString
@@ -32,8 +32,20 @@ class ParticipantNameFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
             return query.filter(
-                text('translations.value ILIKE :name')).params(
-                    name=f'%{value}%')
+                or_(
+                    text('full_name_translations.value ILIKE :name'),
+                    func.btrim(
+                        func.regexp_replace(
+                            func.concat_ws(
+                                ' ',
+                                text('first_name_translations.value'),
+                                text('other_names_translations.value'),
+                                text('last_name_translations.value'),
+                            ), r'\s+', ' ', 'g'
+                        )
+                    ).ilike(f'%{value}%')
+                )
+            ).params(name=f'%{value}%')
         return query
 
 

@@ -51,9 +51,21 @@ class ParticipantSerializer(object):
 
         return {
             'uuid': obj.uuid.hex,
-            'name': {
+            'full_name': {
                 locale: name
-                for locale, name in obj.name_translations.items()
+                for locale, name in obj.full_name_translations.items()
+            },
+            'first_name': {
+                locale: name
+                for locale, name in obj.first_name_translations.items()
+            },
+            'other_names': {
+                locale: name
+                for locale, name in obj.other_names_translations.items()
+            },
+            'last_name': {
+                locale: name
+                for locale, name in obj.last_name_translations.items()
             },
             'participant_id': obj.participant_id,
             'email': obj.email,
