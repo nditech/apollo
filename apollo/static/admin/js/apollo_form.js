@@ -583,6 +583,15 @@
                 me.attr('id', id);
                 me.attr('name', name);
             });
+            $('label[for]', $template).each(function (e) {
+                var me = $(this);
+
+                var forId = me.attr('for');
+
+                forId = prefix + (forId !== '' ? '-' + forId : '');
+
+                me.attr('for', forId);
+            });
 
             $template.appendTo($fieldList);
 
