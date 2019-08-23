@@ -45,7 +45,9 @@
                     <input class="form-control my-3 bg-light masked" id="{{ login_user_form.password.id }}" name="{{ login_user_form.password.name }}" type="text" placeholder="{{ _('Password') }}">
                     <div class="row d-flex align-items-center px-3">
                       <button type="submit" class="btn btn-primary btn-block col-5">{{ _('Sign In') }}</button>
+                      {%- if config.MAIL_SERVER %}
                       <div class="col-7 text-right"><a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">{{ _('Forgot Password?') }}</a></div>
+                      {%- endif %}
                     </div>
                     {% if config['ENABLE_SOCIAL_LOGIN'] and config['GOOGLE_CLIENT_ID'] -%}
                     <div class="row pt-3">
