@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import csv
-from geoalchemy2.shape import to_shape
 from io import StringIO
+
+from flask_babelex import gettext as _
+from geoalchemy2.shape import to_shape
 
 from apollo import constants
 from apollo.dal.service import Service
@@ -44,19 +46,19 @@ class SubmissionService(Service):
         sample_headers = [s.name for s in samples]
 
         dataset_headers = [
-            'Participant ID', 'Name', 'DB Phone', 'Recent Phone'
+            _('Participant ID'), _('Name'), _('DB Phone'), _('Recent Phone')
         ] + [
             loc_type.name for loc_type in location_types
         ] + [
-            'Location', 'Location Code', 'Latitude', 'Longitude'
-        ] + extra_field_headers + ['RV'] + tags + ['Timestamp']
+            _('Location'), _('Location Code'), _('Latitude'), _('Longitude')
+        ] + extra_field_headers + [_('RV')] + tags + [_('Timestamp')]
 
         if form.form_type == 'INCIDENT':
-            dataset_headers.extend(['Status', 'Description'])
+            dataset_headers.extend([_('Status'), _('Description')])
         else:
             dataset_headers.extend(sample_headers)
             if submission.submission_type == 'O':
-                dataset_headers.append('Comment')
+                dataset_headers.append(_('Comment'))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
