@@ -433,6 +433,11 @@ class RoleAdminView(BaseAdminView):
         return models.Role.query.filter_by(
             deployment_id=deployment.id, id=pk).first_or_404()
 
+    def on_model_change(self, form, model, is_created):
+        if is_created:
+            model.deployment = current_user.deployment
+        super().on_model_change(form, model, is_created)
+
 
 class SetViewMixin(object):
     column_filters = ('name',)
