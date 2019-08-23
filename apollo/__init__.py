@@ -19,6 +19,7 @@ from apollo.core import (
     admin, csrf, db, docs, gravatar, menu, oauth, security, webpack
 )
 from apollo.prometheus.flask import monitor
+from apollo.tasks import send_email
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
@@ -63,9 +64,15 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
     userdatastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
 
-    security.init_app(app, userdatastore,
-                      login_form=DeploymentLoginForm,
-                      register_blueprint=register_security_blueprint)
+    security_ctx = security.init_app(
+        app, userdatastore,login_form=DeploymentLoginForm,
+        register_blueprint=register_security_blueprint)
+
+    @security_ctx.send_mail_task
+    def delay_flask_security_mail(msg):
+        send_email.delay(
+            subject=msg.subject, sender=msg.sender, recipients=msg.recipients,
+            body=msg.body)
 
     # initialize the OpenAPI extension
     spec = APISpec(
