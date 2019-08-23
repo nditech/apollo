@@ -510,9 +510,19 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_labels = {
         'name': _('Name'),
         'location_set': _('Location Set'),
-        'participants': _('Participants')
+        'participants': _('Participants'),
+        'gender_hidden': _('Hide Gender'),
+        'role_hidden': _('Hide Role'),
+        'partner_hidden': _('Hide Organization'),
     }
-    form_columns = ('name', 'location_set',)
+    column_descriptions = {
+        'gender_hidden': _('If enabled, will hide the gender in the participant list.'),  # noqa
+        'role_hidden': _('If enabled, will hide the role in the participant list.'),  # noqa
+        'partner_hidden': _('If enabled, will hide the organization in the participant list.'),  # noqa
+    }
+    form_columns = (
+        'name', 'location_set', 'gender_hidden', 'role_hidden',
+        'partner_hidden')
     column_formatters = {
         'participants': macro('participants_list')
     }

@@ -115,6 +115,7 @@
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
         {% endif -%}
 
+        {%- if not participant_set.gender_hidden %}
         {% if request.args.sort_by == 'gen' -%}
         {% if request.args.sort_direction == 'desc' -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_direction='asc', page='') }}">{{ _('Gender') }} <i class="fa fa-chevron-down"></i></a></th>
@@ -124,7 +125,9 @@
         {% else -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_value='', sort_direction='', page='') }}">{{ _('Gender') }}</a></th>
         {% endif -%}
+        {%- endif %}
 
+        {%- if not participant_set.role_hidden %}
         {% if request.args.sort_by == 'role' -%}
         {% if request.args.sort_direction == 'desc' -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_direction='asc', page='') }}">{{ _('Role') }} <i class="fa fa-chevron-down"></i></a></th>
@@ -134,7 +137,9 @@
         {% else -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_value='', sort_direction='', page='') }}">{{ _('Role') }}</a></th>
         {% endif -%}
+        {%- endif %}
 
+        {%- if not participant_set.partner_hidden %}
         {% if request.args.sort_by == 'org' -%}
         {% if request.args.sort_direction == 'desc' -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_direction='asc', page='') }}">{{ _('Organization') }} <i class="fa fa-chevron-down"></i></a></th>
@@ -144,6 +149,7 @@
         {% else -%}
         <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_value='', sort_direction='', page='') }}">{{ _('Organization') }}</a></th>
         {% endif -%}
+        {%- endif %}
 
         {% for field in extra_fields %}
         {% if perms.can_access_resource(field) %}
@@ -166,9 +172,15 @@
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.name|default('N/A', true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.name|default('', true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.primary_phone|default('', true) }}</td>
+        {%- if not participant_set.gender_hidden %}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.gender_display }}</td>
+        {%- endif %}
+        {%- if not participant_set.role_hidden %}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.role.name|default('N/A', true) }}</td>
+        {%- endif %}
+        {%- if not participant_set.partner_hidden %}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.partner|default('', true) }}</td>
+        {%- endif %}
         {% for field in extra_fields %}
         {% if perms.can_access_resource(field) %}
         {%- if participant.extra_data -%}
@@ -180,7 +192,7 @@
         {% endfor %}
       </tr>
       {% else %}
-      {%- set colspan = 7 + (location_types|length) + (extra_fields|length) -%}
+      {%- set colspan = 4 + (location_types|length) + (extra_fields|length) + (0 if participant_set.gender_hidden else 1) + (0 if participant_set.role_hidden else 1) + (0 if participant_set.partner_hidden else 1) -%}
       <tr class="table-warning">
         <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
       </tr>
