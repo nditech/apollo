@@ -6,6 +6,7 @@ from functools import partial
 from io import StringIO
 from itertools import chain
 
+from flask_babelex import gettext as _
 import numpy as np
 import pandas as pd
 
@@ -117,18 +118,18 @@ def aggregate_dataset(query, form, stream=False):
         form.get_field_by_tag(tag) for tag in form.tags
     ]
 
-    headers = ['Level'] + location_type_names + ['Total']
+    headers = [_('Level')] + location_type_names + [_('Total')]
     for field in fields:
         if field['type'] == 'integer':
             headers.append(field['tag'])
         elif field['type'] in ('multiselect', 'select'):
             headers.extend(
-                '{tag} = {option}'.format(tag=field['tag'], option=opt)
+                _('%(tag)s = %(option)d', tag=field['tag'], option=opt)
                 for opt in sorted(field['options'].values())
             )
-        headers.append(f"{field['tag']} (Count)")
-        headers.append(f"{field['tag']} (Nulls)")
-        headers.append(f"{field['tag']} (Percentage)")
+        headers.append(_('%(tag)s (Count)', tag=field['tag']))
+        headers.append(_('%(tag)s (Nulls)', tag=field['tag']))
+        headers.append(_('%(tag)s (Percentage)', tag=field['tag']))
 
     if stream:
         output_stream = StringIO()
