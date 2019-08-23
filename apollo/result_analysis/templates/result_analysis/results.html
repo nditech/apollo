@@ -15,9 +15,25 @@
 {%- block content -%}
 <div class="row">
   <div class="col-md-12">
-    <div id="container" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}" style="height: 450px" data-chart='{{ chart_data|tojson }}'></div>
+    <ul class="nav nav-tabs justify-content-end mt-2" id="chart-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#convergence" class="nav-link active" id="convergence-tab" data-toggle="tab" role="tab" aria-controls="convergence" aria-selected="true">{{ _('Convergence') }}</a>
+        </li>
+        <li class="nav-item">
+            <a href="#scatterplot" class="nav-link" id="scatterplot-tab" data-toggle="tab" role="tab" aria-controls="scatterplot" aria-selected="false">{{ _('Scatterplot') }}</a>
+        </li>
+    </ul>
+    <div class="tab-content mt-2" id="chart-content">
+        <div class="tab-pane fade show active" id="convergence" role="tabpanel" aria-labelledby="convergence-tab">
+            <div id="convergence-chart" dir="ltr" style="height: 450px" data-chart='{{ chart_data|tojson }}'></div>
+        </div>
+        <div class="tab-pane fade" id="scatterplot" role="tabpanel" aria-labelledby="scatterplot-tab">
+            <div id="scatterplot-chart" dir="ltr"></div>
+        </div>
+    </div>
   </div>
 </div>
+
 <div class="row">
 	<div class="col-md-12">
 		<ul class="nav nav-tabs justify-content-end" id="locationTab" role="tablist">
@@ -330,11 +346,12 @@
 {%- endblock -%}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
   $(function () {
     // load the data
-    var data = $('#container').data('chart');
+    var data = $('#convergence-chart').data('chart');
 
     Highcharts.setOptions({
       global: {
@@ -343,12 +360,9 @@
     });
 
     // Create the chart
-    $('#container').highcharts('StockChart', {
+    $('#convergence-chart').highcharts('StockChart', {
         rangeSelector : {
             enabled : false
-        },
-        title: {
-            text: "{{ _('Convergence Chart') }}"
         },
         navigator: {
             height: 30,
@@ -407,4 +421,171 @@
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+<script>
+var dataset = [];
+var data = $('#convergence-chart').data('chart');
+d3.keys(data).forEach(function (share) {
+    data[share].forEach(function (datum) {
+        dataset.push([datum[0], datum[1] / 100, share]);
+    });
+});
+
+var margin = {top: 20, right: 56, bottom: 60, left: 40},
+    width = $('#chart-content').width() - margin.left - margin.right,
+    height = 450 - margin.top - margin.bottom;
+
+var xValue = function (d) { return d[0]; },
+    xScale = d3.scalePoint().range([0, width]),
+    xMap = function (d) { return xScale(xValue(d)); },
+    xAxis = d3.axisBottom().scale(xScale).tickFormat(function (d, i, j) {
+        if (i == 0 || i == j.length - 1) {
+            return d3.timeFormat('%d. %b')(d);
+        } else {
+            return d3.timeFormat('%H:%M:%S')(d);
+        }
+    });
+
+var yValue = function (d) { return d[1]; },
+    yScale = d3.scaleLinear().range([height, 0]),
+    yMap = function (d) { return yScale(yValue(d)); },
+    yAxis = d3.axisLeft().scale(yScale).tickValues([0, 0.2, 0.4, 0.5, 0.6, 0.8, 1]).tickFormat(d3.format(".0%")),
+    gridlines = d3.axisLeft().scale(yScale).ticks(5).tickFormat("").tickSize(-width),
+    midpoint = d3.axisLeft().scale(yScale).ticks(2).tickFormat("").tickSize(-width);
+
+var cValue = function (d) { return d[2]; },
+    color = d3.scaleOrdinal().range(d3.schemeCategory10);
+
+var svg = d3.select("#scatterplot-chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var tooltip = d3.select("#scatterplot-chart")
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+xScale.domain(d3.map(dataset, function (d) { return d[0]; }).keys())
+yScale.domain([0, 1]);
+
+// y axis
+svg.append('g')
+    .attr('class', 'y axis')
+    .call(yAxis);
+
+svg.append('text')
+    .attr('class', 'label')
+    .attr('transform', 'rotate(-90)')
+    .attr('y', 6)
+    .attr('x', -4)
+    .attr('dy', '.71em')
+    .attr('text-anchor', 'end')
+    .text('{{ _("Vote Share") }}');
+
+// x axis
+svg.append('g')
+    .attr('class', 'midpoint')
+    .call(midpoint);
+
+svg.append('g')
+    .attr('class', 'grid')
+    .call(gridlines);
+
+svg.append('g')
+    .attr('class', 'x axis')
+    .attr('transform', 'translate(0,' + height + ')')
+    .call(xAxis);
+
+svg.append('text')
+    .attr('class', 'label')
+    .attr('x', width)
+    .attr('y', height - 6)
+    .attr('text-anchor', 'end')
+    .text('{{ _("Time") }}');
+
+// draw dots
+svg.selectAll(".dot")
+    .data(dataset)
+    .enter().append('circle')
+    .attr('class', 'dot')
+    .attr('r', 3.5)
+    .attr('cx', xMap)
+    .attr('cy', yMap)
+    .style('fill', function (d) { return color(cValue(d)); })
+
+    .on('mouseover', function (d) {
+        tooltip.transition()
+            .duration(200)
+            .style('opacity', .9);
+        tooltip.html(`
+<div class="card">
+  <div class="card-body">
+    <p class="card-subtitle mb-2 text-muted">${d3.timeFormat('%a, %b %e, %X')(xValue(d))}</p>
+    <p class="card-text mb-n1"><strong>${d[2]}: ${d3.format('.0%')(yValue(d))}</strong></p>
+  </div>
+</div>`)
+            .style('left', ((width + margin.left + margin.right - d3.mouse(this)[0] > 175) ? (d3.mouse(this)[0] + margin.left + margin.right / 2) : (d3.mouse(this)[0] + margin.left - 175)) + 'px')
+            .style('top', (d3.mouse(this)[1] + margin.top + margin.bottom / 4) + 'px');
+    })
+    .on('mouseout', function (d) {
+        tooltip.transition()
+            .duration(500)
+            .style('opacity', 0);
+    });
+
+// draw legend
+var legend = svg.selectAll(".legend")
+    .data(color.domain())
+    .enter().append("g")
+    .attr("class", "text-monospace")
+    .attr('transform', function (d, i) { return 'translate(0,' + i * 20 + ')'; });
+
+// draw legend colored rectangles
+legend.append('rect')
+    .attr('x', width + 16)
+    .attr('width', 18)
+    .attr('height', 18)
+    .style('fill', color);
+
+// draw legend text
+legend.append('text')
+    .attr('x', width + 56)
+    .attr('y', 9)
+    .attr('dy', '.35em')
+    .style('text-anchor', 'end')
+    .text(function (d) { return d; });
+
+</script>
 {% endblock %}
+{% block stylesheets %}
+{{- super() }}
+<style>
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.label {
+  fill: #6c757d;
+}
+
+.tooltip {
+  position: absolute;
+  width: 175px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.grid line {
+  stroke: #eee;
+}
+
+.midpoint line {
+  stroke: #fdd;
+}
+</style>
+{%- endblock %}
