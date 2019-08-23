@@ -35,6 +35,9 @@ class ParticipantSet(BaseModel):
         'LocationSet',
         backref=db.backref(
             'participant_sets', cascade='all, delete', passive_deletes=True))
+    gender_hidden = db.Column(db.Boolean, default=False)
+    role_hidden = db.Column(db.Boolean, default=False)
+    partner_hidden = db.Column(db.Boolean, default=False)
 
     def __str__(self):
         return self.name or ''
