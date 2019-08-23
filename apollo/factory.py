@@ -27,27 +27,29 @@ TASK_DESCRIPTIONS = {
 
 class SSEBlueprint(ServerSentEventsBlueprint):
     def messages(self, channel='sse'):
-        self.pubsub = self.redis.pubsub()
-        self.pubsub.subscribe(channel)
-        for pubsub_message in self.pubsub.listen():
+        pubsub = self.redis.pubsub()
+        pubsub.subscribe(channel)
+        for pubsub_message in pubsub.listen():
             if pubsub_message['type'] == 'message':
                 msg_dict = json.loads(pubsub_message['data'])
                 yield Message(**msg_dict)
 
     def stream(self):
         channel = request.args.get('channel') or 'sse'
+        pubsub = self.redis.pubsub()
 
         @stream_with_context
         def generator():
             for message in self.messages(channel=channel):
                 yield str(message)
-            response = current_app.response_class(
-                generator(),
-                mimetype='text/event-stream'
-            )
-            response.call_on_close(self.pubsub.close)
 
-            return response
+        response = current_app.response_class(
+            generator(),
+            mimetype='text/event-stream'
+        )
+        response.call_on_close(pubsub.close)
+
+        return response
 
 
 sse = SSEBlueprint('sse', __name__)

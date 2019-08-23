@@ -4,8 +4,8 @@ from io import BytesIO
 import json
 import os
 
-from flask import (Blueprint, Response, current_app, flash, g, redirect,
-                   request, url_for, abort, stream_with_context, send_file)
+from flask import (Blueprint, Response, abort, current_app, flash, g, redirect,
+                   request, send_file, session, stream_with_context, url_for)
 from flask_babelex import gettext as _
 from flask_security import current_user
 from slugify import slugify
