@@ -5,7 +5,7 @@ import logging
 from operator import itemgetter
 import re
 
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext, lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
@@ -99,7 +99,7 @@ class Form(Resource):
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
     def __str__(self):
-        return str(_('Form - %(name)s', name=self.name))
+        return gettext('Form - %(name)s', name=self.name)
 
     def _populate_field_cache(self):
         if self.data:
@@ -259,7 +259,7 @@ class Form(Resource):
         # hard coding a location question here until the form builder
         # gets updated. please remove once the form builder supports
         # locations
-        description = str(_('Location'))
+        description = gettext('Location')
         path = '/data/location'
         data.append(etree.Element('location'))
         model.append(E.bind(nodeset=path, type='geopoint'))
@@ -352,8 +352,8 @@ class FormBuilderSerializer(object):
             if data['fields'][0]['component'] != 'group':
                 # no group was created, create a default
                 group = {
-                    'name': str(_('SMS 1')),
-                    'slug': slugify(_('SMS 1')),
+                    'name': gettext('SMS 1'),
+                    'slug': slugify(gettext('SMS 1')),
                     'fields': []
                 }
                 groups.append(group)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext, lazy_gettext as _
 from geoalchemy2 import Geometry
 from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import JSONB
@@ -343,8 +343,8 @@ class LocationDataField(Resource):
                            passive_deletes=True))
 
     def __str__(self):
-        return str(_('LocationDataField - %(name)s in %(location_set)s',
-                     name=self.name, location_set=self.location_set.name))
+        return gettext('LocationDataField - %(name)s in %(location_set)s',
+                       name=self.name, location_set=self.location_set.name)
 
 
 LocationTranslations = func.jsonb_each_text(

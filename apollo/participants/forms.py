@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext, lazy_gettext as _
 from flask_wtf import FlaskForm
 from slugify import slugify
 from wtforms import FileField, SelectField
@@ -20,7 +20,7 @@ def _validate_required_fields(form):
     errors = []
 
     if 'id' not in mapped_form_values:
-        errors.append(str(_('Participant ID was not mapped')))
+        errors.append(gettext('Participant ID was not mapped'))
         rv = False
 
     form.errors['__validate__'] = errors
