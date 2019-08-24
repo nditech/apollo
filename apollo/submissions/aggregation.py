@@ -124,7 +124,7 @@ def aggregate_dataset(query, form, stream=False):
             headers.append(field['tag'])
         elif field['type'] in ('multiselect', 'select'):
             headers.extend(
-                _('%(tag)s = %(option)d', tag=field['tag'], option=opt)
+                f'{field["tag"]} = {opt}'
                 for opt in sorted(field['options'].values())
             )
         headers.append(_('%(tag)s (Count)', tag=field['tag']))

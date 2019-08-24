@@ -51,7 +51,9 @@ class SubmissionService(Service):
             loc_type.name for loc_type in location_types
         ] + [
             _('Location'), _('Location Code'), _('Latitude'), _('Longitude')
-        ] + extra_field_headers + [_('RV')] + tags + [_('Timestamp')]
+        ] + extra_field_headers + [
+            _('Registered Voters')
+        ] + tags + [_('Timestamp')]
 
         if form.form_type == 'INCIDENT':
             dataset_headers.extend([_('Status'), _('Description')])
