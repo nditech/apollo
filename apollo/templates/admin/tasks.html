@@ -111,6 +111,8 @@ const vm = new Vue({
     self.eventSource.onmessage = function(event) {
       let data = JSON.parse(event.data);
       self.currentState = data;
+      if (data.status !== 'RUNNING')
+        self.eventSource.close();
     };
     self.eventSource.addEventListener('error', function(event) {
       console.log(event);
