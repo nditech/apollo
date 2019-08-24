@@ -52,7 +52,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     """Returns the frontend application instance"""
     app = factory.create_app(__name__, __path__, settings_override)
 
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root=app.static_folder, prefix='static/')
 
     # Init assets
     assets.init_app(app)
