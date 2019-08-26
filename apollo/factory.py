@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from cachetools import cached
+from importlib import import_module
+
 from celery import Celery
 from flask import (
     Flask, abort, current_app, json, request, session, stream_with_context)
@@ -15,7 +17,6 @@ from apollo.core import (
     babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
     uploads)
 from apollo.helpers import register_blueprints
-from importlib import import_module
 
 
 TASK_DESCRIPTIONS = {
@@ -26,28 +27,36 @@ TASK_DESCRIPTIONS = {
 
 
 class SSEBlueprint(ServerSentEventsBlueprint):
+    pubsub = None
+
     def messages(self, channel='sse'):
-        pubsub = self.redis.pubsub()
-        pubsub.subscribe(channel)
-        for pubsub_message in pubsub.listen():
+        if self.pubsub is None:
+            self.pubsub = self.redis.pubsub()
+        self.pubsub.subscribe(channel)
+
+        for pubsub_message in self.pubsub.listen():
             if pubsub_message['type'] == 'message':
                 msg_dict = json.loads(pubsub_message['data'])
+                if 'quit' in msg_dict:
+                    self.pubsub.unsubscribe(channel)
                 yield Message(**msg_dict)
 
     def stream(self):
         channel = request.args.get('channel') or 'sse'
-        pubsub = self.redis.pubsub()
 
         @stream_with_context
         def generator():
             for message in self.messages(channel=channel):
                 yield str(message)
 
+        def _unsubscribe():
+            self.pubsub.unsubscribe(channel)
+
         response = current_app.response_class(
             generator(),
             mimetype='text/event-stream'
         )
-        response.call_on_close(pubsub.close)
+        response.call_on_close(_unsubscribe)
 
         return response
 
@@ -157,7 +166,8 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': 'FAILED',
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task)
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'quit': True,
                 }
 
                 if channel is not None:
@@ -170,7 +180,8 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': 'COMPLETED',
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task)
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'quit': True,
                 }
 
                 if channel is not None:
