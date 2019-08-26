@@ -4,7 +4,7 @@ from importlib import import_module
 
 from celery import Celery
 from flask import (
-    Flask, abort, current_app, json, request, session, stream_with_context)
+    Flask, abort, current_app, g, json, request, session, stream_with_context)
 from flask_babelex import gettext as _
 from flask_security import current_user
 from flask_sse import Message, ServerSentEventsBlueprint
@@ -12,6 +12,7 @@ from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
+from redis import ConnectionPool, StrictRedis
 
 from apollo.core import (
     babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
@@ -27,7 +28,19 @@ TASK_DESCRIPTIONS = {
 
 
 class SSEBlueprint(ServerSentEventsBlueprint):
+    _redis = None
     pubsub = None
+
+    def cleanup(self):
+        if self._redis is not None:
+            self._redis.close()
+
+    @property
+    def redis(self):
+        if self._redis is None:
+            self._redis = StrictRedis(connection_pool=get_redis_pool())
+
+        return self._redis
 
     def messages(self, channel='sse'):
         if self.pubsub is None:
@@ -63,6 +76,7 @@ class SSEBlueprint(ServerSentEventsBlueprint):
 
 sse = SSEBlueprint('sse', __name__)
 sse.add_url_rule(rule='', endpoint='stream', view_func=sse.stream)
+sse.teardown_request(sse.cleanup)
 
 
 @sse.before_request
@@ -72,6 +86,15 @@ def limit_access():
 
     if request.args.get('channel') != session.get('_id'):
         abort(403)
+
+
+def get_redis_pool():
+    if 'redis_pool' not in g:
+        g.redis_pool = ConnectionPool.from_url(
+            current_app.config.get('REDIS_URL')
+        )
+
+    return g.redis_pool
 
 
 def create_app(
@@ -106,6 +129,13 @@ def create_app(
 
     if app.config.get('DEBUG') and fdt_available:
         debug_toolbar.init_app(app)
+
+    @app.teardown_appcontext
+    def close_redis(*args, **kwargs):
+        redis_pool = g.pop('redis_pool', None)
+
+        if redis_pool is not None:
+            redis_pool.disconnect()
 
     # don't reregister the locale selector
     # if we already have one
