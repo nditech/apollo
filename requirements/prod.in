@@ -23,7 +23,6 @@ flask-principal==0.4.0
 flask-script==2.0.6
 flask-security==3.0.0
 flask-sqlalchemy~=2.4.0
-flask-sse==0.2.1
 flask-sslify==0.1.4
 flask-uploads==0.2.1
 flask-webpack
