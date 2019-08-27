@@ -139,7 +139,7 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': _('FAILED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get[self.request.task],
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
                 }
                 if channel is not None:
@@ -153,7 +153,7 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': _('COMPLETED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get[self.request.task],
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
                 }
                 if channel is not None:
