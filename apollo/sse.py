@@ -21,15 +21,15 @@ def setup_clients():
 
 
 @sse.teardown_request
-def teardown_clients():
+def teardown_clients(*args, **kwargs):
     pubsub = g.pop('sse_pubsub', None)
 
     if pubsub:
         pubsub.close()
 
-    redis = g.pop('sse_redis', None)
-    if redis:
-        redis.close()
+    # remove the client so it goes
+    # out of scope and is returned to the pool
+    g.pop('sse_redis', None)
 
 
 @sse.route('')

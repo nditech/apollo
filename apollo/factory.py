@@ -144,7 +144,7 @@ def create_celery_app(app=None):
                 }
                 if channel is not None:
                     self.redis_instance.publish(channel, json.dumps(payload))
-                    self.redis_instance.close()
+                    self.redis_instance = None
 
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
@@ -158,7 +158,7 @@ def create_celery_app(app=None):
                 }
                 if channel is not None:
                     self.redis_instance.publish(channel, json.dumps(payload))
-                    self.redis_instance.close()
+                    self.redis_instance = None
 
         def update_task_info(self, **kwargs):
             request = self.request
