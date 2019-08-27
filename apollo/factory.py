@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
+import json
+
 from cachetools import cached
 from importlib import import_module
 
 from celery import Celery
-from flask import (
-    Flask, abort, current_app, json, request, session, stream_with_context)
+from flask import Flask, request
 from flask_babelex import gettext as _
 from flask_security import current_user
-from flask_sse import Message, ServerSentEventsBlueprint
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo.core import (
-    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
-    uploads)
+    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, red,
+    sentry, uploads)
 from apollo.helpers import register_blueprints
 
 
@@ -24,54 +24,6 @@ TASK_DESCRIPTIONS = {
     'apollo.participants.tasks.import_participants': _('Import Participants'),
     'apollo.submissions.tasks.init_submissions': _('Create Checklists')
 }
-
-
-class SSEBlueprint(ServerSentEventsBlueprint):
-    pubsub = None
-
-    def messages(self, channel='sse'):
-        if self.pubsub is None:
-            self.pubsub = self.redis.pubsub()
-        self.pubsub.subscribe(channel)
-
-        for pubsub_message in self.pubsub.listen():
-            if pubsub_message['type'] == 'message':
-                msg_dict = json.loads(pubsub_message['data'])
-                if 'quit' in msg_dict:
-                    self.pubsub.unsubscribe(channel)
-                yield Message(**msg_dict)
-
-    def stream(self):
-        channel = request.args.get('channel') or 'sse'
-
-        @stream_with_context
-        def generator():
-            for message in self.messages(channel=channel):
-                yield str(message)
-
-        def _unsubscribe():
-            self.pubsub.unsubscribe(channel)
-
-        response = current_app.response_class(
-            generator(),
-            mimetype='text/event-stream'
-        )
-        response.call_on_close(_unsubscribe)
-
-        return response
-
-
-sse = SSEBlueprint('sse', __name__)
-sse.add_url_rule(rule='', endpoint='stream', view_func=sse.stream)
-
-
-@sse.before_request
-def limit_access():
-    if not current_user.is_authenticated:
-        abort(403)
-
-    if request.args.get('channel') != session.get('_id'):
-        abort(403)
 
 
 def create_app(
@@ -98,6 +50,7 @@ def create_app(
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+    red.init_app(app)
 
     configure_uploads(app, uploads)
 
@@ -131,8 +84,6 @@ def create_app(
         for configured_app in app.config.get('APPLICATIONS'):
             register_blueprints(
                 app, configured_app, import_module(configured_app).__path__)
-
-    app.register_blueprint(sse, url_prefix='/stream')
 
     return app
 
@@ -171,7 +122,7 @@ def create_celery_app(app=None):
                 }
 
                 if channel is not None:
-                    sse.publish(payload, channel=channel)
+                    red.publish(channel, json.dumps(payload))
 
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
@@ -185,7 +136,7 @@ def create_celery_app(app=None):
                 }
 
                 if channel is not None:
-                    sse.publish(payload, channel=channel)
+                    red.publish(channel, json.dumps(payload))
 
         def update_task_info(self, **kwargs):
             request = self.request
@@ -202,7 +153,7 @@ def create_celery_app(app=None):
             }
 
             if channel is not None:
-                sse.publish(payload, channel=channel)
+                red.publish(channel, json.dumps(payload))
 
     celery.Task = ContextTask
     return celery
