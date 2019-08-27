@@ -135,6 +135,7 @@ APPLICATIONS = config(
         "apollo.messaging",
         "apollo.process_analysis",
         "apollo.result_analysis",
+        "apollo.sse",
         "apollo.odk")''')
 
 BIG_N = config('BIG_N', cast=int, default=0) or numpy.inf
@@ -213,3 +214,7 @@ FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
 
 API_KEY = config('API_KEY', default='')
+REDIS_URL = 'redis://{host}/{database}'.format(
+    host=config('REDIS_HOSTNAME', default='redis'),
+    database=config('REDIS_DATABASE', default='0'))
+KEEPALIVE_INTERVAL = 15  # in seconds

@@ -6,6 +6,7 @@ import numbers
 import os
 
 from flask import render_template_string
+from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from pandas import isnull
 from slugify import slugify
@@ -14,7 +15,6 @@ from sqlalchemy import func
 from apollo import helpers
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
-from apollo.locations import utils
 from apollo.messaging.tasks import send_email
 
 from .models import LocationSet
@@ -73,9 +73,15 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(data_frame, header_mapping, location_set):
+def update_locations(data_frame, header_mapping, location_set, task):
     cache = LocationCache()
     locales = location_set.deployment.locale_codes
+
+    total_records = data_frame.shape[0]
+    processed_records = 0
+    error_records = 0
+    warning_records = 0
+    error_log = []
 
     location_types = LocationType.query.filter(
         LocationType.location_set == location_set).join(
@@ -106,6 +112,14 @@ def update_locations(data_frame, header_mapping, location_set):
                 header_mapping.get(name_column_keys[0]) is None or
                 header_mapping.get(code_column_key) is None
             ):
+                error_records += 1
+                error_log.append({
+                    'label': 'ERROR',
+                    'message': gettext(
+                        'No code or name column present for row %(row)d',
+                        row=(idx + 1)
+                    )
+                })
                 continue
 
             lat_column_key = '{}_lat'.format(loc_type.id)
@@ -156,7 +170,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 continue
 
             if location_lat is not None and location_lon is not None:
-                geom_spec = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(
+                geom_spec = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(  # noqa
                     longitude=location_lon, latitude=location_lat)
             else:
                 geom_spec = None
@@ -255,9 +269,18 @@ def update_locations(data_frame, header_mapping, location_set):
 
             db.session.commit()
 
+        processed_records += 1
+        task.update_task_info(
+            total_records=total_records,
+            processed_records=processed_records,
+            error_records=error_records,
+            warning_records=warning_records,
+            error_log=error_log
+        )
 
-@celery.task
-def import_locations(upload_id, mappings, location_set_id):
+
+@celery.task(bind=True)
+def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     upload = UserUpload.query.filter(UserUpload.id == upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -279,7 +302,8 @@ def import_locations(upload_id, mappings, location_set_id):
     update_locations(
         dataframe,
         mappings,
-        location_set
+        location_set,
+        self
     )
 
     os.remove(filepath)

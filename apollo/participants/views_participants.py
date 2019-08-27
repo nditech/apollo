@@ -4,9 +4,9 @@ import logging
 import os
 import re
 
-from flask import (abort, Blueprint, current_app, g, redirect,
-                   render_template, request, Response, url_for,
-                   stream_with_context)
+from flask import (
+    Blueprint, Response, abort, current_app, g, redirect, render_template,
+    request, session, stream_with_context, url_for)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
@@ -602,7 +602,8 @@ def participant_headers(upload_id, participant_set_id=0, view=None):
                 kwargs = {
                     'upload_id': upload.id,
                     'mappings': data,
-                    'participant_set_id': participant_set.id
+                    'participant_set_id': participant_set.id,
+                    'channel': session.get('_id'),
                 }
                 tasks.import_participants.apply_async(kwargs=kwargs)
 

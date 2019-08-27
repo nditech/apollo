@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
+
 from cachetools import cached
+from importlib import import_module
+
 from celery import Celery
 from flask import Flask, request
+from flask_babelex import gettext as _
 from flask_security import current_user
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
@@ -9,10 +14,16 @@ from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo.core import (
-    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
-    uploads)
+    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, red,
+    sentry, uploads)
 from apollo.helpers import register_blueprints
-from importlib import import_module
+
+
+TASK_DESCRIPTIONS = {
+    'apollo.locations.tasks.import_locations': _('Import Locations'),
+    'apollo.participants.tasks.import_participants': _('Import Participants'),
+    'apollo.submissions.tasks.init_submissions': _('Create Checklists')
+}
 
 
 def create_app(
@@ -39,6 +50,7 @@ def create_app(
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+    red.init_app(app)
 
     configure_uploads(app, uploads)
 
@@ -91,10 +103,57 @@ def create_celery_app(app=None):
 
     class ContextTask(TaskBase):
         abstract = True
+        task_info = {}
+        track_started = True
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
+
+        def on_failure(self, exc, task_id, args, kwargs, einfo):
+            with app.app_context():
+                channel = kwargs.get('channel')
+                payload = {
+                    'id': task_id,
+                    'status': 'FAILED',
+                    'progress': self.task_info,
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'quit': True,
+                }
+
+                if channel is not None:
+                    red.publish(channel, json.dumps(payload))
+
+        def on_success(self, retval, task_id, args, kwargs):
+            with app.app_context():
+                channel = kwargs.get('channel')
+                payload = {
+                    'id': task_id,
+                    'status': 'COMPLETED',
+                    'progress': self.task_info,
+                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'quit': True,
+                }
+
+                if channel is not None:
+                    red.publish(channel, json.dumps(payload))
+
+        def update_task_info(self, **kwargs):
+            request = self.request
+            channel = request.kwargs.get('channel')
+            self.task_info.update(**kwargs)
+            self.update_state(meta=self.task_info)
+
+            task_metadata = self.backend.get_task_meta(request.id)
+            payload = {
+                'id': request.id,
+                'status': 'RUNNING',
+                'progress': task_metadata.get('result'),
+                'description': TASK_DESCRIPTIONS.get(self.request.task)
+            }
+
+            if channel is not None:
+                red.publish(channel, json.dumps(payload))
 
     celery.Task = ContextTask
     return celery

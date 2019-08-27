@@ -4,7 +4,7 @@ from io import BytesIO
 from arpeggio import NoMatch
 from arpeggio.cleanpeg import ParserPEG
 from flask import (
-    abort, Blueprint, flash, g, redirect, request, send_file, url_for)
+    abort, Blueprint, flash, g, redirect, request, send_file, session, url_for)
 from flask_babelex import lazy_gettext as _
 import json
 
@@ -42,11 +42,16 @@ def checklist_init():
         flash_message = _('Checklists are being created for the Event, Form, '
                           'Role and Location Type you selected')
 
-        init_submissions.delay(
-            form.data['event'],
-            form.data['form'],
-            form.data['role'],
-            form.data['location_type'])
+        channel = session.get('_id')
+        task_kwargs = {
+            'event_id': form.data['event'],
+            'form_id': form.data['form'],
+            'role_id': form.data['role'],
+            'location_type_id': form.data['location_type'],
+            'channel': channel
+        }
+
+        init_submissions.apply_async(kwargs=task_kwargs)
     else:
         flash_category = 'danger'
         flash_message = _('Checklists were not created')

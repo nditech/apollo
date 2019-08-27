@@ -6,6 +6,7 @@ import random
 import string
 
 from flask import render_template_string
+from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 import pandas as pd
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -73,7 +74,7 @@ def generate_password(length):
         for _ in range(length))
 
 
-def update_participants(dataframe, header_map, participant_set):
+def update_participants(dataframe, header_map, participant_set, task):
     """
     Given a Pandas `class`DataFrame that has participant information loaded,
     create or update the participant database with the info contained therein.
@@ -101,6 +102,12 @@ def update_participants(dataframe, header_map, participant_set):
     unresolved_supervisors = set()
     errors = set()
     warnings = set()
+
+    total_records = dataframe.shape[0]
+    processed_records = 0
+    error_records = 0
+    warning_records = 0
+    error_log = []
 
     location_set = participant_set.location_set
     locales = location_set.deployment.locale_codes
@@ -237,16 +244,32 @@ def update_participants(dataframe, header_map, participant_set):
         except MultipleResultsFound:
             errors.add((
                 participant_id,
-                _('Invalid location id (%(loc_id)s)',
-                    loc_id=record[LOCATION_ID_COL])
+                gettext('Invalid location id (%(loc_id)s)',
+                        loc_id=record[LOCATION_ID_COL])
             ))
+            error_records += 1
+            error_log.append({
+                'label': 'ERROR',
+                'message': gettext(
+                    'Location code %(loc_id)s for row %(row)d is not unique',
+                    loc_id=record[LOCATION_ID_COL], row=(idx + 1)),
+            })
             continue
         except NoResultFound:
             warnings.add((
                 participant_id,
-                _('Location with id %(loc_id)s not found',
-                    loc_id=record[LOCATION_ID_COL])
+                gettext('Location with id %(loc_id)s not found',
+                        loc_id=record[LOCATION_ID_COL])
             ))
+            warning_records += 1
+            error_log.append({
+                'label': 'WARNING',
+                'message': gettext(
+                    'Location code %(loc_id)s for row %(row)d with '
+                    'participant ID %(part_id)s not found',
+                    loc_id=record[LOCATION_ID_COL], row=(idx + 1),
+                    part_id=record[PARTICIPANT_ID_COL])
+            })
 
         if location:
             participant.location = location
@@ -390,6 +413,7 @@ def update_participants(dataframe, header_map, participant_set):
 
         # finally done with first pass
         participant.save()
+        processed_records += 1
 
         # if we have extra data, update the participant
         if extra_data:
@@ -402,6 +426,14 @@ def update_participants(dataframe, header_map, participant_set):
             else:
                 participant.groups = groups
             participant.save()
+
+        task.update_task_info(
+            total_records=total_records,
+            error_records=error_records,
+            processed_records=processed_records,
+            warning_records=warning_records,
+            error_log=error_log
+        )
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
@@ -418,7 +450,24 @@ def update_participants(dataframe, header_map, participant_set):
             participant.delete()
             errors.add((
                 participant_id,
-                _('Supervisor with ID %(id)s not found', id=supervisor_id)))
+                gettext(
+                    'Supervisor with ID %(id)s not found', id=supervisor_id)))
+            processed_records -= 1
+            error_records += 1
+            error_log.append({
+                'label': 'ERROR',
+                'message': gettext(
+                    'Supervisor ID %(sup_id)s specified for '
+                    'participant ID %(part_id)s not found',
+                    sup_id=supervisor_id, part_id=participant_id)
+            })
+            task.update_task_info(
+                total_records=total_records,
+                error_records=error_records,
+                processed_records=processed_records,
+                warning_records=warning_records,
+                error_log=error_log
+            )
         else:
             participant.supervisor_id = supervisor.id
             participant.save()
@@ -442,8 +491,9 @@ def generate_response_email(count, errors, warnings):
     )
 
 
-@celery.task
-def import_participants(upload_id, mappings, participant_set_id):
+@celery.task(bind=True)
+def import_participants(
+        self, upload_id, mappings, participant_set_id, channel=None):
     upload = services.user_uploads.find(id=upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -470,7 +520,8 @@ def import_participants(upload_id, mappings, participant_set_id):
     count, errors, warnings = update_participants(
         dataframe,
         mappings,
-        participant_set
+        participant_set,
+        self
     )
 
     # delete uploaded file

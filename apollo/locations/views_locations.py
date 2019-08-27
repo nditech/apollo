@@ -4,9 +4,8 @@ from io import BytesIO
 import json
 import os
 
-from flask import (Blueprint, current_app, flash, g, redirect,
-                   request, Response, url_for, abort, stream_with_context,
-                   send_file)
+from flask import (Blueprint, Response, abort, current_app, flash, g, redirect,
+                   request, send_file, session, stream_with_context, url_for)
 from flask_babelex import gettext as _
 from flask_security import current_user
 from slugify import slugify
@@ -211,7 +210,8 @@ def locations_headers(view, location_set_id, upload_id):
                 kwargs = {
                     'upload_id': upload.id,
                     'mappings': data,
-                    'location_set_id': location_set_id
+                    'location_set_id': location_set_id,
+                    'channel': session.get('_id')
                 }
                 tasks.import_locations.apply_async(kwargs=kwargs)
 

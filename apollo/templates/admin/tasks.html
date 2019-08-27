@@ -1,0 +1,124 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+<div id="app">
+  <component :is="currentComponent" :task-info="currentState"></component>
+</div>
+{% endblock %}
+{% block tail_js %}
+{{ super() }}
+<template id="task-info">
+  <div class="card">
+    <div class="card-header">{{ '{{' }} taskInfo.description {{ '}}'}} ({{ '{{' }} taskInfo.status {{ '}}' }})</div>
+    <div class="card-body">
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.processed_records || 0 {{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} processedPercentNum {{ '}}' }}%)</div>
+        </div>
+        <p class="card-text">{{ _('Successful') }}</p>
+      </div>
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.error_records || 0 {{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} errorPercentNum {{ '}}' }}%)</div>
+        </div>
+        <p class="card-text">{{ _('Error') }}</p>
+      </div>
+      <div>
+        <div class="progress" style="height: 2em;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.warning_records || 0{{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} warningPercentNum {{ '}}' }}%)</div>
+        </div>
+        <p class="card-text">{{ _('Warning') }}</p>
+      </div>
+      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log">
+        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">{{ '{{' }} report.message {{ '}}' }}<span class="badge badge-dark">{{ '{{' }} report.label {{ '}}' }}</span></li>
+      </ul>  
+    </div>
+  </div>
+</template>
+<template id="default">
+  <div class="alert alert-warning">{{ _('No Active Task') }}</div>
+</template>
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
+<script>
+const roundTo = function(num) {
+  return Math.round((num + 0.00001) * 100) / 100;
+};
+Vue.component('default', {
+  template: '#default'
+});
+Vue.component('task-info', {
+  computed: {
+    processedPercentNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const processedRecords = this.taskInfo.progress.processed_records;
+      let processedPercent;
+      if (totalRecords !== 0)
+        processedPercent = roundTo(100 * processedRecords / totalRecords);
+      else
+        processedPercent = 0;
+      return processedPercent;
+    },
+    errorPercentNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const errorRecords = this.taskInfo.progress.error_records;
+      let errorPercent;
+      if (totalRecords !== 0)
+        errorPercent = roundTo(100 * errorRecords / totalRecords);
+      else
+        errorPercent = 0;
+      return errorPercent;
+    },
+    warningPercentNum: function() {
+      const totalRecords = this.taskInfo.progress.total_records;
+      const warningRecords = this.taskInfo.progress.warning_records;
+      let warningPercent;
+      if (totalRecords !== 0)
+        warningPercent = roundTo(100 * warningRecords / totalRecords);
+      else
+        warningPercent = 0;
+      return warningPercent;
+    },
+    processedProgressStyle: function() {
+      return {width: this.processedPercentNum + '%'};
+    },
+    errorProgressStyle: function() {
+      return {width: this.errorPercentNum + '%'};
+    },
+    warningProgressStyle: function() {
+      return {width: this.warningPercentNum + '%'};
+    }
+  },
+  props: ['taskInfo'],
+  template: '#task-info'
+});
+const vm = new Vue({
+  el: '#app',
+  data: {
+    eventSource: null,
+    currentState: null,
+  },
+  computed: {
+    currentComponent: function () {
+      if (this.currentState === null)
+        return 'default';
+      else
+        return 'task-info';
+    }
+  },
+  created: function () {
+    const self = this;
+
+    if (window.EventSource) {
+      var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+      es.onmessage = function (ev) {
+        console.log(ev.data);
+        let data = JSON.parse(ev.data);
+        if (data.id !== undefined) {
+          self.currentState = data;
+        }
+      };
+    }
+  }
+});
+</script>
+{% endblock tail_js %}

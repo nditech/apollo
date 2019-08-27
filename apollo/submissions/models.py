@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from geoalchemy2 import Geometry  # noqa
 import sqlalchemy as sa
@@ -123,7 +124,7 @@ class Submission(BaseModel):
     verified_fields = db.Column(JSONB, default=[])
 
     @classmethod
-    def init_submissions(cls, event, form, role, location_type):
+    def init_submissions(cls, event, form, role, location_type, task=None):
         from apollo.participants.models import Participant
 
         if form.form_type != 'CHECKLIST':
@@ -140,8 +141,22 @@ class Submission(BaseModel):
 
         deployment_id = event.deployment_id
 
-        for participant in Participant.query.filter_by(role_id=role.id):
+        participants = Participant.query.filter_by(role_id=role.id)
+        total_records = participants.count()
+        processed_records = 0
+        error_records = 0
+        warning_records = 0
+        error_log = []
+
+        for participant in participants:
             if not participant.location_id:
+                error_records += 1
+                error_log.append({
+                    'label': 'ERROR',
+                    'message': gettext(
+                        'Participant ID %(part_id)s has no location',
+                        part_id=participant.participant_id)
+                })
                 continue
 
             if location_type.id == participant.location.location_type.id:
@@ -151,8 +166,26 @@ class Submission(BaseModel):
                     location = next(a for a in participant.location.ancestors()
                                     if a.location_type.id == location_type.id)
                     if not location:
+                        error_records = total_records - processed_records
+                        if task:
+                            task.update_task_info(
+                                total_records=total_records,
+                                processed_records=processed_records,
+                                error_records=error_records,
+                                warning_records=warning_records,
+                                error_log=error_log
+                            )
                         return
                 except StopIteration:
+                    error_records = total_records - processed_records
+                    if task:
+                        task.update_task_info(
+                            total_records=total_records,
+                            processed_records=processed_records,
+                            error_records=error_records,
+                            warning_records=warning_records,
+                            error_log=error_log
+                        )
                     return
 
             obs_submission = cls.query.filter_by(
@@ -179,6 +212,16 @@ class Submission(BaseModel):
                     location_id=location.id, deployment_id=deployment_id,
                     event_id=event.id, submission_type='M', data={})
                 master_submission.save()
+
+            processed_records += 1
+            if task:
+                task.update_task_info(
+                    total_records=total_records,
+                    processed_records=processed_records,
+                    error_records=error_records,
+                    warning_records=warning_records,
+                    error_log=error_log
+                )
 
     def update_related(self, data):
         '''

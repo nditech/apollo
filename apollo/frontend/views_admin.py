@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import flash, g, send_file, redirect, request
+from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
 from flask_admin.actions import action
@@ -11,7 +11,7 @@ from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
-from flask_security import current_user
+from flask_security import current_user, login_required, roles_required
 from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
@@ -633,6 +633,17 @@ class FormsView(BaseView):
         return quality_control_edit(self, form_id)
 
 
+class TaskView(BaseView):
+    @expose('/')
+    @login_required
+    @roles_required('admin')
+    def index(self):
+        context = {'channel': session.get('_id')}
+        template_name = 'admin/tasks.html'
+
+        return self.render(template_name, **context)
+
+
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(
     EventAdminView(models.Event, db.session, _('Events')))
@@ -643,4 +654,5 @@ admin.add_view(
 admin.add_view(
     ParticipantSetAdminView(
         models.ParticipantSet, db.session, _('Participant Sets')))
-admin.add_view(FormsView(name="Forms"))
+admin.add_view(FormsView(name=_("Forms")))
+admin.add_view(TaskView(name=_('Tasks')))

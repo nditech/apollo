@@ -14,6 +14,7 @@ except ImportError:
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate
+from flask_redis import FlaskRedis
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import DEFAULTS, UploadSet
@@ -43,6 +44,7 @@ mail = Mail()
 menu = Menu()
 migrate = Migrate()
 oauth = OAuth()
+red = FlaskRedis()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)
