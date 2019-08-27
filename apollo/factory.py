@@ -3,16 +3,14 @@ from cachetools import cached
 from importlib import import_module
 
 from celery import Celery
-from flask import (
-    Flask, abort, current_app, g, json, request, session, stream_with_context)
+from flask import Flask, current_app, g, json, request
 from flask_babelex import gettext as _
 from flask_security import current_user
-from flask_sse import Message, ServerSentEventsBlueprint
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
-from redis import ConnectionPool, StrictRedis
+from redis import ConnectionPool, Redis
 
 from apollo.core import (
     babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
@@ -27,69 +25,11 @@ TASK_DESCRIPTIONS = {
 }
 
 
-class SSEBlueprint(ServerSentEventsBlueprint):
-    _redis = None
-    pubsub = None
-
-    def cleanup(self):
-        if self._redis is not None:
-            self._redis.close()
-
-    @property
-    def redis(self):
-        if self._redis is None:
-            self._redis = StrictRedis(connection_pool=get_redis_pool())
-
-        return self._redis
-
-    def messages(self, channel='sse'):
-        if self.pubsub is None:
-            self.pubsub = self.redis.pubsub()
-        self.pubsub.subscribe(channel)
-
-        for pubsub_message in self.pubsub.listen():
-            if pubsub_message['type'] == 'message':
-                msg_dict = json.loads(pubsub_message['data'])
-                if 'quit' in msg_dict:
-                    self.pubsub.unsubscribe(channel)
-                yield Message(**msg_dict)
-
-    def stream(self):
-        channel = request.args.get('channel') or 'sse'
-
-        @stream_with_context
-        def generator():
-            for message in self.messages(channel=channel):
-                yield str(message)
-
-        def _unsubscribe():
-            self.pubsub.unsubscribe(channel)
-
-        response = current_app.response_class(
-            generator(),
-            mimetype='text/event-stream'
-        )
-        response.call_on_close(_unsubscribe)
-
-        return response
-
-
-sse = SSEBlueprint('sse', __name__)
-sse.add_url_rule(rule='', endpoint='stream', view_func=sse.stream)
-sse.teardown_request(sse.cleanup)
-
-
-@sse.before_request
-def limit_access():
-    if not current_user.is_authenticated:
-        abort(403)
-
-    if request.args.get('channel') != session.get('_id'):
-        abort(403)
-
-
 def get_redis_pool():
     if 'redis_pool' not in g:
+        if 'REDIS_URL' not in current_app.config:
+            raise KeyError(
+                'Improperly configured: REDIS_URL missing from config')
         g.redis_pool = ConnectionPool.from_url(
             current_app.config.get('REDIS_URL')
         )
@@ -130,13 +70,6 @@ def create_app(
     if app.config.get('DEBUG') and fdt_available:
         debug_toolbar.init_app(app)
 
-    @app.teardown_appcontext
-    def close_redis(*args, **kwargs):
-        redis_pool = g.pop('redis_pool', None)
-
-        if redis_pool is not None:
-            redis_pool.disconnect()
-
     # don't reregister the locale selector
     # if we already have one
     if babel.locale_selector_func is None:
@@ -162,7 +95,15 @@ def create_app(
             register_blueprints(
                 app, configured_app, import_module(configured_app).__path__)
 
+    from .sse import sse
     app.register_blueprint(sse, url_prefix='/stream')
+
+    # clean up the Redis pool
+    @app.teardown_appcontext
+    def cleanup_redis(*args, **kwargs):
+        redis_pool = g.pop('redis_pool', None)
+        if redis_pool is not None:
+            redis_pool.disconnect()
 
     return app
 
@@ -184,9 +125,11 @@ def create_celery_app(app=None):
         abstract = True
         task_info = {}
         track_started = True
+        redis_instance = None
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
+                self.redis_instance = Redis(connection_pool=get_redis_pool())
                 return TaskBase.__call__(self, *args, **kwargs)
 
         def on_failure(self, exc, task_id, args, kwargs, einfo):
@@ -194,28 +137,28 @@ def create_celery_app(app=None):
                 channel = kwargs.get('channel')
                 payload = {
                     'id': task_id,
-                    'status': 'FAILED',
+                    'status': _('FAILED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'description': TASK_DESCRIPTIONS.get[self.request.task],
                     'quit': True,
                 }
-
                 if channel is not None:
-                    sse.publish(payload, channel=channel)
+                    self.redis_instance.publish(channel, json.dumps(payload))
+                    self.redis_instance.close()
 
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
                 channel = kwargs.get('channel')
                 payload = {
                     'id': task_id,
-                    'status': 'COMPLETED',
+                    'status': _('COMPLETED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'description': TASK_DESCRIPTIONS.get[self.request.task],
                     'quit': True,
                 }
-
                 if channel is not None:
-                    sse.publish(payload, channel=channel)
+                    self.redis_instance.publish(channel, json.dumps(payload))
+                    self.redis_instance.close()
 
         def update_task_info(self, **kwargs):
             request = self.request
@@ -226,13 +169,12 @@ def create_celery_app(app=None):
             task_metadata = self.backend.get_task_meta(request.id)
             payload = {
                 'id': request.id,
-                'status': 'RUNNING',
+                'status': _('RUNNING'),
                 'progress': task_metadata.get('result'),
                 'description': TASK_DESCRIPTIONS.get(self.request.task)
             }
-
             if channel is not None:
-                sse.publish(payload, channel=channel)
+                self.redis_instance.publish(channel, json.dumps(payload))
 
     celery.Task = ContextTask
     return celery

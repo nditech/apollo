@@ -107,7 +107,7 @@ const vm = new Vue({
   },
   created: function () {
     const self = this;
-    self.eventSource = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+    self.eventSource = new EventSource("{{ url_for('apollo.sse.event_stream', channel=channel) }}");
     self.eventSource.onmessage = function(event) {
       let data = JSON.parse(event.data);
       self.currentState = data;
