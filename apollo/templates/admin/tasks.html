@@ -8,28 +8,28 @@
 {{ super() }}
 <template id="task-info">
   <div class="card">
-    <div class="card-header">[[ taskInfo.description ]] ([[ taskInfo.status ]])</div>
+    <div class="card-header">{{ '{{' }} taskInfo.description {{ '}}'}} ({{ '{{' }} taskInfo.status {{ '}}' }})</div>
     <div class="card-body">
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.processed_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ processedPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated" :style="processedProgressStyle" :aria-valuenow="processedPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.processed_records || 0 {{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} processedPercentNum {{ '}}' }}%)</div>
         </div>
         <p class="card-text">{{ _('Successful') }}</p>
       </div>
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.error_records || 0 ]] / [[ taskInfo.progress.total_records || 0 ]] ([[ errorPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" :style="errorProgressStyle" :aria-valuenow="errorPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.error_records || 0 {{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} errorPercentNum {{ '}}' }}%)</div>
         </div>
         <p class="card-text">{{ _('Error') }}</p>
       </div>
       <div>
         <div class="progress" style="height: 2em;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">[[ taskInfo.progress.warning_records || 0]] / [[ taskInfo.progress.total_records || 0 ]] ([[ warningPercentNum ]]%)</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" :style="warningProgressStyle" :aria-valuenow="warningPercentNum" aria-valuemin="0" aria-valuemax="100" role="progressbar">{{ '{{' }} taskInfo.progress.warning_records || 0{{ '}}' }} / {{ '{{' }} taskInfo.progress.total_records || 0 {{ '}}' }} ({{ '{{' }} warningPercentNum {{ '}}' }}%)</div>
         </div>
         <p class="card-text">{{ _('Warning') }}</p>
       </div>
       <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log">
-        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">[[ report.message ]]<span class="badge badge-dark">[[ report.label ]]</span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">{{ '{{' }} report.message {{ '}}' }}<span class="badge badge-dark">{{ '{{' }} report.label {{ '}}' }}</span></li>
       </ul>  
     </div>
   </div>
@@ -38,6 +38,7 @@
   <div class="alert alert-warning">{{ _('No Active Task') }}</div>
 </template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
 <script>
 const roundTo = function(num) {
   return Math.round((num + 0.00001) * 100) / 100;
@@ -87,7 +88,6 @@ Vue.component('task-info', {
       return {width: this.warningPercentNum + '%'};
     }
   },
-  delimiters: ['[[', ']]'],
   props: ['taskInfo'],
   template: '#task-info'
 });
@@ -107,16 +107,17 @@ const vm = new Vue({
   },
   created: function () {
     const self = this;
-    self.eventSource = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
-    self.eventSource.onmessage = function(event) {
-      let data = JSON.parse(event.data);
-      self.currentState = data;
-      if (data.status !== 'RUNNING')
-        self.eventSource.close();
-    };
-    self.eventSource.addEventListener('error', function(event) {
-      console.log(event);
-    });
+
+    if (window.EventSource) {
+      var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+      es.onmessage = function (ev) {
+        console.log(ev.data);
+        let data = JSON.parse(ev.data);
+        if (data.id !== undefined) {
+          self.currentState = data;
+        }
+      };
+    }
   }
 });
 </script>

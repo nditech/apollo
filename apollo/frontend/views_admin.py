@@ -11,7 +11,7 @@ from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
-from flask_security import current_user
+from flask_security import current_user, login_required, roles_required
 from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
@@ -634,24 +634,11 @@ class FormsView(BaseView):
 
 
 class TaskView(BaseView):
-    def is_accessible(self):
-        '''For checking if the admin view is accessible.'''
-        if current_user.is_anonymous:
-            return False
-
-        deployment = current_user.deployment
-        role = models.Role.query.filter_by(
-            deployment_id=deployment.id, name='admin').first()
-        return current_user.has_role(role)
-
-    def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for_security('login', next=request.url))
-
     @expose('/')
+    @login_required
+    @roles_required('admin')
     def index(self):
-        context = {
-            'channel': session.get('_id')
-            }
+        context = {'channel': session.get('_id')}
         template_name = 'admin/tasks.html'
 
         return self.render(template_name, **context)
