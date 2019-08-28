@@ -28,7 +28,7 @@
         </div>
         <p class="card-text">{{ _('Warning') }}</p>
       </div>
-      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log">
+      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log" style="max-height: 25em; overflow-y: scroll;">
         <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">{{ '{{' }} report.message {{ '}}' }}<span class="badge badge-dark">{{ '{{' }} report.label {{ '}}' }}</span></li>
       </ul>  
     </div>
