@@ -84,15 +84,19 @@ def update_locations(data_frame, header_mapping, location_set, task):
     error_log = []
 
     location_types = LocationType.query.filter(
-        LocationType.location_set == location_set).join(
-            LocationTypePath,
-            LocationType.id == LocationTypePath.ancestor_id).order_by(
-                func.count(LocationType.ancestor_paths)).group_by('id').all()
+        LocationType.location_set == location_set
+    ).join(
+        LocationTypePath,
+        LocationType.id == LocationTypePath.ancestor_id
+    ).order_by(
+        func.count(LocationType.ancestor_paths).desc()
+    ).group_by('id').all()
 
     all_loc_type_paths = LocationTypePath.query.with_entities(
         LocationTypePath.ancestor_id,
         LocationTypePath.descendant_id,
-        LocationTypePath.depth).all()
+        LocationTypePath.depth
+    ).all()
 
     extra_field_cache = {
         fi.id: fi.name for fi in location_set.extra_fields
@@ -101,160 +105,172 @@ def update_locations(data_frame, header_mapping, location_set, task):
     for idx in data_frame.index:
         current_row = data_frame.ix[idx]
         row_ids = {}
-        for loc_type in location_types:
-            name_column_keys = [
-                f'{loc_type.id}_name_{locale}'
-                for locale in locales
-            ]
-            code_column_key = '{}_code'.format(loc_type.id)
 
-            if (
-                header_mapping.get(name_column_keys[0]) is None or
-                header_mapping.get(code_column_key) is None
-            ):
-                error_records += 1
-                error_log.append({
-                    'label': 'ERROR',
-                    'message': gettext(
-                        'No code or name column present for row %(row)d',
-                        row=(idx + 1)
-                    )
-                })
-                continue
+        def inner_loop():
+            '''
+            Inner loop processor. Returns True if the outer loop should
+            continue next iteration after this is done, or keep going
+            '''
+            nonlocal error_records
+            nonlocal error_log
 
-            lat_column_key = '{}_lat'.format(loc_type.id)
-            lon_column_key = '{}_lon'.format(loc_type.id)
-            reg_voters_column_key = '{}_rv'.format(loc_type.id) \
-                if loc_type.has_registered_voters else None
+            for loc_type in location_types:
+                name_column_keys = [
+                    f'{loc_type.id}_name_{locale}'
+                    for locale in locales
+                ]
+                code_column_key = '{}_code'.format(loc_type.id)
 
-            name_columns = [
-                header_mapping.get(col) for col in name_column_keys]
-            code_column = header_mapping.get(code_column_key)
-            lat_column = header_mapping.get(lat_column_key)
-            lon_column = header_mapping.get(lon_column_key)
-            reg_voters_column = header_mapping.get(reg_voters_column_key)
-
-            location_names = [
-                current_row.get(col) for col in name_columns
-            ]
-            location_code = current_row.get(code_column)
-
-            if isinstance(location_code, numbers.Number):
-                location_code = str(int(location_code))
-
-            # skip if we're missing a name or code
-            if not location_names[0] or not location_code:
-                continue
-            else:
-                try:
-                    location_code = str(int(location_code))
-                except (TypeError, ValueError):
-                    message = gettext(
-                        'Invalid (non-numeric) location code (%(loc_code)s)',
-                        loc_code=location_code)
+                if (
+                    header_mapping.get(name_column_keys[0]) is None or
+                    header_mapping.get(code_column_key) is None
+                ):
                     error_records += 1
                     error_log.append({
                         'label': 'ERROR',
-                        'message': message
+                        'message': gettext(
+                            'No code or name column present for row %(row)d',
+                            row=(idx + 1)
+                        )
                     })
-                    continue
+                    return True
 
-            location_lat = None
-            location_lon = None
-            location_rv = None
+                lat_column_key = '{}_lat'.format(loc_type.id)
+                lon_column_key = '{}_lon'.format(loc_type.id)
+                reg_voters_column_key = '{}_rv'.format(loc_type.id) \
+                    if loc_type.has_registered_voters else None
 
-            location_lat = current_row.get(lat_column)
-            location_lon = current_row.get(lon_column)
-            location_rv = current_row.get(reg_voters_column)
+                name_columns = [
+                    header_mapping.get(col) for col in name_column_keys]
+                code_column = header_mapping.get(code_column_key)
+                lat_column = header_mapping.get(lat_column_key)
+                lon_column = header_mapping.get(lon_column_key)
+                reg_voters_column = header_mapping.get(reg_voters_column_key)
 
-            try:
-                location_lat = float(location_lat)
-                location_lon = float(location_lon)
-            except (TypeError, ValueError):
-                location_lat = location_lon = None
+                location_names = [current_row.get(col) for col in name_columns]
+                location_code = current_row.get(code_column)
+                if isinstance(location_code, numbers.Number):
+                    location_code = str(int(location_code))
 
-            try:
-                if loc_type.has_registered_voters:
-                    location_rv = int(location_rv)
-            except (TypeError, ValueError):
+                if not location_names[0] and not location_code:
+                    # the other columns are likely blank,
+                    # but we want to mark that the previous were
+                    # correctly imported
+                    return False
+
+                if not location_names[0] or not location_code:
+                    error_records += 1
+                    error_log.append({
+                        'label': 'ERROR',
+                        'message': gettext(
+                            'Missing name or code for row %(row)d',
+                            row=(idx + 1)
+                        )
+                    })
+                    return True
+
+                location_lat = None
+                location_lon = None
                 location_rv = None
 
-            # if we have the location in the cache, then continue
-            if cache.has(location_code, loc_type, location_names[0]):
-                loc = cache.get(location_code, loc_type, location_names[0])
-                row_ids[loc_type.id] = loc.id
-                continue
+                location_lat = current_row.get(lat_column)
+                location_lon = current_row.get(lon_column)
+                location_rv = current_row.get(reg_voters_column)
 
-            if location_lat is not None and location_lon is not None:
-                geom_spec = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(  # noqa
-                    longitude=location_lon, latitude=location_lat)
-            else:
-                geom_spec = None
+                try:
+                    location_lat = float(location_lat)
+                    location_lon = float(location_lon)
+                except (TypeError, ValueError):
+                    location_lat = location_lon = None
 
-            kwargs = {
-                'location_type_id': loc_type.id,
-                'location_set_id': location_set.id,
-                'geom': geom_spec,
-                'code': location_code,
-                'name_translations': {
-                    locale: str(name).strip()
-                    for locale, name in zip(locales, location_names)
-                    if name and not isnull(name)
+                try:
+                    if loc_type.has_registered_voters:
+                        location_rv = int(location_rv)
+                except (TypeError, ValueError):
+                    location_rv = None
+
+                # if we have the location in the cache, then continue
+                if cache.has(location_code, loc_type, location_names[0]):
+                    loc = cache.get(location_code, loc_type, location_names[0])
+                    row_ids[loc_type.id] = loc.id
+                    continue
+
+                if location_lat is not None and location_lon is not None:
+                    geom_spec = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(  # noqa
+                        longitude=location_lon, latitude=location_lat)
+                else:
+                    geom_spec = None
+
+                kwargs = {
+                    'location_type_id': loc_type.id,
+                    'location_set_id': location_set.id,
+                    'geom': geom_spec,
+                    'code': location_code,
+                    'name_translations': {
+                        locale: name
+                        for locale, name in zip(
+                            locales, location_names
+                        ) if name
+                    }
                 }
-            }
 
-            if location_rv:
-                kwargs.update({'registered_voters': location_rv})
+                if location_rv:
+                    kwargs.update({'registered_voters': location_rv})
 
-            # is this location in the database?
-            location = Location.query.filter(
-                Location.location_set == location_set,
-                Location.code == kwargs['code']).first()
+                # is this location in the database?
+                location = Location.query.filter(
+                    Location.location_set == location_set,
+                    Location.code == kwargs['code']).first()
 
-            if not location:
-                # no, create it
-                location = Location.create(**kwargs)
-                location.save()
+                if not location:
+                    # no, create it
+                    location = Location.create(**kwargs)
+                    location.save()
 
-                # also add the self-referencing path
-                self_ref_path = LocationPath(
-                    location_set_id=location_set.id, ancestor_id=location.id,
-                    descendant_id=location.id, depth=0)
+                    # also add the self-referencing path
+                    self_ref_path = LocationPath(
+                        location_set_id=location_set.id, ancestor_id=location.id,
+                        descendant_id=location.id, depth=0)
 
-                db.session.add(self_ref_path)
-                db.session.commit()
-            else:
-                # update the existing location instead
-                location.name_translations = kwargs.get('name_translations')
-                location.registered_voters = kwargs.get('registered_voters')
-                location.geom = kwargs.get('geom')
+                    db.session.add(self_ref_path)
+                    db.session.commit()
+                else:
+                    # update the existing location instead
+                    location.name_translations = kwargs.get('name_translations')
+                    location.registered_voters = kwargs.get('registered_voters')
+                    location.geom = kwargs.get('geom')
 
-                location.save()
+                    location.save()
 
-            # each level should have its own extra data column
-            extra_data = {}
-            for field_id in extra_field_cache.keys():
-                column_key = '{}:{}'.format(loc_type.id, field_id)
-                column = header_mapping.get(column_key)
-                if column:
-                    value = current_row.get(column)
-                    if isnull(value):
-                        continue
-                    if isinstance(value, numbers.Number):
-                        if isinstance(value, numbers.Integral):
-                            value = int(value)
+                # each level should have its own extra data column
+                extra_data = {}
+                for field_id in extra_field_cache.keys():
+                    column_key = '{}:{}'.format(loc_type.id, field_id)
+                    column = header_mapping.get(column_key)
+                    if column:
+                        value = current_row.get(column)
+                        if isnull(value):
+                            continue
+                        if isinstance(value, numbers.Number):
+                            if isinstance(value, numbers.Integral):
+                                value = int(value)
+                            else:
+                                value = float(value)
                         else:
-                            value = float(value)
-                    else:
-                        value = str(value)
-                    extra_data[extra_field_cache[field_id]] = value
+                            value = str(value)
+                        extra_data[extra_field_cache[field_id]] = value
 
-            if extra_data:
-                Location.query.filter(Location.id == location.id).update(
-                    {'extra_data': extra_data}, synchronize_session=False)
+                if extra_data:
+                    Location.query.filter(Location.id == location.id).update(
+                        {'extra_data': extra_data}, synchronize_session=False)
 
-            row_ids[loc_type.id] = location.id
-            cache.set(location)
+                row_ids[loc_type.id] = location.id
+                cache.set(location)
+
+            return False
+
+        if inner_loop():
+            continue
 
         for ancestor_lt_id, descendant_lt_id, depth in all_loc_type_paths:
             if ancestor_lt_id == descendant_lt_id:
@@ -264,8 +280,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
             descendant_loc_id = row_ids.get(descendant_lt_id)
 
             if not descendant_loc_id:
-                # TODO: a missing ancestor_id is evil that should
-                # never be tolerated
                 continue
 
             path = LocationPath.query.filter_by(
@@ -294,6 +308,8 @@ def update_locations(data_frame, header_mapping, location_set, task):
             warning_records=warning_records,
             error_log=error_log
         )
+
+
 
 
 @celery.task(bind=True)
