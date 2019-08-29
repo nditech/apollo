@@ -1,13 +1,14 @@
 {% extends 'admin/base.html' %}
 {% block body %}
 <div id="app">
-  <component :is="currentComponent" :task-info="currentState"></component>
+  <default v-if="showPlaceHolder"></default>
+  <task-info v-if="!showPlaceHolder" :task-info="subtask" v-for="(subtask, taskId) in tasks" :key="taskId"></task-info>
 </div>
 {% endblock %}
 {% block tail_js %}
 {{ super() }}
 <template id="task-info">
-  <div class="card">
+  <div class="card m-3">
     <div class="card-header">{{ '{{' }} taskInfo.description {{ '}}'}} ({{ '{{' }} taskInfo.status {{ '}}' }})</div>
     <div class="card-body">
       <div>
@@ -94,27 +95,23 @@ Vue.component('task-info', {
 const vm = new Vue({
   el: '#app',
   data: {
-    eventSource: null,
-    currentState: null,
+    tasks: {}
   },
   computed: {
-    currentComponent: function () {
-      if (this.currentState === null)
-        return 'default';
-      else
-        return 'task-info';
+    showPlaceHolder: function() {
+      return Object.keys(this.tasks).length === 0;
     }
   },
   created: function () {
     const self = this;
-
+    console.log(Object.keys(self.tasks));
     if (window.EventSource) {
       var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
       es.onmessage = function (ev) {
         console.log(ev.data);
         let data = JSON.parse(ev.data);
         if (data.id !== undefined) {
-          self.currentState = data;
+          self.$set(self.tasks, data.id, data);
         }
       };
     }
