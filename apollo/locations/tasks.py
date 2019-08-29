@@ -310,8 +310,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
         )
 
 
-
-
 @celery.task(bind=True)
 def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     upload = UserUpload.query.filter(UserUpload.id == upload_id).first()
