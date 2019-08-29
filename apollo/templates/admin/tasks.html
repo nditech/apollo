@@ -104,11 +104,9 @@ const vm = new Vue({
   },
   created: function () {
     const self = this;
-    console.log(Object.keys(self.tasks));
     if (window.EventSource) {
       var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
       es.onmessage = function (ev) {
-        console.log(ev.data);
         let data = JSON.parse(ev.data);
         if (data.id !== undefined) {
           self.$set(self.tasks, data.id, data);
