@@ -168,9 +168,9 @@ def update_participants(dataframe, header_map, participant_set, task):
                 participant_set_id=participant_set.id
             )
 
-
-        participant_full_names = [record.get(col) for col in full_name_columns]
-
+        participant_full_names = [
+            record.get(col).strip() for col in full_name_columns
+        ]
         if participant_full_names:
             participant.full_name_translations = {
                 locale: name
@@ -179,8 +179,8 @@ def update_participants(dataframe, header_map, participant_set, task):
             }
 
         participant_first_names = [
-            record.get(col) for col in first_name_columns]
-
+            record.get(col).strip() for col in first_name_columns
+        ]
         if participant_first_names:
             participant.first_name_translations = {
                 locale: name
@@ -189,8 +189,8 @@ def update_participants(dataframe, header_map, participant_set, task):
             }
 
         participant_other_names = [
-            record.get(col) for col in other_names_columns]
-
+            record.get(col).strip() for col in other_names_columns
+        ]
         if participant_other_names:
             participant.other_names_translations = {
                 locale: name
@@ -198,8 +198,9 @@ def update_participants(dataframe, header_map, participant_set, task):
                 if _is_valid(name)
             }
 
-        participant_last_names = [record.get(col) for col in last_name_columns]
-
+        participant_last_names = [
+            record.get(col).strip() for col in last_name_columns
+        ]
         if participant_last_names:
             participant.last_name_translations = {
                 locale: name
