@@ -233,7 +233,7 @@ class Submission(BaseModel):
         if self.form.form_type == 'INCIDENT':
             return
 
-        if not self.form.track_data_conflicts:
+        if self.form.untrack_data_conflicts:
             return
 
         combined_data = self.data
@@ -327,7 +327,7 @@ class Submission(BaseModel):
     def compute_conflict_tags(self, tags=None):
         # don't compute if the 'track conflicts' flag is not set
         # on the form
-        if not self.form.track_data_conflicts:
+        if self.form.untrack_data_conflicts:
             return []
 
         # or if the form is an incident form
@@ -412,7 +412,7 @@ class Submission(BaseModel):
         group_tags = self.form.get_group_tags(group_name)
         if (
             self.form.form_type == 'INCIDENT'
-                or not self.form.track_data_conflicts
+                or self.form.untrack_data_conflicts
         ):
             return self._compute_completion(group_tags)
         else:

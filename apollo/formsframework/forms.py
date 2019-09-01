@@ -337,8 +337,8 @@ class FormForm(SecureForm):
         coerce=choice_type_coerce_factory(
             Form.form_type.type),
         validators=[wtforms.validators.InputRequired()])
-    track_data_conflicts = wtforms.BooleanField(
-        _('Track Data Conflicts'),
+    untrack_data_conflicts = wtforms.BooleanField(
+        _("Don't Track Data Conflicts"),
         description=_('Whether data conflicts between observers in the same location are tracked or not.'))  # noqa
     calculate_moe = wtforms.BooleanField(
         _('Calculate MOE'),

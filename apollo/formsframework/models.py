@@ -79,7 +79,7 @@ class Form(Resource):
     prefix = db.Column(db.String, nullable=False)
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
-    track_data_conflicts = db.Column(db.Boolean, default=True, nullable=False)
+    untrack_data_conflicts = db.Column(db.Boolean, default=False, nullable=False)  # noqa
     data = db.Column(JSONB)
     version_identifier = db.Column(
         db.String, default=_make_version_identifer,
