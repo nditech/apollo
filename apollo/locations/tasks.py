@@ -134,7 +134,9 @@ def update_locations(data_frame, header_mapping, location_set, task):
             lon_column = header_mapping.get(lon_column_key)
             reg_voters_column = header_mapping.get(reg_voters_column_key)
 
-            location_names = [current_row.get(col) for col in name_columns]
+            location_names = [
+                current_row.get(col) for col in name_columns
+            ]
             location_code = current_row.get(code_column)
             if isinstance(location_code, numbers.Number):
                 location_code = str(int(location_code))
@@ -181,8 +183,9 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 'geom': geom_spec,
                 'code': location_code,
                 'name_translations': {
-                    locale: name
-                    for locale, name in zip(locales, location_names) if name
+                    locale: str(name).strip()
+                    for locale, name in zip(locales, location_names)
+                    if name and not isnull(name)
                 }
             }
 

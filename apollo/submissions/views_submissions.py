@@ -316,22 +316,22 @@ def submission_list(form_id):
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
         # specify the conditions for the order term
-        condition1 = text('full_name_translations IS NULL')
-        condition2 = text('full_name_translations IS NOT NULL')
+        condition1 = text('participant_full_name IS NULL')
+        condition2 = text('participant_full_name IS NOT NULL')
 
         # concatenation for the full name
         full_name_concat = func.concat_ws(
             ' ',
-            text('first_name_translations.value'),
-            text('other_names_translations.value'),
-            text('last_name_translations.value'),
+            text('participant_first_name.value'),
+            text('participant_other_names.value'),
+            text('participant_last_name.value'),
         ).alias('full_name_concat')
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
         order_term = case([
             (condition1, full_name_concat),
-            (condition2, text('full_name_translations.value')),
+            (condition2, text('participant_full_name.value')),
         ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -1323,22 +1323,22 @@ def quality_assurance_list(form_id):
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
         # specify the conditions for the order term
-        condition1 = text('full_name_translations IS NULL')
-        condition2 = text('full_name_translations IS NOT NULL')
+        condition1 = text('participant_full_name IS NULL')
+        condition2 = text('participant_full_name IS NOT NULL')
 
         # concatenation for the full name
         full_name_concat = func.concat_ws(
             ' ',
-            text('first_name_translations.value'),
-            text('other_names_translations.value'),
-            text('last_name_translations.value'),
+            text('participant_first_name.value'),
+            text('participant_other_names.value'),
+            text('participant_last_name.value'),
         ).alias('full_name_concat')
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
         order_term = case([
             (condition1, full_name_concat),
-            (condition2, text('full_name_translations.value')),
+            (condition2, text('participant_full_name.value')),
         ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
