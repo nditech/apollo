@@ -12,7 +12,7 @@ class FormSchema(BaseModelSchema):
     class Meta:
         model = Form
         fields = (
-            'id', 'name', 'prefix', 'form_type', 'track_data_conflicts',
+            'id', 'name', 'prefix', 'form_type', 'untrack_data_conflicts',
             'events', 'data')
 
     def get_event_ids(self, obj):

@@ -114,7 +114,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             grouped = False
 
         query_kwargs = {'event': event, 'form': form}
-        if form.track_data_conflicts:
+        if not form.untrack_data_conflicts:
             query_kwargs['submission_type'] = 'M'
         else:
             query_kwargs['submission_type'] = 'O'
