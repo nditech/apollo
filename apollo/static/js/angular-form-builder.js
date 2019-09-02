@@ -57,7 +57,7 @@
         $scope.minimumLabel = i18n.gettext('Minimum');
         $scope.maximumLabel = i18n.gettext('Maximum');
         $scope.typeLabel = i18n.gettext('Type');
-        $scope.expectedValueLabel = i18n.gettext('Expected Value');
+        $scope.expectedValueLabel = i18n.gettext('Expected Value (Optional)');
         $scope.validationLabel = i18n.gettext('Validation');
 
         $scope.subtypeOptions = [
