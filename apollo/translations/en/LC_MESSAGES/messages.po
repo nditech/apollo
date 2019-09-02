@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Apollo v0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 01:04+0000\n"
+"POT-Creation-Date: 2019-09-02 01:15+0000\n"
 "PO-Revision-Date: 2014-03-19 03:12+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1068,7 +1068,6 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/message_list.html:25
 #: apollo/frontend/templates/frontend/message_list.html:69
-#: apollo/frontend/templates/frontend/submission_edit.html:389
 #: apollo/messaging/services.py:34 apollo/templates/admin/form_list.html:66
 #: apollo/templates/admin/locations_list.html:56
 msgid "Type"
@@ -1377,6 +1376,10 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:70
 #: apollo/templates/admin/quality_assurance.html:31
 msgid "ID"
+msgstr ""
+
+#: apollo/frontend/templates/frontend/submission_edit.html:389
+msgid "Incident Type"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:436
