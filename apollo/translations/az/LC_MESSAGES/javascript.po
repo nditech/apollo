@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-17 07:52+0000\n"
+"POT-Creation-Date: 2019-09-02 01:05+0000\n"
 "PO-Revision-Date: 2019-08-16 16:47+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: az\n"
@@ -124,10 +124,13 @@ msgid "Type"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:60
-msgid "Expected Value"
+msgid "Expected Value (Optional)"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:61
 msgid "Validation"
 msgstr ""
+
+#~ msgid "Expected Value"
+#~ msgstr ""
 
