@@ -324,6 +324,7 @@
                   $builder.updateFormObjectIndex(scope.formName, oldIndex, newIndex);
                 }
               }
+              window.onbeforeunload = function () { return true; };
               return $(element).find('.empty').remove();
             }
           });
@@ -401,6 +402,7 @@
                 popover.isClickedSave = true;
                 return $(element).popover('hide');
               });
+              window.onbeforeunload = function () { return true; };
             },
             remove: function($event) {
 
@@ -410,6 +412,7 @@
               $event.preventDefault();
               $builder.removeFormObject(scope.$parent.formName, scope.$parent.$index);
               $(element).popover('hide');
+              window.onbeforeunload = function () { return true; };
             },
             shown: function() {
 

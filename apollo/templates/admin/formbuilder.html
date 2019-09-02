@@ -53,7 +53,7 @@
 {% block footer %}
 <div class="mt-n2 pb-2 d-flex justify-content-end">
   <div>
-    <a href="{{ url_for('formsview.index') }}" class="btn btn-secondary">{{ _('Cancel') }}</a>
+    <a href="javascript:;" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</a>
     <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
   </div>
 </div>
@@ -142,7 +142,13 @@
   ]);
 
   $('#saveBtn').click(function(){
+    window.onbeforeunload = null;
     $('#save').click();
+  });
+
+  $('#cancelBtn').click(function(){
+    window.onbeforeunload = null;
+    window.location.href = '{{ url_for('formsview.index') }}';
   })
 }).call(this);
 </script>

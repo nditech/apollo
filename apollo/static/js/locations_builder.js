@@ -141,6 +141,8 @@
 
       $('#divisions_graph').val(JSON.stringify(serializableGraph));
 
+      window.onbeforeunload = null;
+
       $('#save-form').submit();
     };
 
@@ -206,6 +208,8 @@
         appRef.layout();
       }
 
+      window.onbeforeunload = function () { return true; };
+
       $('#addDivision').modal('hide');
       return false;
     };
@@ -233,6 +237,8 @@
         graph.addCells(new_links);
         appRef.layout();
       }
+
+      window.onbeforeunload = function () { return true; };
 
       $('#updateDivision').modal('hide');
     };
@@ -269,6 +275,8 @@
         graph.addCells(new_links);
         appRef.layout();
       }
+
+      window.onbeforeunload = function () { return true; };
 
       $('#updateDivision').modal('hide');
       return false;
