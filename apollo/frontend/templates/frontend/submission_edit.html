@@ -394,13 +394,14 @@
         </thead>
         <tbody>
           {% for incident in incidents %}
-          {% for group in incident.form.data.groups %}
-          {% for field in group.fields %}
+          {% for group in incident.form.data.groups[:1] %}
+          {% for field in group.fields[:1] %}
+          {%- set field_options = field.options|reverse_dict() if field.options else None %}
           {% if field.tag in incident.data %}
           <tr>
             <td class="text-monospace text-right"><a href="{{ url_for('submissions.submission_edit', submission_id=incident.id) }}">{{ incident.id }}</a></td>
             <td class="text-monospace">{{ incident.form.prefix }}</td>
-            <td class="text-monospace"><strong>{{ incident.data[field.tag] }}</strong> &mdash; {{ field.description }}</td>
+            <td class="text-monospace"><strong>{{ incident.data[field.tag] }}</strong> &mdash; {{ field_options[incident.data[field.tag]] if field_options else field.description }}</td>
             <td class="text-monospace text-center">
               {%- set status = incident.incident_status -%}
               {%- if status == 'confirmed' -%}
