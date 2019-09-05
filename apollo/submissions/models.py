@@ -316,9 +316,10 @@ class Submission(BaseModel):
                 self.unreachable
             ):
                 self.master.unreachable = True
+            else:
+                self.master.unreachable = False
         else:
-            if self.unreachable:
-                self.master.unreachable = True
+            self.master.unreachable = self.unreachable
 
         # if the offline status changed in any way
         if master_offline_status != self.master.unreachable:
