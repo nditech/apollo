@@ -66,14 +66,14 @@ def _get_group_coverage(query, form, group, location_type):
     conflict_query = query.filter(
         Submission.conflicts != None,
         Submission.conflicts.has_any(array(group_tags)),
-        Submission.unreachable != True)  # noqa
+        Submission.unreachable == False)  # noqa
 
     missing_query = query.filter(
         ~Submission.data.has_any(array(group_tags)),
         or_(
             Submission.conflicts == None,
             ~Submission.conflicts.has_any(array(group_tags))),
-        Submission.unreachable != True)  # noqa
+        Submission.unreachable == False)  # noqa
 
     complete_query = query.filter(
         or_(
@@ -87,7 +87,7 @@ def _get_group_coverage(query, form, group, location_type):
             ~Submission.conflicts.has_any(array(group_tags))),
         ~Submission.data.has_all(array(group_tags)),
         Submission.data.has_any(array(group_tags)),
-        Submission.unreachable != True)  # noqa
+        Submission.unreachable == False)  # noqa
 
     offline_query = query.filter(
         and_(
@@ -172,14 +172,14 @@ def _get_global_coverage(query, form):
         conflict_query = query.filter(
             Submission.conflicts != None,
             Submission.conflicts.has_any(array(group_tags)),
-            Submission.unreachable != True)  # noqa
+            Submission.unreachable == False)  # noqa
 
         missing_query = query.filter(
             or_(
                 ~Submission.conflicts.has_any(array(group_tags)),
                 Submission.conflicts == None),
             ~Submission.data.has_any(array(group_tags)),
-            Submission.unreachable != True)  # noqa
+            Submission.unreachable == False)  # noqa
 
         complete_query = query.filter(
             or_(
@@ -193,7 +193,7 @@ def _get_global_coverage(query, form):
                 ~Submission.conflicts.has_any(array(group_tags))),
             ~Submission.data.has_all(array(group_tags)),
             Submission.data.has_any(array(group_tags)),
-            Submission.unreachable != True)  # noqa
+            Submission.unreachable == False)  # noqa
 
         offline_query = query.filter(
             and_(
