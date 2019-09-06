@@ -105,9 +105,9 @@ def main_dashboard(form_id=None):
     query_filterset = filter_class(query, request.args)
 
     location = None
-    if args.get('location'):
+    if args.get('location_'):
         location = Location.query.filter(
-            Location.id == args.get('location'),
+            Location.id == args.get('location_'),
             Location.location_set_id == event.location_set_id).first_or_404()
 
     if not group_slug:
