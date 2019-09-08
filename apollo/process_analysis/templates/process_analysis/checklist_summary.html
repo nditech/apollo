@@ -35,7 +35,11 @@
 							<td bgcolor="#eee">{{ _('Mean') }}</td>
 							{% elif stats['type'] == 'histogram' %}
 							{% for label, value in stats['meta'] %}
+							{%- if field['type'] == 'integer' %}
+							<td colspan="2">{{ value }}</td>
+							{%- else %}
 							<td colspan="2">{{ _('%(label)s', label=label) }} ({{ value }})</td>
+							{%- endif %}
 							{% endfor %}
 							{% elif stats['type'] == 'bucket' %}
 							<td colspan="2">&lt; {{ stats['target'] }}</td>
