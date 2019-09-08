@@ -43,7 +43,7 @@ class ProcessAnalysisTest(TestCase):
     def test_generate_histogram_stats(self):
         self.assertDictEqual(
             generate_histogram_stats('AB', self.df, [2, 3, 4, 5, 6]),
-            {'type': 'histogram', 'labels': None, 'meta': [],
+            {'type': 'histogram', 'labels': None, 'meta': [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6)],
              'histogram': {
                 2: (1, 20.0), 3: (1, 20.0), 4: (1, 20.0),
                 5: (1, 20.0), 6: (1, 20.0)
@@ -53,7 +53,7 @@ class ProcessAnalysisTest(TestCase):
         self.assertDictEqual(
             generate_histogram_stats(
                 'AB', self.df.groupby('location'), [2, 3, 4, 5, 6]),
-            {'type': 'histogram', 'labels': None, 'meta': [], 'locations':
+            {'type': 'histogram', 'labels': None, 'meta': [(2, 2), (3, 3), (4, 4), (5, 5), (6, 6)], 'locations':
              {'A': {'missing': 0, 'reported': 1, 'total': 1,
                     'percent_reported': 100.0, 'percent_missing': 0.0,
                     'histogram': {2: (1, 100.0), 3: (0, 0.0), 4: (0, 0.0),
