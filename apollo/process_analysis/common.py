@@ -189,7 +189,7 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None):
         field_stats.update(stats)
 
     options = options if options else sorted(options_generated)
-    field_stats.update(meta=list(zip(labels or [], options)))
+    field_stats.update(meta=list(zip(labels or options, options)))
 
     return field_stats
 
