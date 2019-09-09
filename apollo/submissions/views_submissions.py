@@ -7,7 +7,7 @@ from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
     redirect, render_template, request, stream_with_context, url_for, session
 )
-from flask_babelex import lazy_gettext as _
+from flask_babelex import get_locale, lazy_gettext as _
 from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
@@ -315,23 +315,47 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
+        user_locale = get_locale().language
+        deployment_locale = g.deployment.primary_locale or 'en'
+
+        full_name_term = func.coalesce(
+            models.Participant.full_name_translations.op('->>')(user_locale),
+            models.Participant.full_name_translations.op('->>')(
+                deployment_locale)
+        ).label('full_name')
+        first_name_term = func.coalesce(
+            models.Participant.first_name_translations.op('->>')(user_locale),
+            models.Participant.first_name_translations.op('->>')(
+                deployment_locale)
+        ).label('first_name')
+        other_names_term = func.coalesce(
+            models.Participant.other_names_translations.op('->>')(user_locale),
+            models.Participant.other_names_translations.op('->>')(
+                deployment_locale)
+        ).label('other_names')
+        last_name_term = func.coalesce(
+            models.Participant.last_name_translations.op('->>')(user_locale),
+            models.Participant.last_name_translations.op('->>')(
+                deployment_locale)
+        ).label('last_name')
+
         # specify the conditions for the order term
-        condition1 = text('participant_full_name IS NULL')
-        condition2 = text('participant_full_name IS NOT NULL')
+        condition1 = full_name_term == None # noqa
+        condition2 = full_name_term != None # noqa
 
         # concatenation for the full name
         full_name_concat = func.concat_ws(
             ' ',
-            text('participant_first_name.value'),
-            text('participant_other_names.value'),
-            text('participant_last_name.value'),
+            first_name_term,
+            other_names_term,
+            last_name_term,
         ).alias('full_name_concat')
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
         order_term = case([
             (condition1, full_name_concat),
-            (condition2, text('participant_full_name.value')),
+            (condition2, full_name_term),
         ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -487,7 +511,7 @@ def submission_edit(submission_id):
         OutboundMsg = sa.orm.aliased(models.Message, name='outbound')
 
         messages_qs = models.Message.query.filter(
-            models.Message.participant==submission.participant)
+            models.Message.participant == submission.participant)
         split_messages = messages_qs.filter(
             sa.or_(
                 models.Message.direction == 'IN',
@@ -518,12 +542,12 @@ def submission_edit(submission_id):
             models.Submission.form_id.in_([f.id for f in incident_forms])
         ).order_by(desc(models.Submission.created))
         changelog = models.SubmissionVersion.query.filter(
-            models.SubmissionVersion.submission==submission,
-            models.SubmissionVersion.channel=='WEB').order_by(desc(
+            models.SubmissionVersion.submission == submission,
+            models.SubmissionVersion.channel == 'WEB').order_by(desc(
                 models.SubmissionVersion.timestamp
             ))
         call_log = models.ContactHistory.query.filter(
-            models.ContactHistory.participant==submission.participant
+            models.ContactHistory.participant == submission.participant
         ).order_by(models.ContactHistory.created.desc())
     else:
         messages = []
