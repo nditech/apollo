@@ -7,7 +7,7 @@ import re
 from flask import (
     Blueprint, Response, abort, current_app, g, redirect, render_template,
     request, session, stream_with_context, url_for)
-from flask_babelex import lazy_gettext as _
+from flask_babelex import get_locale, lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify
@@ -23,9 +23,6 @@ from apollo.participants.api import views as api_views
 
 from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, PhoneContact
-from .models import (
-    ParticipantFirstNameTranslations, ParticipantFullNameTranslations,
-    ParticipantLastNameTranslations, ParticipantOtherNamesTranslations)
 from ..locations.models import Location
 from ..submissions.models import Submission
 from ..users.models import UserUpload
@@ -86,6 +83,9 @@ def participant_list(participant_set_id=0, view=None):
         template_name = 'frontend/participant_list.html'
         breadcrumbs = [_('Participants')]
 
+    user_locale = get_locale().language
+    deployment_locale = g.deployment.primary_locale or 'en'
+
     extra_fields = [field for field in participant_set.extra_fields
                     if field.visible_in_lists] \
         if participant_set.extra_fields else []
@@ -95,27 +95,26 @@ def participant_list(participant_set_id=0, view=None):
         location = Location.query.filter(
             Location.id == request.args.get('location')).first()
 
-    full_name_lat_query = ParticipantFullNameTranslations.lateral(
-        'full_name_translations')
-    first_name_lat_query = ParticipantFirstNameTranslations.lateral(
-        'first_name_translations')
-    last_name_lat_query = ParticipantLastNameTranslations.lateral(
-        'last_name_translations')
-    other_names_lat_query = ParticipantOtherNamesTranslations.lateral(
-        'other_names_translations')
+    full_name_term = func.coalesce(
+        Participant.full_name_translations.op('->>')(user_locale),
+        Participant.full_name_translations.op('->>')(deployment_locale)
+    ).label('full_name')
+    first_name_term = func.coalesce(
+        Participant.first_name_translations.op('->>')(user_locale),
+        Participant.first_name_translations.op('->>')(deployment_locale)
+    ).label('first_name')
+    other_names_term = func.coalesce(
+        Participant.other_names_translations.op('->>')(user_locale),
+        Participant.other_names_translations.op('->>')(deployment_locale)
+    ).label('other_names')
+    last_name_term = func.coalesce(
+        Participant.last_name_translations.op('->>')(user_locale),
+        Participant.last_name_translations.op('->>')(deployment_locale)
+    ).label('last_name')
 
     queryset = Participant.query.select_from(
-        Participant
-    ).outerjoin(
-        full_name_lat_query, true()
-    ).outerjoin(
-        first_name_lat_query, true()
-    ).outerjoin(
-        last_name_lat_query, true()
-    ).outerjoin(
-        other_names_lat_query, true()
-    ).filter(
-        Participant.participant_set_id == participant_set.id)
+        Participant,
+    )
 
     # load the location set linked to the participant set
     location_set_id = participant_set.location_set_id
@@ -218,14 +217,6 @@ def participant_list(participant_set_id=0, view=None):
         ).outerjoin(
             models.ParticipantPartner,
             models.Participant.partner_id == models.ParticipantPartner.id
-        ).outerjoin(
-            full_name_lat_query, true()
-        ).outerjoin(
-            first_name_lat_query, true()
-        ).outerjoin(
-            other_names_lat_query, true()
-        ).outerjoin(
-            last_name_lat_query, true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -243,22 +234,22 @@ def participant_list(participant_set_id=0, view=None):
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'name':
         # specify the conditions for the order term
-        condition1 = text('full_name_translations IS NULL')
-        condition2 = text('full_name_translations IS NOT NULL')
+        condition1 = full_name_term == None # noqa
+        condition2 = full_name_term != None # noqa
 
         # concatenation for the full name
         full_name_concat = func.concat_ws(
             ' ',
-            text('first_name_translations.value'),
-            text('other_names_translations.value'),
-            text('last_name_translations.value'),
+            first_name_term,
+            other_names_term,
+            last_name_term,
         ).alias('full_name_concat')
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
         order_term = case([
             (condition1, full_name_concat),
-            (condition2, text('full_name_translations.value')),
+            (condition2, full_name_term),
         ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -628,7 +619,7 @@ def log_call():
         participant = Participant.query.get_or_404(participant_id)
         user = current_user._get_current_object()
         contact = models.ContactHistory(
-            participant=participant,user=user, description=description)
+            participant=participant, user=user, description=description)
 
         contact.save()
         return '1'
