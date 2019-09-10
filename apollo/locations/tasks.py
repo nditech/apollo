@@ -140,6 +140,9 @@ def update_locations(data_frame, header_mapping, location_set, task):
             location_code = current_row.get(code_column)
 
             # skip if we're missing a name or code
+            if isinstance(location_code, numbers.Number):
+                location_code = str(int(location_code))
+
             if not location_names[0] or not location_code:
                 continue
             else:
