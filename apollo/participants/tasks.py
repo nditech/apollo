@@ -155,8 +155,23 @@ def update_participants(dataframe, header_map, participant_set, task):
     for idx in index:
         record = dataframe.ix[idx]
         participant_id = record[PARTICIPANT_ID_COL]
-        if isinstance(participant_id, numbers.Number):
-            participant_id = str(int(participant_id))
+        try:
+            participant_id = int(participant_id)
+        except (TypeError, ValueError):
+            message = gettext(
+                'Invalid (non-numeric) participant ID (%(p_id)s)',
+                p_id=participant_id)
+            errors.add(
+                (participant_id, message)
+            )
+            error_records += 1
+            error_log.append({
+                'label': 'ERROR',
+                'message': message
+            })
+            continue
+        participant_id = str(participant_id)
+
         participant = services.participants.find(
             participant_id=participant_id,
             participant_set=participant_set
@@ -235,10 +250,22 @@ def update_participants(dataframe, header_map, participant_set, task):
         try:
             if LOCATION_ID_COL:
                 loc_code = record[LOCATION_ID_COL]
-                if isinstance(loc_code, numbers.Number):
-                    loc_code = str(int(loc_code))
+                try:
+                    loc_code = int(loc_code)
+                except (TypeError, ValueError):
+                    message = gettext(
+                        'Invalid (non-numeric) location ID (%(loc_id)s)',
+                        loc_id=loc_code)
+                    errors.add((participant_id, message))
+                    error_records += 1
+                    error_log.append({
+                        'label': 'ERROR',
+                        'message': message
+                    })
+                    continue
+
                 location = services.locations.find(
-                    code=loc_code,
+                    code=str(loc_code),
                     location_set=location_set
                 ).one()
         except MultipleResultsFound:
@@ -437,6 +464,12 @@ def update_participants(dataframe, header_map, participant_set, task):
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
+        try:
+            participant_id = str(int(participant_id))
+            supervisor_id = str(int(supervisor_id))
+        except (TypeError, ValueError):
+            continue
+
         participant = services.participants.find(
             participant_id=participant_id,
             participant_set=participant_set

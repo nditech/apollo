@@ -138,12 +138,26 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 current_row.get(col) for col in name_columns
             ]
             location_code = current_row.get(code_column)
+
             if isinstance(location_code, numbers.Number):
                 location_code = str(int(location_code))
 
             # skip if we're missing a name or code
             if not location_names[0] or not location_code:
                 continue
+            else:
+                try:
+                    location_code = str(int(location_code))
+                except (TypeError, ValueError):
+                    message = gettext(
+                        'Invalid (non-numeric) location code (%(loc_code)s)',
+                        loc_code=location_code)
+                    error_records += 1
+                    error_log.append({
+                        'label': 'ERROR',
+                        'message': message
+                    })
+                    continue
 
             location_lat = None
             location_lon = None
