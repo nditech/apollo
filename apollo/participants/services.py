@@ -73,7 +73,7 @@ class ParticipantService(Service):
                 participant.last_name,
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
-                participant.location.code,
+                participant.location.code if participant.location else '',
             ]
 
             name_path = participant.location.make_path() \
