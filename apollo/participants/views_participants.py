@@ -114,6 +114,8 @@ def participant_list(participant_set_id=0, view=None):
 
     queryset = Participant.query.select_from(
         Participant,
+    ).filter(
+        Participant.participant_set == participant_set
     )
 
     # load the location set linked to the participant set
