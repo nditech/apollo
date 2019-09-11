@@ -62,8 +62,19 @@ class LocationSet(BaseModel):
 
         extra_fields = LocationDataField.query.filter_by(
             location_set_id=self.id).all()
-        location_types = LocationType.query.filter_by(
-            location_set_id=self.id).all()
+        location_types = LocationTypePath.query.filter_by(
+            location_set=self
+        ).join(
+            LocationType, LocationType.id == LocationTypePath.ancestor_id
+        ).with_entities(
+            LocationType
+        ).group_by(
+            LocationTypePath.ancestor_id,
+            LocationType.id
+        ).order_by(
+            func.count(LocationTypePath.ancestor_id).desc(),
+            LocationType.name
+        ).all()
 
         for lt in location_types:
             lt_data = {}
