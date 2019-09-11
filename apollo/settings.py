@@ -218,3 +218,5 @@ REDIS_URL = 'redis://{host}/{database}'.format(
     host=config('REDIS_HOSTNAME', default='redis'),
     database=config('REDIS_DATABASE', default='0'))
 KEEPALIVE_INTERVAL = 15  # in seconds
+
+TASK_STATUS_TTL = config('TASK_STATUS_TTL', cast=int, default=300)  # seconds

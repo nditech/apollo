@@ -124,6 +124,10 @@ def create_celery_app(app=None):
                 if channel is not None:
                     red.publish(channel, json.dumps(payload))
 
+                    # leave result in Redis and set/renew the expiration
+                    red.rpush(channel, json.dumps(payload))
+                    red.expire(channel, app.config.get('TASK_STATUS_TTL'))
+
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
                 channel = kwargs.get('channel')
@@ -137,6 +141,10 @@ def create_celery_app(app=None):
 
                 if channel is not None:
                     red.publish(channel, json.dumps(payload))
+
+                    # leave result in Redis and set/renew the expiration
+                    red.rpush(channel, json.dumps(payload))
+                    red.expire(channel, app.config.get('TASK_STATUS_TTL'))
 
         def update_task_info(self, **kwargs):
             request = self.request
