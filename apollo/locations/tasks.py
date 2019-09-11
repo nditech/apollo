@@ -149,14 +149,28 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
                 location_names = [current_row.get(col) for col in name_columns]
                 location_code = current_row.get(code_column)
-                if isinstance(location_code, numbers.Number):
-                    location_code = str(int(location_code))
+                if location_code == 0:
+                    # sanity check: 0 is a valid code but a falsy value
+                    location_code = str(location_code)
 
                 if not location_names[0] and not location_code:
                     # the other columns are likely blank,
                     # but we want to mark that the previous were
                     # correctly imported
                     return False
+
+                try:
+                    location_code = str(int(location_code))
+                except (TypeError, ValueError):
+                    error_records += 1
+                    message = gettext(
+                        'Invalid (non-numeric) location code (%(loc_code)s)',
+                        loc_code=location_code)
+                    error_log.append({
+                        'label': 'ERROR',
+                        'message': message
+                    })
+                    return True
 
                 if not location_names[0] or not location_code:
                     error_records += 1
@@ -207,10 +221,10 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     'geom': geom_spec,
                     'code': location_code,
                     'name_translations': {
-                        locale: name
+                        locale: str(name).strip()
                         for locale, name in zip(
                             locales, location_names
-                        ) if name
+                        ) if name and not isnull(name)
                     }
                 }
 
@@ -229,15 +243,18 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
                     # also add the self-referencing path
                     self_ref_path = LocationPath(
-                        location_set_id=location_set.id, ancestor_id=location.id,
+                        location_set_id=location_set.id,
+                        ancestor_id=location.id,
                         descendant_id=location.id, depth=0)
 
                     db.session.add(self_ref_path)
                     db.session.commit()
                 else:
                     # update the existing location instead
-                    location.name_translations = kwargs.get('name_translations')
-                    location.registered_voters = kwargs.get('registered_voters')
+                    location.name_translations = kwargs.get(
+                        'name_translations')
+                    location.registered_voters = kwargs.get(
+                        'registered_voters')
                     location.geom = kwargs.get('geom')
 
                     location.save()
