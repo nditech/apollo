@@ -323,9 +323,6 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
-        user_locale = get_locale().language
-        deployment_locale = g.deployment.primary_locale or 'en'
-
         # specify the conditions for the order term
         condition1 = full_name_term == None # noqa
         condition2 = full_name_term != None # noqa
