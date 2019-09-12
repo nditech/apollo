@@ -40,6 +40,8 @@
 </template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
+<script src="{{ url_for('static', filename='js/promise-polyfill.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fetch.umd.js') }}"></script>
 <script>
 const roundTo = function(num) {
   return Math.round((num + 0.00001) * 100) / 100;
@@ -104,15 +106,31 @@ const vm = new Vue({
   },
   created: function () {
     const self = this;
-    if (window.EventSource) {
-      var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
-      es.onmessage = function (ev) {
-        let data = JSON.parse(ev.data);
-        if (data.id !== undefined) {
-          self.$set(self.tasks, data.id, data);
+    fetch("{{ url_for('users.task_list') }}")
+      .then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        // load data from all completed tasks
+        if (data.results.length > 0) {
+          data.results.forEach(function (taskInfo) {
+            self.$set(self.tasks, taskInfo.id, taskInfo);
+          });
         }
-      };
-    }
+
+        // load data from currently running tasks
+        if (window.EventSource) {
+          var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+          es.onmessage = function (ev) {
+            let data = JSON.parse(ev.data);
+            if (data.id !== undefined) {
+              self.$set(self.tasks, data.id, data);
+            }
+          };
+        }
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
   }
 });
 </script>
