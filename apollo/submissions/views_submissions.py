@@ -326,27 +326,6 @@ def submission_list(form_id):
         user_locale = get_locale().language
         deployment_locale = g.deployment.primary_locale or 'en'
 
-        full_name_term = func.coalesce(
-            models.Participant.full_name_translations.op('->>')(user_locale),
-            models.Participant.full_name_translations.op('->>')(
-                deployment_locale)
-        ).label('full_name')
-        first_name_term = func.coalesce(
-            models.Participant.first_name_translations.op('->>')(user_locale),
-            models.Participant.first_name_translations.op('->>')(
-                deployment_locale)
-        ).label('first_name')
-        other_names_term = func.coalesce(
-            models.Participant.other_names_translations.op('->>')(user_locale),
-            models.Participant.other_names_translations.op('->>')(
-                deployment_locale)
-        ).label('other_names')
-        last_name_term = func.coalesce(
-            models.Participant.last_name_translations.op('->>')(user_locale),
-            models.Participant.last_name_translations.op('->>')(
-                deployment_locale)
-        ).label('last_name')
-
         # specify the conditions for the order term
         condition1 = full_name_term == None # noqa
         condition2 = full_name_term != None # noqa
