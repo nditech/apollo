@@ -46,7 +46,7 @@ class MessageService(Service):
                 message.sender if message.direction == 'IN'
                 else message.recipient,
                 message.text,
-                message.direction,
+                message.direction.code,
                 message.received.strftime('%Y-%m-%d %H:%M:%S')
                 if message.received else '',
                 message.delivered.strftime('%Y-%m-%d %H:%M:%S')
