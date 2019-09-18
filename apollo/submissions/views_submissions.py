@@ -111,6 +111,34 @@ def submission_list(form_id):
     query = models.Submission.query
     _location_query = None
 
+    user_locale = get_locale().language
+    deployment_locale = g.deployment.primary_locale or 'en'
+
+    full_name_term = func.coalesce(
+        models.Participant.full_name_translations.op('->>')(
+            user_locale),
+        models.Participant.full_name_translations.op('->>')(
+            deployment_locale)
+    ).label('full_name')
+    first_name_term = func.coalesce(
+        models.Participant.first_name_translations.op('->>')(
+            user_locale),
+        models.Participant.first_name_translations.op('->>')(
+            deployment_locale)
+    ).label('first_name')
+    other_names_term = func.coalesce(
+        models.Participant.other_names_translations.op('->>')(
+            user_locale),
+        models.Participant.other_names_translations.op('->>')(
+            deployment_locale)
+    ).label('other_names')
+    last_name_term = func.coalesce(
+        models.Participant.last_name_translations.op('->>')(
+            user_locale),
+        models.Participant.last_name_translations.op('->>')(
+            deployment_locale)
+    ).label('last_name')
+
     # if the user is a field-coordinator (i.e. there's a participant in the
     # session) then define the _location_query (which will be reused) and the
     # query to be used for the exports. Naturally, exports will not be
@@ -256,18 +284,6 @@ def submission_list(form_id):
             models.PhoneContact.participant_id == models.Participant.id
         )
     else:
-        full_name_lat_query = func.jsonb_each_text(
-            models.Participant.full_name_translations).lateral(
-                'participant_full_name')
-        first_name_lat_query = func.jsonb_each_text(
-            models.Participant.first_name_translations).lateral(
-                'participant_first_name')
-        other_names_lat_query = func.jsonb_each_text(
-            models.Participant.other_names_translations).lateral(
-                'participant_other_names')
-        last_name_lat_query = func.jsonb_each_text(
-            models.Participant.last_name_translations).lateral(
-                'participant_last_name')
         queryset = models.Submission.query.select_from(
             models.Submission, models.Location, models.Participant
         ).filter(
@@ -280,14 +296,6 @@ def submission_list(form_id):
         ).join(
             models.Participant,
             models.Submission.participant_id == models.Participant.id
-        ).outerjoin(
-            full_name_lat_query, sa.true()
-        ).outerjoin(
-            first_name_lat_query, sa.true()
-        ).outerjoin(
-            other_names_lat_query, sa.true()
-        ).outerjoin(
-            last_name_lat_query, sa.true()
         )
 
     if _location_query:
@@ -315,30 +323,6 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
-        user_locale = get_locale().language
-        deployment_locale = g.deployment.primary_locale or 'en'
-
-        full_name_term = func.coalesce(
-            models.Participant.full_name_translations.op('->>')(user_locale),
-            models.Participant.full_name_translations.op('->>')(
-                deployment_locale)
-        ).label('full_name')
-        first_name_term = func.coalesce(
-            models.Participant.first_name_translations.op('->>')(user_locale),
-            models.Participant.first_name_translations.op('->>')(
-                deployment_locale)
-        ).label('first_name')
-        other_names_term = func.coalesce(
-            models.Participant.other_names_translations.op('->>')(user_locale),
-            models.Participant.other_names_translations.op('->>')(
-                deployment_locale)
-        ).label('other_names')
-        last_name_term = func.coalesce(
-            models.Participant.last_name_translations.op('->>')(user_locale),
-            models.Participant.last_name_translations.op('->>')(
-                deployment_locale)
-        ).label('last_name')
-
         # specify the conditions for the order term
         condition1 = full_name_term == None # noqa
         condition2 = full_name_term != None # noqa
@@ -1184,6 +1168,34 @@ def quality_assurance_list(form_id):
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=g.event.location_set_id)
 
+    user_locale = get_locale().language
+    deployment_locale = g.deployment.primary_locale or 'en'
+
+    full_name_term = func.coalesce(
+        models.Participant.full_name_translations.op('->>')(
+            user_locale),
+        models.Participant.full_name_translations.op('->>')(
+            deployment_locale)
+    ).label('full_name')
+    first_name_term = func.coalesce(
+        models.Participant.first_name_translations.op('->>')(
+            user_locale),
+        models.Participant.first_name_translations.op('->>')(
+            deployment_locale)
+    ).label('first_name')
+    other_names_term = func.coalesce(
+        models.Participant.other_names_translations.op('->>')(
+            user_locale),
+        models.Participant.other_names_translations.op('->>')(
+            deployment_locale)
+    ).label('other_names')
+    last_name_term = func.coalesce(
+        models.Participant.last_name_translations.op('->>')(
+            user_locale),
+        models.Participant.last_name_translations.op('->>')(
+            deployment_locale)
+    ).label('last_name')
+
     location = None
     if request.args.get('location'):
         location = services.locations.find(
@@ -1298,18 +1310,6 @@ def quality_assurance_list(form_id):
             participant_phones.c.participant_id == models.Participant.id
         )
     else:
-        full_name_lat_query = func.jsonb_each_text(
-            models.Participant.full_name_translations).lateral(
-                'participant_full_name')
-        first_name_lat_query = func.jsonb_each_text(
-            models.Participant.first_name_translations).lateral(
-                'participant_first_name')
-        other_names_lat_query = func.jsonb_each_text(
-            models.Participant.other_names_translations).lateral(
-                'participant_other_names')
-        last_name_lat_query = func.jsonb_each_text(
-            models.Participant.last_name_translations).lateral(
-                'participant_last_name')
         queryset = models.Submission.query.select_from(
             models.Submission, models.Location, models.Participant,
         ).filter(
@@ -1322,14 +1322,6 @@ def quality_assurance_list(form_id):
         ).join(
             models.Participant,
             models.Submission.participant_id == models.Participant.id
-        ).outerjoin(
-            full_name_lat_query, sa.true()
-        ).outerjoin(
-            first_name_lat_query, sa.true()
-        ).outerjoin(
-            other_names_lat_query, sa.true()
-        ).outerjoin(
-            last_name_lat_query, sa.true()
         )
 
     if request.args.get('sort_by') == 'id':
@@ -1347,22 +1339,22 @@ def quality_assurance_list(form_id):
             queryset = queryset.order_by(text('translation.value'))
     elif request.args.get('sort_by') == 'participant':
         # specify the conditions for the order term
-        condition1 = text('participant_full_name IS NULL')
-        condition2 = text('participant_full_name IS NOT NULL')
+        condition1 = full_name_term == None # noqa
+        condition2 = full_name_term != None # noqa
 
         # concatenation for the full name
         full_name_concat = func.concat_ws(
             ' ',
-            text('participant_first_name.value'),
-            text('participant_other_names.value'),
-            text('participant_last_name.value'),
+            first_name_term,
+            other_names_term,
+            last_name_term,
         ).alias('full_name_concat')
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
         order_term = case([
             (condition1, full_name_concat),
-            (condition2, text('participant_full_name.value')),
+            (condition2, full_name_term),
         ])
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
