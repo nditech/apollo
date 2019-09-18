@@ -795,7 +795,7 @@ def submission_edit(submission_id):
                         if data.get(form_field, None) != master_form.data.get(
                                 form_field):
                             if (
-                                not master_form.data.get(form_field)
+                                master_form.data.get(form_field) is None
                             ):
                                 data.pop(form_field, None)
                             else:
@@ -900,7 +900,7 @@ def submission_edit(submission_id):
                         if data.get(form_field) != \
                                 submission_form.data.get(form_field):
                             if (
-                                not submission_form.data.get(form_field)
+                                submission_form.data.get(form_field) is None
                             ):
                                 data.pop(form_field, None)
                                 changed_fields.append(form_field)
