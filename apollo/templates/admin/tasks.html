@@ -38,7 +38,7 @@
 {% endblock head %}
 {% block body %}
 <div id="app">
-  <component :is="currentComponent" :task-info="subtask" v-for="(subtask, taskId) in tasks" :key="taskId"></component>
+  <component :is="currentComponent" :task-info="subtask" v-for="subtask in tasks" :key="subtask.id"></component>
 </div>
 {% endblock %}
 {% block tail_js %}
@@ -139,14 +139,14 @@ Vue.component('task-info', {
 const vm = new Vue({
   el: '#app',
   data: {
-    tasks: {},
+    tasks: [],
     loading: false
   },
   computed: {
     currentComponent: function() {
       if (this.loading)
         return 'loader';
-      else if (!this.loading && Object.keys(this.tasks).length === 0)
+      else if (!this.loading && this.tasks.length === 0)
         return 'default';
       else
         return 'task-info';
@@ -163,7 +163,7 @@ const vm = new Vue({
         // load data from all completed tasks
         if (data.results.length > 0) {
           data.results.forEach(function (taskInfo) {
-            self.$set(self.tasks, taskInfo.id, taskInfo);
+            self.addTask(taskInfo);
           });
         }
 
@@ -173,7 +173,7 @@ const vm = new Vue({
           es.onmessage = function (ev) {
             let data = JSON.parse(ev.data);
             if (data.id !== undefined) {
-              self.$set(self.tasks, data.id, data);
+              self.addTask(data);
             }
           };
         }
@@ -182,6 +182,19 @@ const vm = new Vue({
         self.loading = false;
         console.error(err);
       });
+  },
+  methods: {
+    addTask: function(taskInfo) {
+      const self = this;
+      const index = self.tasks.findIndex(function(t) {
+        return t.id == taskInfo.id;
+      });
+      if (index == -1)
+        self.tasks.unshift(taskInfo);
+      else
+        // update the existing
+        self.tasks.splice(index, 1, taskInfo);
+    }
   }
 });
 </script>
