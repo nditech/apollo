@@ -11,6 +11,16 @@ def import_graph(graph, location_set, fresh_import=False):
     nodes = graph.get('nodes')
     edges = graph.get('edges')
 
+    # convert any integral string IDs, because JavaScript
+    for node in nodes:
+        if not utils.validate_uuid(str(node.get('id'))):
+            node['id'] = int(str(node.get('id')))
+    for edge in edges:
+        if not utils.validate_uuid(str(edge[0])):
+            edge[0] = int(str(edge[0]))
+        if not utils.validate_uuid(str(edge[1])):
+            edge[1] = int(str(edge[1]))
+
     nx_graph = nx.DiGraph()
 
     for i, node in enumerate(nodes):
@@ -67,13 +77,18 @@ def import_graph(graph, location_set, fresh_import=False):
 
     # build graph for the closure table
     nx_graph.add_edges_from(edges)
+    sorted_nodes = list(nx.topological_sort(nx_graph))
+    sorted_edges = list(nx_graph.edges(sorted_nodes))
+
+    closure_graph = nx.DiGraph()
+    closure_graph.add_edges_from(sorted_edges)
 
     # delete existing links
     LocationTypePath.query.filter_by(location_set=location_set).delete()
     db.session.commit()
 
     # build closure table
-    path_lengths = dict(nx.all_pairs_shortest_path_length(nx_graph))
+    path_lengths = dict(nx.all_pairs_shortest_path_length(closure_graph))
 
     for ancestor_id, paths in path_lengths.items():
         for descendant_id, depth in paths.items():
