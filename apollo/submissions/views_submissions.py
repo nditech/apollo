@@ -1116,7 +1116,8 @@ def quality_assurance_dashboard(form_id):
         location = services.locations.find(
             id=request.args.get('location')).first()
 
-    submissions = services.submissions.find(form=form, submission_type='O')
+    submissions = services.submissions.find(
+        event=g.event, form=form, submission_type='O')
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
 
