@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import gettext, lazy_gettext as _
 from geoalchemy2 import Geometry
+import networkx as nx
 from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
@@ -35,8 +36,14 @@ class LocationSet(BaseModel):
             LocationTypePath.descendant_id
         ).all()
 
-        location_types = LocationType.query.filter(
-            LocationType.location_set_id == self.id)
+        di_graph = nx.DiGraph()
+        di_graph.add_edges_from(edges)
+        sorted_nodes = list(nx.topological_sort(di_graph))
+        sorted_edges = list(di_graph.edges(sorted_nodes))
+
+        location_types = [LocationType.query.filter(
+            LocationType.location_set_id == self.id,
+            LocationType.id == _id).one() for _id in sorted_nodes]
 
         nodes = [{
             'id': lt.id,
@@ -52,7 +59,7 @@ class LocationSet(BaseModel):
 
         graph = {
             'nodes': nodes,
-            'edges': edges
+            'edges': sorted_edges
         }
 
         return graph
@@ -62,8 +69,19 @@ class LocationSet(BaseModel):
 
         extra_fields = LocationDataField.query.filter_by(
             location_set_id=self.id).all()
-        location_types = LocationType.query.filter_by(
-            location_set_id=self.id).all()
+        location_types = LocationTypePath.query.filter_by(
+            location_set=self
+        ).join(
+            LocationType, LocationType.id == LocationTypePath.ancestor_id
+        ).with_entities(
+            LocationType
+        ).group_by(
+            LocationTypePath.ancestor_id,
+            LocationType.id
+        ).order_by(
+            func.count(LocationTypePath.ancestor_id).desc(),
+            LocationType.name
+        ).all()
 
         for lt in location_types:
             lt_data = {}

@@ -193,10 +193,13 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
 def displayable_location_types(**kwargs):
     return services.location_types.find(**kwargs).join(
         models.LocationTypePath,
-        models.LocationType.id == models.LocationTypePath.descendant_id
+        models.LocationType.id == models.LocationTypePath.ancestor_id
+    ).group_by(
+        models.LocationTypePath.ancestor_id,
+        models.LocationType.id
     ).order_by(
-        func.count(models.LocationType.id)
-    ).group_by('id').all()
+        func.count(models.LocationTypePath.ancestor_id).desc()
+    ).all()
 
 
 def analysis_breadcrumb_data(form, location, tag=None,

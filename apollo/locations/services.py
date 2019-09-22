@@ -2,9 +2,13 @@
 import csv
 from io import StringIO
 
+import sqlalchemy as sa
+
 from apollo import constants
 from apollo.dal.service import Service
-from apollo.locations.models import Location, LocationSet, LocationType, Sample
+from apollo.locations.models import (
+    Location, LocationPath, LocationSet, LocationType, LocationTypePath,
+    Sample)
 
 
 class LocationSetService(Service):
@@ -20,9 +24,19 @@ class LocationService(Service):
             raise StopIteration
 
         location_set = query.first().location_set
-        location_types = LocationTypeService().find(
-            location_set_id=location_set.id
-        ).join()
+        location_types = LocationTypePath.query.filter_by(
+            location_set=location_set
+        ).join(
+            LocationType, LocationType.id == LocationTypePath.ancestor_id
+        ).with_entities(
+            LocationType
+        ).group_by(
+            LocationTypePath.ancestor_id,
+            LocationType.id
+        ).order_by(
+            sa.func.count(LocationTypePath.ancestor_id).desc(),
+            LocationType.name
+        ).all()
 
         locales = location_set.deployment.locale_codes
 
@@ -47,7 +61,16 @@ class LocationService(Service):
         locations = query.order_by('code')
         for location in locations:
             record = []
-            ancestors = location.ancestors()
+            ancestors = LocationPath.query.filter(
+                LocationPath.depth > 0,
+                LocationPath.descendant_id == location.id
+            ).join(
+                Location,
+                Location.id == LocationPath.ancestor_id
+            ).order_by(
+                LocationPath.depth.desc(),
+                Location.name
+            ).with_entities(Location)
             for ancestor in ancestors:
                 for locale in locales:
                     record.append(ancestor.name_translations.get(locale))
