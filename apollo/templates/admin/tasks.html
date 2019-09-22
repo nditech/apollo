@@ -1,13 +1,50 @@
 {% extends 'admin/base.html' %}
+{% block head %}
+<style>
+.sbl-circ-ripple {
+  height: 48px;
+  width: 48px;
+  color: #5a5a5a;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block; }
+  .sbl-circ-ripple::after, .sbl-circ-ripple::before {
+    content: '';
+    height: 0;
+    width: 0;
+    border: inherit;
+    border: 5px solid;
+    border-radius: inherit;
+    position: absolute;
+    left: 40%;
+    top: 40%;
+    animation: circle-ripple  1s linear infinite; }
+  .sbl-circ-ripple::before {
+    animation-delay: -0.5s; }
+
+@keyframes circle-ripple {
+  0% {
+    height: 0;
+    width: 0;
+    left: 20px;
+    top: 20px; }
+  100% {
+    height: 48px;
+    width: 48px;
+    left: -5px;
+    top: -5px;
+    opacity: 0; } }
+</style>
+{% endblock head %}
 {% block body %}
 <div id="app">
-  <component :is="currentComponent" :task-info="currentState"></component>
+  <component :is="currentComponent" :task-info="subtask" v-for="subtask in tasks" :key="subtask.id"></component>
 </div>
 {% endblock %}
 {% block tail_js %}
 {{ super() }}
 <template id="task-info">
-  <div class="card">
+  <div class="card m-3">
     <div class="card-header">{{ '{{' }} taskInfo.description {{ '}}'}} ({{ '{{' }} taskInfo.status {{ '}}' }})</div>
     <div class="card-body">
       <div>
@@ -28,7 +65,7 @@
         </div>
         <p class="card-text">{{ _('Warning') }}</p>
       </div>
-      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log">
+      <ul class="list-group list-group-flush" v-if="taskInfo.progress.error_log" style="max-height: 25em; overflow-y: scroll;">
         <li class="list-group-item d-flex justify-content-between align-items-center" v-for="report in taskInfo.progress.error_log">{{ '{{' }} report.message {{ '}}' }}<span class="badge badge-dark">{{ '{{' }} report.label {{ '}}' }}</span></li>
       </ul>  
     </div>
@@ -37,12 +74,20 @@
 <template id="default">
   <div class="alert alert-warning">{{ _('No Active Task') }}</div>
 </template>
+<template id="loader">
+  <div class="sbl-circ-ripple"></div>
+</template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
+<script src="{{ url_for('static', filename='js/promise-polyfill.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fetch.umd.js') }}"></script>
 <script>
 const roundTo = function(num) {
   return Math.round((num + 0.00001) * 100) / 100;
 };
+Vue.component('loader', {
+  template: '#loader'
+});
 Vue.component('default', {
   template: '#default'
 });
@@ -94,12 +139,14 @@ Vue.component('task-info', {
 const vm = new Vue({
   el: '#app',
   data: {
-    eventSource: null,
-    currentState: null,
+    tasks: [],
+    loading: false
   },
   computed: {
-    currentComponent: function () {
-      if (this.currentState === null)
+    currentComponent: function() {
+      if (this.loading)
+        return 'loader';
+      else if (!this.loading && this.tasks.length === 0)
         return 'default';
       else
         return 'task-info';
@@ -107,16 +154,46 @@ const vm = new Vue({
   },
   created: function () {
     const self = this;
-
-    if (window.EventSource) {
-      var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
-      es.onmessage = function (ev) {
-        console.log(ev.data);
-        let data = JSON.parse(ev.data);
-        if (data.id !== undefined) {
-          self.currentState = data;
+    self.loading = true;
+    fetch("{{ url_for('users.task_list') }}")
+      .then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        self.loading = false;
+        // load data from all completed tasks
+        if (data.results.length > 0) {
+          data.results.forEach(function (taskInfo) {
+            self.addTask(taskInfo);
+          });
         }
-      };
+
+        // load data from currently running tasks
+        if (window.EventSource) {
+          var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
+          es.onmessage = function (ev) {
+            let data = JSON.parse(ev.data);
+            if (data.id !== undefined) {
+              self.addTask(data);
+            }
+          };
+        }
+      })
+      .catch(function (err) {
+        self.loading = false;
+        console.error(err);
+      });
+  },
+  methods: {
+    addTask: function(taskInfo) {
+      const self = this;
+      const index = self.tasks.findIndex(function(t) {
+        return t.id == taskInfo.id;
+      });
+      if (index == -1)
+        self.tasks.unshift(taskInfo);
+      else
+        // update the existing
+        self.tasks.splice(index, 1, taskInfo);
     }
   }
 });

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, redirect, render_template, url_for, abort
+from flask import (
+    Blueprint, abort, json, jsonify, redirect, render_template, session,
+    url_for)
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import encrypt_password
 
+from apollo.core import red
 from apollo.frontend import route
 from apollo.users import forms
 
@@ -35,3 +38,19 @@ def user_profile():
     context = {'form': form, 'breadcrumbs': breadcrumbs}
 
     return render_template('frontend/userprofile.html', **context)
+
+
+@route(bp, '/user/tasks')
+@login_required
+def task_list():
+    session_id = session.get('_id')
+
+    # extract the data from Redis
+    stringified_data = red.lrange(session_id, 0, -1)
+    raw_data = [json.loads(d) for d in stringified_data]
+
+    tasks = {
+        'results': raw_data
+    }
+
+    return jsonify(tasks)

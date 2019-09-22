@@ -115,7 +115,7 @@ def create_celery_app(app=None):
                 channel = kwargs.get('channel')
                 payload = {
                     'id': task_id,
-                    'status': 'FAILED',
+                    'status': _('FAILED'),
                     'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
@@ -123,13 +123,17 @@ def create_celery_app(app=None):
 
                 if channel is not None:
                     red.publish(channel, json.dumps(payload))
+
+                    # leave result in Redis and set/renew the expiration
+                    red.lpush(channel, json.dumps(payload))
+                    red.expire(channel, app.config.get('TASK_STATUS_TTL'))
 
         def on_success(self, retval, task_id, args, kwargs):
             with app.app_context():
                 channel = kwargs.get('channel')
                 payload = {
                     'id': task_id,
-                    'status': 'COMPLETED',
+                    'status': _('COMPLETED'),
                     'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
@@ -137,6 +141,10 @@ def create_celery_app(app=None):
 
                 if channel is not None:
                     red.publish(channel, json.dumps(payload))
+
+                    # leave result in Redis and set/renew the expiration
+                    red.lpush(channel, json.dumps(payload))
+                    red.expire(channel, app.config.get('TASK_STATUS_TTL'))
 
         def update_task_info(self, **kwargs):
             request = self.request
@@ -147,7 +155,7 @@ def create_celery_app(app=None):
             task_metadata = self.backend.get_task_meta(request.id)
             payload = {
                 'id': request.id,
-                'status': 'RUNNING',
+                'status': _('RUNNING'),
                 'progress': task_metadata.get('result'),
                 'description': TASK_DESCRIPTIONS.get(self.request.task)
             }
