@@ -324,9 +324,9 @@ def update_participants(dataframe, header_map, participant_set, task):
 
         if GENDER_COL:
             gender_spec = record[GENDER_COL]
-            if _is_valid(gender_spec) and gender_spec.upper() in \
+            if _is_valid(gender_spec) and gender_spec[:1].upper() in \
                     APPLICABLE_GENDERS:
-                participant.gender = gender_spec.upper()
+                participant.gender = gender_spec[:1].upper()
             else:
                 participant.gender = APPLICABLE_GENDERS[0]
 
