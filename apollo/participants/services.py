@@ -83,7 +83,7 @@ class ParticipantService(Service):
             record.extend([
                 participant.supervisor.participant_id
                 if participant.supervisor else '',
-                participant.gender.value if participant.gender else '',
+                participant.gender.code if participant.gender else '',
                 participant.email,
                 participant.password
             ])
