@@ -233,6 +233,7 @@ def analysis_navigation_data(form, location, tag=None,
         models.LocationType.id != location.location_type_id,
         models.LocationTypePath.depth > 0,
         models.LocationType.is_political == True,   # noqa
+        models.LocationType.location_set_id == location.location_set_id
     ).order_by(
         models.LocationTypePath.depth
     ).with_entities(
@@ -247,7 +248,8 @@ def analysis_navigation_data(form, location, tag=None,
     ).filter(
         models.LocationType.id == next_analyzable_level_id,
         models.LocationPath.ancestor_id == location.id,
-        models.LocationPath.depth > 0
+        models.LocationPath.depth > 0,
+        models.Location.location_set_id == location.location_set_id
     ).with_entities(
         models.Location
     ).all()
