@@ -155,9 +155,6 @@ def make_participant_sample_filter(location_set_id):
         def queryset_(self, query, value):
             if value:
                 query2 = query.join(
-                    Location,
-                    Participant.location_id == Location.id
-                ).join(
                     samples_locations,
                     samples_locations.c.location_id == Location.id
                 ).join(
