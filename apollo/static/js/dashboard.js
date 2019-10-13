@@ -111,7 +111,7 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
 
     totals.append("text")
       .data([total])
-      .attr("x", window.rtl ? (w - (135 - 30 + (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
+      .attr("x", window.rtl ? (w - (125 - (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
       .attr("y", h / 2 + 32 + (dataMap.values().length + 1) * 16)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace font-weight-bold')

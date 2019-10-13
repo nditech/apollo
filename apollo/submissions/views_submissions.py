@@ -167,6 +167,8 @@ def submission_list(form_id):
             id=request.args.get('location')).first()
 
     if request.args.get('export') and permissions.export_submissions.can():
+        query = filter_class(query, request.args).qs
+
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
             queryset = query.filter_by(
