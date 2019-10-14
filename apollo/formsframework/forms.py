@@ -346,6 +346,15 @@ class FormForm(SecureForm):
     quality_checks_enabled = wtforms.BooleanField(
         _('QA Enabled'),
         description=_('Whether to enable quality assurance or not.'))
+    show_map = wtforms.BooleanField(
+        _('Show Map View'),
+        description=_('Whether to display the map view for submissions or not.'))  # noqa
+    show_moment = wtforms.BooleanField(
+        _('Show Moment Column'),
+        description=_('Enabling this option will show the date and time for the submission in the list view.'))  # noqa
+    show_progress = wtforms.BooleanField(
+        _('Show Daily Progress'),
+        description=_('Enabling this option will show the daily progress for this form on the dashboard.'))  # noqa
     accredited_voters_tag = wtforms.SelectField(
         _('Accredited Voters Field'), choices=[('', '')])
     blank_votes_tag = wtforms.SelectField(
