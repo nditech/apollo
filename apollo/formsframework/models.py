@@ -68,7 +68,8 @@ events_forms = db.Table(
 class Form(Resource):
     FORM_TYPES = (
         ('CHECKLIST', _('Checklist Form')),
-        ('INCIDENT', _('Incident Form'))
+        ('INCIDENT', _('Incident Form')),
+        ('SURVEY', _('Survey Form'))
     )
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
@@ -95,6 +96,9 @@ class Form(Resource):
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
     vote_shares = db.Column(JSONB)
+    show_moment = db.Column(db.Boolean, default=False)
+    show_map = db.Column(db.Boolean, default=False)
+    show_progress = db.Column(db.Boolean, default=False)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
