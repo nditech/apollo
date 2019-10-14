@@ -28,7 +28,7 @@
           {%- for field in form -%}
           {%- if field.type != 'CSRFTokenField' -%}
           <div class="form-group row align-items-center">
-            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled'] %}
+            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment'] %}
               <div class="col-4">&nbsp;</div>
               <div class="col-8">
                 <div class="custom-control custom-checkbox">
