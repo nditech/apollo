@@ -10,7 +10,7 @@ from flask_wtf.file import FileField
 import wtforms
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
-from .. import services, utils
+from .. import services
 from ..core import db
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
@@ -19,6 +19,7 @@ from ..submissions.models import (
 from ..participants.models import Participant, PhoneContact
 from ..deployments.models import Event
 from ..formsframework.models import Form
+from ..utils import current_timestamp
 
 ugly_phone = re.compile('[^0-9]*')
 
@@ -171,7 +172,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                 form=form,
                 participant=participant,
                 location=participant.location,
-                created=utils.current_timestamp(),
+                created=current_timestamp(),
                 event=event,
                 deployment_id=event.deployment_id)
             if self.data.get('comment'):
@@ -239,16 +240,18 @@ class BaseQuestionnaireForm(wtforms.Form):
                         phone_contact.save()
 
                 if commit:
-                    submission.data = data
-                    submission.last_phone_number = phone_num
                     if submission.id is None:
                         # for a fresh submission, everything will get saved
+                        submission.data = data
+                        submission.last_phone_number = phone_num
+                        submission.participant_updated = current_timestamp()
                         submission.save()
                     else:
                         # for an existing submission, we need an update,
                         # otherwise the JSONB field won't get persisted
                         update_params['data'] = data
                         update_params['last_phone_number'] = phone_num
+                        update_params['participant_updated'] = current_timestamp()  # noqa
                         services.submissions.find(
                             id=submission.id
                         ).update(update_params, synchronize_session=False)
