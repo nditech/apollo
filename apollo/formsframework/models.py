@@ -200,65 +200,66 @@ class Form(Resource):
         model.append(subscriber_id_bind)
         model.append(phone_number_bind)
 
-        for group in self.data['groups']:
-            grp_element = E.group(E.label(group['name']))
-            for field in group['fields']:
-                data.append(etree.Element(field['tag']))
-                path = '/data/{}'.format(field['tag'])
+        if self.data:
+            for group in self.data.get('groups'):
+                grp_element = E.group(E.label(group['name']))
+                for field in group['fields']:
+                    data.append(etree.Element(field['tag']))
+                    path = '/data/{}'.format(field['tag'])
 
-                field_type = field.get('type')
-                if field_type == 'boolean':
-                    field_element = E.select1(
-                            E.label(field['description']),
-                            E.item(E.label('True'), E.value('1')),
-                            E.item(E.label('False'), E.value('0')),
-                            ref=field['tag']
-                        )
-                    model.append(E.bind(nodeset=path, type='select1'))
-                elif field_type == 'location':
-                    field_element = E.input(
-                        E.label(field['description']), ref=field['tag'])
-                    model.append(E.bind(nodeset=path, type='geopoint'))
-                elif field_type in ('comment', 'string'):
-                    field_element = E.input(
-                            E.label(field['description']),
-                            ref=field['tag']
-                        )
-                    model.append(E.bind(nodeset=path, type='string'))
-                elif field_type == 'integer':
-                    field_element = E.input(
-                        E.label(field['description']),
-                        ref=field['tag']
-                    )
-                    model.append(E.bind(
-                        nodeset=path, type='integer',
-                        constraint='. >= {} and . <= {}'.format(
-                            field.get('min', 0),
-                            field.get('max', 9999)
-                        )))
-                elif field_type in ('select', 'multiselect', 'category'):
-                    sorted_options = sorted(field.get('options').items(),
-                                            key=itemgetter(1))
-                    if field_type == 'select' or field_type == 'category':
-                        element_factory = E.select1
+                    field_type = field.get('type')
+                    if field_type == 'boolean':
+                        field_element = E.select1(
+                                E.label(field['description']),
+                                E.item(E.label('True'), E.value('1')),
+                                E.item(E.label('False'), E.value('0')),
+                                ref=field['tag']
+                            )
                         model.append(E.bind(nodeset=path, type='select1'))
-                    else:
-                        element_factory = E.select
-                        model.append(E.bind(nodeset=path, type='select'))
-
-                    field_element = element_factory(
-                        E.label(field['description']),
-                        ref=field['tag']
-                    )
-                    for key, value in sorted_options:
-                        field_element.append(
-                            E.item(E.label(key), E.value(str(value)))
+                    elif field_type == 'location':
+                        field_element = E.input(
+                            E.label(field['description']), ref=field['tag'])
+                        model.append(E.bind(nodeset=path, type='geopoint'))
+                    elif field_type in ('comment', 'string'):
+                        field_element = E.input(
+                                E.label(field['description']),
+                                ref=field['tag']
+                            )
+                        model.append(E.bind(nodeset=path, type='string'))
+                    elif field_type == 'integer':
+                        field_element = E.input(
+                            E.label(field['description']),
+                            ref=field['tag']
                         )
-                else:
-                    continue
+                        model.append(E.bind(
+                            nodeset=path, type='integer',
+                            constraint='. >= {} and . <= {}'.format(
+                                field.get('min', 0),
+                                field.get('max', 9999)
+                            )))
+                    elif field_type in ('select', 'multiselect', 'category'):
+                        sorted_options = sorted(field.get('options').items(),
+                                                key=itemgetter(1))
+                        if field_type == 'select' or field_type == 'category':
+                            element_factory = E.select1
+                            model.append(E.bind(nodeset=path, type='select1'))
+                        else:
+                            element_factory = E.select
+                            model.append(E.bind(nodeset=path, type='select'))
 
-                grp_element.append(field_element)
-            body.append(grp_element)
+                        field_element = element_factory(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                        for key, value in sorted_options:
+                            field_element.append(
+                                E.item(E.label(key), E.value(str(value)))
+                            )
+                    else:
+                        continue
+
+                    grp_element.append(field_element)
+                body.append(grp_element)
 
         # hard coding a location question here until the form builder
         # gets updated. please remove once the form builder supports
