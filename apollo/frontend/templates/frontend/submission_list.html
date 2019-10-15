@@ -10,13 +10,22 @@
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  moment.lang('{{ g.locale }}');
   var marker = undefined;
   var map = undefined;
   LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
 
+  $('.timestamp-moment').each(function (index) {
+    var timestamp = Number($(this).data('timestamp'));
+    if (timestamp !== 0) {
+      var mm = moment.unix(timestamp);
+      this.innerText = mm.format('ll LT');
+    }
+  });
   $('#filter_reset').on('click', function() {
     var $form = $(this).parents('form').first();
     $form.find(':input').not('button').each(function() { $(this).val(''); })
