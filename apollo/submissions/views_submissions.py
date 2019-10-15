@@ -355,6 +355,13 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.PhoneContact.number)
+    elif request.args.get('sort_by') == 'moment':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Submission.participant_updated))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.participant_updated)
     else:
         queryset = queryset.order_by(
             models.Location.code.cast(BigInteger),

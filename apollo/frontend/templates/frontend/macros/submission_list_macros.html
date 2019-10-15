@@ -54,6 +54,19 @@
     {% else %}
     <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
     {% endif %}
+
+    {%- if form.show_moment %}
+    {%- if request.args.sort_by == 'moment' %}
+    {%- if request.args.sort_direction == 'desc' %}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='asc', page='') }}">{{ _('Moment') }} <i class="fa fa-chevron-down"></i></a></th>
+    {%- else %}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='desc', page='') }}">{{ _('Moment') }} <i class="fa fa-chevron-up"></i></a></th>
+    {%- endif %}
+    {%- else %}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_value='', sort_direction='', page='') }}">{{ _('Moment') }}</a></th>
+    {%- endif %}
+    {%- endif %}
+
     {% if form.form_type == 'CHECKLIST' %}
     {% for group in form.data.groups %}
     <th scope="col" class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True, '') }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
@@ -96,6 +109,9 @@
     {% endfor %}
     <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.name|default('', true) }}</td>
     <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.primary_phone|default('', true) }}</td>
+    {%- if form.show_moment %}
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %} timestamp-moment" data-timestamp="{{ submission.participant_updated|timestamp if submission.participant_updated else "" }}">{{ submission.participant_updated.strftime("%b %d %Y %I:%M %p") if submission.participant_updated else "" }}</td>
+    {%- endif %}
     {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.data.groups %}
     <td class="text-center">
@@ -162,24 +178,28 @@
 {% else %}
 {% if perms.edit_submission.can() %}
 {% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 7 + (location_types|length) + form.data.groups|length -%}
+{%- set cspan = 8 if form.show_moment else 7 %}
+{%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set colspan = 9 + (location_types|length) + form_fields|length -%}
+{%- set cspan = 10 if form.show_moment else 9 %}
+{%- set colspan = cspan + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% endif %}
 {% else %}
 {% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 6 + (location_types|length) + form.data.groups|length -%}
+{%- set cspan = 7 if form.show_moment else 6 %}
+{%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set colspan = 8 + (location_types|length) + form_fields|length -%}
+{%- set cspan = 9 if form.show_moment else 8 %}
+{%- set colspan = cspan + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
