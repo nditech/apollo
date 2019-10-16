@@ -89,8 +89,11 @@ class SupervisorQuerySelectField(QuerySelectField):
 
     def process_formdata(self, valuelist):
         if valuelist and valuelist[0]:
-            self.query = models.Participant.query.filter(
-                models.Participant.id == valuelist[0])
+            if valuelist[0] == '__None':
+                self.query = models.Participant.query.filter(false())
+            else:
+                self.query = models.Participant.query.filter(
+                    models.Participant.id == valuelist[0])
         return super(SupervisorQuerySelectField, self).process_formdata(
             valuelist)
 
