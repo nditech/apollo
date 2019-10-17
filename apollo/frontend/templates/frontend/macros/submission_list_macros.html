@@ -2,13 +2,26 @@
 <tr>
     {% if request.args.sort_by == 'pid' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='pid', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
     {% endif %}
+
+    {%- if form.form_type == 'SURVEY' %}
+    {% if request.args.sort_by == 'fid' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_direction='asc', page='') }}">{{ _('FID') }} <i class="fa fa-chevron-down"></i></a></th>
+    {% else %}
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_direction='desc', page='') }}">{{ _('FID') }} <i class="fa fa-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_value='', sort_direction='', page='') }}">{{ _('FID') }}</a></th>
+    {% endif %}
+    {%- endif %}
+
     {%- if form.form_type == 'INCIDENT' %}
     {% if request.args.sort_by == 'id' %}
     {% if request.args.sort_direction == 'desc' %}
@@ -20,6 +33,7 @@
     <th scope="col" class="text-right"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
     {% endif %}
     {%- endif %}
+
     <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
     {% for location_type in location_types %}
     {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
@@ -67,7 +81,7 @@
     {%- endif %}
     {%- endif %}
 
-    {% if form.form_type == 'CHECKLIST' %}
+    {% if form.form_type in ['CHECKLIST', 'SURVEY'] %}
     {% for group in form.data.groups %}
     <th scope="col" class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True, '') }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
@@ -94,6 +108,9 @@
     {% else %}
     <td class="text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
+    {%- if form.form_type == 'SURVEY' %}
+    <td class="text-monospace text-right">{{ submission.serial_no }}</td>
+    {%- endif %}
     {%- if form.form_type == 'INCIDENT' %}
     <td class="text-monospace text-right">{{ submission.id }}</td>
     {%- endif %}
@@ -176,30 +193,38 @@
     </td>
 </tr>
 {% else %}
-{% if perms.edit_submission.can() %}
-{% if form.form_type == 'CHECKLIST' %}
-{%- set cspan = 8 if form.show_moment else 7 %}
-{%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
+{%- if perms.edit_submission.can() %}
+{%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
+    {%- if form.form_type == 'CHECKLIST' %}
+        {%- set cspan = 8 if form.show_moment else 7 %}
+    {%- else %}
+        {%- set cspan = 9 if form.show_moment else 8 %}
+    {%- endif %}
+    {%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set cspan = 10 if form.show_moment else 9 %}
-{%- set colspan = cspan + (location_types|length) + form_fields|length -%}
+    {%- set cspan = 10 if form.show_moment else 9 %}
+    {%- set colspan = cspan + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% endif %}
 {% else %}
-{% if form.form_type == 'CHECKLIST' %}
-{%- set cspan = 7 if form.show_moment else 6 %}
-{%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
+{%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
+    {%- if form.form_type == 'CHECKLIST' %}
+        {%- set cspan = 7 if form.show_moment else 6 %}
+    {%- else %}
+        {%- set cspan = 8 if form.show_moment else 7 %}
+    {%- endif %}
+    {%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set cspan = 9 if form.show_moment else 8 %}
-{%- set colspan = cspan + (location_types|length) + form_fields|length -%}
+    {%- set cspan = 9 if form.show_moment else 8 %}
+    {%- set colspan = cspan + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
