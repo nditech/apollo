@@ -15,7 +15,7 @@
                     <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>
-            {%- if form.form_type == 'CHECKLIST' -%}
+            {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
                 <div class="col-md-2 mb-2 d-flex">
                     <label for="{{ filter_form.conjunction.id }}" class="sr-only">{{ filter_form.conjunction.label.text }}</label>
                     {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}

@@ -376,7 +376,7 @@ def make_submission_list_filter(event, form):
 
     if form.form_type == 'INCIDENT':
         attributes['status'] = IncidentStatusFilter()
-    elif form.form_type == 'CHECKLIST':
+    elif form.form_type in ['CHECKLIST', 'SURVEY']:
         attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
             choices=(
                 ('', _('Quarantine Status')),

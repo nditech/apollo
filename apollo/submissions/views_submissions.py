@@ -311,6 +311,13 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
+    elif request.args.get('sort_by') == 'fid':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Submission.serial_no))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.serial_no)
     elif request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -393,6 +400,9 @@ def submission_list(form_id):
     if form.form_type == 'CHECKLIST':
         form_fields = []
         breadcrumbs = [_("Checklists"), form.name]
+    elif form.form_type == 'SURVEY':
+        form_fields = []
+        breadcrumbs = [_("Surveys"), form.name]
     else:
         if form.data and 'groups' in form.data:
             form_fields = [
