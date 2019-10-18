@@ -14,8 +14,8 @@ def parse_message(form):
     had_errors = False
     response_dict = None
 
-    (prefix, participant_id, exclamation, responses, comment) = parse_text(
-        message['text'])
+    (prefix, participant_id, exclamation, form_serial, responses, comment) = \
+        parse_text(message['text'])
     if (prefix and participant_id and responses):
         form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
@@ -23,7 +23,8 @@ def parse_message(form):
         if form_doc and response_dict:
             form_data = MultiDict(
                 {'form': form_doc.id, 'participant': participant_id,
-                 'sender': message['sender'], 'comment': comment})
+                 'sender': message['sender'], 'form_serial': form_serial,
+                 'comment': comment})
             form_data.update(response_dict)
             questionnaire = build_questionnaire(form_doc, form_data)
 
@@ -93,6 +94,7 @@ def parse_message(form):
                         had_errors
                     )
                 else:
+                    print(questionnaire.errors)
                     # Save any valid data
                     submission = questionnaire.save()
                     return (
