@@ -7,16 +7,20 @@ from flask import (
     abort, Blueprint, flash, g, redirect, request, send_file, session, url_for)
 from flask_babelex import lazy_gettext as _
 import json
+from flask_security import current_user
 
 from apollo import core, models
+from apollo.core import uploads
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
-from apollo.frontend.forms import make_checklist_init_form
+from apollo.frontend.forms import (
+    make_checklist_init_form, make_survey_init_form)
 from apollo.submissions.qa.query_builder import GRAMMAR
-from apollo.submissions.tasks import init_submissions
-from apollo.utils import generate_identifier
+from apollo.submissions.tasks import init_submissions, init_survey_submissions
+from apollo.users.models import UserUpload
+from apollo.utils import generate_identifier, strip_bom_header
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
@@ -55,6 +59,39 @@ def checklist_init():
     else:
         flash_category = 'danger'
         flash_message = _('Checklists were not created')
+
+    flash(str(flash_message), flash_category)
+    return redirect(url_for('formsview.index'))
+
+
+def survey_init():
+    flash_message = ''
+    flash_category = ''
+    form = make_survey_init_form(g.event)
+
+    if form.validate_on_submit():
+        flash_category = 'info'
+        flash_message = _('Surveys are being created for the Event, Form '
+                          'and Participants you selected')
+
+        user = current_user._get_current_object()
+        upload_file = strip_bom_header(request.files['import_file'])
+        filename = uploads.save(upload_file)
+        upload = UserUpload(
+            deployment_id=g.deployment.id, upload_filename=filename,
+            user_id=user.id)
+        upload.save()
+
+        task_kwargs = {
+            'event_id': form.data['event'],
+            'form_id': form.data['form'],
+            'upload_id': upload.id
+        }
+
+        init_survey_submissions.apply_async(kwargs=task_kwargs)
+    else:
+        flash_category = 'danger'
+        flash_message = _('Surveys were not created')
 
     flash(str(flash_message), flash_category)
     return redirect(url_for('formsview.index'))
@@ -160,6 +197,8 @@ def forms_list(view):
         'forms': models.Form.query.order_by('name').all(),
         'checklist_forms': models.Form.query.filter(
             models.Form.form_type == 'CHECKLIST').order_by('name').all(),
+        'survey_forms': models.Form.query.filter(
+            models.Form.form_type == 'SURVEY').order_by('name').all(),
         'events': models.Event.query.order_by('name').all(),
         'roles': models.ParticipantRole.query.order_by('name').all(),
         'location_types': models.LocationType.query.all(),

@@ -432,6 +432,7 @@ class Submission(BaseModel):
             Submission.deployment_id == self.deployment_id,
             Submission.event_id == self.event_id,
             Submission.form_id == self.form_id,
+            Submission.serial_no == self.serial_no,
             Submission.location_id == self.location_id,
             Submission.submission_type == 'O',
             Submission.id != self.id
@@ -442,6 +443,7 @@ class Submission(BaseModel):
             Submission.deployment_id == self.deployment_id,
             Submission.event_id == self.event_id,
             Submission.form_id == self.form_id,
+            Submission.serial_no == self.serial_no,
             Submission.location_id == self.location_id,
             Submission.submission_type == 'M'
         ).first()

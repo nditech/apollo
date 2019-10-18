@@ -292,9 +292,6 @@ class DummyForm(WTSecureForm):
 
 
 def make_checklist_init_form(event):
-    location_set_id = getattr(event, 'location_set_id', None)
-    participant_set_id = getattr(event, 'participant_set_id', None)
-
     event_choices = [
         (event.id, event.name)
         for event in models.Event.query.all()]
@@ -332,3 +329,28 @@ def make_checklist_init_form(event):
             validators=[validators.input_required()])
 
     return ChecklistInitForm()
+
+
+def make_survey_init_form(event):
+    event_choices = [
+        (event.id, event.name)
+        for event in models.Event.query.all()]
+    form_choices = [
+        (form.id, form.name)
+        for form in models.Form.query.all()
+        if form.form_type == 'SURVEY'
+    ]
+
+    class SurveyInitForm(WTSecureForm):
+        event = SelectField(
+            _('Event'),
+            choices=_make_choices(event_choices, _('Choose Event')),
+            validators=[validators.input_required()])
+        form = SelectField(
+            _('Form'),
+            choices=_make_choices(form_choices, _('Choose Form')),
+            validators=[validators.input_required()])
+        import_file = FileField(
+            _('Choose File'), validators=[validators.InputRequired()])
+
+    return SurveyInitForm()
