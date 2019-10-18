@@ -82,7 +82,7 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <a class="dropdown-item" href="{{ url_for('formsview.edit_form', form_id=form.id) }}">{{ _('Properties') }}</a>
               <a class="dropdown-item" href="{{ url_for('formsview.builder', form_id=form.id) }}">{{ _('Form Builder') }}</a>
-              {% if form.form_type == 'CHECKLIST' -%}
+              {% if form.form_type in ['CHECKLIST', 'SURVEY'] and form.quality_checks_enabled -%}
                 <a class="dropdown-item" href="{{ url_for('formsview.qc', form_id=form.id) }}">{{ _('Quality Assurance') }}</a>
               {%- endif %}
               <a class="dropdown-item" href="{{ url_for('formsview.form_export', form_id=form.id) }}">{{ _('Export') }}</a>

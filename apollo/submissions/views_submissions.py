@@ -1115,18 +1115,20 @@ def submission_version(submission_id, version_id):
 @route(bp, '/dashboard/qa/<form_id>')
 @register_menu(
     bp, 'main.dashboard.qa', _('Quality Assurance'),
-    icon='<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    order=1,
     visible_when=lambda: len(
         get_quality_assurance_form_dashboard_menu(
-            form_type='CHECKLIST', quality_checks_enabled=True)) > 0
+            ['CHECKLIST', 'SURVEY'])) > 0
         and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
-        form_type='CHECKLIST', quality_checks_enabled=True))
+        form_types=['CHECKLIST', 'SURVEY']))
 @login_required
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_dashboard(form_id):
-    form = services.forms.fget_or_404(id=form_id, form_type='CHECKLIST')
+    form = services.forms.get_or_404(
+        models.Form.id == form_id,
+        models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
@@ -1171,23 +1173,24 @@ def quality_assurance_dashboard(form_id):
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),
-    order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
-    visible_when=lambda: len(get_quality_assurance_form_list_menu(
-        form_type='CHECKLIST', quality_checks_enabled=True)) > 0 and
-    permissions.view_quality_assurance.can())
+    order=3,
+    visible_when=lambda: len(
+        get_quality_assurance_form_list_menu(
+            ['CHECKLIST', 'SURVEY'])) > 0
+    and permissions.view_quality_assurance.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
-    icon='<i class="glyphicon glyphicon-ok"></i>', order=1,
+    order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
-        form_type='CHECKLIST', quality_checks_enabled=True))
+        form_types=['CHECKLIST', 'SURVEY']))
 @login_required
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_list(form_id):
     event = g.event
     form = services.forms.get_or_404(
         models.Form.id == form_id,
-        models.Form.form_type == 'CHECKLIST')
+        models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = generate_quality_assurance_filter(form)
 

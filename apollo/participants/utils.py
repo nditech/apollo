@@ -47,20 +47,6 @@ def update_participant_completion_rating(participant):
     participant.save()
 
 
-def lookup_participant(form, participant_id):
-    current_event = getattr(g, 'event', services.events.default())
-    running_events = services.events.overlapping_events(current_event)
-    available_events = set(running_events).intersection(form.events)
-
-    # this assumes that nobody assigns the same participant ID in multiple
-    # concurrent events
-    participant = models.Participant.objects.filter(
-        event__in=available_events,
-        participant_id=participant_id).first()
-
-    return participant
-
-
 def update_phone_contacts(participant, phone):
     phone_contact = next(filter(
         lambda contact: ugly_phone.sub('', phone) == contact.number,
