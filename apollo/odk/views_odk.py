@@ -157,6 +157,16 @@ def submission():
             participant=participant,
             form=form, submission_type='O',
             deployment=form.deployment).first()
+    elif form.form_type == 'SURVEY':
+        try:
+            form_serial = document.xpath('//data/form_serial')[0].text
+            submission = models.Submission.query.filter_by(
+                participant=participant,
+                serial_no=form_serial,
+                form=form, submission_type='O',
+                deployment=form.deployment).first()
+        except IndexError:
+            submission = None
     else:
         event = current_events.join(models.Event.forms).filter(
             models.Event.forms.contains(form),

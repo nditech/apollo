@@ -19,7 +19,7 @@ bp = Blueprint('messaging', __name__)
 
 def lookup_participant(msg, event=None):
     participant = None
-    unused, participant_id, unused, unused, unused = parse_text(msg.text)
+    unused, participant_id, unused, unused, unused, unused = parse_text(msg.text)
 
     evt = getattr(g, 'event', None) or event
 

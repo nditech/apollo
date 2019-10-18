@@ -200,6 +200,17 @@ class Form(Resource):
         model.append(subscriber_id_bind)
         model.append(phone_number_bind)
 
+        if self.form_type == 'SURVEY':
+            description = gettext('Form Serial')
+            path = '/data/form_serial'
+            data.append(etree.Element('form_serial'))
+            model.append(E.bind(nodeset=path, type='string'))
+
+            grp_element = E.group(E.label(description))
+            field_element = E.input(E.label(description), ref='form_serial')
+            grp_element.append(field_element)
+            body.append(grp_element)
+
         if self.data:
             for group in self.data.get('groups'):
                 grp_element = E.group(E.label(group['name']))
