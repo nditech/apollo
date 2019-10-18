@@ -102,6 +102,8 @@ class BaseQuestionnaireForm(wtforms.Form):
     form = wtforms.StringField(
         'Form', validators=[wtforms.validators.required()],
         filters=[lambda data: filter_form(data)])
+    form_serial = wtforms.StringField(
+        'Form Serial', validators=[wtforms.validators.optional()])
     sender = wtforms.StringField('Sender',
                                  validators=[wtforms.validators.required()])
     comment = wtforms.StringField('Comment',

@@ -13,18 +13,27 @@
 <form method="POST">
 <input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
 {{ submission_form.csrf_token() }}
-{%- if form.form_type == 'CHECKLIST' %}
+{%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
 {%- endif %}
 
 <div class="table-responsive {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <table class="table table-bordered">
+  {%- if submission.form.form_type == 'SURVEY' %}
+  <tr>
+    <th class="col-2">{{ _('Form ID') }}</th>
+    <td><strong>{{ submission.serial_no }}</strong></td>
+    {%- for sib in siblings -%}
+    <td><strong>{{ sib.serial_no }}</strong></td>
+    {%- endfor -%}
+  </tr>
+  {%- endif %}
   <tr>
     <th class="col-2">{{ _('Participant') }}</th>
     <td>{% if submission.participant %}<strong>{{ submission.participant.name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.primary_phone %} ({{ submission.participant.primary_phone }}){%- endif %}
     <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
     {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
-    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong> &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% if sib.participant.primary_phone %} ({{ sib.participant.primary_phone }}){% endif %}{% endif %}</td>
     {%- endfor -%}
@@ -33,7 +42,7 @@
   <tr>
     <th>{{ _('Last Contacted') }}</th>
     <td>{% if submission.participant.last_contacted %}<span class="tonow" data-timestamp="{{ submission.participant.last_contacted|timestamp }}">{{ submission.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
-    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant.last_contacted %}<span class="tonow" data-timestamp="{{ sib.participant.last_contacted|timestamp }}">{{ sib.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -42,7 +51,7 @@
   <tr>
     <th>{{ _('Texted Phone') }}</th>
     <td>{% if submission.last_phone_number %}<strong>{{ submission.last_phone_number }}</strong> <a href="javascript:;" {%- if not perms.edit_participant.can() %} style="pointer-events:none"{% endif %} id="toggle_verification" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.last_phone_number }}" data-submission="{{ submission.id }}"><span id="toggle_verification_badge" class="badge badge-pill {% if submission.sender_verified %}badge-success{% else %}badge-warning{% endif %}">{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}</span></a> <div class="spinner-grow spinner-grow-sm inline-block invisible" id="toggle_verification_spinner" role="status"><span class="sr-only">Loading...</span></div>{% else %}{{ _('-') }}{% endif %}</td>
-    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {%- for sib in siblings -%}
     <td>{% if sib.last_phone_number %}<strong>{{ sib.last_phone_number }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span>{% endif %}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -53,7 +62,7 @@
     <td>
       {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}
     </td>
-    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant and sib.participant.other_phones %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -62,13 +71,13 @@
   <tr>
     <th>{{ _('Role') }}</th>
     <td>{{ submission.participant.role|default(_('-'), true) }}</td>
-    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {%- for sib in siblings -%}
     <td>{{ sib.participant.role }}</td>
     {%- endfor -%}
     {%- endif -%}
   </tr>
-  {%- if form.form_type == 'CHECKLIST' -%}
+  {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
   {#- checklist #}
   <tr>
     <th>{{ _('Location') }}</th>
@@ -114,7 +123,7 @@
   </table>
 </div>
 
-{%- if form.form_type == 'CHECKLIST' %}
+{%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
 <ul class="nav nav-tabs justify-content-end mb-n1" id="tabbed" role="tablist">
 {%- with comments_count = submission.comments|count %}
 {%- if comments_count > 0 %}
@@ -157,7 +166,7 @@
   {%- endif %}
 {%- endif %}
 
-{%- if form.form_type == 'CHECKLIST' %}
+{%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
 {%- if master_form.errors or submission_form.errors %}
 <div class="alert alert-danger alert-dismissible fade show mt-4 mb-0" role="alert">
   <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>

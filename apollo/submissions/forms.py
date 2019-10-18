@@ -164,7 +164,7 @@ def make_submission_edit_form_class(event, form):
                             validators=[validators.Optional()]
                         )
 
-    if form.form_type == 'CHECKLIST':
+    if form.form_type in ['CHECKLIST', 'SURVEY']:
         if permissions.edit_submission_quarantine_status.can():
             form_fields['quarantine_status'] = fields.SelectField(
                 choices=models.Submission.QUARANTINE_STATUSES,
