@@ -111,7 +111,6 @@ def get_checklist_form_dashboard_menu(**kwargs):
     return [{'url': url_for('dashboard.checklists',
              form_id=form.id),
              'text': form.name,
-             'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
             for form in [f for f in
                          models.Form.query.filter_by(
