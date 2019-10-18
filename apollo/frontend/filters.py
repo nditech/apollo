@@ -391,6 +391,25 @@ class DateFilter(CharFilter):
         return queryset
 
 
+class SubmissionDateFilter(CharFilter):
+    def queryset_(self, queryset, value):
+        if value:
+            try:
+                timestamp = parse(value, dayfirst=True)
+            except Exception:
+                return queryset.filter(False)
+
+            upper = timestamp.replace(hour=23, minute=59, second=59)
+            lower = timestamp.replace(hour=0, minute=0, second=0)
+
+            return queryset.filter(
+                models.Submission.participant_updated >= lower,
+                models.Submission.participant_updated <= upper
+            )
+
+        return queryset
+
+
 class OnlineStatusFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value and value == '1':
@@ -503,6 +522,7 @@ def generate_quality_assurance_filter(form):
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = AJAXLocationFilter()
+    attributes['date'] = SubmissionDateFilter()
 
     return type(
         'QualityAssuranceFilterSet',

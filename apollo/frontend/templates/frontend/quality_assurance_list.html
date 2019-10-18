@@ -3,9 +3,43 @@
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/quality_assurance_list_macros.html' import submission_header, submission_items -%}
 
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
+{% endblock %}
 {% block scripts %}
+<script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  moment.lang('{{ g.locale }}');
+
+  $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+    format: 'DD-MM-YYYY',
+    widgetPositioning: {
+      horizontal: "{{ 'right' if g.locale.text_direction == 'rtl' else 'left' }}"
+    },
+    allowInputToggle: true,
+    icons: {
+      time: 'far fa-clock',
+      date: 'far fa-calendar',
+      up: 'fas fa-arrow-up',
+      down: 'fas fa-arrow-down',
+      previous: 'fas {{ 'fa-chevron-right' if g.locale.text_direction == 'rtl' else 'fa-chevron-left' }}',
+      next: 'fas {{ 'fa-chevron-left' if g.locale.text_direction == 'rtl' else 'fa-chevron-right' }}',
+      today: 'far fa-calendar-check',
+      clear: 'fas fa-trash',
+      close: 'fas fa-times'
+    }
+  });
+
+  $('.timestamp-moment').each(function (index) {
+    var timestamp = Number($(this).data('timestamp'));
+    if (timestamp !== 0) {
+      var mm = moment.unix(timestamp);
+      this.innerText = mm.format('ll LT');
+    }
+  });
+
   $('#filter_reset').on('click', function() {
     var $form = $(this).parents('form').first();
     $form.find(':input').not('button').each(function() { $(this).val(''); })
