@@ -141,6 +141,7 @@ class BaseQuestionnaireForm(wtforms.Form):
         ignored_fields.extend(self.errors.keys())
         form = self.data.get('form')
         participant = self.data.get('participant')
+        form_serial = self.data.get('form_serial')
 
         if form.form_type == 'CHECKLIST':
             # when searching for the submission, take into cognisance
@@ -150,6 +151,20 @@ class BaseQuestionnaireForm(wtforms.Form):
                 Submission.participant == participant,
                 Submission.form == form,
                 Submission.submission_type == 'O',
+                Submission.event_id.in_(current_event_ids)
+            ).first()
+
+            if self.data.get('comment') and submission and commit:
+                SubmissionComment.create(
+                    submission=submission,
+                    comment=self.data.get('comment'),
+                    deployment=submission.deployment)
+        elif form.form_type == 'SURVEY':
+            submission = Submission.query.filter(
+                Submission.participant == participant,
+                Submission.form == form,
+                Submission.submission_type == 'O',
+                Submission.serial_no == form_serial,
                 Submission.event_id.in_(current_event_ids)
             ).first()
 
