@@ -90,8 +90,7 @@ class Submission(BaseModel):
     serial_no = db.Column(db.String, index=True)
     created = db.Column(db.DateTime, default=current_timestamp)
     updated = db.Column(db.DateTime, onupdate=current_timestamp, index=True)
-    participant_updated = db.Column(
-        db.DateTime, default=current_timestamp, index=True)
+    participant_updated = db.Column(db.DateTime, index=True)
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
     verification_status = db.Column(
