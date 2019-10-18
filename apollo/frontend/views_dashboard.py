@@ -48,14 +48,14 @@ def main_dashboard(form_id=None):
             Form.events
         ).filter(
             Form.events.contains(event),
-            Form.form_type == 'CHECKLIST'
+            Form.form_type.in_(['CHECKLIST', 'SURVEY'])
         ).order_by('name').first()
     else:
         form = Form.query.join(
             Form.events
         ).filter(
             Form.events.contains(event),
-            Form.form_type == 'CHECKLIST',
+            Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.id == form_id).first_or_404()
 
     filter_class = make_dashboard_filter(event)
@@ -178,21 +178,27 @@ def main_dashboard(form_id=None):
 @route(bp, '/')
 @register_menu(
     bp, 'main.dashboard',
-    _('Dashboard'), order=0,
-    icon='<i class="glyphicon glyphicon-user glyphicon-home"></i>')
+    _('Dashboard'), order=0)
 @login_required
 def index():
     return main_dashboard()
 
 
-@route(bp, '/dashboard/checklists/<form_id>')
+@route(bp, '/dashboard/<form_id>')
 @register_menu(
     bp, 'main.dashboard.checklists', _('Checklists'),
-    icon='<i class="glyphicon glyphicon-check"></i>', order=0,
+    order=0,
     visible_when=lambda: len(
         get_checklist_form_dashboard_menu(form_type='CHECKLIST')) > 0,
     dynamic_list_constructor=partial(
         get_checklist_form_dashboard_menu, form_type='CHECKLIST'))
+@register_menu(
+    bp, 'main.dashboard.surveys', _('Surveys'),
+    order=1,
+    visible_when=lambda: len(
+        get_checklist_form_dashboard_menu(form_type='SURVEY')) > 0,
+    dynamic_list_constructor=partial(
+        get_checklist_form_dashboard_menu, form_type='SURVEY'))
 @login_required
 def checklists(form_id=None):
     return main_dashboard(form_id)
