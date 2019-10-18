@@ -76,20 +76,26 @@ def verify_pw(username, password):
 
 @route(bp, '/submissions/<int:form_id>', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'main.checklists',
-    _('Checklists'), order=1, icon='<i class="glyphicon glyphicon-check"></i>',
+    bp, 'main.checklists', _('Checklists'), order=1,
     visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
-@register_menu(bp, 'main.checklists.forms', _('Checklists'),
-               dynamic_list_constructor=partial(
-               get_form_list_menu, form_type='CHECKLIST'))
 @register_menu(
-    bp, 'main.incidents',
-    _('Critical Incidents'),
-    order=2, icon='<i class="glyphicon glyphicon-check"></i>',
+    bp, 'main.checklists.forms', _('Checklists'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='CHECKLIST'))
+@register_menu(
+    bp, 'main.incidents', _('Critical Incidents'), order=2,
     visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
-@register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
-               dynamic_list_constructor=partial(
-               get_form_list_menu, form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.incidents.forms', _('Critical Incidents'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.surveys', _('Surveys'), order=3,
+    visible_when=lambda: len(get_form_list_menu(form_type='SURVEY')) > 0)
+@register_menu(
+    bp, 'main.surveys.forms', _('Surveys'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='SURVEY'))
 @login_required
 def submission_list(form_id):
     event = g.event
@@ -501,16 +507,19 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    breadcrumbs = [
-        _('Edit Incident') if questionnaire_form.form_type == 'INCIDENT' else
-        _('Edit Checklist')]
+    if questionnaire_form.form_type == 'INCIDENT':
+        breadcrumbs = [_('Edit Incident')]
+    elif questionnaire_form.form_type == 'SURVEY':
+        breadcrumbs = [_('Edit Survey')]
+    else:
+        breadcrumbs = [_('Edit Checklist')]
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = models.LocationType.query.filter(
         models.LocationType.location_set_id==event.location_set_id,  # noqa
         models.LocationType.is_administrative==True)  # noqa
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
-    if questionnaire_form.form_type == 'CHECKLIST':
+    if questionnaire_form.form_type in ['CHECKLIST', 'SURVEY']:
         OutboundMsg = sa.orm.aliased(models.Message, name='outbound')
 
         messages_qs = models.Message.query.filter(

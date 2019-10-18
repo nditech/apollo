@@ -116,7 +116,7 @@ def init_survey_submissions(self, event_id, form_id, upload_id):
                 submission.save()
 
             master = Submission.query.filter(
-                Submission.form == form, Submission.participant_id == None,
+                Submission.form == form, Submission.participant_id == None,  # noqa
                 Submission.location == participant.location,
                 Submission.deployment == event.deployment,
                 Submission.event == event, Submission.serial_no == serial,
