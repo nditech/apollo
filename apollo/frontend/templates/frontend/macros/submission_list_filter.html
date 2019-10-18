@@ -55,6 +55,17 @@
                     <label for="{{ filter_form.online_status.id }}" class="sr-only">{{ filter_form.online_status.label.text }}</label>
                     {{ filter_form.online_status(class_='form-control custom-select') }}
                 </div>
+                {%- if form.show_moment %}
+                <div class="col-md-2 mb-2">
+                    <div class="input-group date" id="datepicker" data-target-input="nearest">
+                        <label for="{{ filter_form.date.id }}" class="sr-only">{{ filter_form.date.label.text }}</label>
+                        {{ filter_form.date(class_="form-control datetimepicker-input", placeholder=_("Date"), **{'data-target': '#datepicker'}) }}
+                        <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                {%- endif %}
                 <div class="col-md-2 mb-2">
                     <div class="d-flex flex-row">
                         <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>
