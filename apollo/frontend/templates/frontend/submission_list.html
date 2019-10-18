@@ -6,11 +6,13 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
@@ -18,6 +20,25 @@ $(function () {
   var marker = undefined;
   var map = undefined;
   LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
+
+  $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+    format: 'DD-MM-YYYY',
+    widgetPositioning: {
+      horizontal: "{{ 'right' if g.locale.text_direction == 'rtl' else 'left' }}"
+    },
+    allowInputToggle: true,
+    icons: {
+      time: 'far fa-clock',
+      date: 'far fa-calendar',
+      up: 'fas fa-arrow-up',
+      down: 'fas fa-arrow-down',
+      previous: 'fas {{ 'fa-chevron-right' if g.locale.text_direction == 'rtl' else 'fa-chevron-left' }}',
+      next: 'fas {{ 'fa-chevron-left' if g.locale.text_direction == 'rtl' else 'fa-chevron-right' }}',
+      today: 'far fa-calendar-check',
+      clear: 'fas fa-trash',
+      close: 'fas fa-times'
+    }
+  });
 
   $('.timestamp-moment').each(function (index) {
     var timestamp = Number($(this).data('timestamp'));

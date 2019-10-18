@@ -2,6 +2,8 @@
 from operator import itemgetter
 
 from cgi import escape
+from dateutil.parser import parse
+from dateutil.tz import gettz, UTC
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import Integer, and_, or_
 from sqlalchemy.dialects.postgresql import array
@@ -13,6 +15,9 @@ from wtforms_alchemy.fields import QuerySelectField
 from apollo import models, services
 from apollo.core import BooleanFilter, CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
+from apollo.settings import TIMEZONE
+
+APP_TZ = gettz(TIMEZONE)
 
 
 class TagLookupFilter(ChoiceFilter):
@@ -249,6 +254,30 @@ class OnlineStatusFilter(ChoiceFilter):
         return (None, None)
 
 
+class DateFilter(CharFilter):
+    def filter(self, query, value, **kwargs):
+        if value:
+            try:
+                dt = parse(value, dayfirst=True)
+            except (OverflowError, ValueError):
+                return (None, None)
+
+            dt = dt.replace(tzinfo=APP_TZ).astimezone(
+                UTC).replace(tzinfo=None)
+            upper_bound = dt.replace(hour=23, minute=59, second=59)
+            lower_bound = dt.replace(hour=0, minute=0, second=0)
+
+            return (
+                and_(
+                    models.Submission.participant_updated >= lower_bound,
+                    models.Submission.participant_updated <= upper_bound
+                ),
+                None
+            )
+
+        return (None, None)
+
+
 class LocationSelectWidget(widgets.Select):
     @classmethod
     def render_option(cls, value, label, selected, **kwargs):
@@ -405,6 +434,7 @@ def make_submission_list_filter(event, form):
             ('1', _('No Signal'))
         )
     )
+    attributes['date'] = DateFilter()
 
     return type(
         'SubmissionFilterSet',
