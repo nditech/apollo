@@ -16,7 +16,7 @@
   </nav>
 </div>
 
-<form class="form-horizontal" method="POST">
+<form class="form-horizontal" id="formCreateForm" method="POST">
   <div class="row {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
     <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
       <div class="card border-light bg-light mt-2">
@@ -104,6 +104,10 @@
     show_relevant_options();
 
     $('#form_type').change(show_relevant_options);
+
+    document.getElementById('formCreateForm').addEventListener('submit', function () {
+      document.getElementById('saveBtn').disabled = true;
+    });
   });
 </script>}
 {%- endblock %}
