@@ -68,7 +68,8 @@ events_forms = db.Table(
 class Form(Resource):
     FORM_TYPES = (
         ('CHECKLIST', _('Checklist Form')),
-        ('INCIDENT', _('Incident Form'))
+        ('INCIDENT', _('Incident Form')),
+        ('SURVEY', _('Survey Form'))
     )
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
@@ -95,6 +96,9 @@ class Form(Resource):
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
     vote_shares = db.Column(JSONB)
+    show_moment = db.Column(db.Boolean, default=False)
+    show_map = db.Column(db.Boolean, default=False)
+    show_progress = db.Column(db.Boolean, default=False)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
@@ -196,65 +200,77 @@ class Form(Resource):
         model.append(subscriber_id_bind)
         model.append(phone_number_bind)
 
-        for group in self.data['groups']:
-            grp_element = E.group(E.label(group['name']))
-            for field in group['fields']:
-                data.append(etree.Element(field['tag']))
-                path = '/data/{}'.format(field['tag'])
+        if self.form_type == 'SURVEY':
+            description = gettext('Form Serial')
+            path = '/data/form_serial'
+            data.append(etree.Element('form_serial'))
+            model.append(E.bind(nodeset=path, type='string'))
 
-                field_type = field.get('type')
-                if field_type == 'boolean':
-                    field_element = E.select1(
-                            E.label(field['description']),
-                            E.item(E.label('True'), E.value('1')),
-                            E.item(E.label('False'), E.value('0')),
-                            ref=field['tag']
-                        )
-                    model.append(E.bind(nodeset=path, type='select1'))
-                elif field_type == 'location':
-                    field_element = E.input(
-                        E.label(field['description']), ref=field['tag'])
-                    model.append(E.bind(nodeset=path, type='geopoint'))
-                elif field_type in ('comment', 'string'):
-                    field_element = E.input(
-                            E.label(field['description']),
-                            ref=field['tag']
-                        )
-                    model.append(E.bind(nodeset=path, type='string'))
-                elif field_type == 'integer':
-                    field_element = E.input(
-                        E.label(field['description']),
-                        ref=field['tag']
-                    )
-                    model.append(E.bind(
-                        nodeset=path, type='integer',
-                        constraint='. >= {} and . <= {}'.format(
-                            field.get('min', 0),
-                            field.get('max', 9999)
-                        )))
-                elif field_type in ('select', 'multiselect', 'category'):
-                    sorted_options = sorted(field.get('options').items(),
-                                            key=itemgetter(1))
-                    if field_type == 'select' or field_type == 'category':
-                        element_factory = E.select1
-                        model.append(E.bind(nodeset=path, type='select1'))
-                    else:
-                        element_factory = E.select
-                        model.append(E.bind(nodeset=path, type='select'))
-
-                    field_element = element_factory(
-                        E.label(field['description']),
-                        ref=field['tag']
-                    )
-                    for key, value in sorted_options:
-                        field_element.append(
-                            E.item(E.label(key), E.value(str(value)))
-                        )
-                else:
-                    continue
-
-                grp_element.append(field_element)
+            grp_element = E.group(E.label(description))
+            field_element = E.input(E.label(description), ref='form_serial')
+            grp_element.append(field_element)
             body.append(grp_element)
+
+        if self.data:
+            for group in self.data.get('groups'):
+                grp_element = E.group(E.label(group['name']))
+                for field in group['fields']:
+                    data.append(etree.Element(field['tag']))
+                    path = '/data/{}'.format(field['tag'])
+
+                    field_type = field.get('type')
+                    if field_type == 'boolean':
+                        field_element = E.select1(
+                                E.label(field['description']),
+                                E.item(E.label('True'), E.value('1')),
+                                E.item(E.label('False'), E.value('0')),
+                                ref=field['tag']
+                            )
+                        model.append(E.bind(nodeset=path, type='select1'))
+                    elif field_type == 'location':
+                        field_element = E.input(
+                            E.label(field['description']), ref=field['tag'])
+                        model.append(E.bind(nodeset=path, type='geopoint'))
+                    elif field_type in ('comment', 'string'):
+                        field_element = E.input(
+                                E.label(field['description']),
+                                ref=field['tag']
+                            )
+                        model.append(E.bind(nodeset=path, type='string'))
+                    elif field_type == 'integer':
+                        field_element = E.input(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                        model.append(E.bind(
+                            nodeset=path, type='integer',
+                            constraint='. >= {} and . <= {}'.format(
+                                field.get('min', 0),
+                                field.get('max', 9999)
+                            )))
+                    elif field_type in ('select', 'multiselect', 'category'):
+                        sorted_options = sorted(field.get('options').items(),
+                                                key=itemgetter(1))
+                        if field_type == 'select' or field_type == 'category':
+                            element_factory = E.select1
+                            model.append(E.bind(nodeset=path, type='select1'))
+                        else:
+                            element_factory = E.select
+                            model.append(E.bind(nodeset=path, type='select'))
+
+                        field_element = element_factory(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                        for key, value in sorted_options:
+                            field_element.append(
+                                E.item(E.label(key), E.value(str(value)))
+                            )
+                    else:
+                        continue
+
+                    grp_element.append(field_element)
+                body.append(grp_element)
 
         # hard coding a location question here until the form builder
         # gets updated. please remove once the form builder supports

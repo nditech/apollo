@@ -14,8 +14,8 @@ def parse_text(text):
     form to process the responses in the text.
     2. Participant_id: The participant_id is used to identify the participant
     contributing this submission.
-    3. Exclamation: The exclamation is used as a guide in searching for the form
-    to process the responses. It will contain the value of True or False.
+    3. Exclamation: The exclamation is used as a guide in searching for the
+    form to process the responses. It will contain the value of True or False.
     Exlamation isn't used in all cases in finding the form to
     process the responses it is only used when the value is explicitly
     True.
@@ -32,12 +32,13 @@ def parse_text(text):
     from flask import current_app
     config = current_app.config
 
-    prefix = participant_id = exclamation = responses = comment = None
+    prefix = participant_id = exclamation = form_serial = responses = comment = None  # noqa
     text = str(text)
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
-        '(?P<exclamation>!?)(?P<responses>[A-Z0-9\s]*)$', re.I|re.M)
+        '(?P<exclamation>!?)(?:X(?P<form_serial>\d+))?(?P<responses>[A-Z0-9\s]*)$',  # noqa
+        re.I | re.M)
 
     at_position = text.find("@")
 
@@ -77,10 +78,12 @@ def parse_text(text):
         prefix = match.group('prefix') or None
         participant_id = match.group('participant_id') or None
         exclamation = True if match.group('exclamation') else False
+        form_serial = match.group('form_serial') or None
         responses = match.group('responses') or None
     comment = text[at_position + 1:].strip() if at_position != -1 else None
 
-    return (prefix, participant_id, exclamation, responses, comment)
+    return (
+        prefix, participant_id, exclamation, form_serial, responses, comment)
 
 
 def parse_responses(responses_text, form):

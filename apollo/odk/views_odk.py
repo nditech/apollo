@@ -16,6 +16,7 @@ from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
 from apollo.odk.utils import make_message_text
 from apollo.services import messages
+from apollo.utils import current_timestamp
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -155,8 +156,17 @@ def submission():
         submission = models.Submission.query.filter_by(
             participant=participant,
             form=form, submission_type='O',
-            # event__in=services.events.overlapping_events(g.event),
             deployment=form.deployment).first()
+    elif form.form_type == 'SURVEY':
+        try:
+            form_serial = document.xpath('//data/form_serial')[0].text
+            submission = models.Submission.query.filter_by(
+                participant=participant,
+                serial_no=form_serial,
+                form=form, submission_type='O',
+                deployment=form.deployment).first()
+        except IndexError:
+            submission = None
     else:
         event = current_events.join(models.Event.forms).filter(
             models.Event.forms.contains(form),
@@ -242,6 +252,7 @@ def submission():
         pass
 
     submission.data = data
+    submission.participant_updated = current_timestamp()
     if (geopoint_lat is not None) and (geopoint_lon is not None):
         submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
             longitude=geopoint_lon, latitude=geopoint_lat)

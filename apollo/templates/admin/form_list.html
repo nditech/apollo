@@ -19,7 +19,8 @@
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
       <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Form') }}</a>
-      <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Create Checklists') }}</a>
+      <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Create Checklists') }}</a>
+      <a class="btn btn-success" href="#" data-toggle="modal" data-target="#surveyModal">{{ _('Create Surveys') }}</a>
     </div>
   </div>
 </div>
@@ -71,7 +72,7 @@
     {% for form in forms %}
       <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
         <td>{{ form.name }}</td>
-        <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
+        <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% elif form.form_type == 'SURVEY' %}badge-success{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
         <td class="align-middle">
           <div class="dropdown">
             <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -81,7 +82,7 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <a class="dropdown-item" href="{{ url_for('formsview.edit_form', form_id=form.id) }}">{{ _('Properties') }}</a>
               <a class="dropdown-item" href="{{ url_for('formsview.builder', form_id=form.id) }}">{{ _('Form Builder') }}</a>
-              {% if form.form_type == 'CHECKLIST' -%}
+              {% if form.form_type in ['CHECKLIST', 'SURVEY'] and form.quality_checks_enabled -%}
                 <a class="dropdown-item" href="{{ url_for('formsview.qc', form_id=form.id) }}">{{ _('Quality Assurance') }}</a>
               {%- endif %}
               <a class="dropdown-item" href="{{ url_for('formsview.form_export', form_id=form.id) }}">{{ _('Export') }}</a>
@@ -120,6 +121,28 @@
     </div>
   </div>
 </form>
+
+<form class="form-horizontal" method="POST" action="{{ url_for('formsview.init_surveys') }}" enctype="multipart/form-data" id="surveyInitForm">
+  <div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="surveyModal" tabindex="-1" role="dialog" aria-labelledby="surveyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="surveyModalLabel" class="modal-title">{{ _('Create Surveys') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="{{ _('Close') }}">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <create-surveys-modal-body />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
+          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Create Surveys') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
 </div>
 
 <form action="{{ url_for('formsview.import_form') }}" enctype="multipart/form-data" method="post">
@@ -136,7 +159,7 @@
           {{ form_import_form.hidden_tag() }}
           <div class="custom-file">
             <input type="file" class="custom-file-input upload" id="import_file" name="import_file">
-            <label for="import_file" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+            <label for="import_file" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose File') }}</label>
             <small class="form-text text-muted" id="import_file_help_text">{{ _('Only .xls and .xlsx files') }}</small>
           </div>
         </div>
@@ -204,7 +227,7 @@
     computed: {
       forms: function() {
         var event = this.event;
-        return this.$parent.forms.filter(function (form) {
+        return this.$parent.checklist_forms.filter(function (form) {
           return form.events.indexOf(event) == -1 ? false : true;
         });
       },
@@ -222,11 +245,62 @@
       },
     }
   });
+
+  Vue.component('create-surveys-modal-body', {
+    template: `
+    <div>
+      {{ init_form.hidden_tag() }}
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="event">{{ init_form.event.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="event" class="form-control custom-select" name="event" v-model="event">
+            <option value="">{{ _('Choose Event') }}</option>
+            <option v-for="event in this.$parent.events" :value="event.id" :key="event.id">{{ '{{' }} event.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="form">{{ init_form.form.label.text }}</label>
+        <div class="col-sm-8">
+          <select id="form" class="form-control custom-select" name="form">
+            <option value="">{{ _('Choose Form') }}</option>
+            <option v-for="form in forms" :value="form.id" :key="form.id">{{ '{{' }} form.name {{ '}}' }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row align-items-center">
+        <label class="col-sm-4 control-label text-right mb-0" for="form">{{ _('Participants') }}</label>
+        <div class="col-sm-8">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input upload" id="import_file" name="import_file">
+            <label for="import_file" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose File') }}</label>
+            <small class="form-text text-muted" id="import_file_help_text">{{ _('Accepts CSV or Excel files with columns for Participant ID (named ID) and Form Serial (named SERIAL).') }}<br><a href="{{ url_for('static', filename='docs/survey.csv') }}">{{ _('Download Template') }}</a></small>
+          </div>
+        </div>
+      </div>
+    </div>
+    `,
+    data: function() {
+      return {
+        event: '',
+      }
+    },
+    computed: {
+      forms: function() {
+        var event = this.event;
+        return this.$parent.survey_forms.filter(function (form) {
+          return form.events.indexOf(event) == -1 ? false : true;
+        });
+      },
+    }
+  });
+
   var vm = new Vue({
     el: '#app',
     data: {
       events: [{% for event in events %}{id:{{ event.id }}, name:'{{ event.name }}'},{% endfor %}],
-      forms: [{% for form in checklist_forms %}{id:{{ form.id }}, name:'{{ form.name }}', events:[{{ form.events|join(', ', 'id') }}]},{% endfor %}],
+      checklist_forms: [{% for form in checklist_forms %}{id:{{ form.id }}, name:'{{ form.name }}', events:[{{ form.events|join(', ', 'id') }}]},{% endfor %}],
+      survey_forms: [{% for form in survey_forms %}{id:{{ form.id }}, name:'{{ form.name }}', events:[{{ form.events|join(', ', 'id') }}]},{% endfor %}],
       roles: [{% for role in roles %}{id:{{ role.id }}, name:'{{ role.name }}', events:[{{ role.participant_set.events|join(', ', 'id') }}]},{% endfor %}],
       location_types: [{% for location_type in location_types %}{id:{{ location_type.id }}, name:'{{ location_type.name }}', events:[{{ location_type.location_set.events|join(',', 'id') }}]},{% endfor %}],
     },

@@ -86,9 +86,11 @@ class Submission(BaseModel):
         'location.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB, default={})
     extra_data = db.Column(JSONB)
-    submission_type = db.Column(ChoiceType(SUBMISSION_TYPES))
+    submission_type = db.Column(ChoiceType(SUBMISSION_TYPES), index=True)
+    serial_no = db.Column(db.String, index=True)
     created = db.Column(db.DateTime, default=current_timestamp)
-    updated = db.Column(db.DateTime, onupdate=current_timestamp)
+    updated = db.Column(db.DateTime, onupdate=current_timestamp, index=True)
+    participant_updated = db.Column(db.DateTime, index=True)
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
     verification_status = db.Column(
@@ -429,6 +431,7 @@ class Submission(BaseModel):
             Submission.deployment_id == self.deployment_id,
             Submission.event_id == self.event_id,
             Submission.form_id == self.form_id,
+            Submission.serial_no == self.serial_no,
             Submission.location_id == self.location_id,
             Submission.submission_type == 'O',
             Submission.id != self.id
@@ -439,6 +442,7 @@ class Submission(BaseModel):
             Submission.deployment_id == self.deployment_id,
             Submission.event_id == self.event_id,
             Submission.form_id == self.form_id,
+            Submission.serial_no == self.serial_no,
             Submission.location_id == self.location_id,
             Submission.submission_type == 'M'
         ).first()

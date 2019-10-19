@@ -111,7 +111,6 @@ def get_checklist_form_dashboard_menu(**kwargs):
     return [{'url': url_for('dashboard.checklists',
              form_id=form.id),
              'text': form.name,
-             'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
             for form in [f for f in
                          models.Form.query.filter_by(
@@ -140,7 +139,7 @@ def get_concurrent_events_list_menu():
             for event in events_list]
 
 
-def get_quality_assurance_form_list_menu(**kwargs):
+def get_quality_assurance_form_list_menu(form_types):
     """Retrieves a list of forms that have the verification flag set
 
     :param form_type: The form type for the forms to be retrieved
@@ -149,11 +148,11 @@ def get_quality_assurance_form_list_menu(**kwargs):
     return [{'url': url_for('submissions.quality_assurance_list',
              form_id=form.id),
              'text': form.name,
-             'icon': '<i class="glyphicon glyphicon-ok"></i>',
              'visible': True}
             for form in [f for f in
-                         models.Form.query.filter_by(
-                             **kwargs
+                         models.Form.query.filter(
+                             models.Form.form_type.in_(form_types),
+                             models.Form.quality_checks_enabled == True  # noqa
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
                          ).order_by('name')
@@ -165,7 +164,7 @@ def get_quality_assurance_form_list_menu(**kwargs):
             ]
 
 
-def get_quality_assurance_form_dashboard_menu(**kwargs):
+def get_quality_assurance_form_dashboard_menu(form_types):
     """Retrieves a list of forms that have the verification flag set
 
     :param form_type: The form type for the forms to be retrieved
@@ -174,11 +173,11 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
     return [{'url': url_for('submissions.quality_assurance_dashboard',
              form_id=form.id),
              'text': form.name,
-             'icon': '<i class="glyphicon glyphicon-tasks"></i>',
              'visible': True}
             for form in [f for f in
-                         models.Form.query.filter_by(
-                             **kwargs
+                         models.Form.query.filter(
+                             models.Form.form_type.in_(form_types),
+                             models.Form.quality_checks_enabled == True  # noqa
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
                          ).order_by('name')

@@ -76,20 +76,26 @@ def verify_pw(username, password):
 
 @route(bp, '/submissions/<int:form_id>', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'main.checklists',
-    _('Checklists'), order=1, icon='<i class="glyphicon glyphicon-check"></i>',
+    bp, 'main.checklists', _('Checklists'), order=1,
     visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
-@register_menu(bp, 'main.checklists.forms', _('Checklists'),
-               dynamic_list_constructor=partial(
-               get_form_list_menu, form_type='CHECKLIST'))
 @register_menu(
-    bp, 'main.incidents',
-    _('Critical Incidents'),
-    order=2, icon='<i class="glyphicon glyphicon-check"></i>',
+    bp, 'main.checklists.forms', _('Checklists'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='CHECKLIST'))
+@register_menu(
+    bp, 'main.incidents', _('Critical Incidents'), order=2,
     visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
-@register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
-               dynamic_list_constructor=partial(
-               get_form_list_menu, form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.incidents.forms', _('Critical Incidents'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.surveys', _('Surveys'), order=3,
+    visible_when=lambda: len(get_form_list_menu(form_type='SURVEY')) > 0)
+@register_menu(
+    bp, 'main.surveys.forms', _('Surveys'),
+    dynamic_list_constructor=partial(
+        get_form_list_menu, form_type='SURVEY'))
 @login_required
 def submission_list(form_id):
     event = g.event
@@ -311,6 +317,13 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
+    elif request.args.get('sort_by') == 'fid':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Submission.serial_no))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.serial_no)
     elif request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -355,6 +368,13 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.PhoneContact.number)
+    elif request.args.get('sort_by') == 'moment':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Submission.participant_updated))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.participant_updated)
     else:
         queryset = queryset.order_by(
             models.Location.code.cast(BigInteger),
@@ -386,6 +406,9 @@ def submission_list(form_id):
     if form.form_type == 'CHECKLIST':
         form_fields = []
         breadcrumbs = [_("Checklists"), form.name]
+    elif form.form_type == 'SURVEY':
+        form_fields = []
+        breadcrumbs = [_("Surveys"), form.name]
     else:
         if form.data and 'groups' in form.data:
             form_fields = [
@@ -484,16 +507,19 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    breadcrumbs = [
-        _('Edit Incident') if questionnaire_form.form_type == 'INCIDENT' else
-        _('Edit Checklist')]
+    if questionnaire_form.form_type == 'INCIDENT':
+        breadcrumbs = [_('Edit Incident')]
+    elif questionnaire_form.form_type == 'SURVEY':
+        breadcrumbs = [_('Edit Survey')]
+    else:
+        breadcrumbs = [_('Edit Checklist')]
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = models.LocationType.query.filter(
         models.LocationType.location_set_id==event.location_set_id,  # noqa
         models.LocationType.is_administrative==True)  # noqa
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
-    if questionnaire_form.form_type == 'CHECKLIST':
+    if questionnaire_form.form_type in ['CHECKLIST', 'SURVEY']:
         OutboundMsg = sa.orm.aliased(models.Message, name='outbound')
 
         messages_qs = models.Message.query.filter(
@@ -1089,18 +1115,20 @@ def submission_version(submission_id, version_id):
 @route(bp, '/dashboard/qa/<form_id>')
 @register_menu(
     bp, 'main.dashboard.qa', _('Quality Assurance'),
-    icon='<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    order=1,
     visible_when=lambda: len(
         get_quality_assurance_form_dashboard_menu(
-            form_type='CHECKLIST', quality_checks_enabled=True)) > 0
+            ['CHECKLIST', 'SURVEY'])) > 0
         and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
-        form_type='CHECKLIST', quality_checks_enabled=True))
+        form_types=['CHECKLIST', 'SURVEY']))
 @login_required
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_dashboard(form_id):
-    form = services.forms.fget_or_404(id=form_id, form_type='CHECKLIST')
+    form = services.forms.get_or_404(
+        models.Form.id == form_id,
+        models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
@@ -1145,23 +1173,24 @@ def quality_assurance_dashboard(form_id):
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),
-    order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
-    visible_when=lambda: len(get_quality_assurance_form_list_menu(
-        form_type='CHECKLIST', quality_checks_enabled=True)) > 0 and
-    permissions.view_quality_assurance.can())
+    order=3,
+    visible_when=lambda: len(
+        get_quality_assurance_form_list_menu(
+            ['CHECKLIST', 'SURVEY'])) > 0
+    and permissions.view_quality_assurance.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
-    icon='<i class="glyphicon glyphicon-ok"></i>', order=1,
+    order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
-        form_type='CHECKLIST', quality_checks_enabled=True))
+        form_types=['CHECKLIST', 'SURVEY']))
 @login_required
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_list(form_id):
     event = g.event
     form = services.forms.get_or_404(
         models.Form.id == form_id,
-        models.Form.form_type == 'CHECKLIST')
+        models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = generate_quality_assurance_filter(form)
 

@@ -10,7 +10,7 @@ from flask_wtf.file import FileField
 import wtforms
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
-from .. import services, utils
+from .. import services
 from ..core import db
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
@@ -19,6 +19,7 @@ from ..submissions.models import (
 from ..participants.models import Participant, PhoneContact
 from ..deployments.models import Event
 from ..formsframework.models import Form
+from ..utils import current_timestamp
 
 ugly_phone = re.compile('[^0-9]*')
 
@@ -101,6 +102,8 @@ class BaseQuestionnaireForm(wtforms.Form):
     form = wtforms.StringField(
         'Form', validators=[wtforms.validators.required()],
         filters=[lambda data: filter_form(data)])
+    form_serial = wtforms.StringField(
+        'Form Serial', validators=[wtforms.validators.optional()])
     sender = wtforms.StringField('Sender',
                                  validators=[wtforms.validators.required()])
     comment = wtforms.StringField('Comment',
@@ -140,6 +143,7 @@ class BaseQuestionnaireForm(wtforms.Form):
         ignored_fields.extend(self.errors.keys())
         form = self.data.get('form')
         participant = self.data.get('participant')
+        form_serial = self.data.get('form_serial')
 
         if form.form_type == 'CHECKLIST':
             # when searching for the submission, take into cognisance
@@ -149,6 +153,20 @@ class BaseQuestionnaireForm(wtforms.Form):
                 Submission.participant == participant,
                 Submission.form == form,
                 Submission.submission_type == 'O',
+                Submission.event_id.in_(current_event_ids)
+            ).first()
+
+            if self.data.get('comment') and submission and commit:
+                SubmissionComment.create(
+                    submission=submission,
+                    comment=self.data.get('comment'),
+                    deployment=submission.deployment)
+        elif form.form_type == 'SURVEY':
+            submission = Submission.query.filter(
+                Submission.participant == participant,
+                Submission.form == form,
+                Submission.submission_type == 'O',
+                Submission.serial_no == form_serial,
                 Submission.event_id.in_(current_event_ids)
             ).first()
 
@@ -171,7 +189,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                 form=form,
                 participant=participant,
                 location=participant.location,
-                created=utils.current_timestamp(),
+                created=current_timestamp(),
                 event=event,
                 deployment_id=event.deployment_id)
             if self.data.get('comment'):
@@ -239,16 +257,18 @@ class BaseQuestionnaireForm(wtforms.Form):
                         phone_contact.save()
 
                 if commit:
-                    submission.data = data
-                    submission.last_phone_number = phone_num
                     if submission.id is None:
                         # for a fresh submission, everything will get saved
+                        submission.data = data
+                        submission.last_phone_number = phone_num
+                        submission.participant_updated = current_timestamp()
                         submission.save()
                     else:
                         # for an existing submission, we need an update,
                         # otherwise the JSONB field won't get persisted
                         update_params['data'] = data
                         update_params['last_phone_number'] = phone_num
+                        update_params['participant_updated'] = current_timestamp()  # noqa
                         services.submissions.find(
                             id=submission.id
                         ).update(update_params, synchronize_session=False)
@@ -346,6 +366,15 @@ class FormForm(SecureForm):
     quality_checks_enabled = wtforms.BooleanField(
         _('QA Enabled'),
         description=_('Whether to enable quality assurance or not.'))
+    show_map = wtforms.BooleanField(
+        _('Show Map View'),
+        description=_('Whether to display the map view for submissions or not.'))  # noqa
+    show_moment = wtforms.BooleanField(
+        _('Show Moment Column'),
+        description=_('Enabling this option will show the date and time for the submission in the list view.'))  # noqa
+    show_progress = wtforms.BooleanField(
+        _('Show Daily Progress'),
+        description=_('Enabling this option will show the daily progress for this form on the dashboard.'))  # noqa
     accredited_voters_tag = wtforms.SelectField(
         _('Accredited Voters Field'), choices=[('', '')])
     blank_votes_tag = wtforms.SelectField(

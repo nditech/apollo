@@ -122,13 +122,26 @@ class MessageParsingTest(FlaskTestCase):
 
     def test_parse_invalid_message(self):
         sample_text = '2014'
-        prefix, participant_id, exclamation, responses, comment = parse_text(
-            sample_text)
+        prefix, participant_id, exclamation, form_serial, responses, comment = \
+            parse_text(sample_text)
 
         self.assertIsNone(prefix)
         self.assertIsNone(participant_id, sample_text)
         self.assertIsNone(exclamation)
+        self.assertIsNone(form_serial)
         self.assertIsNone(responses)
+        self.assertIsNone(comment)
+
+    def test_parse_survey_message(self):
+        sample_text = 'TC111111X321AA2'
+        prefix, participant_id, exclamation, form_serial, responses, comment = \
+            parse_text(sample_text)
+
+        self.assertEqual(prefix, 'TC')
+        self.assertEqual(participant_id, '111111')
+        self.assertFalse(exclamation)
+        self.assertEqual(form_serial, '321')
+        self.assertEqual(responses, 'AA2')
         self.assertIsNone(comment)
 
     def test_parse_comment_message(self):
@@ -148,7 +161,7 @@ class MessageParsingTest(FlaskTestCase):
                         test_participant_id, test_comment)
 
                     result = parse_text(sample_text)
-                    (prefix, participant_id, exclamation, responses,
+                    (prefix, participant_id, exclamation, form_serial, responses,
                         comment) = result
 
                     self.assertEqual(prefix, 'XA')

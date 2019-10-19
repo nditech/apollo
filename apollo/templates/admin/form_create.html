@@ -27,8 +27,8 @@
           {{ form.hidden_tag() }}
           {%- for field in form -%}
           {%- if field.type != 'CSRFTokenField' -%}
-          <div class="form-group row align-items-center">
-            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled'] %}
+          <div class="form-group row align-items-center {{- " for-checklist" if field.name in ['untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_moment', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_voters_tag', 'vote_shares'] }}{{- " for-survey" if field.name in ['untrack_data_conflicts', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment'] }}{{- " for-incident" if field.name in ['require_exclamation', 'show_map', 'show_moment'] }}">
+            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment'] %}
               <div class="col-4">&nbsp;</div>
               <div class="col-8">
                 <div class="custom-control custom-checkbox">
@@ -79,12 +79,34 @@
   </div>
 </form>
 {% endblock %}
-{% block tail %}
+{%- block tail_js %}
+{{ super() }}
 <script>
-  (function () {
+  function show_relevant_options() {
+    var selected = $('#form_type').val();
+
+    if (selected === "SURVEY") {
+      $('.for-checklist').addClass('d-none');
+      $('.for-incident').addClass('d-none');
+      $('.for-survey').removeClass('d-none');
+    } else if (selected === "INCIDENT") {
+      $('.for-checklist').addClass('d-none');
+      $('.for-survey').addClass('d-none');
+      $('.for-incident').removeClass('d-none');
+    } else {
+      $('.for-survey').addClass('d-none');
+      $('.for-incident').addClass('d-none');
+      $('.for-checklist').removeClass('d-none');
+    }
+  }
+
+  $(function () {
+    show_relevant_options();
+
+    $('#form_type').change(show_relevant_options);
     document.getElementById('formCreateForm').addEventListener('submit', function () {
       document.getElementById('saveBtn').disabled = true;
     });
-  })();
-</script>
-{% endblock tail %}
+  });
+</script>}
+{%- endblock %}
