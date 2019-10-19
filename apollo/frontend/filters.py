@@ -77,7 +77,7 @@ class LocationQuerySelectField(QuerySelectField):
     widget = LocationSelectWidget()
 
     def process_formdata(self, valuelist):
-        if valuelist and valuelist[0]:
+        if valuelist and valuelist[0] and valuelist[0] != '__None':
             self.query = models.Location.query.filter(
                 models.Location.id == valuelist[0])
         return super(LocationQuerySelectField, self).process_formdata(
@@ -88,7 +88,7 @@ class SupervisorQuerySelectField(QuerySelectField):
     widget = SupervisorSelectWidget()
 
     def process_formdata(self, valuelist):
-        if valuelist and valuelist[0]:
+        if valuelist and valuelist[0] and valuelist[0] != '__None':
             self.query = models.Participant.query.filter(
                 models.Participant.id == valuelist[0])
         return super(SupervisorQuerySelectField, self).process_formdata(
