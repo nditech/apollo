@@ -139,7 +139,7 @@ class MessageParsingTest(FlaskTestCase):
 
         self.assertEqual(prefix, 'TC')
         self.assertEqual(participant_id, '111111')
-        self.assertIsNone(exclamation)
+        self.assertFalse(exclamation)
         self.assertEqual(form_serial, '321')
         self.assertEqual(responses, 'AA2')
         self.assertIsNone(comment)
