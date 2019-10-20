@@ -320,10 +320,10 @@ def submission_list(form_id):
     elif request.args.get('sort_by') == 'fid':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Submission.serial_no))
+                desc(models.Submission.serial_no.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
-                models.Submission.serial_no)
+                models.Submission.serial_no.cast(BigInteger))
     elif request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -1356,13 +1356,20 @@ def quality_assurance_list(form_id):
             models.Submission.participant_id == models.Participant.id
         )
 
-    if request.args.get('sort_by') == 'id':
+    if request.args.get('sort_by') == 'pid':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Participant.participant_id.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
+    elif request.args.get('sort_by') == 'fid':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Submission.serial_no.cast(BigInteger)))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.serial_no.cast(BigInteger))
     elif request.args.get('sort_by') == 'location':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
