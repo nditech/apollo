@@ -1,12 +1,12 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    {% if request.args.sort_by == 'id' -%}
+    {% if request.args.sort_by == 'pid' -%}
     {% if request.args.sort_direction == 'desc' -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_direction='asc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_direction='desc', page='') }}">{{ _('PID') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}{% else -%}
-    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" title="{{ _('Participant ID') }}" href="{{ modify_query(sort_by='pid', sort_value='', sort_direction='', page='') }}">{{ _('PID') }}</a></th>
     {% endif -%}
 
     {%- if form.form_type == 'SURVEY' %}

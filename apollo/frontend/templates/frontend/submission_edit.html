@@ -23,9 +23,6 @@
   <tr>
     <th class="col-2">{{ _('Form ID') }}</th>
     <td><strong>{{ submission.serial_no }}</strong></td>
-    {%- for sib in siblings -%}
-    <td><strong>{{ sib.serial_no }}</strong></td>
-    {%- endfor -%}
   </tr>
   {%- endif %}
   <tr>
@@ -33,7 +30,7 @@
     <td>{% if submission.participant %}<strong>{{ submission.participant.name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.primary_phone %} ({{ submission.participant.primary_phone }}){%- endif %}
     <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
     {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
-    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong> &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% if sib.participant.primary_phone %} ({{ sib.participant.primary_phone }}){% endif %}{% endif %}</td>
     {%- endfor -%}
@@ -42,7 +39,7 @@
   <tr>
     <th>{{ _('Last Contacted') }}</th>
     <td>{% if submission.participant.last_contacted %}<span class="tonow" data-timestamp="{{ submission.participant.last_contacted|timestamp }}">{{ submission.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
-    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant.last_contacted %}<span class="tonow" data-timestamp="{{ sib.participant.last_contacted|timestamp }}">{{ sib.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -51,7 +48,7 @@
   <tr>
     <th>{{ _('Texted Phone') }}</th>
     <td>{% if submission.last_phone_number %}<strong>{{ submission.last_phone_number }}</strong> <a href="javascript:;" {%- if not perms.edit_participant.can() %} style="pointer-events:none"{% endif %} id="toggle_verification" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.last_phone_number }}" data-submission="{{ submission.id }}"><span id="toggle_verification_badge" class="badge badge-pill {% if submission.sender_verified %}badge-success{% else %}badge-warning{% endif %}">{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}</span></a> <div class="spinner-grow spinner-grow-sm inline-block invisible" id="toggle_verification_spinner" role="status"><span class="sr-only">Loading...</span></div>{% else %}{{ _('-') }}{% endif %}</td>
-    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{% if sib.last_phone_number %}<strong>{{ sib.last_phone_number }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span>{% endif %}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -62,7 +59,7 @@
     <td>
       {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}
     </td>
-    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant and sib.participant.other_phones %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
@@ -71,7 +68,7 @@
   <tr>
     <th>{{ _('Role') }}</th>
     <td>{{ submission.participant.role|default(_('-'), true) }}</td>
-    {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{{ sib.participant.role }}</td>
     {%- endfor -%}
@@ -89,6 +86,7 @@
       {% endfor %}
       <input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
     </td>
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {% for sib in siblings %}
     <td>
       {% for location_type, location_name in submission.location.make_path().items() %}
@@ -98,13 +96,16 @@
       {% endfor %}
     </td>
     {% endfor %}
+    {%- endif %}
   </tr>
   <tr>
     <th>{{ _('Supervisor') }}</th>
     <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if submission.participant.supervisor.primary_phone %} ({{ submission.participant.supervisor.primary_phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
     {%- for sib in siblings -%}
     <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if sib.participant.supervisor.primary_phone %} ({{ sib.participant.supervisor.primary_phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
     {%- endfor -%}
+    {%- endif %}
   </tr>
   {%- else -%}
   {#- critical incident #}
@@ -195,6 +196,7 @@
                 <span><strong>{{ submission.participant.participant_id }}</strong></span>
               {% endif %}
               </td>
+              {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {% for sibling in siblings -%}
               <td class="col-2 align-middle text-center">
                 <span><strong>{{ sibling.participant.participant_id }}</strong></span>
@@ -210,6 +212,7 @@
                 <span><strong>{{ _('Location') }}</strong></span>
               {% endif %}
               </td>
+              {% endif %}
             </tr>
           </tbody>
         </table>
@@ -227,12 +230,14 @@
                 {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm'}) }}
                 {%- endif %}
               </td>
+              {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
                 &nbsp;
               </td>
               {% endfor %}
               <td class="col-2 align-middle">&nbsp;</td>
+              {%- endif %}
             </tr>
             {% if perms.edit_submission_quarantine_status.can() %}
             <tr>
@@ -245,6 +250,7 @@
                 {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
                 {%- endif %}
               </td>
+              {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
                 <label for="{{ sibling_form.quarantine_status.id }}" class="sr-only">{{ sibling_form.quarantine_status.label.text }}</label>
@@ -259,6 +265,7 @@
                 {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
                 {%- endif %}
               </td>
+              {%- endif %}
             </tr>
             {% endif %}
           </tbody>
@@ -303,6 +310,7 @@
               <td class="col-2 align-middle obs-on"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- endif %}
+              {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {% for sibling_form in sibling_forms -%}
               <td class="col-2 align-middle"><label for="{{ sibling_form[field.tag].id }}" class="sr-only">{{ sibling_form[field.tag].label.text }}</label>{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {% endfor %}
@@ -314,6 +322,7 @@
               {%- endif %}
               {%- else -%}
               <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', disabled='disabled') }}</td>
+              {%- endif %}
               {%- endif %}
             </tr>
           {% endfor %}
