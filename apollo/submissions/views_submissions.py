@@ -13,7 +13,7 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from slugify import slugify
-from sqlalchemy import BigInteger, case, desc, func, text
+from sqlalchemy import BigInteger, case, desc, func, text, nullslast
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
 from sqlalchemy.sql import false
@@ -371,7 +371,7 @@ def submission_list(form_id):
     elif request.args.get('sort_by') == 'moment':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Submission.participant_updated))
+                nullslast(desc(models.Submission.participant_updated)))
         else:
             queryset = queryset.order_by(
                 models.Submission.participant_updated)
@@ -1400,6 +1400,13 @@ def quality_assurance_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.PhoneContact.number)
+    elif request.args.get('sort_by') == 'moment':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                nullslast(desc(models.Submission.participant_updated)))
+        else:
+            queryset = queryset.order_by(
+                models.Submission.participant_updated)
     else:
         queryset = queryset.order_by(
             models.Location.code.cast(BigInteger),
