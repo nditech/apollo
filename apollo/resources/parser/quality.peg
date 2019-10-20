@@ -1,6 +1,7 @@
 grammar QC
 
-qc <- sum+
+qc <- concat+
+concat <- sum (ws* "|" ws* sum)*
 sum <- product (ws* ("+" / "-") ws* product)*
 product <- exponent (ws* ("*" / "/") ws* exponent)*
 exponent <- value (ws* "^" ws* value)*
