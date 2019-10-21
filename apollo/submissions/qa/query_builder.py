@@ -7,6 +7,7 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from sqlalchemy import Integer, String, and_, case, func, null
 from sqlalchemy.dialects.postgresql import array
+from sqlalchemy.sql.operators import concat_op
 
 from apollo.models import Location, Participant, Submission
 
@@ -24,14 +25,15 @@ GRAMMAR = '''
 number = r'\d+\.{0,1}\d*'
 variable = r'[A-Z]+'
 name = r'[a-zA-Z_][a-zA-Z0-9_]*'
-lookup = "$" ("location" / "participant") ("." / "@") name
+lookup = "$" ("location" / "participant" / "submission") ("." / "@") name
 null = "NULL"
 factor = ("+" / "-")? (number / variable / lookup / "(" expression ")")
 value = null / factor
 exponent = value (("^") value)*
 product = exponent (("*" / "/") exponent)*
 sum = product (("+" / "-") product)*
-comparison = sum ((">=" / ">" / "<=" / "<" / "=" / "!=") sum)*
+concat = sum (("|") sum)*
+comparison = concat ((">=" / ">" / "<=" / "<" / "=" / "!=") concat)*
 expression = comparison (("&&" / "||") comparison)*
 qa = expression+ EOF
 '''
@@ -65,7 +67,10 @@ FIELD_TYPE_CASTS = {
 
 class BaseVisitor(PTNodeVisitor):
     def visit_number(self, node, children):
-        return float(node.value)
+        if node.value.isdigit():
+            return int(node.value)
+        else:
+            return float(node.value)
 
     def visit_factor(self, node, children):
         if len(children) == 1:
@@ -103,11 +108,31 @@ class BaseVisitor(PTNodeVisitor):
 
         return total
 
+    def visit_concat(self, node, children):
+        if len(children) == 1:
+            return children[0]
+
+        self.uses_concat = True
+
+        operand = func.cast(children[0], String)
+        for i in children[1:]:
+            operand = concat_op(operand, func.cast(i, String))
+
+        return operand
+
     def visit_comparison(self, node, children):
-        comparison = children[0] if children[0] != 'NULL' else None
+        if getattr(self, 'uses_concat', False):
+            comparison = func.cast(children[0], String) \
+                if children[0] != 'NULL' else None
+        else:
+            comparison = children[0] if children[0] != 'NULL' else None
         for i in range(2, len(children), 2):
             sign = children[i - 1]
-            item = None if children[i] == 'NULL' else children[i]
+            if getattr(self, 'uses_concat', False):
+                item = func.cast(children[i], String) \
+                    if children[i] != 'NULL' else None
+            else:
+                item = children[i] if children[i] != 'NULL' else None
             comparison = OPERATIONS[sign](comparison, item)
 
         return comparison
@@ -137,12 +162,15 @@ class InlineQATreeVisitor(BaseVisitor):
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
 
-        attribute = getattr(self.submission, top_level_attr)
+        if top_level_attr in ['location', 'participant']:
+            attribute = getattr(self.submission, top_level_attr)
 
-        if symbol == '.':
-            return getattr(attribute, name)
+            if symbol == '.':
+                return getattr(attribute, name)
+            else:
+                return attribute.extra_data.get(name)
         else:
-            return attribute.extra_data.get(name)
+            return getattr(self.submission, name)
 
     def visit_comparison(self, node, children):
         if len(children) > 1:
@@ -168,14 +196,16 @@ class QATreeVisitor(BaseVisitor):
 
         if top_level_attr == 'location':
             if symbol == '.':
-                return getattr(Location, name)
+                return getattr(Location, name).cast(Integer)
             else:
-                return Location.extra_data[name].astext
-        else:
+                return Location.extra_data[name].astext.cast(Integer)
+        elif top_level_attr == 'participant':
             if symbol == '.':
-                return getattr(Participant, name)
+                return getattr(Participant, name).cast(Integer)
             else:
-                return Participant.extra_data[name].astext
+                return Participant.extra_data[name].astext.cast(Integer)
+        else:
+            return getattr(Submission, name).cast(Integer)
 
     def visit_variable(self, node, children):
         var_name = node.value
@@ -229,12 +259,18 @@ def generate_qa_queries(form):
 
         tags = array(used_tags)
 
-        case_query = case([
-            (subquery == True, 'OK'),   # noqa
-            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
-            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
-            (subquery == None, 'Missing')   # noqa
-        ]).label(check['name'])
+        if used_tags:
+            case_query = case([
+                (subquery == True, 'OK'),   # noqa
+                (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
+                (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
+                (subquery == None, 'Missing')   # noqa
+            ]).label(check['name'])
+        else:
+            case_query = case([
+                (subquery == True, 'OK'),   # noqa
+                (subquery == False, 'Flagged')   # noqa
+            ]).label(check['name'])
 
         subqueries.append(case_query)
         tag_groups.append(sorted(used_tags))
@@ -254,12 +290,18 @@ def get_logical_check_stats(query, form, condition):
         query = query.join(
             Participant, Participant.id == Submission.participant_id)
 
-    qa_case_query = case([
-        (qa_query == True, 'OK'),
-        (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
-        (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
-        (qa_query == None, 'Missing')
-    ])
+    if question_codes:
+        qa_case_query = case([
+            (qa_query == True, 'OK'),
+            (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
+            (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
+            (qa_query == None, 'Missing')
+        ])
+    else:
+        qa_case_query = case([
+            (qa_query == True, 'OK'),  # noqa
+            (qa_query == False, 'Flagged')
+        ])
 
     return query.with_entities(
         qa_case_query.label('status'),
@@ -304,10 +346,10 @@ def build_expression(logical_check):
 
         for index, cond in enumerate(logical_check['criteria']):
             if index:
-                control_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)
+                control_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)  # noqa
             else:
-                control_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)
+                control_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)  # noqa
     else:
-        control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)
+        control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)  # noqa
 
     return control_expression.strip()

@@ -42,7 +42,7 @@ def get_analysis_menu():
         or_(
             models.Form.form_type == 'INCIDENT',
             and_(
-                models.Form.form_type == 'CHECKLIST',
+                models.Form.form_type.in_(['CHECKLIST', 'SURVEY']),
                 subquery)
         )
     ).order_by(models.Form.form_type, models.Form.name)]
@@ -60,7 +60,7 @@ def get_process_analysis_menu(form_type='CHECKLIST'):
         )
         formlist = forms.filter(
             models.Form.events.contains(event),
-            models.Form.form_type == 'CHECKLIST',
+            models.Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             subquery
         ).order_by(models.Form.form_type, models.Form.name)
     else:
@@ -98,7 +98,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             ancestor_id=location.id, location_set_id=event.location_set_id)
 
     # set the correct template and fill out the required data
-    if form.form_type == 'CHECKLIST':
+    if form.form_type in ['CHECKLIST', 'SURVEY']:
         if tag:
             template_name = 'process_analysis/checklist_summary_breakdown.html'
             tags.append(tag)
@@ -114,7 +114,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             grouped = False
 
         query_kwargs = {'event': event, 'form': form}
-        if not form.untrack_data_conflicts:
+        if not form.untrack_data_conflicts and form.form_type == 'CHECKLIST':
             query_kwargs['submission_type'] = 'M'
         else:
             query_kwargs['submission_type'] = 'O'

@@ -4,7 +4,7 @@ from collections import defaultdict
 from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import and_, false, or_
+from sqlalchemy import and_, false, or_, String, true
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets, fields, Form
 from wtforms.compat import text_type
@@ -227,11 +227,17 @@ class QualityAssuranceFilter(ChoiceFilter):
 
                     if condition == '4':
                         # verified
-                        filter_query = and_(
-                            single_qa_query == False,
-                            models.Submission.verified_fields.has_all(
-                                array(tags))
-                        )
+                        if tags:
+                            filter_query = and_(
+                                single_qa_query == False,  # noqa
+                                models.Submission.verified_fields.has_all(
+                                    array(tags))
+                            )
+                        else:
+                            filter_query = and_(
+                                single_qa_query == False,  # noqa
+                                false()
+                            )
                     elif condition == '-1':
                         # missing
                             filter_query = (single_qa_query == None)    # noqa
@@ -240,11 +246,17 @@ class QualityAssuranceFilter(ChoiceFilter):
                         filter_query = (single_qa_query == True)        # noqa
                     elif condition == '2':
                         # flagged
-                        filter_query = and_(
-                            single_qa_query == False,                   # noqa
-                            ~models.Submission.verified_fields.has_all(
-                                array(tags))
-                        )
+                        if tags:
+                            filter_query = and_(
+                                single_qa_query == False,  # noqa
+                                ~models.Submission.verified_fields.has_all(
+                                    array(tags))
+                            )
+                        else:
+                            filter_query = and_(
+                                single_qa_query == False,  # noqa
+                                true()
+                            )
 
                     if filter_query is None:
                         return query.filter(false())
@@ -263,22 +275,18 @@ class QualityAssuranceFilter(ChoiceFilter):
             qa_subquery, tags = generate_qa_query(qa_expr, self.qa_form)
             question_codes = array(tags)
 
-            if '$location' in qa_expr:
-                query = query.join(
-                    models.Location,
-                    models.Submission.location_id == models.Location.id)
-
-            if '$participant' in qa_expr:
-                query = query.join(
-                    models.Participant,
-                    models.Submission.participant_id == models.Participant.id)
-
             condition = value['condition']
             if condition == '4':
                 # verified
-                return query.filter(
-                    qa_subquery == False,   # noqa
-                    models.Submission.verified_fields.has_all(question_codes))
+                if tags:
+                    return query.filter(
+                        qa_subquery == False,   # noqa
+                        models.Submission.verified_fields.has_all(
+                            question_codes))
+                else:
+                    return query.filter(
+                        qa_subquery == False,  # noqa
+                        false())
             elif condition == '-1':
                 # missing
                 return query.filter(qa_subquery == None)  # noqa
@@ -287,9 +295,15 @@ class QualityAssuranceFilter(ChoiceFilter):
                 return query.filter(qa_subquery == True)  # noqa
             elif condition == '2':
                 # flagged
-                return query.filter(
-                    qa_subquery == False,   # noqa
-                    ~models.Submission.verified_fields.has_all(question_codes))
+                if tags:
+                    return query.filter(
+                        qa_subquery == False,   # noqa
+                        ~models.Submission.verified_fields.has_all(
+                            question_codes))
+                else:
+                    return query.filter(
+                        qa_subquery == False,   # noqa
+                        true())
         return query
 
 
