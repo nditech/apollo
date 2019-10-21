@@ -80,11 +80,12 @@
       {%- for question in form.tags %}
       {value: '{{ question }}', text: '{{ question }}', optgroup: 'fields'},
       {%- endfor %}
-      {value: '$location.code', text: '$location.code', optgroup: 'extra'},
-      {value: '$location.registered_voters', text: '$location.registered_voters', optgroup: 'extra'},
+      {value: '$location.code', text: '@location_code', optgroup: 'extra'},
+      {value: '$location.registered_voters', text: '@location_registered_voters', optgroup: 'extra'},
       {%- for field in location_set.extra_fields %}
-      {value: '$location@{{ field.name }}', text: '$location@{{ field.name }}', optgroup: 'extra'},
+      {value: '$location@{{ field.name }}', text: '@location_{{ field.name }}', optgroup: 'extra'},
       {%- endfor %}
+      {value: '$participant.participant_id', text: '@participant_id', optgroup: 'extra'},
       {%- for field in participant_set.extra_fields %}
       {value: '$participant@{{ field.name }}', text: '$participant@{{ field.name }}', optgroup: 'extra'},
       {%- endfor %}

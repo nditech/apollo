@@ -193,14 +193,14 @@ class QATreeVisitor(BaseVisitor):
 
         if top_level_attr == 'location':
             if symbol == '.':
-                return getattr(Location, name)
+                return getattr(Location, name).cast(Integer)
             else:
-                return Location.extra_data[name].astext
+                return Location.extra_data[name].astext.cast(Integer)
         else:
             if symbol == '.':
-                return getattr(Participant, name)
+                return getattr(Participant, name).cast(Integer)
             else:
-                return Participant.extra_data[name].astext
+                return Participant.extra_data[name].astext.cast(Integer)
 
     def visit_variable(self, node, children):
         var_name = node.value
@@ -254,12 +254,18 @@ def generate_qa_queries(form):
 
         tags = array(used_tags)
 
-        case_query = case([
-            (subquery == True, 'OK'),   # noqa
-            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
-            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
-            (subquery == None, 'Missing')   # noqa
-        ]).label(check['name'])
+        if used_tags:
+            case_query = case([
+                (subquery == True, 'OK'),   # noqa
+                (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
+                (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
+                (subquery == None, 'Missing')   # noqa
+            ]).label(check['name'])
+        else:
+            case_query = case([
+                (subquery == True, 'OK'),   # noqa
+                (subquery == False, 'Flagged')   # noqa
+            ]).label(check['name'])
 
         subqueries.append(case_query)
         tag_groups.append(sorted(used_tags))
@@ -279,12 +285,18 @@ def get_logical_check_stats(query, form, condition):
         query = query.join(
             Participant, Participant.id == Submission.participant_id)
 
-    qa_case_query = case([
-        (qa_query == True, 'OK'),
-        (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
-        (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
-        (qa_query == None, 'Missing')
-    ])
+    if question_codes:
+        qa_case_query = case([
+            (qa_query == True, 'OK'),
+            (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
+            (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
+            (qa_query == None, 'Missing')
+        ])
+    else:
+        qa_case_query = case([
+            (qa_query == True, 'OK'),  # noqa
+            (qa_query == False, 'Flagged')
+        ])
 
     return query.with_entities(
         qa_case_query.label('status'),
