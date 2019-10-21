@@ -93,7 +93,7 @@ def get_form_list_menu(**kwargs):
                              **kwargs
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
-                         ).order_by('name')
+                         ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
                                 'access_resource', f.resource_id,
@@ -117,7 +117,7 @@ def get_checklist_form_dashboard_menu(**kwargs):
                              **kwargs
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
-                         ).order_by('name')
+                         ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
                                 'access_resource', f.resource_id,
@@ -155,7 +155,7 @@ def get_quality_assurance_form_list_menu(form_types):
                              models.Form.quality_checks_enabled == True  # noqa
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
-                         ).order_by('name')
+                         ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
                                 'access_resource', f.resource_id,
@@ -180,7 +180,7 @@ def get_quality_assurance_form_dashboard_menu(form_types):
                              models.Form.quality_checks_enabled == True  # noqa
                          ).join(models.Form.events).filter(
                              models.Form.events.contains(event)
-                         ).order_by('name')
+                         ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
                                 'access_resource', f.resource_id,
