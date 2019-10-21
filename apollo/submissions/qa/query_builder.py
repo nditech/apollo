@@ -25,7 +25,7 @@ GRAMMAR = '''
 number = r'\d+\.{0,1}\d*'
 variable = r'[A-Z]+'
 name = r'[a-zA-Z_][a-zA-Z0-9_]*'
-lookup = "$" ("location" / "participant") ("." / "@") name
+lookup = "$" ("location" / "participant" / "submission") ("." / "@") name
 null = "NULL"
 factor = ("+" / "-")? (number / variable / lookup / "(" expression ")")
 value = null / factor
@@ -162,12 +162,15 @@ class InlineQATreeVisitor(BaseVisitor):
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
 
-        attribute = getattr(self.submission, top_level_attr)
+        if top_level_attr in ['location', 'participant']:
+            attribute = getattr(self.submission, top_level_attr)
 
-        if symbol == '.':
-            return getattr(attribute, name)
+            if symbol == '.':
+                return getattr(attribute, name)
+            else:
+                return attribute.extra_data.get(name)
         else:
-            return attribute.extra_data.get(name)
+            return getattr(self.submission, name)
 
     def visit_comparison(self, node, children):
         if len(children) > 1:
@@ -196,11 +199,13 @@ class QATreeVisitor(BaseVisitor):
                 return getattr(Location, name).cast(Integer)
             else:
                 return Location.extra_data[name].astext.cast(Integer)
-        else:
+        elif top_level_attr == 'participant':
             if symbol == '.':
                 return getattr(Participant, name).cast(Integer)
             else:
                 return Participant.extra_data[name].astext.cast(Integer)
+        else:
+            return getattr(Submission, name).cast(Integer)
 
     def visit_variable(self, node, children):
         var_name = node.value

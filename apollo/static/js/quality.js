@@ -952,17 +952,37 @@
           }
           if (address2 === FAILURE) {
             this._offset = index2;
+            var chunk3 = null;
+            if (this._offset < this._inputSize) {
+              chunk3 = this._input.substring(this._offset, this._offset + 10);
+            }
+            if (chunk3 === 'submission') {
+              address2 = new TreeNode(this._input.substring(this._offset, this._offset + 10), this._offset);
+              this._offset = this._offset + 10;
+            } else {
+              address2 = FAILURE;
+              if (this._offset > this._failure) {
+                this._failure = this._offset;
+                this._expected = [];
+              }
+              if (this._offset === this._failure) {
+                this._expected.push('"submission"');
+              }
+            }
+            if (address2 === FAILURE) {
+              this._offset = index2;
+            }
           }
         }
         if (address2 !== FAILURE) {
           elements0[1] = address2;
           var address3 = FAILURE;
           var index3 = this._offset;
-          var chunk3 = null;
+          var chunk4 = null;
           if (this._offset < this._inputSize) {
-            chunk3 = this._input.substring(this._offset, this._offset + 1);
+            chunk4 = this._input.substring(this._offset, this._offset + 1);
           }
-          if (chunk3 === '.') {
+          if (chunk4 === '.') {
             address3 = new TreeNode(this._input.substring(this._offset, this._offset + 1), this._offset);
             this._offset = this._offset + 1;
           } else {
@@ -977,11 +997,11 @@
           }
           if (address3 === FAILURE) {
             this._offset = index3;
-            var chunk4 = null;
+            var chunk5 = null;
             if (this._offset < this._inputSize) {
-              chunk4 = this._input.substring(this._offset, this._offset + 1);
+              chunk5 = this._input.substring(this._offset, this._offset + 1);
             }
-            if (chunk4 === '@') {
+            if (chunk5 === '@') {
               address3 = new TreeNode(this._input.substring(this._offset, this._offset + 1), this._offset);
               this._offset = this._offset + 1;
             } else {
