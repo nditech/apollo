@@ -75,8 +75,8 @@
       {% if right_message != None %}
       <tr>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ right_message.recipient }}</td>
-        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
-        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
+        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d, %Y') }}</td>
+        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%l:%M %p') }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ right_message.direction.value }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" style="word-wrap:break-word">{{ right_message.text }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ right_message.message_type.value }}</td>
@@ -89,8 +89,8 @@
       {% endif %}
       <tr>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.sender }}</td>
-        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
-        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d, %Y') }}</td>
+        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%l:%M %p') }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.direction.value }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" style="word-wrap:break-word">{{ left_message.text }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.message_type.value }}</td>
@@ -99,8 +99,8 @@
       {% else %}
       <tr>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.recipient }}</td>
-        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
-        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+        <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d, %Y') }}</td>
+        <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%l:%M %p') }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ _(left_message.direction.value) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" style="word-wrap:break-word">{{ left_message.text }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.message_type.value }}</td>
@@ -134,7 +134,7 @@
 
     Highcharts.setOptions({
       global: {
-        useUTC: false
+        timezone: '{{ config.TIMEZONE }}'
       }
     });
 
@@ -202,19 +202,19 @@
     });
 
     $('.tonow').each(function (index) {
-        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        var timestamp = moment.unix(Number($(this).data('timestamp'))).tz('{{ config.TIMEZONE }}');
         this.innerText = timestamp.fromNow();
     });
     $('.timestamp').each(function (index) {
-        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        var timestamp = moment.unix(Number($(this).data('timestamp'))).tz('{{ config.TIMEZONE }}');
         this.innerText = timestamp.format('llll');
     });
     $('.timestamp-date').each(function (index) {
-        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        var timestamp = moment.unix(Number($(this).data('timestamp'))).tz('{{ config.TIMEZONE }}');
         this.innerText = timestamp.format('ll');
     });
     $('.timestamp-time').each(function (index) {
-        var timestamp = moment.unix(Number($(this).data('timestamp')));
+        var timestamp = moment.unix(Number($(this).data('timestamp'))).tz('{{ config.TIMEZONE }}');
         this.innerText = timestamp.format('LT');
     });
   });

@@ -313,11 +313,15 @@ def submission_list(form_id):
     if request.args.get('sort_by') == 'pid':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Participant.participant_id.cast(BigInteger)))
+                desc(models.Participant.participant_id.cast(BigInteger)),
+                models.Submission.serial_no.cast(BigInteger),
+                models.Location.code.cast(BigInteger))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id.cast(BigInteger))
-    elif request.args.get('sort_by') == 'fid':
+                models.Participant.participant_id.cast(BigInteger),
+                models.Submission.serial_no.cast(BigInteger),
+                models.Location.code.cast(BigInteger))
+    elif request.args.get('sort_by') == 'fsn':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Submission.serial_no.cast(BigInteger)))
@@ -377,8 +381,9 @@ def submission_list(form_id):
                 models.Submission.participant_updated)
     else:
         queryset = queryset.order_by(
-            models.Location.code.cast(BigInteger),
-            models.Participant.participant_id.cast(BigInteger))
+            models.Participant.participant_id.cast(BigInteger),
+            models.Submission.serial_no.cast(BigInteger),
+            models.Location.code.cast(BigInteger))
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -1359,11 +1364,15 @@ def quality_assurance_list(form_id):
     if request.args.get('sort_by') == 'pid':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Participant.participant_id.cast(BigInteger)))
+                desc(models.Participant.participant_id.cast(BigInteger)),
+                models.Submission.serial_no.cast(BigInteger),
+                models.Location.code.cast(BigInteger))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id.cast(BigInteger))
-    elif request.args.get('sort_by') == 'fid':
+                models.Participant.participant_id.cast(BigInteger),
+                models.Submission.serial_no.cast(BigInteger),
+                models.Location.code.cast(BigInteger))
+    elif request.args.get('sort_by') == 'fsn':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Submission.serial_no.cast(BigInteger)))
@@ -1416,8 +1425,9 @@ def quality_assurance_list(form_id):
                 models.Submission.participant_updated)
     else:
         queryset = queryset.order_by(
-            models.Location.code.cast(BigInteger),
-            models.Participant.participant_id.cast(BigInteger))
+            models.Participant.participant_id.cast(BigInteger),
+            models.Submission.serial_no.cast(BigInteger),
+            models.Location.code.cast(BigInteger))
 
     if not form.quality_checks:
         queryset = models.Submission.query.filter(false())

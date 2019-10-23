@@ -201,7 +201,7 @@ class Form(Resource):
         model.append(phone_number_bind)
 
         if self.form_type == 'SURVEY':
-            description = gettext('Form Serial')
+            description = gettext('Form Serial Number')
             path = '/data/form_serial'
             data.append(etree.Element('form_serial'))
             model.append(E.bind(nodeset=path, type='string'))
