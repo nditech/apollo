@@ -317,7 +317,7 @@ def submission_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
-    elif request.args.get('sort_by') == 'fid':
+    elif request.args.get('sort_by') == 'fsn':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Submission.serial_no.cast(BigInteger)))
@@ -1363,7 +1363,7 @@ def quality_assurance_list(form_id):
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
-    elif request.args.get('sort_by') == 'fid':
+    elif request.args.get('sort_by') == 'fsn':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Submission.serial_no.cast(BigInteger)))

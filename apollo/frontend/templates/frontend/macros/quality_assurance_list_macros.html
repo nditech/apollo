@@ -10,14 +10,14 @@
     {% endif -%}
 
     {%- if form.form_type == 'SURVEY' %}
-    {% if request.args.sort_by == 'fid' %}
+    {% if request.args.sort_by == 'fsn' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_direction='asc', page='') }}">{{ _('FID') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form Serial Number') }}" href="{{ modify_query(sort_by='fsn', sort_direction='asc', page='') }}">{{ _('FSN') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_direction='desc', page='') }}">{{ _('FID') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form Serial Number') }}" href="{{ modify_query(sort_by='fsn', sort_direction='desc', page='') }}">{{ _('FSN') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form ID') }}" href="{{ modify_query(sort_by='fid', sort_value='', sort_direction='', page='') }}">{{ _('FID') }}</a></th>
+    <th scope="col" class="text-right"><a class="text-decoration-none" title="{{ _('Form Serial Number') }}" href="{{ modify_query(sort_by='fsn', sort_value='', sort_direction='', page='') }}">{{ _('FSN') }}</a></th>
     {% endif %}
     {%- endif %}
 
