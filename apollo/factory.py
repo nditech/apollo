@@ -161,6 +161,7 @@ def create_celery_app(app=None):
                 'progress': task_metadata.get('result'),
                 'description': TASK_DESCRIPTIONS.get(self.request.task),
                 'name': self.request.task.split('.')[-1],
+                'quit': False,
             }
 
             if channel is not None:
