@@ -22,6 +22,7 @@
     "jquery": "^3.4.1",
     "leaflet": "^1.5.1",
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
     "popper.js": "^1.15.0",
     "select2": "^4.0.8",
     "tempusdominus-bootstrap-4": "^5.1.2",

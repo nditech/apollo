@@ -127,7 +127,7 @@
     <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.name|default('', true) }}</td>
     <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.show_moment %}
-    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %} timestamp-moment" data-timestamp="{{ submission.participant_updated|timestamp if submission.participant_updated else "" }}">{{ submission.participant_updated.strftime("%b %d %Y %I:%M %p") if submission.participant_updated else "" }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %} timestamp-moment" data-timestamp="{{ submission.participant_updated|timestamp if submission.participant_updated else "" }}">{{ submission.participant_updated.strftime("%b %d, %Y %l:%M %p") if submission.participant_updated else "" }}</td>
     {%- endif %}
     {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
     {% for group in form.data.groups %}

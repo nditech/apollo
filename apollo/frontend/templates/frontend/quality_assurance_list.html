@@ -35,7 +35,7 @@ $(function () {
   $('.timestamp-moment').each(function (index) {
     var timestamp = Number($(this).data('timestamp'));
     if (timestamp !== 0) {
-      var mm = moment.unix(timestamp);
+      var mm = moment.unix(timestamp).tz('{{ config.TIMEZONE }}');
       this.innerText = mm.format('ll LT');
     }
   });
