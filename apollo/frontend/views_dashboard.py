@@ -67,7 +67,7 @@ def main_dashboard(form_id=None):
         Submission.form_id == form.id
     ] if form else [false()]
     if form:
-        if not form.untrack_data_conflicts:
+        if not form.untrack_data_conflicts and form.form_type == 'CHECKLIST':
             query_args.append(Submission.submission_type == 'M')
         else:
             query_args.append(Submission.submission_type == 'O')
