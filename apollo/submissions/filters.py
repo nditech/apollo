@@ -334,6 +334,17 @@ class ParticipantQuerySelectField(QuerySelectField):
             valuelist)
 
 
+class FormSerialNumberFilter(CharFilter):
+    def filter(self, query, value, **kwargs):
+        if value:
+            return (
+                models.Submission.serial_no == value,
+                None
+            )
+
+        return (None, None)
+
+
 def make_submission_location_filter(location_set_id):
     class AJAXLocationFilter(ChoiceFilter):
         field_class = LocationQuerySelectField
@@ -435,6 +446,7 @@ def make_submission_list_filter(event, form):
         )
     )
     attributes['date'] = DateFilter()
+    attributes['fsn'] = FormSerialNumberFilter()
 
     return type(
         'SubmissionFilterSet',

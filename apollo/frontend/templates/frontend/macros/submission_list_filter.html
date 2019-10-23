@@ -7,11 +7,17 @@
                     <label for="{{ filter_form.participant_id.id }}" class="sr-only">{{ filter_form.participant_id.label.text }}</label>
                     {{ filter_form.participant_id(class_='form-control', placeholder=_('Participant ID')) }}
                 </div>
+                {%- if form.form_type == 'SURVEY' %}
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="{{ filter_form.fsn.id }}" class="sr-only">{{ filter_form.fsn.label.text }}</label>
+                    {{ filter_form.fsn(class_='form-control', placeholder=_('Form Serial Number')) }}
+                </div>
+                {%- endif %}
                 <div class="col-6 col-md-2 mb-2">
                     <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
                     {{ filter_form.sample(class_='form-control custom-select') }}
                 </div>
-                <div class="col-md-6 mb-2">
+                <div class="{% if form.form_type == 'SURVEY' %}col-md-4{% else %}col-md-6{% endif %} mb-2">
                     <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>

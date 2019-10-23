@@ -440,6 +440,17 @@ class OnlineStatusFilter(ChoiceFilter):
         return (None, None)
 
 
+class FormSerialNumberFilter(CharFilter):
+    """This is used to filter on a queryset of submissions.
+    """
+
+    def queryset_(self, queryset, value):
+        if value:
+            return queryset.filter(
+                models.Submission.serial_no == value)
+        return queryset
+
+
 def basesubmission_filterset():
     class BaseSubmissionFilterSet(FilterSet):
         event = EventFilter()
@@ -537,6 +548,7 @@ def generate_quality_assurance_filter(form):
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = AJAXLocationFilter()
     attributes['date'] = SubmissionDateFilter()
+    attributes['fsn'] = FormSerialNumberFilter()
 
     return type(
         'QualityAssuranceFilterSet',
