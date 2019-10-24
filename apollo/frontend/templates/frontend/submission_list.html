@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
+<style>
+#mapView{height:60vh}
+</style>
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
@@ -82,6 +85,74 @@ $(function () {
     marker = L.marker([latitude, longitude]).addTo(map);
     map.panTo([latitude, longitude]);
   });
+
+{%- if form.show_map %}
+
+  // initialize the map view
+  var mapView = L.map('mapView').setView([0, 0], 2);
+  {%- if config.MAPBOX_TOKEN %}
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: '{{ config.MAPBOX_TOKEN }}'
+  }).addTo(mapView);
+  {%- else %}
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    maxZoom: 18
+  }).addTo(mapView);
+  {%- endif %}
+
+  var info = L.control();
+  info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info');
+    this.update();
+    return this._div;
+  };
+  info.update = function (props) {
+    if (props) {
+      this._div.innerHTML = `
+<div class="card text-white bg-primary border-0" style="min-width: 20vw">
+  <h5 class="card-header text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">${props.participant} — ${props.participant_id}</h5>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item text-dark bg-light text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">${props.phone}</li>
+    <li class="list-group-item text-dark bg-light text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}"><strong>${props.location}</strong></li>
+${(props.last_updated ? `
+    <li class="list-group-item text-dark bg-light text-muted text-monospace timestamp-moment {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}" data-timestamp='${props.last_updated_timestamp}'>${props.last_updated}</li>
+`: '')}
+  </ul>
+</div>
+`;
+      $('li.timestamp-moment').each(function (index) {
+        var timestamp = Number($(this).data('timestamp'));
+        if (timestamp !== 0) {
+          var mm = moment.unix(timestamp).tz('{{ config.TIMEZONE }}');
+          this.innerText = mm.format('ll LT');
+        }
+      });
+    }
+  };
+  info.addTo(mapView);
+  mapView.panTo([0, 0]);
+
+  var markers = L.featureGroup();
+{% for submission in submissions %}
+{%- if submission.geom.desc %}
+  marker = L.marker([{{ submission.geom|latitude }}, {{ submission.geom|longitude }}], {riseOnHover: true});
+  marker.on({mouseover: function () {
+      info.update({location: '{{ submission.location.name|default(_('No Location'), true) }}', participant: '{{ submission.participant.name|default(_('No Name'), true) }}', participant_id: '{{ submission.participant.participant_id|default('00000', true) }}', phone: '{{ submission.participant.primary_phone|default(_('No Phone'), true) }}', last_updated: '{{ submission.participant_updated.strftime("%b %d, %Y %l:%M %p") if submission.participant_updated else "" }}', last_updated_timestamp: '{{ submission.participant_updated|timestamp if submission.participant_updated else "" }}'});
+  }});
+  marker.addTo(markers);
+{% endif %}
+{%- endfor %}
+  markers.addTo(mapView);
+
+  $('a[aria-controls="mapView"]').one('shown.bs.tab', function (e) {
+    mapView.invalidateSize();
+    mapView.fitBounds(markers.getBounds());
+  });
+{%- endif %}
 });
 </script>
 {% if perms.send_messages.can() %}
@@ -110,14 +181,14 @@ $(function () {
 <div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
-<a style="margin-left:1em" class="btn btn-primary mr-2" href="{{ url_for('submissions.submission_create', form_id=form.id) }}">{{ _('Add Incident') }}</a>
+<a style="margin-left:1em" class="btn btn-primary ml-2" href="{{ url_for('submissions.submission_create', form_id=form.id) }}">{{ _('Add Incident') }}</a>
 {% endif %}
 {% if perms.export_submissions.can() %}
-<a class="btn btn-secondary mr-2" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
+<a class="btn btn-secondary ml-2" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
 {% else %}
 {% if perms.export_submissions.can() %}
-<div class="btn-group mr-2" role="group">
+<div class="btn-group ml-2" role="group">
   <a class="btn btn-secondary" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Export') }}</a>
   <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="exportMenuReference" data-reference="parent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="sr-only">{{ _('Toggle Dropdown') }}</span>
@@ -131,9 +202,17 @@ $(function () {
 {% endif %}
 {% endif %}
 {% if perms.send_messages.can() %}
-<button class="btn btn-success" id="send_message_modal_btn">{{ _('Send Message') }}</button>
+<button class="btn btn-success ml-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
 {% endif %}
 </div>
+{%- if form.show_map %}
+<div class="mt-md-0 mt-1 ml-2" id="view" role="tablist">
+  <div class="nav btn-group" role="group" aria-label="{{ _('View Selection') }}">
+    <a class="btn btn-primary active" href="#listView" data-toggle="tab" role="tab" aria-controls="listView" aria-selected="true" title="{{ _('List View') }}" aria-label="{{ _('List View') }}"><i class="fa fa-list"></i></a>
+    <a class="btn btn-primary" href="#mapView" data-toggle="tab" role="tab" aria-controls="mapView" aria-selected="false" title="{{ _('Map View') }}" aria-label="{{ _('Map View') }}"><i class="fa fa-map-marked-alt"></i></a>
+  </div>
+</div>
+{%- endif %}
 {% endblock %}
 
 {% block content -%}
@@ -143,22 +222,27 @@ $(function () {
   </div>
 </div>
 
-<div class="card-header">
-  {{ render_pager(pager, 'submissions.submission_list', args) }}
-</div>
+<div class="tab-content">
+  <div class="tab-pane active" id="listView">
+    <div class="card-header">
+      {{ render_pager(pager, 'submissions.submission_list', args) }}
+    </div>
 
-<div class="table-responsive mb-n3">
-  <table class="table table-sm table-hover">
-    <thead class="thead-light">
-      {{ submission_header(form, form_fields, location_types, perms) }}
-    </thead>
-    <tbody>
-      {{ submission_items(pager.items, form, form_fields, location_types, perms) }}
-    </tbody>
-  </table>
-</div>
+    <div class="table-responsive mb-n3">
+      <table class="table table-sm table-hover">
+        <thead class="thead-light">
+          {{ submission_header(form, form_fields, location_types, perms) }}
+        </thead>
+        <tbody>
+          {{ submission_items(pager.items, form, form_fields, location_types, perms) }}
+        </tbody>
+      </table>
+    </div>
 
-<div class="card-footer">
-  {{ render_pager(pager, 'submissions.submission_list', args) }}
+    <div class="card-footer">
+      {{ render_pager(pager, 'submissions.submission_list', args) }}
+    </div>
+  </div>
+  <div class="tab-pane" id="mapView"></div>
 </div>
 {% endblock %}
