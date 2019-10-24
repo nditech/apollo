@@ -433,7 +433,8 @@ def submission_list(form_id):
         location=location,
         breadcrumbs=breadcrumbs,
         pager=query_filterset.qs.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+            page=page, per_page=current_app.config.get('PAGE_SIZE')),
+        submissions=query_filterset.qs
     )
 
 
