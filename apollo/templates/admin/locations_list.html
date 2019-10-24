@@ -128,7 +128,7 @@
     {{ render_pager(locations, 'locationset.locations_list', args) }}
   </div>
   <div aria-live="polite" aria-atomic="true" id="app">
-    <div style="position: absolute; top: 1rem; right: 1rem;">
+    <div style="position: absolute; bottom: 2rem; right: 2rem;">
       <task-toast v-for="task in tasks" :key="task.id" :task-info="task"></task-toast>
     </div>
   </div>
@@ -269,6 +269,8 @@ $(function(){
     },
     methods: {
       addTask: function(taskInfo) {
+        if (taskInfo.name !== 'import_locations')
+          return;
         var self = this;
         var index = self.tasks.findIndex(function(task) {
           return task.id == taskInfo.id;
