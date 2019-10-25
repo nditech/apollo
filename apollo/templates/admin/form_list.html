@@ -80,7 +80,7 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             {% endif %}
             {{ form_delete_form.form_id(value=form.id) }}
-            <button class="btn btn-light" title="{{ _('Delete form') }}" onclick="formDeleteConfirm()"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-light" title="{{ _('Delete form') }}" onclick="formDeleteConfirm()" type="button"><i class="fas fa-trash"></i></button>
           </form>
         </td>
         <td>{{ form.name }}</td>
