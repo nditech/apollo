@@ -12,10 +12,12 @@ from slugify import slugify
 
 from apollo import core, models
 from apollo.core import uploads
-from apollo.formsframework.forms import FormForm, FormImportForm
+from apollo.formsframework.forms import (
+    FormForm, FormImportForm, FormDeleteForm)
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
+from apollo.frontend import route
 from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
@@ -212,6 +214,7 @@ def forms_list(view):
 
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
+    form_delete_form = FormDeleteForm()
 
     context = {
         'forms': models.Form.query.order_by('name').all(),
@@ -225,6 +228,7 @@ def forms_list(view):
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
+        'form_delete_form': form_delete_form,
     }
 
     return view.render(template_name, **context)
@@ -442,5 +446,16 @@ def import_form_schema():
             deployment_id=g.event.deployment_id).all()
         form.roles = roles
         form.save()
+
+    return redirect(url_for('formsview.index'))
+
+
+@route(bp, '/delete', methods=['POST'])
+def delete_form():
+    form_delete_form = FormDeleteForm()
+    if form_delete_form.validate_on_submit():
+        models.Form.query.filter_by(
+            id=form_delete_form.data['form_id']).delete()
+        core.db.session.commit()
 
     return redirect(url_for('formsview.index'))
