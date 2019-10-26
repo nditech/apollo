@@ -2,6 +2,7 @@
 <div class="card border-light bg-light mb-3">
     <div class="card-header">
         <form class="mb-n2 ml-n2 mr-n2">
+        {% if form.show_map %}<input type="hidden" id="v" name="v" value="{{ request.args.v }}">{% endif %}
             <div class="form-row">
                 <div class="col-6 col-md-2 mb-2">
                     <label for="{{ filter_form.participant_id.id }}" class="sr-only">{{ filter_form.participant_id.label.text }}</label>

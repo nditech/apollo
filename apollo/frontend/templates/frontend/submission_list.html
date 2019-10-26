@@ -150,8 +150,20 @@ ${(props.last_updated ? `
 
   $('a[aria-controls="mapView"]').one('shown.bs.tab', function (e) {
     mapView.invalidateSize();
-    mapView.fitBounds(markers.getBounds());
+    if (markers.getBounds().isValid()) {
+      mapView.fitBounds(markers.getBounds());
+    }
   });
+  $('a[aria-controls="mapView"]').on('shown.bs.tab', function (e) {
+    $('input#v').val('map');
+  });
+  $('a[aria-controls="listView"]').on('shown.bs.tab', function (e) {
+    $('input#v').val('');
+  });
+
+  if (markers.getBounds().isValid()) {
+    mapView.fitBounds(markers.getBounds());
+  }
 {%- endif %}
 });
 </script>
@@ -208,8 +220,8 @@ ${(props.last_updated ? `
 {%- if form.show_map %}
 <div class="mt-md-0 mt-1 ml-2" id="view" role="tablist">
   <div class="nav btn-group" role="group" aria-label="{{ _('View Selection') }}">
-    <a class="btn btn-primary active" href="#listView" data-toggle="tab" role="tab" aria-controls="listView" aria-selected="true" title="{{ _('List View') }}" aria-label="{{ _('List View') }}"><i class="fa fa-list"></i></a>
-    <a class="btn btn-primary" href="#mapView" data-toggle="tab" role="tab" aria-controls="mapView" aria-selected="false" title="{{ _('Map View') }}" aria-label="{{ _('Map View') }}"><i class="fa fa-map-marked-alt"></i></a>
+    <a class="btn btn-primary {%- if request.args.v != "map" %} active{% endif %}" href="#listView" data-toggle="tab" role="tab" aria-controls="listView" aria-selected="true" title="{{ _('List View') }}" aria-label="{{ _('List View') }}"><i class="fa fa-list"></i></a>
+    <a class="btn btn-primary {%- if request.args.v == "map" %} active{% endif %}" href="#mapView" data-toggle="tab" role="tab" aria-controls="mapView" aria-selected="false" title="{{ _('Map View') }}" aria-label="{{ _('Map View') }}"><i class="fa fa-map-marked-alt"></i></a>
   </div>
 </div>
 {%- endif %}
@@ -223,7 +235,7 @@ ${(props.last_updated ? `
 </div>
 
 <div class="tab-content">
-  <div class="tab-pane active" id="listView">
+  <div class="tab-pane fade {%- if request.args.v != "map" %} show active{% endif %}" id="listView">
     <div class="card-header">
       {{ render_pager(pager, 'submissions.submission_list', args) }}
     </div>
@@ -243,6 +255,6 @@ ${(props.last_updated ? `
       {{ render_pager(pager, 'submissions.submission_list', args) }}
     </div>
   </div>
-  <div class="tab-pane" id="mapView"></div>
+  <div class="tab-pane fade {%- if request.args.v == "map" %} show active{% endif %}" id="mapView"></div>
 </div>
 {% endblock %}
