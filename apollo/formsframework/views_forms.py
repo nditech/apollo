@@ -234,6 +234,7 @@ def forms_list(view):
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
+        'channel': session.get('_id'),
     }
 
     return view.render(template_name, **context)
