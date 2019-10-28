@@ -1,4 +1,4 @@
-function setupTaskToasts(appSelector, taskName, taskListUrl, eventStreamUrl) {
+function setupTaskToasts(appSelector, taskNames, taskListUrl, eventStreamUrl) {
   var roundTo = function(num) {
     return Math.round((num + 0.00001) * 100) / 100;
   };
@@ -70,8 +70,10 @@ function setupTaskToasts(appSelector, taskName, taskListUrl, eventStreamUrl) {
     },
     methods: {
       addTask: function(taskInfo) {
-        if (taskInfo.name !== taskName)
+        // skip unregistered tasks
+        if (taskNames.indexOf(taskInfo.name) === -1)
           return;
+
         var self = this;
         var index = self.tasks.findIndex(function(task) {
           return task.id == taskInfo.id;
