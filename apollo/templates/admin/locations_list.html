@@ -1,7 +1,8 @@
 {%- extends 'admin/master.html' -%}
 {%- from 'admin/locations_list_filter.html' import render_filter_form -%}
+{%- from 'admin/task_toast.html' import render_toast_parent, render_toast_template -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
-
+{%- set toast_app_id = 'app' -%}
 
 {% block head_css %}
 {{ super() }}
@@ -127,11 +128,7 @@
   <div class="card-footer">
     {{ render_pager(locations, 'locationset.locations_list', args) }}
   </div>
-  <div aria-live="polite" aria-atomic="true" id="app">
-    <div style="position: absolute; bottom: 2rem; right: 2rem;">
-      <task-toast v-for="task in tasks" :key="task.id" :task-info="task"></task-toast>
-    </div>
-  </div>
+  {{ render_toast_parent(toast_app_id) }}
 </div>
 <div class="modal fade" id="finalizeModal" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -156,164 +153,22 @@
 
 {%- block tail_js -%}
 {{ super() }}
-<template id="task-toast">
-  <div class="toast" style="width: 250px;" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false" data-delay="5000">
-    <div class="toast-header">
-      <strong class="mr-auto">{{ '{{' }} taskInfo.status {{ '}}' }}</strong>
-      <button class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    </div>
-    <div class="toast-body">
-      <div class="row">
-        <div class="col">
-          <div class="clearfix"><strong>{{ '{{' }} processedCount {{ '}}' }} / {{ '{{' }} totalCount {{ '}}' }}</strong></div>
-          <div class="progress" style="height: 0.25rem;">
-            <div class="progress-bar" :style="processedStyle"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <div class="clearfix"><strong>{{ '{{' }} warningCount {{ '}}' }} / {{ '{{' }} totalCount {{ '}}' }}</strong></div>
-          <div class="progress" style="height: 0.25rem;">
-            <div class="progress-bar bg-warning" :style="warningStyle"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <div class="clearfix"><strong>{{ '{{' }} errorCount {{ '}}' }} / {{ '{{' }} totalCount {{ '}}' }}</strong></div>
-          <div class="progress" style="height: 0.25rem;">
-            <div class="progress-bar bg-danger" :style="errorStyle"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+{{ render_toast_template() }}
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
 <script src="{{ url_for('static', filename='js/promise-polyfill.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/fetch.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/task-toasts.js') }}"></script>
 <script type="text/javascript">
 $(function(){
-  var roundTo = function(num) {
-    return Math.round((num + 0.00001) * 100) / 100;
-  };
+  var taskAppSelector = '#{{ toast_app_id }}';
+  var taskName = 'import_locations';
+  var taskListUrl = "{{ url_for('users.task_list') }}";
+  var eventStreamUrl = "{{ url_for('sse.stream', channel=channel) }}";
 
-  Vue.component('task-toast', {
-    updated: function() {
-      // clear completed tasks
-      if (this.taskInfo.quit == true)
-        this.clear();
-    },
-    template: '#task-toast',
-    props: {
-      taskInfo: {
-        id: String,
-        status: String,
-        quit: Boolean,
-        progress: Object,
-        description: String,
-        name: String
-      }
-    },
-    methods: {
-      clear: function() {
-        $(this.$el).toast('hide');
-      }
-    },
-    computed: {
-      processedCount: function() {
-        return this.taskInfo.progress.processed_records;
-      },
-      warningCount: function() {
-        return this.taskInfo.progress.warning_records;
-      },
-      errorCount: function() {
-        return this.taskInfo.progress.error_records;
-      },
-      totalCount: function() {
-        return this.taskInfo.progress.total_records;
-      },
-      processedStyle: function() {
-        return {width: roundTo(100 * this.taskInfo.progress.processed_records / this.taskInfo.progress.total_records) + '%'};
-      },
-      warningStyle: function() {
-        return {width: roundTo(100 * this.taskInfo.progress.warning_records / this.taskInfo.progress.total_records) + '%'};
-      },
-      errorStyle: function() {
-        return {width: roundTo(100 * this.taskInfo.progress.error_records / this.taskInfo.progress.total_records) + '%'};
-      }
-    },
-    mounted: function() {
-      $(this.$el).toast('show');
-      var self = this;
-      if (this.taskInfo.quit == true) {
-        // clear already completed tasks after 5 seconds
-        window.setTimeout(function() {
-          self.clear();
-        }, 5000);
-      }
-    },
-    destroyed: function() {
-      $(this.el).toast('dispose');
-    }
-  });
-
-  var vm = new Vue({
-    el: '#app',
-    data: {
-      tasks: []
-    },
-    methods: {
-      addTask: function(taskInfo) {
-        if (taskInfo.name !== 'import_locations')
-          return;
-        var self = this;
-        var index = self.tasks.findIndex(function(task) {
-          return task.id == taskInfo.id;
-        });
-        if (index == -1)
-          self.tasks.unshift(taskInfo);
-        else
-          self.tasks.splice(index, 1, taskInfo);
-      },
-      loadCompletedTasks: function() {
-        var self = this;
-        fetch("{{ url_for('users.task_list') }}")
-        .then(function(response) {
-          return response.json();
-        }).then(function(data) {
-          if (data.results.length > 0) {
-            data.results.forEach(function(taskInfo) {
-              self.addTask(taskInfo);
-            });
-          }
-
-        }).catch(function(err) {
-          console.error(err);
-        });
-      },
-      loadRunningTasks: function() {
-        var self = this;
-        if (window.EventSource) {
-          var es = new EventSource("{{ url_for('sse.stream', channel=channel) }}");
-          es.onmessage = function (ev) {
-            let data = JSON.parse(ev.data);
-            if (data.id !== undefined) {
-              self.addTask(data);
-            }
-          };
-        }
-      }
-    },
-    mounted: function() {
-      this.loadCompletedTasks();
-      this.loadRunningTasks();
-    }
-  });
+  var vm = setupTaskToasts(taskAppSelector, taskName, taskListUrl, eventStreamUrl);
 
     $('#filter_reset').on('click', function() {
       var $form = $(this).parents('form').first();
