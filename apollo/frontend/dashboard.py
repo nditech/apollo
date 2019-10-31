@@ -300,7 +300,7 @@ def get_stratified_daily_progress(query, event, location_type):
             Location.location_type == location_type)
 
         for location in locations:
-            if location.name not in df['getter'].unique():
+            if location.name not in df.loc[df.index.notnull()]['getter'].unique():  # noqa
                 df = df.append(pd.DataFrame(
                     {'getter': location.name, 'count': 0},
                     index=[start]))
