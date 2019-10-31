@@ -10,7 +10,8 @@ from sqlalchemy import false
 
 from ..deployments.forms import generate_event_selection_form
 from ..frontend import permissions, route
-from ..frontend.dashboard import get_coverage
+from ..frontend.dashboard import (
+    get_coverage, get_daily_progress, get_stratified_daily_progress)
 from ..frontend.helpers import (
     get_event, set_event, get_concurrent_events_list_menu,
     get_checklist_form_dashboard_menu)
@@ -31,6 +32,7 @@ def main_dashboard(form_id=None):
 
     # get variables from query params, or use (hopefully) sensible defaults
     group_slug = args.pop('group', None)
+    stratified_progress = args.pop('progress', None)
     group = None
     location_type_id = args.pop('locationtype', None)
     next_location_type = None
@@ -112,6 +114,45 @@ def main_dashboard(form_id=None):
 
     if not group_slug:
         data = get_coverage(query_filterset.qs, form)
+        if form.show_progress and not stratified_progress:
+            progress = get_daily_progress(query_filterset.qs, event)
+        elif form.show_progress and stratified_progress:
+            admin_location_types = LocationType.query.filter(
+                LocationType.is_administrative == True,  # noqa
+                LocationType.location_set_id == event.location_set_id
+            ).join(
+                LocationType.ancestor_paths
+            ).group_by(
+                LocationType.id, models.LocationTypePath.depth
+            ).order_by(models.LocationTypePath.depth).all()
+
+            location_type = None
+            if location_type_id:
+                # pair[1].id needs to be cast to a str because location_type_id
+                # is a string
+                index, location_type = next(
+                    (pair for pair in enumerate(admin_location_types)
+                     if str(pair[1].id) == location_type_id),
+                    (None, None))
+
+            if location_type is None and len(admin_location_types) > 0:
+                location_type = admin_location_types[0]
+                try:
+                    next_location_type = admin_location_types[1]
+                except IndexError:
+                    next_location_type = None
+            elif location_type is not None:
+                try:
+                    next_location_type = admin_location_types[index + 1]
+                except IndexError:
+                    next_location_type = None
+            else:
+                stratified_progress = None
+
+            progress = get_stratified_daily_progress(
+                query, event, location_type)
+        else:
+            progress = []
     else:
         group = next(
             (grp for grp in form.data['groups']
@@ -154,19 +195,23 @@ def main_dashboard(form_id=None):
 
         data = get_coverage(
             query, form, group, location_type)
+        progress = []
 
     context = {
         'args': {},
         'location_id': '',
         'next_location': next_location_type,
         'data': data,
+        'progress': progress,
         'obs_data': [],
         'filter_form': query_filterset.form,
         'breadcrumbs': breadcrumbs,
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
         'group': group or '',
-        'form_id': form.id if form else None
+        'stratified_progress': stratified_progress or '',
+        'form_id': form.id if form else None,
+        'form': form
     }
 
     return render_template(
