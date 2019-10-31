@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from apollo.settings import TIMEZONE
 from collections import defaultdict
+from datetime import datetime
 from logging import getLogger
+from pytz import timezone
 
 from sqlalchemy import and_, func, or_, not_
 from sqlalchemy.orm import aliased, Load
@@ -9,6 +12,8 @@ from sqlalchemy.dialects.postgresql import array
 from apollo.core import db
 from apollo.locations.models import Location, LocationPath, LocationTypePath
 from apollo.submissions.models import Submission
+
+import pandas as pd
 
 logger = getLogger(__name__)
 
@@ -219,3 +224,105 @@ def _get_global_coverage(query, form):
         coverage_list.append(data)
 
     return coverage_list
+
+
+def get_daily_progress(query, event):
+    query_with_entities = query.with_entities(Submission.participant_updated)
+    df = pd.read_sql(
+        query_with_entities.statement,
+        query_with_entities.session.bind, index_col='participant_updated',
+        parse_dates=['participant_updated']).tz_localize(TIMEZONE)
+    df['count'] = 1
+
+    tz = timezone(TIMEZONE)
+    start = tz.localize(datetime.combine(
+        event.start.astimezone(tz), datetime.min.time()))
+    end = tz.localize(
+        datetime.combine(event.end.astimezone(tz), datetime.min.time()))
+    df_resampled = df.loc[df.index.notnull()].append(
+        pd.DataFrame({'count': 0}, index=[start])).append(
+        pd.DataFrame({'count': 0}, index=[end])).resample('D').sum()
+
+    progress = df_resampled.truncate(before=start, after=end)
+    progress.loc[progress.index == start.strftime(
+        '%Y-%m-%d'), 'count'] = int(
+            df_resampled[df_resampled.index <= start].sum())
+    progress.loc[progress.index == end.strftime(
+        '%Y-%m-%d'), 'count'] = int(
+            df_resampled[df_resampled.index >= end].sum())
+
+    return [{'date': idx.strftime('%Y-%m-%d'),
+             'value': int(progress.loc[idx]['count'])}
+            for idx in progress.index]
+
+
+def get_stratified_daily_progress(query, event, location_type):
+    response = []
+    ancestor_location = aliased(Location)
+    location_closure = aliased(LocationPath)
+
+    sample_sub = query.first()
+    sub_location_type = sample_sub.location.location_type
+
+    depth_info = LocationTypePath.query.filter_by(
+        ancestor_id=location_type.id,
+        descendant_id=sub_location_type.id).first()
+
+    if depth_info:
+        _query = query.join(
+            location_closure,
+            location_closure.descendant_id == Submission.location_id).join(
+                ancestor_location,
+                ancestor_location.id == location_closure.ancestor_id
+            ).filter(
+                location_closure.depth == depth_info.depth
+            ).with_entities(
+                ancestor_location.name,
+                Submission.participant_updated
+            ).options(
+                Load(ancestor_location).load_only('id', 'name_translations')
+            ).group_by(ancestor_location.id, Submission.participant_updated)
+
+        df = pd.read_sql(
+            _query.statement,
+            _query.session.bind,
+            index_col=['participant_updated'],
+            parse_dates=['participant_updated']).tz_localize(TIMEZONE)
+        df['count'] = 1
+        tz = timezone(TIMEZONE)
+        start = tz.localize(datetime.combine(
+            event.start.astimezone(tz), datetime.min.time()))
+        end = tz.localize(
+            datetime.combine(event.end.astimezone(tz), datetime.min.time()))
+
+        locations = Location.query.filter(
+            Location.location_set == location_type.location_set,
+            Location.location_type == location_type)
+
+        for location in locations:
+            if location.name not in df['getter'].unique():
+                df = df.append(pd.DataFrame(
+                    {'getter': location.name, 'count': 0},
+                    index=[start]))
+
+        df2 = df.loc[df.index.notnull()].groupby('getter').resample('D').sum()
+
+        for location in df2.index.get_level_values(0).unique():
+            df_resampled = df2.loc[location].append(
+                pd.DataFrame({'count': 0}, index=[start])).append(
+                    pd.DataFrame({'count': 0}, index=[end])).resample(
+                        'D').sum()
+            progress = df_resampled.truncate(before=start, after=end)
+            progress.loc[progress.index == start.strftime(
+                '%Y-%m-%d'), 'count'] = int(
+                    df_resampled[df_resampled.index <= start].sum())
+            progress.loc[progress.index == end.strftime(
+                '%Y-%m-%d'), 'count'] = int(
+                    df_resampled[df_resampled.index >= end].sum())
+            response.append(
+                {'name': location,
+                 'values': [{'date': idx.strftime('%Y-%m-%d'),
+                            'value': int(progress.loc[idx]['count'])}
+                            for idx in progress.index]})
+
+        return response

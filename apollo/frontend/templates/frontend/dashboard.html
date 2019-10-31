@@ -13,6 +13,9 @@
   stroke: #666;
   shape-rendering: crispEdges;
 }
+.daily .axis text {
+  text-anchor: end;
+}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
@@ -32,6 +35,7 @@
       {{ render_filter_form(filter_form, location)}}
   </div>
 </div>
+{%- if not stratified_progress %}
 {% if data %}
 <div class="row">
 {% for row in data %}
@@ -47,6 +51,28 @@
 {% endfor %}
 </div>
 {% else %}
+<div class="card border-light">
+  <div class="card-header text-center">{{ _('No Data Available') }}</div>
+</div>
+{% endif %}
+{%- endif %}
+{%- if form.show_progress and progress %}
+<div class="row">
+  {%- if stratified_progress %}
+  {%- for item in progress %}
+  <div class="col-12 col-lg-6 mb-2 mt-4 p-0">
+    <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</h5>
+    <div class="daily text-center" data-chart='{{ item['values']|tojson }}'></div>
+  </div>
+  {%- endfor %}
+  {%- else %}
+  <div class="col-12 col-lg-6 mb-2 mt-4 p-0">
+    <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ _('Daily Progress Report') }}{% if not location and not request.args.location %}</a>{% endif %}</h5>
+    <div class="daily text-center" data-chart='{{ progress|tojson }}'></div>
+  </div>
+  {%- endif %}
+</div>
+{%- elif form.show_progress and not group %}
 <div class="card border-light">
   <div class="card-header text-center">{{ _('No Data Available') }}</div>
 </div>
@@ -92,6 +118,11 @@
       {%- else %}
         drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
       {%- endif %}
+      });
+
+      $('.daily').each(function (idx, el) {
+        var data = JSON.parse(el.dataset.chart);
+        drawProgressChart(el, data);
       });
   });
 </script>
