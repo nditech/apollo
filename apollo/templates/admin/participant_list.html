@@ -211,7 +211,6 @@
   {{ render_pager(participants, 'participants.participant_list', args) }}
   {%- endif %}
 </div>
-{{ render_toast_parent(toast_app_id) }}
 
 <div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
   <div class="wizard-card" data-cardname="uploadFile">
@@ -248,6 +247,10 @@
   </div>
 </div>
 {%- endblock -%}
+
+{% block footer %}
+{{ render_toast_parent(toast_app_id) }}
+{% endblock footer %}
 
 {%- block tail_js -%}
 {{ super() }}

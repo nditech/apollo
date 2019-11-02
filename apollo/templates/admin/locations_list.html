@@ -128,7 +128,6 @@
   <div class="card-footer">
     {{ render_pager(locations, 'locationset.locations_list', args) }}
   </div>
-  {{ render_toast_parent(toast_app_id) }}
 </div>
 <div class="modal fade" id="finalizeModal" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -150,6 +149,9 @@
 </div>
 {% endblock %}
 
+{% block footer %}
+{{ render_toast_parent(toast_app_id) }}
+{% endblock footer %}
 
 {%- block tail_js -%}
 {{ super() }}

@@ -173,9 +173,10 @@
     </div>
   </div>
 </form>
-{{ render_toast_parent(toast_app_id) }}
 {% endblock %}
-
+{% block footer %}
+{{ render_toast_parent(toast_app_id) }}
+{% endblock footer %}
 {%- block tail_js %}
 {{ super() }}
 {{ render_toast_template() }}
