@@ -39,7 +39,7 @@
 
 {% macro render_toast_parent(toast_app_id) %}
 <div aria-live="polite" aria-atomic="true" id="{{ toast_app_id }}">
-  <div style="position: absolute; bottom: 2rem; right: 2rem;">
+  <div style="position: relative; margin-bottom: 2rem; margin-right: 2rem;">
     <task-toast v-for="task in tasks" :key="task.id" :task-info="task"></task-toast>
   </div>
 </div>
