@@ -114,9 +114,9 @@ def main_dashboard(form_id=None):
 
     if not group_slug:
         data = get_coverage(query_filterset.qs, form)
-        if form.show_progress and not stratified_progress:
+        if form and form.show_progress and not stratified_progress:
             progress = get_daily_progress(query_filterset.qs, event)
-        elif form.show_progress and stratified_progress:
+        elif form and form.show_progress and stratified_progress:
             admin_location_types = LocationType.query.filter(
                 LocationType.is_administrative == True,  # noqa
                 LocationType.location_set_id == event.location_set_id
