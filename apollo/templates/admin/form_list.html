@@ -194,9 +194,13 @@
     importSubmitButton.disabled = true;
   });
   var formDeleteConfirm = function(event) {
+    // for some reason, the event handler activates on clicking the icon,
+    // and the target is, well, the icon. so we have to go up one more
+    // level if that's the case
+    var form = event.target.localName.toLowerCase() === 'button' ? event.target.parentElement : event.target.parentElement.parentElement;
     var result = confirm("{{ _('Are you sure you want to delete this form? All submissions for it will be deleted too!') }}");
     if (result)
-      event.target.parentElement.submit();
+      form.submit();
     event.preventDefault();
   };
 
