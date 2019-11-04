@@ -1198,7 +1198,7 @@ def quality_assurance_list(form_id):
         models.Form.id == form_id,
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
-    filter_class = generate_quality_assurance_filter(form)
+    filter_class = generate_quality_assurance_filter(event, form)
 
     data = request.args.to_dict()
     data['form_id'] = str(form.id)

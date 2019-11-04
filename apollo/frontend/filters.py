@@ -503,7 +503,9 @@ def generate_submission_analysis_filter(form):
             basesubmission_filterset(),), attributes)
 
 
-def generate_quality_assurance_filter(form):
+def generate_quality_assurance_filter(event, form):
+    from apollo.submissions.filters import make_base_submission_filter
+
     quality_check_criteria = [
         ('', _('Quality Check Criterion')),
         ('A', _('Any Criterion'))
@@ -552,6 +554,6 @@ def generate_quality_assurance_filter(form):
 
     return type(
         'QualityAssuranceFilterSet',
-        (basesubmission_filterset(),),
+        (make_base_submission_filter(event),),
         attributes
     )
