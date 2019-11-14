@@ -59,7 +59,7 @@ FIELD_TYPE_CASTS = {
     'comment': String,
     'integer': Integer,
     'select': Integer,
-    'multiselect': String,
+    'multiselect': Integer,
     'string': String,
     'location': String
 }
