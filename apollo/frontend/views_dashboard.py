@@ -194,11 +194,11 @@ def main_dashboard(form_id=None):
             group = None
 
         data = get_coverage(
-            query, form, group, location_type)
+            query_filterset.qs, form, group, location_type)
         progress = []
 
     context = {
-        'args': {},
+        'args': {'sample': args.get('sample')},
         'location_id': '',
         'next_location': next_location_type,
         'data': data,

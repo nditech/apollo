@@ -31,6 +31,8 @@ class LocationTypeItemResource(MethodResource):
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
+        else:
+            location_set_id = None
 
         location_type = LocationType.query.join(
             LocationType.location_set
@@ -62,6 +64,8 @@ class LocationTypeListResource(BaseListResource):
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
+        else:
+            location_set_id = None
 
         return LocationType.query.join(
             LocationType.location_set
@@ -84,6 +88,8 @@ class LocationItemResource(MethodResource):
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
+        else:
+            location_set_id = None
 
         return Location.query.filter_by(
             id=location_id,
@@ -104,6 +110,8 @@ class LocationListResource(BaseListResource):
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
+        else:
+            location_set_id = None
 
         lookup_args = kwargs.get('q')
         queryset = Location.query.select_from(

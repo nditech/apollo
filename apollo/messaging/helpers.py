@@ -94,7 +94,6 @@ def parse_message(form):
                         had_errors
                     )
                 else:
-                    print(questionnaire.errors)
                     # Save any valid data
                     submission = questionnaire.save()
                     return (
