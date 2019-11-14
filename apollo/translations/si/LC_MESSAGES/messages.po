@@ -1,13 +1,20 @@
-
+# Sinhala translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+# Translators:
+# Tim Akinbo <takinbo@timbaobjects.com>, 2019
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-11-14 19:18+0000\n"
-"PO-Revision-Date: 2019-11-14 18:01+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2019-08-16 17:49+0000\n"
+"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2019\n"
 "Language: si\n"
-"Language-Team: si <LL@li.org>\n"
+"Language-Team: Sinhala (https://www.transifex.com/nditech/teams/898/si/)\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -1104,7 +1111,7 @@ msgid ""
 "of the credentials on this system. Please check both and try again."
 msgstr ""
 "ඔබ සැපයූ පරිශීලක නාමය සහ මුරපදය <strong> මෙම පද්ධතියේ කිසිදු මුරපදයක් "
-"නොගැලපේ </ strong>. කරුණාකර දෙකම පරීක්ෂා කර නැවත උත්සාහ කරන්න."
+"නොගැලපේ </strong>. කරුණාකර දෙකම පරීක්ෂා කර නැවත උත්සාහ කරන්න."
 
 #: apollo/frontend/templates/frontend/login_user.html:42
 #: apollo/frontend/templates/frontend/login_user.html:43
@@ -1611,7 +1618,7 @@ msgstr "ෆිල්ටරය "
 #: apollo/frontend/templates/frontend/macros/pagination.html:37
 #, python-format
 msgid "Showing %(start)s - %(end)s of %(total)s"
-msgstr "පෙන්වීම  %(start)s - %(end)s  වල %(total)s"
+msgstr "පෙන්වීම %(start)s - %(end)s වල %(total)s"
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:18
 msgid "Previous"
@@ -1993,15 +2000,15 @@ msgstr "අධීක්ෂක හැඳුනුම්පත"
 
 #: apollo/participants/services.py:45
 msgid "Phone #1"
-msgstr "දුරකථන # 1"
+msgstr "දුරකථන #1"
 
 #: apollo/participants/services.py:45
 msgid "Phone #2"
-msgstr "දුරකථන # 2"
+msgstr "දුරකථන #2"
 
 #: apollo/participants/services.py:45
 msgid "Phone #3"
-msgstr "දුරකථන # 3"
+msgstr "දුරකථන #3"
 
 #: apollo/participants/tasks.py:161
 #, python-format
@@ -2357,19 +2364,19 @@ msgstr "තහවුරු කරන ලදි"
 
 #: apollo/submissions/models.py:35
 msgid "Status — No Problem"
-msgstr "තත්වය - ගැටළුවක් නොමැත"
+msgstr "තත්වය — ගැටළුවක් නොමැත"
 
 #: apollo/submissions/models.py:36
 msgid "Status — Unverified"
-msgstr "තත්වය - තහවුරු  නොකරන ලදි"
+msgstr "තත්වය — තහවුරු  නොකරන ලදි"
 
 #: apollo/submissions/models.py:37
 msgid "Status — Verified"
-msgstr "තත්වය - තහවුරු කරන ලදි"
+msgstr "තත්වය — තහවුරු කරන ලදි"
 
 #: apollo/submissions/models.py:38
 msgid "Status — Rejected"
-msgstr "තත්වය - ප්‍රතික්ෂේප කරන ලදි"
+msgstr "තත්වය — ප්‍රතික්ෂේප කරන ලදි"
 
 #: apollo/submissions/models.py:44
 msgid "Observer submission"
@@ -2692,7 +2699,4 @@ msgstr ""
 #, python-format
 msgid "The email %(email)s is not available"
 msgstr ""
-
-#~ msgid "Import Forms"
-#~ msgstr ""
 
