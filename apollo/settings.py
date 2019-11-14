@@ -85,14 +85,16 @@ CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
     database=config('REDIS_DATABASE', default='0'))
 
 LANGUAGES = {
+    'ar': 'العربية',
+    'az': 'Azərbaycanca',
+    'de': 'Deutsch',
     'en': 'English',
     'es': 'Español',
     'fr': 'Français',
-    'az': 'Azərbaycanca',
-    'ar': 'العربية',
-    'de': 'Deutsch',
-    'ru': 'Русский',
     'ro': 'Română',
+    'ru': 'Русский',
+    'si': "සිංහල",
+    'ta': 'தமிழ்',
 }
 BABEL_DEFAULT_LOCALE = config('BABEL_DEFAULT_LOCALE', default='en')
 
