@@ -1611,7 +1611,8 @@ msgstr "ෆිල්ටරය "
 #: apollo/frontend/templates/frontend/macros/pagination.html:37
 #, python-format
 msgid "Showing %(start)s - %(end)s of %(total)s"
-msgstr "පෙන්වීම %(start)s% -%(end)s %(total)s"
+msgstr "පෙන්වීම  %(start)s - %(end)s  වල %(total)s"
+
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:18
 msgid "Previous"
