@@ -78,7 +78,7 @@ msgstr ""
 
 #: apollo/deployments/utils.py:17
 msgid "English"
-msgstr ""
+msgstr "ஆங்கில மொழி "
 
 #: apollo/formsframework/forms.py:351 apollo/frontend/forms.py:35
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:12
@@ -112,7 +112,7 @@ msgstr ""
 #: apollo/formsframework/forms.py:356 apollo/frontend/filters.py:350
 #: apollo/messaging/filters.py:21
 msgid "Form Type"
-msgstr ""
+msgstr "தகவல் அறிக்கை முறை "
 
 #: apollo/formsframework/forms.py:361
 msgid "Don't Track Data Conflicts"
@@ -253,7 +253,7 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:96
 #: apollo/templates/admin/participant_list.html:352
 msgid "Location"
-msgstr ""
+msgstr "இடம் "
 
 #: apollo/formsframework/models.py:371 apollo/formsframework/models.py:372
 msgid "SMS 1"
@@ -327,19 +327,19 @@ msgstr ""
 #: apollo/frontend/forms.py:350
 #: apollo/frontend/templates/frontend/submission_edit.html:406
 msgid "Form"
-msgstr ""
+msgstr "படிவம் "
 
 #: apollo/frontend/filters.py:162 apollo/participants/filters.py:152
 #: apollo/participants/models.py:48 apollo/submissions/filters.py:52
 msgid "Sample"
-msgstr ""
+msgstr "மாதிரி "
 
 #: apollo/frontend/filters.py:351
 #: apollo/frontend/templates/frontend/message_list.html:83
 #: apollo/frontend/templates/frontend/message_list.html:97
 #: apollo/frontend/templates/frontend/message_list.html:107
 msgid "Invalid"
-msgstr ""
+msgstr "தவரான அல்லது முறையற்ற "
 
 #: apollo/frontend/filters.py:496
 #: apollo/frontend/templates/frontend/incident_add.html:80
@@ -349,7 +349,7 @@ msgstr ""
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:45
 #: apollo/submissions/models.py:34 apollo/submissions/services.py:59
 msgid "Status"
-msgstr ""
+msgstr "நிலையை "
 
 #: apollo/frontend/filters.py:496 apollo/frontend/forms.py:170
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:166
@@ -358,7 +358,7 @@ msgstr ""
 #: apollo/submissions/forms.py:83 apollo/submissions/models.py:55
 #: apollo/submissions/models.py:399
 msgid "Unmarked"
-msgstr ""
+msgstr "குறிக்கப்படாமல் "
 
 #: apollo/frontend/filters.py:497 apollo/frontend/forms.py:171
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:111
@@ -369,7 +369,7 @@ msgstr ""
 #: apollo/submissions/forms.py:84 apollo/submissions/models.py:57
 #: apollo/submissions/models.py:63
 msgid "Confirmed"
-msgstr ""
+msgstr "உறுதிப்படுத்தப்பட்ட "
 
 #: apollo/frontend/filters.py:497 apollo/frontend/forms.py:172
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:162
@@ -378,18 +378,18 @@ msgstr ""
 #: apollo/submissions/forms.py:85 apollo/submissions/models.py:17
 #: apollo/submissions/models.py:58
 msgid "Rejected"
-msgstr ""
+msgstr "நிராகரிப்பு "
 
 #: apollo/frontend/filters.py:498 apollo/frontend/forms.py:173
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:164
 #: apollo/frontend/templates/frontend/submission_edit.html:430
 #: apollo/submissions/forms.py:86 apollo/submissions/models.py:56
 msgid "Citizen Report"
-msgstr ""
+msgstr "குடிமக்கள் அறிக்கை "
 
 #: apollo/frontend/filters.py:510
 msgid "Quality Check Criterion"
-msgstr ""
+msgstr "தரச்  சோதனை அளவுகோல் "
 
 #: apollo/frontend/filters.py:511
 msgid "Any Criterion"
@@ -404,26 +404,26 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:244
 #: apollo/submissions/filters.py:422
 msgid "Quarantine Status"
-msgstr ""
+msgstr "தடுப்பு நிலை "
 
 #: apollo/frontend/filters.py:536 apollo/submissions/filters.py:426
 msgid "Quarantine None"
-msgstr ""
+msgstr "தடுப்புட்கு உட்படவில்லை "
 
 #: apollo/frontend/filters.py:537 apollo/submissions/filters.py:423
 msgid "Quarantine All"
-msgstr ""
+msgstr "தடுப்பிட்கு உட்பட்ட அனைத்தும் "
 
 #: apollo/frontend/filters.py:538 apollo/submissions/filters.py:424
 msgid "Quarantine Results"
-msgstr ""
+msgstr "தடுப்பிட்குட்பட்ட பெறுபேறு "
 
 #: apollo/frontend/filters.py:543
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:71
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:37
 #: apollo/submissions/filters.py:443
 msgid "Signal Status"
-msgstr ""
+msgstr "சமிக்கை நிலை "
 
 #: apollo/frontend/filters.py:544
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:116
@@ -433,7 +433,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:230
 #: apollo/submissions/filters.py:444
 msgid "Signal"
-msgstr ""
+msgstr "சமிக்கை "
 
 #: apollo/frontend/filters.py:545
 #: apollo/frontend/templates/frontend/dashboard.html:111
@@ -443,7 +443,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:230
 #: apollo/submissions/filters.py:445
 msgid "No Signal"
-msgstr ""
+msgstr "சமிக்கை இல்லை "
 
 #: apollo/frontend/forms.py:36 apollo/submissions/services.py:53
 msgid "Latitude"
@@ -456,22 +456,22 @@ msgstr ""
 #: apollo/frontend/forms.py:55 apollo/participants/models.py:60
 #, python-format
 msgid "Full Name (%(language)s)"
-msgstr ""
+msgstr "முழுப்பெயர் (%(language)s)"
 
 #: apollo/frontend/forms.py:60 apollo/participants/models.py:63
 #, python-format
 msgid "First Name (%(language)s)"
-msgstr ""
+msgstr "முதற் பெயர் (%(language)s)"
 
 #: apollo/frontend/forms.py:65 apollo/participants/models.py:66
 #, python-format
 msgid "Other Names (%(language)s)"
-msgstr ""
+msgstr "வேறு பெயர் (%(language)s)"
 
 #: apollo/frontend/forms.py:70 apollo/participants/models.py:69
 #, python-format
 msgid "Last Name (%(language)s)"
-msgstr ""
+msgstr "கடைசிப் பெயர் (%(language)s)"
 
 #: apollo/frontend/forms.py:73
 #: apollo/frontend/templates/frontend/participant_list.html:126
@@ -482,7 +482,7 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:123
 #: apollo/templates/admin/participant_list.html:126
 msgid "Gender"
-msgstr ""
+msgstr "பாலினம் "
 
 #: apollo/frontend/forms.py:75 apollo/frontend/forms.py:322
 #: apollo/frontend/templates/frontend/participant_list.html:138
@@ -494,13 +494,13 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:135
 #: apollo/templates/admin/participant_list.html:138
 msgid "Role"
-msgstr ""
+msgstr "பணி "
 
 #: apollo/frontend/forms.py:79
 #: apollo/frontend/templates/frontend/submission_edit.html:102
 #: apollo/participants/models.py:50
 msgid "Supervisor"
-msgstr ""
+msgstr "மேற்பார்வையாளர் "
 
 #: apollo/frontend/forms.py:80
 #: apollo/frontend/templates/frontend/incident_add.html:10
@@ -515,12 +515,12 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:29
 #: apollo/submissions/forms.py:90 apollo/submissions/forms.py:92
 msgid "Participant"
-msgstr ""
+msgstr "பங்குபற்றினோர் "
 
 #: apollo/frontend/forms.py:90 apollo/participants/models.py:52
 #: apollo/participants/services.py:40
 msgid "Partner"
-msgstr ""
+msgstr "பங்குதாரர் "
 
 #: apollo/frontend/forms.py:91
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:26
@@ -538,7 +538,7 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:112
 #: apollo/templates/admin/participant_list.html:115
 msgid "Phone"
-msgstr ""
+msgstr "தொலைபேசி "
 
 #: apollo/frontend/forms.py:92
 #: apollo/frontend/templates/frontend/login_user.html:44
@@ -548,7 +548,7 @@ msgstr ""
 #: apollo/participants/models.py:57 apollo/participants/services.py:44
 #: apollo/users/forms.py:15
 msgid "Password"
-msgstr ""
+msgstr "கடவுட்ச் சொல் அல்லது இரகசிய சொல் "
 
 #: apollo/frontend/forms.py:161
 msgid "Participant and Location cannot both be empty"
@@ -725,15 +725,15 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:383
 msgid "New Password"
-msgstr ""
+msgstr "இரகசிய குறியிடு "
 
 #: apollo/frontend/views_admin.py:385 apollo/users/forms.py:21
 msgid "Language"
-msgstr ""
+msgstr "மொழி "
 
 #: apollo/frontend/views_admin.py:386
 msgid "Specifies the user's default language."
-msgstr ""
+msgstr "பயன்படுத்துபவர்களின் இயல்பு நிலை மொழியைக் குறிப்பிடுக "
 
 #: apollo/frontend/views_admin.py:389
 msgid "Disable"
@@ -799,7 +799,7 @@ msgstr ""
 #: apollo/participants/views_participants.py:380
 #: apollo/templates/admin/form_list.html:272
 msgid "Participants"
-msgstr ""
+msgstr "கலந்துகொண்டோர் "
 
 #: apollo/frontend/views_admin.py:514
 msgid "Hide Gender"
@@ -827,22 +827,22 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:653 apollo/frontend/views_dashboard.py:268
 msgid "Events"
-msgstr ""
+msgstr "நிகழ்வுகள் "
 
 #: apollo/frontend/views_admin.py:654
 msgid "Users"
-msgstr ""
+msgstr "பயன்படுத்துவோர் "
 
 #: apollo/frontend/views_admin.py:657 apollo/locations/views_locations.py:73
 #: apollo/locations/views_locations.py:114
 #: apollo/locations/views_locations.py:230
 msgid "Location Sets"
-msgstr ""
+msgstr "இருப்பிட பகுதி "
 
 #: apollo/frontend/views_admin.py:660
 #: apollo/participants/views_participants.py:78
 msgid "Participant Sets"
-msgstr ""
+msgstr "பங்குபற்றுவோர் பகுதி "
 
 #: apollo/frontend/views_admin.py:662
 msgid "Tasks"
@@ -850,14 +850,14 @@ msgstr ""
 
 #: apollo/frontend/views_dashboard.py:45 apollo/frontend/views_dashboard.py:226
 msgid "Dashboard"
-msgstr ""
+msgstr "அறை "
 
 #: apollo/frontend/views_dashboard.py:234
 #: apollo/submissions/views_submissions.py:79
 #: apollo/submissions/views_submissions.py:82
 #: apollo/submissions/views_submissions.py:413
 msgid "Checklists"
-msgstr ""
+msgstr "பட்டியல் "
 
 #: apollo/frontend/views_dashboard.py:241
 #: apollo/submissions/views_submissions.py:93
@@ -873,7 +873,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/userprofile.html:7
 #: apollo/frontend/views_users.py:22
 msgid "Edit Profile"
-msgstr ""
+msgstr "மறுசீலமைக்கப்பட்ட சுய விபரம் "
 
 #: apollo/frontend/templates/403.html:5
 msgid "Forbidden Error"
@@ -930,12 +930,12 @@ msgstr ""
 #: apollo/frontend/templates/frontend/dashboard.html:26
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:27
 msgid "Pie Chart"
-msgstr ""
+msgstr "பை விளக்கப்படம் "
 
 #: apollo/frontend/templates/frontend/dashboard.html:27
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:28
 msgid "Bar Chart"
-msgstr ""
+msgstr "சலாகை விளக்கப்படம் "
 
 #: apollo/frontend/templates/frontend/dashboard.html:55
 #: apollo/frontend/templates/frontend/dashboard.html:77
@@ -956,7 +956,7 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:197
 #: apollo/templates/admin/quality_assurance.html:49
 msgid "No Data Available"
-msgstr ""
+msgstr "தரவு ஏதும் கிடைக்கப்பெறவில்லை "
 
 #: apollo/frontend/templates/frontend/dashboard.html:70
 msgid "Daily Progress Report"
@@ -972,50 +972,50 @@ msgstr ""
 #: apollo/result_analysis/templates/result_analysis/results.html:71
 #: apollo/result_analysis/templates/result_analysis/results.html:204
 msgid "Missing"
-msgstr ""
+msgstr "காணாமல் "
 
 #: apollo/frontend/templates/frontend/dashboard.html:109
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:136
 msgid "Partial"
-msgstr ""
+msgstr "பகுதி "
 
 #: apollo/frontend/templates/frontend/dashboard.html:110
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:135
 msgid "Complete"
-msgstr ""
+msgstr "முழுமை "
 
 #: apollo/frontend/templates/frontend/dashboard.html:114
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:77
 #: apollo/submissions/aggregation.py:121
 msgid "Total"
-msgstr ""
+msgstr "மொத்தம் "
 
 #: apollo/frontend/templates/frontend/event_selection.html:14
 msgid "Go"
-msgstr ""
+msgstr "செல்ல "
 
 #: apollo/frontend/templates/frontend/forgot_password.html:5
 #: apollo/frontend/templates/frontend/forgot_password.html:36
 msgid "Password Reset"
-msgstr ""
+msgstr "இரகசியக்  குறி மாற்றியமைப்பதட்கு "
 
 #: apollo/frontend/templates/frontend/forgot_password.html:40
 msgid ""
 "An error occured while attempting to reset the password for the supplied "
 "account. Please check the email address and try again."
-msgstr ""
+msgstr "\"முயற்சிக்கும் போது பிழை ஏற்பட்டப்பட்டமையால் "
 
 #: apollo/frontend/templates/frontend/forgot_password.html:43
 #: apollo/frontend/templates/frontend/forgot_password.html:45
 #: apollo/participants/models.py:56 apollo/participants/services.py:44
 #: apollo/users/forms.py:12
 msgid "Email"
-msgstr ""
+msgstr "மின்னஞ்சல் "
 
 #: apollo/frontend/templates/frontend/forgot_password.html:47
 #: apollo/frontend/templates/frontend/reset_password.html:5
 msgid "Reset Password"
-msgstr ""
+msgstr "மாற்றியமைக்கப்பட்ட இரகசியக்  குறி "
 
 #: apollo/frontend/templates/frontend/forgot_password.html:49
 #: apollo/frontend/templates/frontend/incident_add.html:96
@@ -1038,13 +1038,13 @@ msgstr ""
 #: apollo/templates/admin/quality_assurance_edit.html:45
 #: apollo/templates/admin/quality_assurance_edit.html:56
 msgid "Cancel"
-msgstr ""
+msgstr "இரத்து "
 
 #: apollo/frontend/templates/frontend/incident_add.html:22
 #: apollo/frontend/templates/frontend/submission_edit.html:173
 #: apollo/frontend/templates/frontend/submission_edit.html:547
 msgid "Data Validation Errors"
-msgstr ""
+msgstr "தரவு மதிப்பிட்டு பிழைகள் "
 
 #: apollo/frontend/templates/frontend/incident_add.html:23
 #: apollo/frontend/templates/frontend/submission_edit.html:174
@@ -1053,6 +1053,8 @@ msgid ""
 "The data you entered are not valid. Please check the affected questions "
 "and correct them."
 msgstr ""
+"நீங்கள் குறிப்பிட்ட தரவு செல்லுபடியற்றது .தயவுசெய்து பயனுள்ள கேள்விகள் "
+"மற்றும் அவற்றை சரி செய்யவும் ."
 
 #: apollo/frontend/templates/frontend/incident_add.html:97
 #: apollo/frontend/templates/frontend/participant_edit.html:58
@@ -1066,7 +1068,7 @@ msgstr ""
 #: apollo/templates/admin/location_edit.html:46
 #: apollo/templates/admin/quality_assurance_edit.html:58
 msgid "Save"
-msgstr ""
+msgstr "பதிந்து "
 
 #: apollo/frontend/templates/frontend/layout.html:46
 #: apollo/templates/admin/base.html:39
@@ -1075,19 +1077,19 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/layout.html:83
 msgid "Settings"
-msgstr ""
+msgstr "செட்டிங் அமைப்பு "
 
 #: apollo/frontend/templates/frontend/layout.html:92
 msgid "Admin"
-msgstr ""
+msgstr "நிர்வாகம் "
 
 #: apollo/frontend/templates/frontend/layout.html:95
 msgid "Account Settings"
-msgstr ""
+msgstr "கணக்கு அமைப்பு "
 
 #: apollo/frontend/templates/frontend/layout.html:97
 msgid "Logout"
-msgstr ""
+msgstr "வெளியேறு "
 
 #: apollo/frontend/templates/frontend/layout.html:138
 #: apollo/templates/admin/base.html:76
@@ -1096,23 +1098,26 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:5
 msgid "User Sign In"
-msgstr ""
+msgstr "பயன்படுவோர் உள் நுழைய "
 
 #: apollo/frontend/templates/frontend/login_user.html:39
 msgid ""
 "The username and password you supplied <strong>do not match</strong> any "
 "of the credentials on this system. Please check both and try again."
 msgstr ""
+"நீங்கள் வழங்கிய பயனர்பெயர் மற்றும் கடவுச் சொல்  <strong>பொருந்தவில்லை "
+"</strong>எந்த கணினியில் உள்ள எந்த சான்றுகளுடனும் .தயவு செய்து இரண்டையும் "
+"சரிபார்த்து மறுபடியும் அனுப்பவும் "
 
 #: apollo/frontend/templates/frontend/login_user.html:42
 #: apollo/frontend/templates/frontend/login_user.html:43
 #: apollo/users/forms.py:11
 msgid "Username"
-msgstr ""
+msgstr "பயன் படுத்துவோர் பெயர் "
 
 #: apollo/frontend/templates/frontend/login_user.html:47
 msgid "Sign In"
-msgstr ""
+msgstr "பயன் படுத்துவோர் உள்நுழைய "
 
 #: apollo/frontend/templates/frontend/login_user.html:49
 msgid "Forgot Password?"
@@ -1146,21 +1151,21 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:342
 #: apollo/messaging/services.py:33
 msgid "Mobile"
-msgstr ""
+msgstr "கையடக்க "
 
 #: apollo/frontend/templates/frontend/message_list.html:21
 #: apollo/frontend/templates/frontend/message_list.html:67
 #: apollo/frontend/templates/frontend/submission_edit.html:340
 #: apollo/messaging/services.py:33
 msgid "Text"
-msgstr ""
+msgstr "உரை "
 
 #: apollo/frontend/templates/frontend/message_list.html:25
 #: apollo/frontend/templates/frontend/message_list.html:69
 #: apollo/messaging/services.py:34 apollo/templates/admin/form_list.html:67
 #: apollo/templates/admin/locations_list.html:56
 msgid "Type"
-msgstr ""
+msgstr "வகை  "
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:44
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:69
@@ -1171,11 +1176,11 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:456
 #: apollo/frontend/templates/frontend/submission_edit.html:488
 msgid "Date"
-msgstr ""
+msgstr "திகதி "
 
 #: apollo/frontend/templates/frontend/message_list.html:38
 msgid "Search"
-msgstr ""
+msgstr "தேடு "
 
 #: apollo/frontend/templates/frontend/macros/dashboard_filter.html:17
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:39
@@ -1185,7 +1190,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/message_list.html:39
 #: apollo/templates/admin/locations_list_filter.html:15
 msgid "Clear"
-msgstr ""
+msgstr "தெளிவான /அழிக்கப்பட்ட "
 
 #: apollo/frontend/templates/frontend/message_list.html:65
 #: apollo/frontend/templates/frontend/submission_edit.html:344
@@ -1194,13 +1199,13 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:489
 #: apollo/result_analysis/templates/result_analysis/results.html:506
 msgid "Time"
-msgstr ""
+msgstr "நேரம் "
 
 #: apollo/frontend/templates/frontend/message_list.html:66
 #: apollo/frontend/templates/frontend/submission_edit.html:341
 #: apollo/messaging/services.py:33
 msgid "Direction"
-msgstr ""
+msgstr "திசை "
 
 #: apollo/frontend/templates/frontend/message_list.html:68
 msgid "Source"
@@ -1334,13 +1339,13 @@ msgstr ""
 #: apollo/templates/admin/locations_list.html:153
 #: apollo/templates/admin/participant_list.html:267
 msgid "Next"
-msgstr ""
+msgstr "அடுத்த "
 
 #: apollo/frontend/templates/frontend/participant_list.html:272
 #: apollo/templates/admin/locations_list.html:154
 #: apollo/templates/admin/participant_list.html:268
 msgid "Back"
-msgstr ""
+msgstr "முன்னைய "
 
 #: apollo/frontend/templates/frontend/participant_list.html:273
 #: apollo/templates/admin/locations_list.html:155
@@ -1393,7 +1398,7 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:40
 msgid "Last Contacted"
-msgstr ""
+msgstr "கடைசியாக தொடர்பு கொண்டது "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:41
 #: apollo/frontend/templates/frontend/submission_edit.html:44
@@ -1407,52 +1412,52 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:49
 msgid "Texted Phone"
-msgstr ""
+msgstr "தொலைபேசி உரை "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:50
 #: apollo/frontend/templates/frontend/submission_edit.html:53
 #: apollo/frontend/templates/frontend/submission_edit.html:731
 msgid "Unverified"
-msgstr ""
+msgstr "சரிபார்க்கப்படாத "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:58
 msgid "Other Phones"
-msgstr ""
+msgstr "ஏனைய தொலைபேசி "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:132
 #, python-format
 msgid "%(num)d comment"
 msgid_plural "%(num)d comments"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d கருத்து "
+msgstr[1] "%(num)d கருத்து "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:137
 msgid "Checklist"
-msgstr ""
+msgstr "பட்டியல் "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:140
 #: apollo/submissions/views_submissions.py:86
 #: apollo/submissions/views_submissions.py:89
 #: apollo/submissions/views_submissions.py:424
 msgid "Critical Incidents"
-msgstr ""
+msgstr "பாரதூரமான நிகழ்வு "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:143
 #: apollo/messaging/views_messages.py:33 apollo/messaging/views_messages.py:40
 msgid "Messages"
-msgstr ""
+msgstr "குறுந்தகவல் "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:146
 msgid "Changelog"
-msgstr ""
+msgstr "பதிவை மாற்ற "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:149
 msgid "Call Log"
-msgstr ""
+msgstr "அழைப்பு பதிவு "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:155
 msgid "Quality Assurance Warnings"
-msgstr ""
+msgstr "தர உத்தரவாத ஏச்சரிக்கை "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:156
 msgid ""
@@ -1472,57 +1477,59 @@ msgstr ""
 #: apollo/templates/admin/participant_list.html:70
 #: apollo/templates/admin/quality_assurance.html:31
 msgid "ID"
-msgstr ""
+msgstr "ஆட்பதிவு "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:407
 msgid "Incident Type"
-msgstr ""
+msgstr "சம்பவ வகை "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:455
 #: apollo/frontend/templates/frontend/submission_edit.html:487
 msgid "User"
-msgstr ""
+msgstr "பயன்படுத்துவோர் "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:468
 msgid "Added"
-msgstr ""
+msgstr "சேர்க்கப்பட்டது "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:469
 msgid "Changed"
-msgstr ""
+msgstr "மாற்றியமைக்கப்பட்ட "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:470
 msgid "Deleted"
-msgstr ""
+msgstr "அழிக்கப்பட்ட "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:490
 #: apollo/frontend/templates/frontend/submission_edit.html:619
 msgid "Note"
-msgstr ""
+msgstr "குறிப்பு "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:529
 msgid "No Comment"
-msgstr ""
+msgstr "கருத்துக்கள் இல்லை "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:534
 #: apollo/submissions/services.py:63
 msgid "Comment"
-msgstr ""
+msgstr "குறிப்பு "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:537
 msgid "Add Comment"
-msgstr ""
+msgstr "கருத்துக்களை சேர்க்கவும் "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:612
 #: apollo/frontend/templates/frontend/submission_edit.html:639
 msgid "Add Call Log"
-msgstr ""
+msgstr "அழைப்பு பதிவை சேர்க்கவும் "
 
 #: apollo/frontend/templates/frontend/submission_edit.html:622
 msgid ""
 "You may (optionally) include details of your call or interaction with the"
 " participant here."
 msgstr ""
+"உங்கள் அழைப்புக்கள் அல்லது பங்கெடுப்பாளருடனான தொடர்பு பற்றிய விவரங்களை "
+"இங்கே சேர்க்கலாம் ."
 
 #: apollo/frontend/templates/frontend/submission_list.html:144
 msgid "No Location"
@@ -1554,24 +1561,24 @@ msgstr ""
 #: apollo/templates/admin/location_headers_errors.html:9
 #: apollo/templates/admin/quality_assurance_edit.html:37
 msgid "Close"
-msgstr ""
+msgstr "நெருக்கமான "
 
 #: apollo/frontend/templates/frontend/submission_list.html:196
 #: apollo/submissions/views_submissions.py:453
 msgid "Add Incident"
-msgstr ""
+msgstr "சம்பவத்தை  உட்படுத்தவும் "
 
 #: apollo/frontend/templates/frontend/submission_list.html:206
 msgid "Toggle Dropdown"
-msgstr ""
+msgstr "கீழிறங்கும் நிலைமாற்று "
 
 #: apollo/frontend/templates/frontend/submission_list.html:209
 msgid "Observer"
-msgstr ""
+msgstr "கண்காளிப்பாளர் "
 
 #: apollo/frontend/templates/frontend/submission_list.html:211
 msgid "Aggregate"
-msgstr ""
+msgstr "மதிப்பீட்டு "
 
 #: apollo/frontend/templates/frontend/submission_list.html:222
 msgid "View Selection"
@@ -1597,17 +1604,17 @@ msgstr ""
 #: apollo/result_analysis/templates/result_analysis/results.html:10
 #: apollo/templates/admin/locations_list_filter.html:14
 msgid "Filter"
-msgstr ""
+msgstr "வடிகட்டி "
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:12
 #: apollo/frontend/templates/frontend/macros/pagination.html:37
 #, python-format
 msgid "Showing %(start)s - %(end)s of %(total)s"
-msgstr ""
+msgstr "காண்பிக்கப்படுகின்றது %(start)s - %(end)s இன் %(total)s"
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:18
 msgid "Previous"
-msgstr ""
+msgstr "முன்னைய "
 
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:8
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:8
@@ -1620,7 +1627,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:10
 #: apollo/participants/models.py:49 apollo/submissions/services.py:49
 msgid "Participant ID"
-msgstr ""
+msgstr "பங்குபற்றினோர் ஆள் அடையாளம் "
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:15
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:17
@@ -1644,75 +1651,75 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:94
 #: apollo/submissions/filters.py:430
 msgid "Phone Confirmation"
-msgstr ""
+msgstr "உறுதிப்படுத்தப்பட்ட தொலைபேசி "
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:111
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:177
 #: apollo/submissions/models.py:62
 msgid "Unconfirmed"
-msgstr ""
+msgstr "உறுதிப்படுத்தப்படாத "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:17
 msgid "Sending to"
-msgstr ""
+msgstr "அனுப்புவதட்கு "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:17
 #, python-format
 msgid "%(counter)s recipient"
 msgid_plural "%(counter)s recipients"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(counter)s பெறுநர் "
+msgstr[1] "%(counter)s பெறுநர் "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:23
 #: apollo/frontend/templates/frontend/macros/send_message.html:55
 msgid "characters"
-msgstr ""
+msgstr "எழுத்துக்கள் /நடத்தைகள் "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:23
 #: apollo/frontend/templates/frontend/macros/send_message.html:56
 msgid "message part"
-msgstr ""
+msgstr "செய்திப் பகுதி "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:33
 msgid "Send"
-msgstr ""
+msgstr "அனுப்புக "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:55
 msgid "character"
-msgstr ""
+msgstr "எழுத்தர்கள் /நடத்தைகள் "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:56
 msgid "message parts"
-msgstr ""
+msgstr "செய்திப் பகுதிகள் "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:79
 msgid "Success"
-msgstr ""
+msgstr "வெற்றிகரமாக "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:79
 msgid "Your message has been sent"
-msgstr ""
+msgstr "  உங்கள் குறுந்தகவல் அனுப்பப்பட்டுள்ளது "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:88
 #: apollo/templates/admin/tasks.html:60
 msgid "Error"
-msgstr ""
+msgstr "பிழை "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:88
 msgid "Please try sending again"
-msgstr ""
+msgstr "தயவு செய்து மறுபடியும் அனுப்பவும் "
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
 #: apollo/templates/admin/quality_assurance.html:43
 #: apollo/templates/admin/quality_assurance_edit.html:224
 msgid "OR"
-msgstr ""
+msgstr "அல்லது "
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
 #: apollo/templates/admin/quality_assurance.html:43
 #: apollo/templates/admin/quality_assurance_edit.html:223
 msgid "AND"
-msgstr ""
+msgstr "மற்றும் "
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:54
 msgid "All Statuses"
@@ -1732,7 +1739,7 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:184
 msgid "Quarantined"
-msgstr ""
+msgstr "தடுக்கப்பட்டது "
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:189
 msgid "GPS"
@@ -1837,7 +1844,7 @@ msgstr ""
 #: apollo/messaging/helpers.py:39
 #, python-format
 msgid "Invalid message: %(text)s. Please check and resend!"
-msgstr ""
+msgstr "பொருந்தாத செய்தி  %(text)s தயவு செய்து மறுபடியும் அனுப்பவும் "
 
 #: apollo/messaging/helpers.py:59
 #, python-format
@@ -1848,7 +1855,7 @@ msgstr ""
 
 #: apollo/messaging/helpers.py:63
 msgid "Thank you! Your report was received! You sent: {text}"
-msgstr ""
+msgstr "\"உங்களுக்கு நன்றி "
 
 #: apollo/messaging/helpers.py:73
 msgid "Unknown question codes: \"{questions}\". You sent: {text}"
@@ -1862,7 +1869,7 @@ msgstr ""
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
-msgstr ""
+msgstr "\"மேட்பார்வையாளர் அடையாளம் கிடைக்கப்பெறவில்லை "
 
 #: apollo/messaging/helpers.py:100
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
@@ -1874,11 +1881,11 @@ msgstr ""
 
 #: apollo/messaging/models.py:14
 msgid "INCOMING"
-msgstr ""
+msgstr "உள்வருகை /வருகை "
 
 #: apollo/messaging/models.py:15
 msgid "OUTGOING"
-msgstr ""
+msgstr "வெளிச்செல்லும் "
 
 #: apollo/messaging/models.py:19 apollo/submissions/models.py:504
 msgid "SMS"
@@ -1920,11 +1927,11 @@ msgstr ""
 
 #: apollo/participants/filters.py:60
 msgid "All Roles"
-msgstr ""
+msgstr "அனைத்து வகிபாகம் "
 
 #: apollo/participants/filters.py:83
 msgid "All Organizations"
-msgstr ""
+msgstr "அனைத்து நிறுவனங்கள் "
 
 #: apollo/participants/forms.py:23
 msgid "Participant ID was not mapped"
@@ -1932,11 +1939,11 @@ msgstr ""
 
 #: apollo/participants/models.py:53
 msgid "Location code"
-msgstr ""
+msgstr "இருப்பிட குறியீடு "
 
 #: apollo/participants/models.py:54
 msgid "Group"
-msgstr ""
+msgstr "குழு "
 
 #: apollo/participants/models.py:100
 #, python-format
@@ -1945,51 +1952,51 @@ msgstr ""
 
 #: apollo/participants/models.py:190
 msgid "Unspecified"
-msgstr ""
+msgstr "குறிப்பிடப்படாத "
 
 #: apollo/participants/models.py:191
 msgid "Female"
-msgstr ""
+msgstr "பெண் "
 
 #: apollo/participants/models.py:192
 msgid "Male"
-msgstr ""
+msgstr "ஆண் "
 
 #: apollo/participants/services.py:39
 msgid "Full Name"
-msgstr ""
+msgstr "முழுப்பெயர் "
 
 #: apollo/participants/services.py:39
 msgid "First Name"
-msgstr ""
+msgstr "முதலெழுத்து "
 
 #: apollo/participants/services.py:39
 msgid "Other Names"
-msgstr ""
+msgstr "ஏனைய பெயர் "
 
 #: apollo/participants/services.py:40
 msgid "Last Name"
-msgstr ""
+msgstr "இறுதிப்  பெயர் "
 
 #: apollo/participants/services.py:40
 msgid "Location ID"
-msgstr ""
+msgstr "இட /பரப்பு அடையாளம் "
 
 #: apollo/participants/services.py:44
 msgid "Supervisor ID"
-msgstr ""
+msgstr "மேற்பார்வையாளர் அடையாளம் "
 
 #: apollo/participants/services.py:45
 msgid "Phone #1"
-msgstr ""
+msgstr "தொலைபேசி 01"
 
 #: apollo/participants/services.py:45
 msgid "Phone #2"
-msgstr ""
+msgstr "தொலைபேசி 02"
 
 #: apollo/participants/services.py:45
 msgid "Phone #3"
-msgstr ""
+msgstr "தொலைபேசி 03"
 
 #: apollo/participants/tasks.py:161
 #, python-format
@@ -2046,7 +2053,7 @@ msgstr ""
 
 #: apollo/process_analysis/views_process.py:213
 msgid "Data Summary"
-msgstr ""
+msgstr "தகவல் சுருக்கம் "
 
 #: apollo/process_analysis/views_process.py:218
 msgid "Incidents Data"
@@ -2241,64 +2248,64 @@ msgstr ""
 
 #: apollo/submissions/filters.py:81
 msgid "All Incidents"
-msgstr ""
+msgstr "அணைத்து சம்பவங்கள் "
 
 #: apollo/submissions/filters.py:82
 msgid "Unmarked Incidents"
-msgstr ""
+msgstr "குறிப்பிடப்படாத சம்பவங்கள் "
 
 #: apollo/submissions/filters.py:83
 msgid "Confirmed Incidents"
-msgstr ""
+msgstr "உறுதிசெய்யப்பட்ட  சம்பவங்கள் "
 
 #: apollo/submissions/filters.py:84
 msgid "Rejected Incidents"
-msgstr ""
+msgstr "நிராகரிக்கப்பட்ட சம்பவங்கள் "
 
 #: apollo/submissions/filters.py:85
 msgid "Citizen Report Incidents"
-msgstr ""
+msgstr "சம்பவங்கள் தொடர்பாக மக்கள் அறிக்கைகள்  "
 
 #: apollo/submissions/filters.py:408
 #, python-format
 msgid "%(group)s Status"
-msgstr ""
+msgstr "%(group)s நிலை "
 
 #: apollo/submissions/filters.py:409
 #, python-format
 msgid "%(group)s Partial"
-msgstr ""
+msgstr "%(group)s பகுதி "
 
 #: apollo/submissions/filters.py:410
 #, python-format
 msgid "%(group)s Missing"
-msgstr ""
+msgstr "%(group)s தவறவிடப்பட்ட "
 
 #: apollo/submissions/filters.py:411
 #, python-format
 msgid "%(group)s Complete"
-msgstr ""
+msgstr "%(group)s பூரண "
 
 #: apollo/submissions/filters.py:412
 #, python-format
 msgid "%(group)s Conflict"
-msgstr ""
+msgstr "%(group)s முரணான "
 
 #: apollo/submissions/filters.py:425
 msgid "Quarantine All + Results"
-msgstr ""
+msgstr "தடுக்கப்பட்ட அனைத்து பெறுபேறு "
 
 #: apollo/submissions/filters.py:431
 msgid "Phone Confirmed"
-msgstr ""
+msgstr "உறுதிப்படுத்தப்பட்ட  தொலைபேசி "
 
 #: apollo/submissions/filters.py:432
 msgid "Phone Unconfirmed"
-msgstr ""
+msgstr "உறுதிப்படுத்தப்படாத தொலைபேசி "
 
 #: apollo/submissions/filters.py:439
 msgid "Optional Inclusion"
-msgstr ""
+msgstr "விருப்ப சேர்க்கை "
 
 #: apollo/submissions/forms.py:29
 msgid "Not a valid integer value"
@@ -2333,31 +2340,31 @@ msgstr ""
 
 #: apollo/submissions/models.py:28
 msgid "MISSING"
-msgstr ""
+msgstr "காணாமல் "
 
 #: apollo/submissions/models.py:29
 msgid "FLAGGED"
-msgstr ""
+msgstr "கொடியிடப்பட்ட "
 
 #: apollo/submissions/models.py:30
 msgid "VERIFIED"
-msgstr ""
+msgstr "சரிபார்க்கப்பட்டது "
 
 #: apollo/submissions/models.py:35
 msgid "Status — No Problem"
-msgstr ""
+msgstr " நிலையில் பிரச்னையும் இல்லை "
 
 #: apollo/submissions/models.py:36
 msgid "Status — Unverified"
-msgstr ""
+msgstr "நிலை உறுதிப்படுத்தப்பட்டவில்லை "
 
 #: apollo/submissions/models.py:37
 msgid "Status — Verified"
-msgstr ""
+msgstr "நிலை உறுதிப்படுத்தப்பட்டது "
 
 #: apollo/submissions/models.py:38
 msgid "Status — Rejected"
-msgstr ""
+msgstr "நிலை நிராகரிக்கப்பட்டது "
 
 #: apollo/submissions/models.py:44
 msgid "Observer submission"
@@ -2420,7 +2427,7 @@ msgstr ""
 
 #: apollo/submissions/views_submissions.py:517
 msgid "Edit Incident"
-msgstr ""
+msgstr "சம்பவம் தொடர்பான திருத்தும் "
 
 #: apollo/submissions/views_submissions.py:519
 msgid "Edit Survey"
@@ -2428,15 +2435,15 @@ msgstr ""
 
 #: apollo/submissions/views_submissions.py:521
 msgid "Edit Checklist"
-msgstr ""
+msgstr "சரிபார்க்கப்பட்ட பட்டியலை திருத்துக "
 
 #: apollo/submissions/views_submissions.py:1105
 msgid "View submission"
-msgstr ""
+msgstr "சமர்பித்ததை பார்ப்பதற்கு "
 
 #: apollo/submissions/views_submissions.py:1138
 msgid "Quality Assurance Dashboard"
-msgstr ""
+msgstr "தர உத்தரவாத அறை"
 
 #: apollo/templates/admin/administrative_divisions.html:18
 #: apollo/templates/admin/administrative_divisions.html:197
@@ -2680,7 +2687,4 @@ msgstr ""
 #, python-format
 msgid "The email %(email)s is not available"
 msgstr ""
-
-#~ msgid "Import Forms"
-#~ msgstr ""
 
