@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-09-02 01:15+0000\n"
+"POT-Creation-Date: 2019-11-14 19:18+0000\n"
 "PO-Revision-Date: 2019-11-14 18:01+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ta\n"
@@ -62,11 +62,12 @@ msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:24
 #: apollo/static/js/angular-form-builder.js:28
-#: apollo/static/js/angular-form-builder.js:34
+#: apollo/static/js/angular-form-builder.js:35
 msgid "No Analysis"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:25
+#: apollo/static/js/angular-form-builder.js:31
 msgid "Histogram"
 msgstr ""
 
@@ -75,59 +76,59 @@ msgid "Categorical"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:30
-msgid "Mean"
-msgstr ""
-
-#: apollo/static/js/angular-form-builder.js:31
-#: apollo/static/js/angular-form-builder.js:35
+#: apollo/static/js/angular-form-builder.js:36
 msgid "Count"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder.js:50
-msgid "Delete"
+#: apollo/static/js/angular-form-builder.js:32
+msgid "Mean"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:51
-msgid "Cancel"
+msgid "Delete"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:52
-msgid "Save"
+msgid "Cancel"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:53
-msgid "Name"
+msgid "Save"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:54
-msgid "Description"
+msgid "Name"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:55
-msgid "Options"
+msgid "Description"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:56
-msgid "Analysis"
+msgid "Options"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:57
-msgid "Minimum"
+msgid "Analysis"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:58
-msgid "Maximum"
+msgid "Minimum"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:59
-msgid "Type"
+msgid "Maximum"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:60
-msgid "Expected Value (Optional)"
+msgid "Type"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:61
+msgid "Expected Value (Optional)"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:62
 msgid "Validation"
 msgstr ""
 
