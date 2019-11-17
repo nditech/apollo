@@ -1136,7 +1136,7 @@ def quality_assurance_dashboard(form_id):
         models.Form.id == form_id,
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
-    filter_class = generate_quality_assurance_filter(form)
+    filter_class = generate_quality_assurance_filter(g.event, form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
     loc_types = displayable_location_types(
