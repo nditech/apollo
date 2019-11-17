@@ -92,7 +92,9 @@ def update_locations(data_frame, header_mapping, location_set, task):
         func.count(LocationType.ancestor_paths).desc()
     ).group_by('id').all()
 
-    all_loc_type_paths = LocationTypePath.query.with_entities(
+    all_loc_type_paths = LocationTypePath.query.filter_by(
+        location_set_id=location_set.id
+    ).with_entities(
         LocationTypePath.ancestor_id,
         LocationTypePath.descendant_id,
         LocationTypePath.depth
