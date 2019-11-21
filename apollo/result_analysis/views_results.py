@@ -106,10 +106,9 @@ def _voting_results(form_id, location_id=None):
     non_null_fields = (
         rejected_votes_field
         + blank_votes_field
-        + accredited_voters_field)
-    non_zero_fields = (
-        result_field_labels
-        + [registered_voters_field])
+        + accredited_voters_field
+        + result_field_labels)
+    non_zero_fields = [registered_voters_field]
     non_zero_sum_fields = result_field_labels
 
     if not dataset.empty:
