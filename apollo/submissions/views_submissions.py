@@ -897,7 +897,7 @@ def submission_edit(submission_id):
                         'quarantine_status')
                     new_offline_status = submission_form.unreachable.data
 
-                    if permissions.edit_submission_quarantine_status.can():
+                    if permissions.edit_submission_verification_status.can():
                         new_verified_fields = \
                             submission_form.verified_fields.data
                         if new_verified_fields != submission.verified_fields:
@@ -905,6 +905,7 @@ def submission_edit(submission_id):
                             update_params['verified_fields'] = \
                                 new_verified_fields
 
+                    if permissions.edit_submission_quarantine_status.can():
                         if (
                             new_quarantine_status in get_valid_values(
                                 Submission.QUARANTINE_STATUSES)
