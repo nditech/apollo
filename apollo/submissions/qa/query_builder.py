@@ -255,25 +255,26 @@ def generate_qa_queries(form):
     tag_groups = []
     for check in form.quality_checks:
         expression = build_expression(check)
-        subquery, used_tags = generate_qa_query(expression, form)
+        if expression:
+            subquery, used_tags = generate_qa_query(expression, form)
 
-        tags = array(used_tags)
+            tags = array(used_tags)
 
-        if used_tags:
-            case_query = case([
-                (subquery == True, 'OK'),   # noqa
-                (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
-                (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
-                (subquery == None, 'Missing')   # noqa
-            ]).label(check['name'])
-        else:
-            case_query = case([
-                (subquery == True, 'OK'),   # noqa
-                (subquery == False, 'Flagged')   # noqa
-            ]).label(check['name'])
+            if used_tags:
+                case_query = case([
+                    (subquery == True, 'OK'),   # noqa
+                    (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
+                    (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
+                    (subquery == None, 'Missing')   # noqa
+                ]).label(check['name'])
+            else:
+                case_query = case([
+                    (subquery == True, 'OK'),   # noqa
+                    (subquery == False, 'Flagged')   # noqa
+                ]).label(check['name'])
 
-        subqueries.append(case_query)
-        tag_groups.append(sorted(used_tags))
+            subqueries.append(case_query)
+            tag_groups.append(sorted(used_tags))
 
     return subqueries, tag_groups
 
