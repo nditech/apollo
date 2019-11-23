@@ -370,7 +370,7 @@ class FormForm(SecureForm):
         _('Show Map View'),
         description=_('Whether to display the map view for submissions or not.'))  # noqa
     show_moment = wtforms.BooleanField(
-        _('Show Moment Column'),
+        _('Show Timestamp Column'),
         description=_('Enabling this option will show the date and time for the submission in the list view.'))  # noqa
     show_progress = wtforms.BooleanField(
         _('Show Daily Progress'),

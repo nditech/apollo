@@ -53,12 +53,12 @@
     {%- if form.show_moment %}
     {%- if request.args.sort_by == 'moment' %}
     {%- if request.args.sort_direction == 'desc' %}
-    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='asc', page='') }}">{{ _('Moment') }} <i class="fa fa-chevron-down"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='asc', page='') }}">{{ _('Timestamp') }} <i class="fa fa-chevron-down"></i></a></th>
     {%- else %}
-    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='desc', page='') }}">{{ _('Moment') }} <i class="fa fa-chevron-up"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_direction='desc', page='') }}">{{ _('Timestamp') }} <i class="fa fa-chevron-up"></i></a></th>
     {%- endif %}
     {%- else %}
-    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_value='', sort_direction='', page='') }}">{{ _('Moment') }}</a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='moment', sort_value='', sort_direction='', page='') }}">{{ _('Timestamp') }}</a></th>
     {%- endif %}
     {%- endif %}
 
