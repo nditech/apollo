@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-14 19:18+0000\n"
+"POT-Creation-Date: 2019-11-25 22:55+0000\n"
 "PO-Revision-Date: 2019-08-16 17:49+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2019\n"
 "Language: si\n"
@@ -152,7 +152,7 @@ msgid "Whether to display the map view for submissions or not."
 msgstr ""
 
 #: apollo/formsframework/forms.py:373
-msgid "Show Moment Column"
+msgid "Show Timestamp Column"
 msgstr ""
 
 #: apollo/formsframework/forms.py:374
@@ -309,10 +309,10 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:218
 #: apollo/formsframework/views_forms.py:265
-#: apollo/submissions/views_submissions.py:1123
-#: apollo/submissions/views_submissions.py:1181
-#: apollo/submissions/views_submissions.py:1188
-#: apollo/submissions/views_submissions.py:1200
+#: apollo/submissions/views_submissions.py:1127
+#: apollo/submissions/views_submissions.py:1185
+#: apollo/submissions/views_submissions.py:1192
+#: apollo/submissions/views_submissions.py:1204
 #: apollo/templates/admin/form_list.html:86
 msgid "Quality Assurance"
 msgstr ""
@@ -544,10 +544,10 @@ msgid "Phone"
 msgstr "දුරකථනය "
 
 #: apollo/frontend/forms.py:92
-#: apollo/frontend/templates/frontend/login_user.html:44
-#: apollo/frontend/templates/frontend/login_user.html:45
-#: apollo/frontend/templates/frontend/reset_password.html:46
-#: apollo/frontend/templates/frontend/reset_password.html:48
+#: apollo/frontend/templates/frontend/login_user.html:65
+#: apollo/frontend/templates/frontend/login_user.html:66
+#: apollo/frontend/templates/frontend/reset_password.html:66
+#: apollo/frontend/templates/frontend/reset_password.html:68
 #: apollo/participants/models.py:57 apollo/participants/services.py:44
 #: apollo/users/forms.py:15
 msgid "Password"
@@ -882,11 +882,11 @@ msgstr "සංස්කරණය කල පෙනුම "
 msgid "Forbidden Error"
 msgstr ""
 
-#: apollo/frontend/templates/403.html:16
+#: apollo/frontend/templates/403.html:36
 msgid "Off Limits!"
 msgstr ""
 
-#: apollo/frontend/templates/403.html:17
+#: apollo/frontend/templates/403.html:37
 msgid ""
 "We understood your request, but we refuse to honor it! You are seeing "
 "this page because you were snooping around! Now paddle along before the "
@@ -897,11 +897,11 @@ msgstr ""
 msgid "Page not found"
 msgstr ""
 
-#: apollo/frontend/templates/404.html:16
+#: apollo/frontend/templates/404.html:36
 msgid "Oh No! Looks like you're lost!"
 msgstr ""
 
-#: apollo/frontend/templates/404.html:17
+#: apollo/frontend/templates/404.html:37
 msgid ""
 "Don't freak out, maybe you entered the wrong address or clicked a bad "
 "link! Who knows, this could even be a fluke! :) I recommend you either "
@@ -914,11 +914,11 @@ msgstr ""
 msgid "Server Error"
 msgstr ""
 
-#: apollo/frontend/templates/500.html:16
+#: apollo/frontend/templates/500.html:36
 msgid "Zong! We screwed up :("
 msgstr ""
 
-#: apollo/frontend/templates/500.html:17
+#: apollo/frontend/templates/500.html:37
 msgid ""
 "You shouldn't be seeing this page but you are because you're a genius and"
 " have found a rare bug in the software. Rest assured, we now know about "
@@ -998,11 +998,11 @@ msgid "Go"
 msgstr "යන්න"
 
 #: apollo/frontend/templates/frontend/forgot_password.html:5
-#: apollo/frontend/templates/frontend/forgot_password.html:36
+#: apollo/frontend/templates/frontend/forgot_password.html:56
 msgid "Password Reset"
 msgstr "මුරපදය නැවත සකස් කරන ලදී "
 
-#: apollo/frontend/templates/frontend/forgot_password.html:40
+#: apollo/frontend/templates/frontend/forgot_password.html:60
 msgid ""
 "An error occured while attempting to reset the password for the supplied "
 "account. Please check the email address and try again."
@@ -1010,24 +1010,24 @@ msgstr ""
 "සපයන ලද ගිණුම සඳහා මුරපදය නැවත සැකසීමට උත්සාහ කිරීමේදී දෝෂයක් සිදුවිය. "
 "කරුණාකර විද්‍යුත් තැපැල් ලිපිනය පරීක්ෂා කර නැවත උත්සාහ කරන්න."
 
-#: apollo/frontend/templates/frontend/forgot_password.html:43
-#: apollo/frontend/templates/frontend/forgot_password.html:45
+#: apollo/frontend/templates/frontend/forgot_password.html:63
+#: apollo/frontend/templates/frontend/forgot_password.html:65
 #: apollo/participants/models.py:56 apollo/participants/services.py:44
 #: apollo/users/forms.py:12
 msgid "Email"
 msgstr "විද්‍යුත් තැපැල් ලිපිනය"
 
-#: apollo/frontend/templates/frontend/forgot_password.html:47
+#: apollo/frontend/templates/frontend/forgot_password.html:67
 #: apollo/frontend/templates/frontend/reset_password.html:5
 msgid "Reset Password"
 msgstr "මුරපදය නැවත සකස් කරන ලදී"
 
-#: apollo/frontend/templates/frontend/forgot_password.html:49
+#: apollo/frontend/templates/frontend/forgot_password.html:69
 #: apollo/frontend/templates/frontend/incident_add.html:96
 #: apollo/frontend/templates/frontend/macros/send_message.html:32
 #: apollo/frontend/templates/frontend/participant_edit.html:57
 #: apollo/frontend/templates/frontend/participant_list.html:270
-#: apollo/frontend/templates/frontend/reset_password.html:55
+#: apollo/frontend/templates/frontend/reset_password.html:75
 #: apollo/frontend/templates/frontend/submission_edit.html:640
 #: apollo/frontend/templates/frontend/userprofile.html:31
 #: apollo/templates/admin/form_create.html:74
@@ -1075,29 +1075,29 @@ msgstr ""
 msgid "Save"
 msgstr "සුරකින්න "
 
-#: apollo/frontend/templates/frontend/layout.html:46
-#: apollo/templates/admin/base.html:39
+#: apollo/frontend/templates/frontend/layout.html:69
+#: apollo/templates/admin/base.html:59
 msgid "Toggle Navigation"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/layout.html:83
+#: apollo/frontend/templates/frontend/layout.html:106
 msgid "Settings"
 msgstr "සැකසුම්"
 
-#: apollo/frontend/templates/frontend/layout.html:92
+#: apollo/frontend/templates/frontend/layout.html:115
 msgid "Admin"
 msgstr "පරිපාලක"
 
-#: apollo/frontend/templates/frontend/layout.html:95
+#: apollo/frontend/templates/frontend/layout.html:118
 msgid "Account Settings"
 msgstr "ගිණුම සැකසුම් "
 
-#: apollo/frontend/templates/frontend/layout.html:97
+#: apollo/frontend/templates/frontend/layout.html:120
 msgid "Logout"
 msgstr "ලොග්අවුට්"
 
-#: apollo/frontend/templates/frontend/layout.html:138
-#: apollo/templates/admin/base.html:76
+#: apollo/frontend/templates/frontend/layout.html:161
+#: apollo/templates/admin/base.html:96
 msgid "Built with <span class=\"text-danger\">♥</span> from Lagos"
 msgstr ""
 
@@ -1105,7 +1105,7 @@ msgstr ""
 msgid "User Sign In"
 msgstr "පරිශීලක ඇතුල්  වීම"
 
-#: apollo/frontend/templates/frontend/login_user.html:39
+#: apollo/frontend/templates/frontend/login_user.html:60
 msgid ""
 "The username and password you supplied <strong>do not match</strong> any "
 "of the credentials on this system. Please check both and try again."
@@ -1113,25 +1113,25 @@ msgstr ""
 "ඔබ සැපයූ පරිශීලක නාමය සහ මුරපදය <strong> මෙම පද්ධතියේ කිසිදු මුරපදයක් "
 "නොගැලපේ </strong>. කරුණාකර දෙකම පරීක්ෂා කර නැවත උත්සාහ කරන්න."
 
-#: apollo/frontend/templates/frontend/login_user.html:42
-#: apollo/frontend/templates/frontend/login_user.html:43
+#: apollo/frontend/templates/frontend/login_user.html:63
+#: apollo/frontend/templates/frontend/login_user.html:64
 #: apollo/users/forms.py:11
 msgid "Username"
 msgstr "පරිශීලකගේ නම "
 
-#: apollo/frontend/templates/frontend/login_user.html:47
+#: apollo/frontend/templates/frontend/login_user.html:68
 msgid "Sign In"
 msgstr "ඇතුල් වීම"
 
-#: apollo/frontend/templates/frontend/login_user.html:49
+#: apollo/frontend/templates/frontend/login_user.html:70
 msgid "Forgot Password?"
 msgstr "මුරපදය අමතකද "
 
-#: apollo/frontend/templates/frontend/login_user.html:55
+#: apollo/frontend/templates/frontend/login_user.html:76
 msgid "Sign in with Google"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/login_user.html:63
+#: apollo/frontend/templates/frontend/login_user.html:84
 msgid "Sign in with Facebook"
 msgstr ""
 
@@ -1380,19 +1380,19 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/reset_password.html:37
-#: apollo/frontend/templates/frontend/reset_password.html:53
+#: apollo/frontend/templates/frontend/reset_password.html:57
+#: apollo/frontend/templates/frontend/reset_password.html:73
 msgid "Change Password"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/reset_password.html:42
+#: apollo/frontend/templates/frontend/reset_password.html:62
 msgid ""
 "An error occured while attempting to reset the password for the supplied "
 "account. Please ensure that both values are the same."
 msgstr ""
 
-#: apollo/frontend/templates/frontend/reset_password.html:49
-#: apollo/frontend/templates/frontend/reset_password.html:51
+#: apollo/frontend/templates/frontend/reset_password.html:69
+#: apollo/frontend/templates/frontend/reset_password.html:71
 msgid "Retype Password"
 msgstr ""
 
@@ -1652,7 +1652,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:75
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:77
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:80
-msgid "Moment"
+#: apollo/submissions/services.py:56
+msgid "Timestamp"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:70
@@ -1805,22 +1806,22 @@ msgstr ""
 msgid "LocationDataField - %(name)s in %(location_set)s"
 msgstr ""
 
-#: apollo/locations/tasks.py:133
+#: apollo/locations/tasks.py:135
 #, python-format
 msgid "No code or name column present for row %(row)d"
 msgstr ""
 
-#: apollo/locations/tasks.py:166
+#: apollo/locations/tasks.py:168
 #, python-format
 msgid "Invalid (non-numeric) location code (%(loc_code)s)"
 msgstr ""
 
-#: apollo/locations/tasks.py:181
+#: apollo/locations/tasks.py:183
 #, python-format
 msgid "Missing name or code for row %(row)d"
 msgstr ""
 
-#: apollo/locations/tasks.py:364
+#: apollo/locations/tasks.py:366
 msgid "Locations Import Report"
 msgstr ""
 
@@ -2112,7 +2113,7 @@ msgid "Detail"
 msgstr ""
 
 #: apollo/result_analysis/views_results.py:60
-#: apollo/result_analysis/views_results.py:485
+#: apollo/result_analysis/views_results.py:484
 msgid "Results Data"
 msgstr ""
 
@@ -2423,10 +2424,6 @@ msgstr ""
 msgid "Registered Voters"
 msgstr ""
 
-#: apollo/submissions/services.py:56
-msgid "Timestamp"
-msgstr ""
-
 #: apollo/submissions/tasks.py:71
 #, python-format
 msgid "Participant ID %(part_id)s was not found"
@@ -2449,11 +2446,11 @@ msgstr ""
 msgid "Edit Checklist"
 msgstr "පිරික්සුම් ලැයිස්තුව සංස්කරණය කරන්න"
 
-#: apollo/submissions/views_submissions.py:1105
+#: apollo/submissions/views_submissions.py:1109
 msgid "View submission"
 msgstr "ඉදිරිපත් කිරීම බලන්න"
 
-#: apollo/submissions/views_submissions.py:1138
+#: apollo/submissions/views_submissions.py:1142
 msgid "Quality Assurance Dashboard"
 msgstr "තත්ත්ව සහතික උපකරණ පුවරුව"
 
@@ -2699,4 +2696,10 @@ msgstr ""
 #, python-format
 msgid "The email %(email)s is not available"
 msgstr ""
+
+#~ msgid "Show Moment Column"
+#~ msgstr ""
+
+#~ msgid "Moment"
+#~ msgstr ""
 
