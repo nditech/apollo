@@ -11,6 +11,26 @@
         <meta name="author" content="">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="icon" type="image/ico" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+        <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{{ url_for('static', filename='ico/apple-touch-icon-57x57.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='ico/apple-touch-icon-114x114.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='ico/apple-touch-icon-72x72.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ url_for('static', filename='ico/apple-touch-icon-144x144.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="{{ url_for('static', filename='ico/apple-touch-icon-60x60.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{{ url_for('static', filename='ico/apple-touch-icon-120x120.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{{ url_for('static', filename='ico/apple-touch-icon-76x76.png') }}" />
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{{ url_for('static', filename='ico/apple-touch-icon-152x152.png') }}" />
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='ico/favicon-196x196.png') }}" sizes="196x196" />
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='ico/favicon-96x96.png') }}" sizes="96x96" />
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='ico/favicon-32x32.png') }}" sizes="32x32" />
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='ico/favicon-16x16.png') }}" sizes="16x16" />
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='ico/favicon-128.png') }}" sizes="128x128" />
+        <meta name="application-name" content="Apollo"/>
+        <meta name="msapplication-TileColor" content="#FFFFFF" />
+        <meta name="msapplication-TileImage" content="{{ url_for('static', filename='ico/mstile-144x144.png') }}" />
+        <meta name="msapplication-square70x70logo" content="{{ url_for('static', filename='ico/mstile-70x70.png') }}" />
+        <meta name="msapplication-square150x150logo" content="{{ url_for('static', filename='ico/mstile-150x150.png') }}" />
+        <meta name="msapplication-wide310x150logo" content="{{ url_for('static', filename='ico/mstile-310x150.png') }}" />
+        <meta name="msapplication-square310x310logo" content="{{ url_for('static', filename='ico/mstile-310x310.png') }}" />
     {%- endblock %}
     {%- block head_css %}
       {% if g.locale.text_direction == 'rtl' -%}
@@ -32,8 +52,8 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-primary sticky-top" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="container">
-          <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
-              {{ admin_view.admin.name }}
+          <a class="navbar-brand mb-0 mt-1 h1" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
+              <img src="{{ url_for('static', filename='img/brand.png') }}" width="30" height="30" class="d-inline-block align-middle" alt="Apollo"> {{ admin_view.admin.name }}
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="{{ _('Toggle Navigation') }}"><span
@@ -73,7 +93,7 @@
     <footer class="footer mt-auto py-1 fixed-bottom bg-white">
         <div class="container">
             <div class="d-flex align-items-center justify-content-between mt-0 pt-3">
-                <p class="small text-muted" data-config-id="copyright">Apollo v{{ config.VERSION }} &mdash; {% trans %}Built with <span class="text-danger">♥</span> from Lagos{% endtrans %}</p>
+                <p class="small text-muted" data-config-id="copyright">Apollo {% if config.VERSION != "undefined" %}{{ config.VERSION }}{% else %}<em>{{ config.COMMIT }}</em>{% endif %} &mdash; {% trans %}Built with <span class="text-danger">♥</span> from Lagos{% endtrans %}</p>
                 {% block footer -%}{%- endblock %}
             </div>
         </div>
