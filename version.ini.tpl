@@ -1,0 +1,3 @@
+[settings]
+VERSION=
+COMMIT=

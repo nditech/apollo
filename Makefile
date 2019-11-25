@@ -1,3 +1,5 @@
+.PHONY: pip-compile babel-compile parser babel-extract babel-init babel-update po2json version
+
 pip-compile:
 	pip-compile --allow-unsafe --generate-hashes --no-index --no-emit-trusted-host --output-file=requirements/prod.txt requirements/prod.in
 	pip-compile --allow-unsafe --generate-hashes --no-index --no-emit-trusted-host --output-file=requirements/dev.txt requirements/dev.in
@@ -17,3 +19,5 @@ babel-update:
 	pybabel update -i apollo/translations/javascript.pot -D javascript -d apollo/translations/
 po2json:
 	./convert-po2json
+version:
+	./update_version.sh
