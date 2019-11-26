@@ -21,3 +21,5 @@ po2json:
 	./convert-po2json
 version:
 	./update_version.sh
+docker: version
+	docker-compose build

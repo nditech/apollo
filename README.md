@@ -21,7 +21,7 @@
 
 ### Introduction
 
-This document details the steps required in deploying a fully functional installment of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
+This document details the steps required in deploying a fully functional installation of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
 
 
 ### Install
@@ -42,8 +42,6 @@ After installing git, you will be able to clone the current version of Apollo fr
 git clone https://github.com/nditech/dev-elections.git
 ```
 
-Due to the fact this repository is private, to clone this repository to a regular server you will need to upload a deployment SSH to this repository [here](https://github.com/nditech/dev-elections/settings/keys), or use an authenticated URL (if you have an account on GitHub that has access to the repository).
-
 After downloading, configure a settings file in the main folder called `settings.ini`. A basic sample settings file is shown below. The install will not work if a settings file is not created with a Secret Key specified. The secret key should be any randomly generated string of characters of similar length to the example provided. For more information on additional configuration settings, read the section "[Application Configuration Settings](#application-configuration-settings)" below.
 
 ```
@@ -58,9 +56,9 @@ In order to simplify the deployment process, Apollo now includes a docker compos
 
 To build and start the application, simply run:
 
-`docker-compose up -d`
+`make docker`
 
-The main application container and worker containers will be built and run together with the supporting database and task queue containers. After running the command initially, subsequent builds will use cached container images. To deploy the code from scratch without drawing upon the cached images (for example to incorporate subsequent any changes made to the Apollo code outside of the docker containers), run `docker run build --no-cache`.
+The main application container and worker containers will be built and run together with the supporting database and task queue containers. After running the command initially, subsequent builds will use cached container images. To deploy the code from scratch without drawing upon the cached images (for example to incorporate subsequent any changes made to the Apollo code outside of the docker containers), run `docker-compose build --no-cache`.
 
 
 
@@ -112,25 +110,25 @@ You should now be able to login to your site by navigating to port `:5000` on yo
 
 Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. Here are a collection of settings parameters and sample values together with an explanation of what they do.
 
-SECRET_KEY
+**SECRET_KEY**
 (e.g. LBZyd8EY80mALqb7bl8o3da8)
 
 The secret key contains a random string of characters, numbers and symbols and is used internally for signing and encrypting cookies and other security-related tokens. Best security practice requires that you set the value to a random value before starting the containers. Note that if this value is changed after the application is already fully configured, then user logins will stop working as the application would not be able to decrypt stored passwords. So this should remain the same throughout the lifetime of the application. This is a compulsory configuration option.
 
 
-SSL_REQUIRED
+**SSL_REQUIRED**
 (e.g. False)
 
 This parameter determines whether the application server will explicitly check if all requests are being served over a secure (https) connection. By setting this value to True, you effectively turn this check on and all connections must be secure before access is granted.
 
 
-TIMEZONE
+**TIMEZONE**
 (e.g. Africa/Lagos)
 
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-GOOGLE_TAG_MANAGER
+**GOOGLE_TAG_MANAGER**
 (e.g. GTM-1234567)
 
 
@@ -141,25 +139,25 @@ If you need to manage tags that are inserted into the application, one way to do
 More information on using Google Tag Manager can be found [here](https://marketingplatform.google.com/about/tag-manager/), and [here](https://developers.google.com/tag-manager/).
 
 
-REDIS_DATABASE
+**REDIS_DATABASE**
 (e.g. 0)
 
 This value determines the redis database that is used by the application. It takes the default value of 0 but (in the unlikely event that you need to share a redis installation) it can be changed to a different value. By default most redis installations have a maximum value of 15.
 
 
-REDIS_HOSTNAME
+**REDIS_HOSTNAME**
 (e.g. redis)
 
 As was described above, if you require connecting to an external redis server, you can specify the value of the hostname for this redis database here.
 
 
-DATABASE_HOSTNAME
+**DATABASE_HOSTNAME**
 (e.g. postgres)
 
 As was the case in REDIS_HOSTNAME, there might be cases where an external PostgreSQL database is to be used, setting the DATABASE_HOSTNAME allows the application and worker applications to connect to this.
 
 
-DATABASE_NAME
+**DATABASE_NAME**
 (e.g. apollo)
 
 If you need to use the non-default database name for the installation, you can change the value here. Please note that if you are using an external PostgreSQL server, you may not need to create and link to the postgres container; in which case, simply providing the DATABASE_HOSTNAME and the DATABASE_NAME will be sufficient for the application containers to connect to the provided database.
@@ -167,29 +165,57 @@ If you need to use the non-default database name for the installation, you can c
 You would also need to drop the DATABASE_NAME environment specification (-e DATABASE_NAME=...) when creating the application containers.
 
 
-DEBUG
+**DEBUG**
 (e.g. False)
 
 Debug information is usually only used when the application is being built or when an issue is being debugged. The default value of False is sufficient and should only be changed to True if there’s the need to debug the application. Setting DEBUG to True may reveal sensitive information to the user and should only be used when actual debugging is being done and reverted to the default value when debugging is over.
 
-MAIL_SERVER
+**MAIL_SERVER**
 (e.g. smtp.sendgrid.net)
-MAIL_PORT
+**MAIL_PORT**
 (e.g. 587)
-MAIL_USE_TLS
+**MAIL_USE_TLS**
 (e.g. True)
-MAIL_USERNAME
+**MAIL_USERNAME**
 (e.g. sendgrid-username)
-MAIL_PASSWORD
+**MAIL_PASSWORD**
 (e.g sendgrid-apikey)
 
 These set of configuration values allow the administrator to configure a mail server for the purpose of being able to send out transactional emails like password resets, notices on task completion, etc. It is highly recommended that these values are configured.
 
 
-PROMETHEUS_SECRET
+**PROMETHEUS_SECRET**
 (e.g. pmsecretz)
 
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
+
+
+**MAPBOX_TOKEN**
+(e.g. pk.eyJ1I.BOh_5nWoa-sWP)
+
+If you would rather have the better looking MapBox base tiles for the maps, you should add your MapBox API token as a parameter to the settings file.
+
+
+**ENABLE_SOCIAL_LOGIN**
+(e.g. True)
+
+If you would like to offer the option to login with either a Facebook or Google account, you should enable the social login plugin by setting this parameter to True.
+
+**GOOGLE_CLIENT_ID**
+**GOOGLE_CLIENT_SECRET**
+
+To enable Google authentication, you'll need to create credentials for the Apollo application in your Google account (https://console.developers.google.com/apis/credentials). Copy the client id and secret and set them to the `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` respectively.
+
+**FACEBOOK_CLIENT_ID**
+**FACEBOOK_CLIENT_SECRET**
+
+Similarly, to enable Facebook login, you'll need to obtain Facebook Login (https://developers.facebook.com/docs/facebook-login) credentials to use with Apollo. After setting the appropriate parameters, login with Facebook will be enabled.
+
+
+**API_KEY**
+(e.g. 3a;lk9243)
+
+The `API_KEY` setting enables external API access to the artefacts exposed by Apollo. This parameter specifies the key that must accompany every API request to enable access.
 
 
 ### Legacy Installation Method
