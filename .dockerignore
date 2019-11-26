@@ -4,7 +4,7 @@
 .Python
 .tx/
 .vscode/
-*.ini
+settings.ini
 *.sublime-project
 *.sublime-workspace
 **/.DS_Store
