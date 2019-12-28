@@ -58,10 +58,11 @@ class DateFilter(CharFilter):
             except (OverflowError, ValueError):
                 return query.filter(False)
 
-            dt = dt.replace(tzinfo=APP_TZ).astimezone(
-                    UTC).replace(tzinfo=None)
-            upper_bound = dt.replace(hour=23, minute=59, second=59)
-            lower_bound = dt.replace(hour=0, minute=0, second=0)
+            dt = dt.replace(tzinfo=APP_TZ)
+            upper_bound = dt.replace(hour=23, minute=59, second=59).astimezone(
+                UTC).replace(tzinfo=None)
+            lower_bound = dt.replace(hour=0, minute=0, second=0).astimezone(
+                UTC).replace(tzinfo=None)
 
             return query.filter(
                 Message.received >= lower_bound,

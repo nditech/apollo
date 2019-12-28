@@ -262,10 +262,11 @@ class DateFilter(CharFilter):
             except (OverflowError, ValueError):
                 return (None, None)
 
-            dt = dt.replace(tzinfo=APP_TZ).astimezone(
+            dt = dt.replace(tzinfo=APP_TZ)
+            upper_bound = dt.replace(hour=23, minute=59, second=59).astimezone(
                 UTC).replace(tzinfo=None)
-            upper_bound = dt.replace(hour=23, minute=59, second=59)
-            lower_bound = dt.replace(hour=0, minute=0, second=0)
+            lower_bound = dt.replace(hour=0, minute=0, second=0).astimezone(
+                UTC).replace(tzinfo=None)
 
             return (
                 and_(
