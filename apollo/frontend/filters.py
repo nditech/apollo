@@ -3,8 +3,9 @@ from collections import defaultdict
 
 from cgi import escape
 from dateutil.parser import parse
+from dateutil.tz import gettz, UTC
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import and_, false, or_, String, true
+from sqlalchemy import and_, false, or_, true
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets, fields, Form
 from wtforms.compat import text_type
@@ -15,10 +16,13 @@ from apollo import services, models
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.frontend.helpers import get_event
 from apollo.helpers import _make_choices
+from apollo.settings import TIMEZONE
 from apollo.submissions.models import FLAG_CHOICES
 from apollo.submissions.qa.query_builder import (
     build_expression, generate_qa_query)
 from apollo.wtforms_ext import ExtendedSelectField
+
+APP_TZ = gettz(TIMEZONE)
 
 
 class EventFilter(CharFilter):
@@ -390,12 +394,15 @@ class DateFilter(CharFilter):
     def queryset_(self, queryset, value):
         if value:
             try:
-                timestamp = parse(value, dayfirst=True)
+                dt = parse(value, dayfirst=True)
             except Exception:
                 return queryset.filter(False)
 
-            upper = timestamp.replace(hour=23, minute=59, second=59)
-            lower = timestamp.replace(hour=0, minute=0, second=0)
+            dt = dt.replace(tzinfo=APP_TZ)
+            upper = dt.replace(hour=23, minute=59, second=59).astimezone(
+                UTC).replace(tzinfo=None)
+            lower = dt.replace(hour=0, minute=0, second=0).astimezone(
+                UTC).replace(tzinfo=None)
 
             return queryset.filter(
                 models.Message.received >= lower,
