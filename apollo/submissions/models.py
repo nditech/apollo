@@ -303,6 +303,8 @@ class Submission(BaseModel):
                 subset.pop(key, None)
 
         master.data = subset
+        master.participant_updated = self.participant_updated
+
         db.session.begin(nested=True)
         db.session.add_all([self, master])
         db.session.add_all(siblings)

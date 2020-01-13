@@ -11,7 +11,8 @@ from sqlalchemy import false
 from ..deployments.forms import generate_event_selection_form
 from ..frontend import permissions, route
 from ..frontend.dashboard import (
-    get_coverage, get_daily_progress, get_stratified_daily_progress)
+    event_days, get_coverage, get_daily_progress,
+    get_stratified_daily_progress)
 from ..frontend.helpers import (
     get_event, set_event, get_concurrent_events_list_menu,
     get_checklist_form_dashboard_menu)
@@ -40,6 +41,8 @@ def main_dashboard(form_id=None):
     if chart_type:
         session['dashboard_chart_type'] = chart_type if chart_type in [
             'pie', 'bar'] else 'pie'
+    daily_progress = {}
+    daily_stratified_progress = []
 
     template_name = 'frontend/dashboard.html'
     breadcrumbs = [_('Dashboard')]
@@ -115,7 +118,7 @@ def main_dashboard(form_id=None):
     if not group_slug:
         data = get_coverage(query_filterset.qs, form)
         if form and form.show_progress and not stratified_progress:
-            progress = get_daily_progress(query_filterset.qs, event)
+            daily_progress = get_daily_progress(query_filterset.qs, event)
         elif form and form.show_progress and stratified_progress:
             admin_location_types = LocationType.query.filter(
                 LocationType.is_administrative == True,  # noqa
@@ -149,10 +152,8 @@ def main_dashboard(form_id=None):
             else:
                 stratified_progress = None
 
-            progress = get_stratified_daily_progress(
+            daily_stratified_progress = get_stratified_daily_progress(
                 query, event, location_type)
-        else:
-            progress = []
     else:
         group = next(
             (grp for grp in form.data['groups']
@@ -195,21 +196,21 @@ def main_dashboard(form_id=None):
 
         data = get_coverage(
             query_filterset.qs, form, group, location_type)
-        progress = []
 
     context = {
         'args': {'sample': args.get('sample')},
         'location_id': '',
         'next_location': next_location_type,
         'data': data,
-        'progress': progress,
+        'event_days': event_days(event),
+        'daily_progress': daily_progress,
+        'daily_stratified_progress': daily_stratified_progress,
         'obs_data': [],
         'filter_form': query_filterset.form,
         'breadcrumbs': breadcrumbs,
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
         'group': group or '',
-        'stratified_progress': stratified_progress or '',
         'form_id': form.id if form else None,
         'form': form
     }

@@ -2,6 +2,7 @@
 from apollo.settings import TIMEZONE
 from collections import defaultdict
 from datetime import datetime
+from dateutil.rrule import rrule, DAILY
 from logging import getLogger
 from pytz import timezone
 
@@ -82,7 +83,7 @@ def _get_group_coverage(query, form, group, location_type):
 
     complete_query = query.filter(
         or_(
-            Submission.conflicts == None,
+            Submission.conflicts == None,  # noqa
             ~Submission.conflicts.has_any(array(group_tags))),
         Submission.data.has_all(array(group_tags)))
 
@@ -188,7 +189,7 @@ def _get_global_coverage(query, form):
 
         complete_query = query.filter(
             or_(
-                Submission.conflicts == None,
+                Submission.conflicts == None, # noqa
                 ~Submission.conflicts.has_any(array(group_tags))),
             Submission.data.has_all(array(group_tags)))
 
@@ -251,9 +252,23 @@ def get_daily_progress(query, event):
         '%Y-%m-%d'), 'count'] = int(
             df_resampled[df_resampled.index >= end].sum())
 
-    return [{'date': idx.strftime('%Y-%m-%d'),
-             'value': int(progress.loc[idx]['count'])}
-            for idx in progress.index]
+    dp = {
+        idx.date(): int(progress.loc[idx]['count'])
+        for idx in progress.index
+    }
+    dp.update({'total': progress['count'].sum()})
+    return dp
+
+
+def event_days(event):
+    tz = timezone(TIMEZONE)
+    start = tz.localize(datetime.combine(
+        event.start.astimezone(tz), datetime.min.time()))
+    end = tz.localize(
+        datetime.combine(event.end.astimezone(tz), datetime.min.time()))
+    dates = [d.date() for d in rrule(DAILY, dtstart=start, until=end)]
+
+    return dates
 
 
 def get_stratified_daily_progress(query, event, location_type):
@@ -319,10 +334,11 @@ def get_stratified_daily_progress(query, event, location_type):
             progress.loc[progress.index == end.strftime(
                 '%Y-%m-%d'), 'count'] = int(
                     df_resampled[df_resampled.index >= end].sum())
-            response.append(
-                {'name': location,
-                 'values': [{'date': idx.strftime('%Y-%m-%d'),
-                            'value': int(progress.loc[idx]['count'])}
-                            for idx in progress.index]})
+            dp = {
+                idx.date(): int(progress.loc[idx]['count'])
+                for idx in progress.index
+            }
+            dp.update({'total': progress['count'].sum()})
+            response.append({'name': location, 'data': dp})
 
         return response

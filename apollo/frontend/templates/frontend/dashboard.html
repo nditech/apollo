@@ -16,6 +16,9 @@
 .daily .axis text {
   text-anchor: end;
 }
+.table-hide {
+  empty-cells: hide;
+}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
@@ -35,7 +38,7 @@
       {{ render_filter_form(filter_form, location)}}
   </div>
 </div>
-{%- if not stratified_progress %}
+{%- if not daily_stratified_progress %}
 {% if data %}
 <div class="row">
 {% for row in data %}
@@ -56,19 +59,66 @@
 </div>
 {% endif %}
 {%- endif %}
-{%- if form.show_progress and progress %}
+{%- if form.show_progress and (daily_progress or daily_stratified_progress) %}
 <div class="row">
-  {%- if stratified_progress %}
-  {%- for item in progress %}
-  <div class="col-12 col-lg-6 mb-2 mt-4 p-0">
-    <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</h5>
-    <div class="daily text-center" data-chart='{{ item['values']|tojson }}'></div>
+  {%- if daily_stratified_progress %}
+  <div class="col-12 mb-2 mt-4 p-0">
+    <h5 class="text-center">{{ _('Daily Progress Report') }}</h5>
+    <div class="table-responsive mb-n3 mt-4">
+      <table class="table table-sm table-hover table-bordered table-hide">
+        <thead class="thead-light">
+          <tr>
+            <td style="border-top-style: none; border-left-style: none; border-bottom-style: none;"></td>
+            <th class="text-center" colspan="{{ event_days|length }}">{{ _('Days') }}</th>
+          </tr>
+          <tr>
+            <th></th>
+            {% for day in event_days -%}
+            <th scope="col" class="text-center">{{ loop.index }}</th>
+            {% endfor %}
+            <th scope="col" class="text-center">{% trans %}Total{% endtrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for item in daily_stratified_progress %}
+          <tr>
+            <td>{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</td>
+            {% for day in event_days -%}
+            <td class="text-center text-monospace" title="{% trans index=loop.index %}Day {{ index }}{% endtrans %}">{{ item.data[day] or 0 }}</th>
+            {% endfor %}
+            <td class="text-center text-monospace" title="{% trans %}Total{% endtrans %}">{{ item.data.total or 0 }}</td>
+          <tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-  {%- endfor %}
   {%- else %}
-  <div class="col-12 col-lg-6 mb-2 mt-4 p-0">
+  <div class="col-12 mb-2 mt-4 p-0">
     <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ _('Daily Progress Report') }}{% if not location and not request.args.location %}</a>{% endif %}</h5>
-    <div class="daily text-center" data-chart='{{ progress|tojson }}'></div>
+    <div class="table-responsive mb-n3 mt-4">
+      <table class="table table-sm table-hover table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center" colspan="{{ event_days|length }}">{{ _('Days') }}</th>
+          </tr>
+          <tr>
+            {% for day in event_days -%}
+            <th scope="col" class="text-center">{{ loop.index }}</th>
+            {% endfor %}
+            <th scope="col" class="text-center">{% trans %}Total{% endtrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for day in event_days -%}
+            <td class="text-center text-monospace" title="{% trans index=loop.index %}Day {{ index }}{% endtrans %}">{{ daily_progress[day] or 0 }}</th>
+            {% endfor %}
+            <td class="text-center text-monospace" title="{% trans %}Total{% endtrans %}">{{ daily_progress.total or 0 }}</td>
+          <tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   {%- endif %}
 </div>
@@ -118,11 +168,6 @@
       {%- else %}
         drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
       {%- endif %}
-      });
-
-      $('.daily').each(function (idx, el) {
-        var data = JSON.parse(el.dataset.chart);
-        drawProgressChart(el, data);
       });
   });
 </script>
