@@ -54,7 +54,12 @@ def make_submission_sample_filter(location_set_id):
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                query2 = query.join(
+                joined_classes = [mapper.class_ for mapper in query._join_entities]
+                if models.Location in joined_classes:
+                    query1 = query
+                else:
+                    query1 = query.join(models.Submission.location)
+                query2 = query1.join(
                     models.samples_locations,
                     models.samples_locations.c.location_id == models.Location.id    # noqa
                 ).join(
