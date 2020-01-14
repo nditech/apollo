@@ -1089,7 +1089,7 @@ msgid "Admin"
 msgstr "පරිපාලක"
 
 #: apollo/frontend/templates/frontend/layout.html:118
-msgid "Account Settings"
+msgid "User Settings"
 msgstr "ගිණුම සැකසුම් "
 
 #: apollo/frontend/templates/frontend/layout.html:120

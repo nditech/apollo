@@ -1095,7 +1095,7 @@ msgid "Admin"
 msgstr "المسؤول"
 
 #: apollo/frontend/templates/frontend/layout.html:118
-msgid "Account Settings"
+msgid "User Settings"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/layout.html:120
