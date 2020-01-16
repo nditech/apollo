@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import calendar
-from collections import OrderedDict
 import re
 
 from babel.numbers import format_number
+from datetime import date, datetime
 from flask import Markup
 from flask_babelex import get_locale, lazy_gettext as _
 from geoalchemy2.shape import to_shape
@@ -84,7 +84,13 @@ def mean_filter(value):
 
 def mkunixtimestamp(dt):
     '''Creates a unix timestamp from a datetime.'''
-    return calendar.timegm(dt.utctimetuple())
+    if type(dt) == datetime:
+        return calendar.timegm(dt.utctimetuple())
+    elif type(dt) == date:
+        return calendar.timegm(datetime.combine(
+            dt, datetime.min.time()).utctimetuple())
+    else:
+        return calendar.timegm(datetime.min.utctimetuple())
 
 
 def number_format(number):

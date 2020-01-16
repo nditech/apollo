@@ -293,9 +293,11 @@ def get_stratified_daily_progress(query, event, location_type):
                 location_closure.depth == depth_info.depth
             ).with_entities(
                 ancestor_location.name,
+                ancestor_location.code,
                 Submission.participant_updated
             ).options(
-                Load(ancestor_location).load_only('id', 'name_translations')
+                Load(ancestor_location).load_only(
+                    'id', 'code', 'name_translations')
             ).group_by(ancestor_location.id, Submission.participant_updated)
 
         df = pd.read_sql(
@@ -317,12 +319,14 @@ def get_stratified_daily_progress(query, event, location_type):
         for location in locations:
             if location.name not in df.loc[df.index.notnull()]['getter'].unique():  # noqa
                 df = df.append(pd.DataFrame(
-                    {'getter': location.name, 'count': 0},
+                    {'getter': location.name, 'count': 0, 'code': location.code},  # noqa
                     index=[start]))
 
-        df2 = df.loc[df.index.notnull()].groupby('getter').resample('D').sum()
+        df2 = df.loc[df.index.notnull()].groupby(['getter', 'code']).resample('D').sum()  # noqa
+        df2 = df2.sort_index(level='code')
+        df2.index = df2.index.droplevel('code')
 
-        for location in df2.index.get_level_values(0).unique():
+        for location in df2.index.get_level_values(0).unique():  # noqa
             df_resampled = df2.loc[location].append(
                 pd.DataFrame({'count': 0}, index=[start])).append(
                     pd.DataFrame({'count': 0}, index=[end])).resample(

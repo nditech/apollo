@@ -74,7 +74,7 @@
           <tr>
             <th></th>
             {% for day in event_days -%}
-            <th scope="col" class="text-center">{{ loop.index }}</th>
+            <th scope="col" class="text-center timestamp-date" data-timestamp="{{ day|timestamp }}">{{ day.strftime('%b %-d') }}</th>
             {% endfor %}
             <th scope="col" class="text-center">{% trans %}Total{% endtrans %}</th>
           </tr>
@@ -104,7 +104,7 @@
           </tr>
           <tr>
             {% for day in event_days -%}
-            <th scope="col" class="text-center">{{ loop.index }}</th>
+            <th scope="col" class="text-center timestamp-date" data-timestamp="{{ day|timestamp }}">{{ day.strftime('%b %-d') }}</th>
             {% endfor %}
             <th scope="col" class="text-center">{% trans %}Total{% endtrans %}</th>
           </tr>
@@ -129,9 +129,17 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
+<script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script type="text/javascript">
+  moment.lang('{{ g.locale }}');
+
+  $('.timestamp-date').each(function (index) {
+    var timestamp = moment.unix(Number($(this).data('timestamp')));
+    this.innerText = timestamp.format('MMM D');
+  });
+
   var time = new Date().getTime();
 
   $(document.body).bind("mousemove keypress", function(e) {
