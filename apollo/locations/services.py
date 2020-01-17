@@ -4,8 +4,10 @@ from io import StringIO
 
 from geoalchemy2.shape import to_shape
 import sqlalchemy as sa
+from sqlalchemy.orm import aliased
 
 from apollo import constants
+from apollo.core import db
 from apollo.dal.service import Service
 from apollo.locations.models import (
     Location, LocationPath, LocationSet, LocationType, LocationTypePath,
@@ -41,6 +43,33 @@ class LocationService(Service):
 
         locales = location_set.deployment.locale_codes
 
+        # export coordinates if any location in the location set
+        # has coordinates set
+        ancestor = aliased(Location)
+
+        # this query checks to see if there's a non-null
+        # geometry column when the query is joined to the ancestors
+        # it's rather expensive
+        # coordinates_exist_query = query.join(
+        #     LocationPath, Location.id == LocationPath.descendant_id
+        # ).join(
+        #     ancestor, LocationPath.ancestor_id == ancestor.id
+        # ).filter(
+        #     Location.location_set == location_set
+        #     sa.or_(
+        #         Location.geom != None,
+        #         ancestor.geom != None
+        #     )
+        # ).exists()
+
+        # this one is simpler, but probably too simple
+        coordinates_exist_query = Location.query.filter(
+            Location.location_set == location_set,
+            Location.geom != None
+        ).exists()
+
+        export_coordinates = db.session.query(coordinates_exist_query).scalar()
+
         for location_type in location_types:
             location_type_name = location_type.name.upper()
             type_locale_headers = [
@@ -51,8 +80,9 @@ class LocationService(Service):
             headers.append('{}_ID'.format(location_type_name))
             if location_type.has_registered_voters:
                 headers.append('{}_RV'.format(location_type_name))
-            headers.append('{} LAT'.format(location_type_name))
-            headers.append('{} LON'.format(location_type_name))
+            if export_coordinates:
+                headers.append('{} LAT'.format(location_type_name))
+                headers.append('{} LON'.format(location_type_name))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -82,12 +112,13 @@ class LocationService(Service):
                 if ancestor.location_type.has_registered_voters:
                     record.append(ancestor.registered_voters)
 
-                lat = to_shape(ancestor.geom).x if hasattr(
-                    ancestor.geom, 'desc') else None
-                lon = to_shape(ancestor.geom).y if hasattr(
-                    ancestor.geom, 'desc') else None
-                record.append(lat)
-                record.append(lon)
+                if export_coordinates:
+                    lat = to_shape(ancestor.geom).x if hasattr(
+                        ancestor.geom, 'desc') else None
+                    lon = to_shape(ancestor.geom).y if hasattr(
+                        ancestor.geom, 'desc') else None
+                    record.append(lat)
+                    record.append(lon)
 
             for locale in locales:
                 record.append(location.name_translations.get(locale))
@@ -95,12 +126,14 @@ class LocationService(Service):
 
             if location.location_type.has_registered_voters:
                 record.append(location.registered_voters)
-            lat = to_shape(location.geom).x if hasattr(
-                location.geom, 'desc') else None
-            lon = to_shape(location.geom).y if hasattr(
-                location.geom, 'desc') else None
-            record.append(lat)
-            record.append(lon)
+
+            if export_coordinates:
+                lat = to_shape(location.geom).x if hasattr(
+                    location.geom, 'desc') else None
+                lon = to_shape(location.geom).y if hasattr(
+                    location.geom, 'desc') else None
+                record.append(lat)
+                record.append(lon)
 
             output = StringIO()
             writer = csv.writer(output)
