@@ -12,7 +12,7 @@ from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required, roles_required
-from flask_security.utils import encrypt_password, url_for_security
+from flask_security.utils import hash_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
 import pytz
@@ -346,7 +346,7 @@ class UserAdminView(BaseAdminView):
 
     def on_model_change(self, form, model, is_created):
         if form.password2.data:
-            model.password = encrypt_password(form.password2.data)
+            model.password = hash_password(form.password2.data)
         if is_created:
             model.deployment = current_user.deployment
         if not form.locale.data:

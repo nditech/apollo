@@ -1,7 +1,7 @@
 """Initial migration
 
 Revision ID: 872591ee58b4
-Revises: 
+Revises:
 Create Date: 2018-12-18 13:20:00.714150
 
 """
@@ -11,7 +11,7 @@ from uuid import uuid4
 from alembic import op
 from dateutil.tz import tzutc
 from flask_principal import Permission
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import text
@@ -503,7 +503,7 @@ def upgrade():
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('role', 'id'))
     """)
-    password = encrypt_password('admin')
+    password = hash_password('admin')
     conn.execute(text("""INSERT INTO \"user\" (
         id, deployment_id, email, username, password, active, uuid)
         VALUES (1, 1, 'admin@example.com', 'admin',
