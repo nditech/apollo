@@ -38,6 +38,7 @@ def import_graph(graph, location_set, fresh_import=False):
                 location_type.is_political = node.get('is_political')
                 location_type.has_registered_voters = node.get(
                     'has_registered_voters')
+                location_type.has_coordinates = node.get('has_coordinates')
                 if node.get('nameTranslations'):
                     location_type.name_translations = node.get(
                         'nameTranslations')

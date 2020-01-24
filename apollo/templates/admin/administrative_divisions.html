@@ -64,6 +64,16 @@
             </div>
           </div>
         </div>
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="addDivisionCoordinates" name="has_coordinates" value="false">
+              <label class="custom-control-label" for="addDivisionCoordinates">{{ _('Has GPS coordinates') }}</label>
+              <small class="form-text text-muted">{{ _('Indicates whether your location data will have GPS coordinates at this administrative level.') }}</small>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
@@ -127,6 +137,16 @@
               <input type="checkbox" class="custom-control-input" id="updateDivisionRegisteredVoters" name="has_registered_voters" value="true">
               <label class="custom-control-label" for="updateDivisionRegisteredVoters">{{ _('Has registered voters') }}</label>
               <small class="form-text text-muted">{{ _('Indicates whether your location data will have registered voters at this administrative level.') }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row align-items-center">
+          <div class="col-2">&nbsp;</div>
+          <div class="col-10">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="updateDivisionCoordinates" name="has_coordinates" value="false">
+              <label class="custom-control-label" for="updateDivisionCoordinates">{{ _('Has GPS coordinates') }}</label>
+              <small class="form-text text-muted">{{ _('Indicates whether your location data will have GPS coordinates at this administrative level.') }}</small>
             </div>
           </div>
         </div>

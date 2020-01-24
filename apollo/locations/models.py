@@ -2,7 +2,7 @@
 from flask_babelex import gettext, lazy_gettext as _
 from geoalchemy2 import Geometry
 import networkx as nx
-from sqlalchemy import and_, func
+from sqlalchemy import and_, false, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
@@ -53,6 +53,7 @@ class LocationSet(BaseModel):
                 for locale, tr in lt.name_translations.items()
             } if lt.name_translations else {},
             'has_registered_voters': lt.has_registered_voters,
+            'has_coordinates': lt.has_coordinates,
             'is_administrative': lt.is_administrative,
             'is_political': lt.is_political,
         } for lt in location_types]
@@ -93,10 +94,11 @@ class LocationSet(BaseModel):
 
             lt_data['{}_code'.format(lt.id)] = _('%(location_type)s Code',
                                                  location_type=lt.name)
-            lt_data['{}_lat'.format(lt.id)] = _('%(location_type)s Latitude',
-                                                location_type=lt.name)
-            lt_data['{}_lon'.format(lt.id)] = _('%(location_type)s Longitude',
-                                                location_type=lt.name)
+            if lt.has_coordinates:
+                lt_data['{}_lat'.format(lt.id)] = _(
+                    '%(location_type)s Latitude', location_type=lt.name)
+                lt_data['{}_lon'.format(lt.id)] = _(
+                    '%(location_type)s Longitude', location_type=lt.name)
 
             for ex_field in extra_fields:
                 lt_data['{}:{}'.format(lt.id, ex_field.id)] = _(
@@ -155,6 +157,8 @@ class LocationType(BaseModel):
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
         nullable=False)
+    has_coordinates = db.Column(
+        db.Boolean, default=False, server_default=false())
 
     name = translation_hybrid(name_translations)
 
@@ -340,6 +344,10 @@ class LocationPath(db.Model):
         'LocationSet',
         backref=db.backref('location_paths', cascade='all, delete',
                            passive_deletes=True))
+    ancestor = db.relationship(
+        'Location', foreign_keys=[ancestor_id], uselist=False)
+    descendant = db.relationship(
+        'Location', foreign_keys=[descendant_id], uselist=False)
 
 
 class LocationDataField(Resource):
