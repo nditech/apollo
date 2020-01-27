@@ -121,12 +121,16 @@ def update_locations(data_frame, header_mapping, location_set, task):
     location_table = Location.__table__
     location_path_table = LocationPath.__table__
 
-    def _row_processor():
+    # due to the way the reports are presented, one only wants to report
+    # (counts of) errors/warnings once per row of data, even if multiple
+    # issues arise per row, since there's no way to enforce a specific
+    # spreadsheet structure
+
+    for idx in data_frame.index:
+        current_row = data_frame.ix[idx]
         location_path_helper_map = {}
-        nonlocal error_log
-        nonlocal error_records
-        nonlocal total_locations
-        nonlocal warning_records
+        error_this_row = False
+        warning_this_row = False
 
         for loc_type in location_types:
             name_column_keys = [
@@ -137,14 +141,15 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 header_mapping.get(name_column_keys[0]) is None or
                 header_mapping.get(code_column_key) is None
             ):
-                error_records += 1
+                warning_records += (0 if warning_this_row else 1)
                 error_log.append({
-                    'label': 'ERROR',
+                    'label': 'WARNING',
                     'message': gettext(
-                        'No code or name present for row %(row)d',
-                        row=(idx + 1))
+                        'No code or name present for row %(row)d for %(level)s',
+                        row=(idx + 1), level=loc_type.name)
                 })
-                return True
+                warning_this_row = True
+                continue
 
             lat_column_key = f'{loc_type.id}_lat' \
                 if loc_type.has_coordinates else None
@@ -170,12 +175,12 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
             if not location_names[0] and not location_code:
                 # the other columns are likely blank
-                return False
+                continue
 
             try:
                 location_code = str(int(location_code))
             except (TypeError, ValueError):
-                error_records += 1
+                error_records += (0 if error_this_row else 1)
                 message = gettext(
                     'Invalid (non-numeric) location code (%(loc_code)s)',
                     loc_code=location_code)
@@ -183,19 +188,21 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     'label': 'ERROR',
                     'message': message
                 })
-                return True
+                error_this_row = True
+                continue
 
             # it's an issue if either is missing, too
             if not location_names[0] or not location_code:
-                error_records += 1
+                warning_records += (0 if warning_this_row else 1)
                 error_log.append({
-                    'label': 'ERROR',
+                    'label': 'WARNING',
                     'message': gettext(
                         'Missing name or code for row %(row)d',
                         row=(idx + 1)
                     )
                 })
-                return True
+                warning_this_row = True
+                continue
 
             # if we have the location in the cache, then continue
             if cache.has(location_code, loc_type.name, location_names[0]):
@@ -212,12 +219,13 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     location_lat = float(location_lat)
                     location_lon = float(location_lon)
                 except (TypeError, ValueError):
-                    warning_records += 1
+                    warning_records += (0 if warning_this_row else 1)
                     error_log.append({
                         'label': 'WARNING',
                         'message': gettext('Invalid coordinate data for row %(row)d. Data will not be used.', row=(idx + 1))
                     })
                     location_lat = location_lon = None
+                    warning_this_row = True
             else:
                 location_lat = location_lon = None
 
@@ -225,12 +233,13 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 try:
                     location_rv = int(location_rv)
                 except (TypeError, ValueError):
-                    warning_records += 1
+                    warning_records += (0 if warning_this_row else 1)
                     error_log.append({
                         'label': 'WARNING',
                         'message': gettext('Invalid number of registered voters for row %(row)d. Data will not be used.', row=(idx + 1))
                     })
                     location_rv = None
+                    warning_this_row = True
             else:
                 location_rv = 0
 
@@ -323,8 +332,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
             # update location path info for this row
             location_path_helper_map[loc_type.id] = location_id
 
-        logger.info('Building paths')
-
         for ans_type_id, des_type_id, depth in all_loc_type_paths:
             ancestor_id = location_path_helper_map.get(ans_type_id)
             descendant_id = location_path_helper_map.get(des_type_id)
@@ -342,16 +349,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     location_set_id=location_set.id, depth=depth
                 )
                 result = db.session.get_bind().execute(stmt)
-                logger.info(result.inserted_primary_key)
                 result.close()
-
-        return False
-
-    for idx in data_frame.index:
-        current_row = data_frame.ix[idx]
-
-        if _row_processor():
-            continue        
 
         processed_records += 1
         task.update_task_info(
