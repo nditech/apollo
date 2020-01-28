@@ -58,12 +58,12 @@
 						<td>{{ tag_stats.mean|mean_filter }}</td>
 						{% elif tag_stats.type == 'histogram' %}
 						{% for label, option in tag_stats.meta %}
-						<td>{{ tag_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ tag_stats.histogram.get(option)[1]|default(0)|round|int }}%</td>
 						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% elif tag_stats.type == 'bucket' %}
 						{% for option in [-1, 0, 1] %}
-						<td>{{ tag_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ tag_stats.histogram.get(option)[1]|default(0)|round|int }}%</td>
 						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% endif %}
@@ -87,12 +87,12 @@
 						<td>{{ location_stats.mean|mean_filter }}</td>
 						{% elif tag_stats.type == 'histogram' %}
 						{% for label, option in tag_stats.meta %}
-						<td>{{ location_stats.histogram.get(option)[1]|round|int}}%</td>
+						<td>{{ location_stats.histogram.get(option)[1]|default(0)|round|int}}%</td>
 						<td>{{ location_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% elif tag_stats.type == 'bucket' %}
 						{% for option in [-1, 0, 1] %}
-						<td>{{ location_stats.histogram.get(option)[1]|round|int }}%</td>
+						<td>{{ location_stats.histogram.get(option)[1]|default(0)|round|int }}%</td>
 						<td>{{ location_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% endif %}
