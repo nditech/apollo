@@ -45,7 +45,7 @@ msgstr "Importă Participanți"
 #: apollo/factory.py:25 apollo/templates/admin/form_list.html:22
 #: apollo/templates/admin/form_list.html:108
 #: apollo/templates/admin/form_list.html:118
-msgid "Create Checklists"
+msgid "Generate checklists"
 msgstr ""
 
 #: apollo/factory.py:118
@@ -2854,7 +2854,7 @@ msgstr ""
 #~ msgid "Builder"
 #~ msgstr "Constructor"
 
-#~ msgid "Create checklists"
+#~ msgid "Generate checklists"
 #~ msgstr "Creați liste de verificare"
 
 #~ msgid "Checklist form"
