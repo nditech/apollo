@@ -36,8 +36,9 @@ class ParticipantService(Service):
 
         # build headers
         headers = [
-            _('ID'), _('Full Name'), _('First Name'), _('Other Names'),
-            _('Last Name'), _('Partner'), _('Role'), _('Location ID')]
+            _('Participant ID'), _('Full Name'), _('First Name'),
+            _('Other Names'), _('Last Name'), _('Partner'), _('Role'),
+            _('Location code')]
         headers.extend(lt.name for lt in location_types)
 
         headers.extend([
