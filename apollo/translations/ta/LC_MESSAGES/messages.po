@@ -41,7 +41,7 @@ msgstr ""
 #: apollo/factory.py:25 apollo/templates/admin/form_list.html:22
 #: apollo/templates/admin/form_list.html:108
 #: apollo/templates/admin/form_list.html:118
-msgid "Create Checklists"
+msgid "Generate checklists"
 msgstr ""
 
 #: apollo/factory.py:118
@@ -1087,7 +1087,7 @@ msgid "Admin"
 msgstr "நிர்வாகம் "
 
 #: apollo/frontend/templates/frontend/layout.html:118
-msgid "Account Settings"
+msgid "User Settings"
 msgstr "கணக்கு அமைப்பு "
 
 #: apollo/frontend/templates/frontend/layout.html:120
@@ -2529,7 +2529,7 @@ msgstr ""
 #: apollo/templates/admin/form_list.html:23
 #: apollo/templates/admin/form_list.html:130
 #: apollo/templates/admin/form_list.html:140
-msgid "Create Surveys"
+msgid "Generate Surveys"
 msgstr ""
 
 #: apollo/templates/admin/form_list.html:68

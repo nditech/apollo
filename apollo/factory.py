@@ -22,7 +22,7 @@ from apollo.helpers import register_blueprints
 TASK_DESCRIPTIONS = {
     'apollo.locations.tasks.import_locations': _('Import Locations'),
     'apollo.participants.tasks.import_participants': _('Import Participants'),
-    'apollo.submissions.tasks.init_submissions': _('Create Checklists')
+    'apollo.submissions.tasks.init_submissions': _('Generate Checklists')
 }
 
 

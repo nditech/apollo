@@ -25,7 +25,7 @@ msgid "Import Participants"
 msgstr "Importar participantes"
 
 #: apollo%2Ffactory.py%3A25+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A22+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A108+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A118
-msgid "Create Checklists"
+msgid "Generate checklists"
 msgstr "Crear formularios"
 
 #: apollo/factory.py:118
@@ -801,7 +801,7 @@ msgid "Admin"
 msgstr "Admin"
 
 #: apollo/frontend/templates/frontend/layout.html:118
-msgid "Account Settings"
+msgid "User Settings"
 msgstr "Configuración de cuenta"
 
 #: apollo/frontend/templates/frontend/layout.html:120
@@ -1959,7 +1959,7 @@ msgid "Import Form"
 msgstr "Importar formulario"
 
 #: apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A23+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A130+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A140
-msgid "Create Surveys"
+msgid "Generate surveys"
 msgstr "Crear encuestas"
 
 #: apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A68+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A79
@@ -2264,7 +2264,7 @@ msgstr "Añadir formulario"
 msgid "Builder"
 msgstr "Creador"
 
-msgid "Create checklists"
+msgid "Generate checklists"
 msgstr "Crear formularios"
 
 msgid "Checklist form"

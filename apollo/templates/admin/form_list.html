@@ -19,8 +19,8 @@
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
       <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Form') }}</a>
-      <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Create Checklists') }}</a>
-      <a class="btn btn-success" href="#" data-toggle="modal" data-target="#surveyModal">{{ _('Create Surveys') }}</a>
+      <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Generate Checklists') }}</a>
+      <a class="btn btn-success" href="#" data-toggle="modal" data-target="#surveyModal">{{ _('Generate Surveys') }}</a>
     </div>
   </div>
 </div>
@@ -105,7 +105,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 id="checklistModalLabel" class="modal-title">{{ _('Create Checklists') }}</h5>
+          <h5 id="checklistModalLabel" class="modal-title">{{ _('Generate Checklists') }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="{{ _('Close') }}">
             <span aria-hidden="true">&times;</span>
           </button>          
@@ -115,7 +115,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
-          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Create Checklists') }}</button>
+          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Generate Checklists') }}</button>
         </div>
       </div>
     </div>
@@ -127,7 +127,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 id="surveyModalLabel" class="modal-title">{{ _('Create Surveys') }}</h5>
+          <h5 id="surveyModalLabel" class="modal-title">{{ _('Generate Surveys') }}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="{{ _('Close') }}">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -137,7 +137,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
-          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Create Surveys') }}</button>
+          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Generate Surveys') }}</button>
         </div>
       </div>
     </div>
