@@ -47,7 +47,7 @@ class ParticipantSet(BaseModel):
             'role': _('Role'),
             'sample': _('Sample'),
             'id': _('Participant ID'),
-            'supervisor': _('Supervisor'),
+            'supervisor': _('Supervisor ID'),
             'phone': _('Phone'),
             'partner': _('Partner'),
             'location': _('Location code'),
@@ -93,7 +93,8 @@ class ParticipantDataField(Resource):
     participant_set = db.relationship(
         'ParticipantSet',
         backref=db.backref(
-            'extra_fields', cascade='all, delete-orphan', passive_deletes=True))
+            'extra_fields', cascade='all, delete-orphan',
+            passive_deletes=True))
 
     def __str__(self):
         return str(
