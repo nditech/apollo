@@ -344,10 +344,6 @@ class LocationPath(db.Model):
         'LocationSet',
         backref=db.backref('location_paths', cascade='all, delete',
                            passive_deletes=True))
-    ancestor = db.relationship(
-        'Location', foreign_keys=[ancestor_id], uselist=False)
-    descendant = db.relationship(
-        'Location', foreign_keys=[descendant_id], uselist=False)
 
 
 class LocationDataField(Resource):
