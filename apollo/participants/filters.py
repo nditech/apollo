@@ -3,7 +3,7 @@ from cgi import escape
 from collections import OrderedDict
 
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import func, or_, text
+from sqlalchemy import func, or_, text, true
 from wtforms import widgets
 from wtforms.compat import text_type
 from wtforms.widgets import html_params, HTMLString
@@ -31,7 +31,28 @@ class ParticipantIDFilter(CharFilter):
 class ParticipantNameFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
-            return query.filter(
+            full_name_query = func.jsonb_each_text(
+                Participant.full_name_translations
+            ).lateral('full_name_translations')
+            first_name_query = func.jsonb_each_text(
+                Participant.first_name_translations
+            ).lateral('first_name_translations')
+            other_names_query = func.jsonb_each_text(
+                Participant.other_names_translations
+            ).lateral('other_names_translations')
+            last_name_query = func.jsonb_each_text(
+                Participant.last_name_translations
+            ).lateral('last_name_translations')
+
+            subquery = Participant.query.outerjoin(
+                full_name_query, true()
+            ).outerjoin(
+                first_name_query, true()
+            ).outerjoin(
+                other_names_query, true()
+            ).outerjoin(
+                last_name_query, true()
+            ).filter(
                 or_(
                     text('full_name_translations.value ILIKE :name'),
                     func.btrim(
@@ -45,7 +66,9 @@ class ParticipantNameFilter(CharFilter):
                         )
                     ).ilike(f'%{value}%')
                 )
-            ).params(name=f'%{value}%')
+            ).params(name=f'%{value}%').with_entities(Participant.id).subquery()
+
+            return query.join(subquery, subquery.c.id == Participant.id)
         return query
 
 
