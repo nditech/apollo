@@ -7,7 +7,7 @@ from geoalchemy2.shape import to_shape
 
 from apollo import constants
 from apollo.dal.service import Service
-from apollo.locations.models import LocationType, Sample
+from apollo.locations.models import LocationType
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
 

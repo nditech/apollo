@@ -123,28 +123,6 @@ class LocationSet(BaseModel):
         }
 
 
-samples_locations = db.Table(
-    'samples_locations',
-    db.Column('sample_id', db.Integer, db.ForeignKey(
-        'sample.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('location_id', db.Integer, db.ForeignKey(
-        'location.id', ondelete='CASCADE'), primary_key=True))
-
-
-class Sample(BaseModel):
-    __tablename__ = 'sample'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
-        nullable=False)
-
-    location_set = db.relationship('LocationSet', backref=db.backref(
-        'samples', cascade='all, delete', lazy='dynamic',
-        passive_deletes=True))
-
-
 class LocationType(BaseModel):
     __tablename__ = 'location_type'
 
@@ -258,8 +236,6 @@ class Location(BaseModel):
         'LocationType',
         backref=db.backref('locations', cascade='all, delete',
                            passive_deletes=True))
-    samples = db.relationship(
-        'Sample', backref='locations', secondary=samples_locations)
 
     ancestor_paths = db.relationship(
         'LocationPath', order_by='desc(LocationPath.depth)',

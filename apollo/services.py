@@ -2,7 +2,7 @@
 from apollo.deployments.services import EventService
 from apollo.formsframework.services import FormService
 from apollo.locations.services import (
-    LocationService, LocationSetService, LocationTypeService, SampleService)
+    LocationService, LocationSetService, LocationTypeService)
 from apollo.messaging.services import MessageService
 from apollo.participants.services import (
     ParticipantSetService,
@@ -26,7 +26,6 @@ participant_sets = ParticipantSetService()
 participant_groups = ParticipantGroupService()
 participant_group_types = ParticipantGroupTypeService()
 phone_contacts = PhoneContactService()
-samples = SampleService()
 submissions = SubmissionService()
 submission_comments = SubmissionCommentService()
 submission_versions = SubmissionVersionService()

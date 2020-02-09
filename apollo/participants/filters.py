@@ -12,8 +12,7 @@ from wtforms_alchemy.fields import QuerySelectField
 from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
-from apollo.locations.models import (
-    Location, LocationPath, Sample, samples_locations)
+from apollo.locations.models import Location, LocationPath
 from apollo.wtforms_ext import ExtendedMultipleSelectField
 
 from .models import Participant, ParticipantRole, ParticipantPartner

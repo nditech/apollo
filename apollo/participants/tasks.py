@@ -14,7 +14,6 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from apollo import helpers, services
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
-from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
 from apollo.participants.models import Participant, PhoneContact
 
