@@ -6,7 +6,7 @@ from dateutil.rrule import rrule, DAILY
 from logging import getLogger
 from pytz import timezone
 
-from sqlalchemy import and_, func, or_, not_
+from sqlalchemy import and_, false, func, or_, not_
 from sqlalchemy.orm import aliased, Load
 from sqlalchemy.dialects.postgresql import array
 
@@ -69,42 +69,57 @@ def _get_group_coverage(query, form, group, location_type):
         return coverage_list
 
     # get conflict submissions first
-    conflict_query = query.filter(
-        Submission.conflicts != None,
-        Submission.conflicts.has_any(array(group_tags)),
-        Submission.unreachable == False)  # noqa
+    if group_tags:
+        conflict_query = query.filter(
+            Submission.conflicts != None,
+            Submission.conflicts.has_any(array(group_tags)),
+            Submission.unreachable == False)  # noqa
+    else:
+        conflict_query = query.filter(false())
 
-    missing_query = query.filter(
-        ~Submission.data.has_any(array(group_tags)),
-        or_(
-            Submission.conflicts == None,
-            ~Submission.conflicts.has_any(array(group_tags))),
-        Submission.unreachable == False)  # noqa
+    if group_tags:
+        missing_query = query.filter(
+            ~Submission.data.has_any(array(group_tags)),
+            or_(
+                Submission.conflicts == None,
+                ~Submission.conflicts.has_any(array(group_tags))),
+            Submission.unreachable == False)  # noqa
+    else:
+        missing_query = query
 
-    complete_query = query.filter(
-        or_(
-            Submission.conflicts == None,  # noqa
-            ~Submission.conflicts.has_any(array(group_tags))),
-        Submission.data.has_all(array(group_tags)))
+    if group_tags:
+        complete_query = query.filter(
+            or_(
+                Submission.conflicts == None,  # noqa
+                ~Submission.conflicts.has_any(array(group_tags))),
+            Submission.data.has_all(array(group_tags)))
+    else:
+        complete_query = query.filter(false())
 
-    partial_query = query.filter(
-        or_(
-            Submission.conflicts == None,
-            ~Submission.conflicts.has_any(array(group_tags))),
-        ~Submission.data.has_all(array(group_tags)),
-        Submission.data.has_any(array(group_tags)),
-        Submission.unreachable == False)  # noqa
+    if group_tags:
+        partial_query = query.filter(
+            or_(
+                Submission.conflicts == None,
+                ~Submission.conflicts.has_any(array(group_tags))),
+            ~Submission.data.has_all(array(group_tags)),
+            Submission.data.has_any(array(group_tags)),
+            Submission.unreachable == False)  # noqa
+    else:
+        partial_query = query.filter(false())
 
-    offline_query = query.filter(
-        and_(
-            Submission.unreachable == True,  # noqa
-            not_(
-                and_(
-                    Submission.data.has_all(array(group_tags)),
-                    Submission.unreachable == True
+    if group_tags:
+        offline_query = query.filter(
+            and_(
+                Submission.unreachable == True,  # noqa
+                not_(
+                    and_(
+                        Submission.data.has_all(array(group_tags)),
+                        Submission.unreachable == True
+                    )
                 )
-            )
-        ))
+            ))
+    else:
+        offline_query = query.filter(false())
 
     dataset = defaultdict(dict)
 
@@ -175,42 +190,57 @@ def _get_global_coverage(query, form):
     for group in groups:
         group_tags = form.get_group_tags(group['name'])
 
-        conflict_query = query.filter(
-            Submission.conflicts != None,
-            Submission.conflicts.has_any(array(group_tags)),
-            Submission.unreachable == False)  # noqa
+        if group_tags:
+            conflict_query = query.filter(
+                Submission.conflicts != None,
+                Submission.conflicts.has_any(array(group_tags)),
+                Submission.unreachable == False)  # noqa
+        else:
+            conflict_query = query.filter(false())
 
-        missing_query = query.filter(
-            or_(
-                ~Submission.conflicts.has_any(array(group_tags)),
-                Submission.conflicts == None),
-            ~Submission.data.has_any(array(group_tags)),
-            Submission.unreachable == False)  # noqa
+        if group_tags:
+            missing_query = query.filter(
+                or_(
+                    ~Submission.conflicts.has_any(array(group_tags)),
+                    Submission.conflicts == None),
+                ~Submission.data.has_any(array(group_tags)),
+                Submission.unreachable == False)  # noqa
+        else:
+            missing_query = query
 
-        complete_query = query.filter(
-            or_(
-                Submission.conflicts == None, # noqa
-                ~Submission.conflicts.has_any(array(group_tags))),
-            Submission.data.has_all(array(group_tags)))
+        if group_tags:
+            complete_query = query.filter(
+                or_(
+                    Submission.conflicts == None, # noqa
+                    ~Submission.conflicts.has_any(array(group_tags))),
+                Submission.data.has_all(array(group_tags)))
+        else:
+            complete_query = query.filter(false())
 
-        partial_query = query.filter(
-            or_(
-                Submission.conflicts == None,
-                ~Submission.conflicts.has_any(array(group_tags))),
-            ~Submission.data.has_all(array(group_tags)),
-            Submission.data.has_any(array(group_tags)),
-            Submission.unreachable == False)  # noqa
+        if group_tags:
+            partial_query = query.filter(
+                or_(
+                    Submission.conflicts == None,
+                    ~Submission.conflicts.has_any(array(group_tags))),
+                ~Submission.data.has_all(array(group_tags)),
+                Submission.data.has_any(array(group_tags)),
+                Submission.unreachable == False)  # noqa
+        else:
+            partial_query = query.filter(false())
 
-        offline_query = query.filter(
-            and_(
-                Submission.unreachable == True,  # noqa
-                not_(
-                    and_(
-                        Submission.data.has_all(array(group_tags)),
-                        Submission.unreachable == True
+        if group_tags:
+            offline_query = query.filter(
+                and_(
+                    Submission.unreachable == True,  # noqa
+                    not_(
+                        and_(
+                            Submission.data.has_all(array(group_tags)),
+                            Submission.unreachable == True
+                        )
                     )
-                )
-            ))
+                ))
+        else:
+            offline_query = query.filter(false())
 
         data = {
             'Complete': complete_query.count(),
