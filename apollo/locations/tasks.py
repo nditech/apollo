@@ -84,7 +84,9 @@ def map_attribute(location_type, attribute):
 
 def update_locations(data_frame, header_mapping, location_set, task):
     cache = LocationCache()
-    locales = location_set.deployment.locale_codes
+
+    mapped_locales = [
+        k.rsplit('_', 1)[-1] for k in header_mapping.keys() if 'name' in k]
 
     total_records = data_frame.shape[0]
     processed_records = 0
@@ -134,7 +136,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
         for loc_type in location_types:
             name_column_keys = [
-                f'{loc_type.id}_name_{locale}' for locale in locales]
+                f'{loc_type.id}_name_{locale}' for locale in mapped_locales]
             code_column_key = f'{loc_type.id}_code'
 
             if (
@@ -277,7 +279,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 'name_translations': {
                     locale: str(name).strip()
                     for locale, name in zip(
-                        locales, location_names
+                        mapped_locales, location_names
                     ) if name and not isnull(name)
                 }
             }
