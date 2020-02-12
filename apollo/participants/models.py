@@ -279,7 +279,7 @@ class Participant(BaseModel):
     supervisor = db.relationship('Participant', remote_side=id)
     samples = db.relationship(
         "Sample",
-        backref="locations",
+        backref="participants",
         secondary=samples_participants,
     )
 
