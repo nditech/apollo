@@ -201,9 +201,7 @@ def submission_list(form_id):
             if models.Location in joined_classes:
                 queryset = queryset.order_by(models.Location.code)
             else:
-                queryset = queryset.join(
-                    models.Submission.location
-                )
+                queryset = queryset.join(models.Submission.location)
             queryset = queryset.join(
                 models.Participant,
                 models.Submission.participant_id == models.Participant.id
