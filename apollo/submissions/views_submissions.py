@@ -203,8 +203,6 @@ def submission_list(form_id):
             else:
                 queryset = queryset.join(
                     models.Submission.location
-                ).order_by(
-                    models.Location.code
                 )
             queryset = queryset.join(
                 models.Participant,
