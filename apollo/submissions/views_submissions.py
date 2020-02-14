@@ -177,21 +177,36 @@ def submission_list(form_id):
 
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
-            queryset = query.filter_by(
-                submission_type='M',
-                form=form, event=event
-            ).join(
-                models.Location,
-                models.Submission.location_id == models.Location.id
-            ).order_by(models.Location.code)
+            queryset = query.filter(
+                models.Submission.submission_type == 'M',
+                models.Submission.form == form,
+                models.Submission.event == event,
+            )
+            joined_classes = [mapper.class_ for mapper in query._join_entities]
+            if models.Location in joined_classes:
+                queryset = queryset.order_by(models.Location.code)
+            else:
+                queryset = queryset.join(
+                    models.Submission.location
+                ).order_by(
+                    models.Location.code
+                )
         else:
-            queryset = query.filter_by(
-                submission_type='O',
-                form=form, event=event
-            ).join(
-                models.Location,
-                models.Submission.location_id == models.Location.id
-            ).join(
+            queryset = query.filter(
+                models.Submission.submission_type == 'O',
+                models.Submission.form == form,
+                models.Submission.event == event,
+            )
+            joined_classes = [mapper.class_ for mapper in query._join_entities]
+            if models.Location in joined_classes:
+                queryset = queryset.order_by(models.Location.code)
+            else:
+                queryset = queryset.join(
+                    models.Submission.location
+                ).order_by(
+                    models.Location.code
+                )
+            queryset = queryset.join(
                 models.Participant,
                 models.Submission.participant_id == models.Participant.id
             ).order_by(models.Location.code, models.Participant.participant_id)
