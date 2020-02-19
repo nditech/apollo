@@ -5,7 +5,7 @@ from cgi import escape
 from dateutil.parser import parse
 from dateutil.tz import gettz, UTC
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import Integer, and_, or_
+from sqlalchemy import Integer, and_, false, or_, true
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
 from wtforms.compat import text_type
@@ -142,26 +142,38 @@ class FormGroupFilter(ChoiceFilter):
 
         if value == '1':
             # Partial
-            constraint = and_(
-                    ~models.Submission.data.has_all(array(group_tags)),
-                    models.Submission.data.has_any(array(group_tags))
-                )
+            if group_tags:
+                constraint = and_(
+                        ~models.Submission.data.has_all(array(group_tags)),
+                        models.Submission.data.has_any(array(group_tags))
+                    )
+            else:
+                constraint = false()
         elif value == '2':
             # Missing
-            constraint = or_(
-                    ~models.Submission.data.has_any(array(group_tags)),
-                    models.Submission.data == None  # noqa
-                )
+            if group_tags:
+                constraint = or_(
+                        ~models.Submission.data.has_any(array(group_tags)),
+                        models.Submission.data == None  # noqa
+                    )
+            else:
+                constraint = true()
         elif value == '3':
             # Complete
-            constraint = models.Submission.data.has_all(array(group_tags))
+            if group_tags:
+                constraint = models.Submission.data.has_all(array(group_tags))
+            else:
+                constraint = false()
         elif value == '4':
             # Conflict
-            query_params = [
-                models.Submission.conflicts.has_key(tag)    # noqa
-                for tag in group_tags
-            ]
-            constraint = or_(*query_params)
+            if group_tags:
+                query_params = [
+                    models.Submission.conflicts.has_key(tag)    # noqa
+                    for tag in group_tags
+                ]
+                constraint = or_(*query_params)
+            else:
+                constraint = false()
         else:
             constraint = None
 
