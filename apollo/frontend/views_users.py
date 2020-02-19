@@ -4,7 +4,7 @@ from flask import (
     url_for)
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required
-from flask_security.utils import encrypt_password
+from flask_security.utils import hash_password
 
 from apollo.core import red
 from apollo.frontend import route
@@ -26,7 +26,7 @@ def user_profile():
     if form.validate_on_submit():
         data = form.data
         if data.get('password'):
-            user.password = encrypt_password(data.get('password'))
+            user.password = hash_password(data.get('password'))
 
         user.username = data.get('username')
         user.email = data.get('email')

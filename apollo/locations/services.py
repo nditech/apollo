@@ -51,8 +51,9 @@ class LocationService(Service):
             headers.append('{}_ID'.format(location_type_name))
             if location_type.has_registered_voters:
                 headers.append('{}_RV'.format(location_type_name))
-            headers.append('{} LAT'.format(location_type_name))
-            headers.append('{} LON'.format(location_type_name))
+            if location_type.has_coordinates:
+                headers.append('{} LAT'.format(location_type_name))
+                headers.append('{} LON'.format(location_type_name))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -82,12 +83,13 @@ class LocationService(Service):
                 if ancestor.location_type.has_registered_voters:
                     record.append(ancestor.registered_voters)
 
-                lat = to_shape(ancestor.geom).x if hasattr(
-                    ancestor.geom, 'desc') else None
-                lon = to_shape(ancestor.geom).y if hasattr(
-                    ancestor.geom, 'desc') else None
-                record.append(lat)
-                record.append(lon)
+                if ancestor.location_type.has_coordinates:
+                    lat = to_shape(ancestor.geom).x if hasattr(
+                        ancestor.geom, 'desc') else None
+                    lon = to_shape(ancestor.geom).y if hasattr(
+                        ancestor.geom, 'desc') else None
+                    record.append(lat)
+                    record.append(lon)
 
             for locale in locales:
                 record.append(location.name_translations.get(locale))
@@ -95,12 +97,13 @@ class LocationService(Service):
 
             if location.location_type.has_registered_voters:
                 record.append(location.registered_voters)
-            lat = to_shape(location.geom).x if hasattr(
-                location.geom, 'desc') else None
-            lon = to_shape(location.geom).y if hasattr(
-                location.geom, 'desc') else None
-            record.append(lat)
-            record.append(lon)
+            if location.location_type.has_coordinates:
+                lat = to_shape(location.geom).x if hasattr(
+                    location.geom, 'desc') else None
+                lon = to_shape(location.geom).y if hasattr(
+                    location.geom, 'desc') else None
+                record.append(lat)
+                record.append(lon)
 
             output = StringIO()
             writer = csv.writer(output)
