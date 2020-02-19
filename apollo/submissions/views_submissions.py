@@ -198,9 +198,7 @@ def submission_list(form_id):
                 models.Submission.event == event,
             )
             joined_classes = [mapper.class_ for mapper in query._join_entities]
-            if models.Location in joined_classes:
-                queryset = queryset
-            else:
+            if models.Location not in joined_classes:
                 queryset = queryset.join(models.Submission.location)
             queryset = queryset.join(
                 models.Participant,
