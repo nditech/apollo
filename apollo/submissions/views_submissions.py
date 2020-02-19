@@ -199,7 +199,7 @@ def submission_list(form_id):
             )
             joined_classes = [mapper.class_ for mapper in query._join_entities]
             if models.Location in joined_classes:
-                queryset = queryset.order_by(models.Location.code)
+                queryset = queryset
             else:
                 queryset = queryset.join(models.Submission.location)
             queryset = queryset.join(
