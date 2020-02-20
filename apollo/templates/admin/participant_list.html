@@ -27,9 +27,9 @@
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
       {%- if perms.export_participants.can() -%}
       {% if args.participant_set_id -%}
-      <a class="btn btn-secondary mr-2" href="{{ url_for('participantset.participants_list', export='true', participant_set_id=participant_set_id) }}">{{ _('Export') }}</a>
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participantset.participants_list', export='true', participant_set_id=participant_set_id, **request.args) }}">{{ _('Export') }}</a>
       {%- else -%}
-      <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true', **request.args) }}">{{ _('Export') }}</a>
       {%- endif %}
       {%- endif -%}
       {%- if perms.import_participants.can() -%}
