@@ -86,7 +86,7 @@ class SubmissionService(Service):
                     if submission.participant else '',
                     submission.participant.primary_phone
                     if submission.participant else '',
-                    submission.participant.phone_contacts[0].number
+                    sorted(submission.participant.phone_contacts, key=lambda p: p.updated, reverse=True)[0].number  # noqa
                     if submission.participant and
                     submission.participant.phone_contacts else '',
                 ] + [
