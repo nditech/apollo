@@ -315,6 +315,11 @@ def participant_list(participant_set_id=0, view=None):
         else:
             abort(400)
 
+    pagination = queryset_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+    pagination.total = queryset_filterset.qs.order_by(None).distinct(
+        models.Participant.id).count()
+
     # load form context
     context = dict(
         args=args,
@@ -327,8 +332,7 @@ def participant_list(participant_set_id=0, view=None):
         participant_set_id=participant_set.id,
         location_types=helpers.displayable_location_types(
             is_administrative=True, location_set_id=location_set_id),
-        participants=queryset_filterset.qs.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+        participants=pagination,
     )
 
     if view:
