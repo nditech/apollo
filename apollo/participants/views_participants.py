@@ -223,7 +223,7 @@ def participant_list(participant_set_id=0, view=None):
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
     elif request.args.get('sort_by') == 'location_name':
-        if request.arts.get('sort_direction') == 'desc':
+        if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Location.name_translations.op('->>')(user_locale)),
                 desc(models.Location.name_translations.op('->>')(deployment_locale)),
