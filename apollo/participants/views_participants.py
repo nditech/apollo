@@ -154,10 +154,11 @@ def participant_list(participant_set_id=0, view=None):
         # particular division.
 
         division = models.Location.query.with_entities(
-            models.Location.id).filter(
-                models.Location.location_type_id ==
-                request.args.get('sort_value')
-            ).subquery()
+            models.Location.id
+        ).filter(
+            models.Location.location_type_id == request.args.get('sort_value'),
+            models.Location.location_set_id == participant_set.location_set_id
+        ).subquery()
         # next is we retrieve all the descendant locations for all the
         # locations in that particular administrative division making sure
         # to retrieve the name translations which would be used in sorting
@@ -177,8 +178,6 @@ def participant_list(participant_set_id=0, view=None):
         # is the division name.
         queryset = models.Participant.query.select_from(
             models.Participant, models.Location,
-            func.jsonb_each_text(
-                descendants.c.name_translations).alias('translation')
         ).filter(
             models.Participant.participant_set_id == participant_set.id
         ).join(
@@ -188,7 +187,7 @@ def participant_list(participant_set_id=0, view=None):
             descendants,
             descendants.c.descendant_id == models.Participant.location_id
         ).group_by(
-            text('translation.value'), models.Participant.id
+            descendants.c.name_translations, models.Participant.id
         )
     elif request.args.get('sort_by') == 'phone':
         queryset = models.Participant.query.filter(
@@ -201,9 +200,6 @@ def participant_list(participant_set_id=0, view=None):
             models.PhoneContact.participant_id == models.Participant.id
         )
     else:
-        location_lat_query = func.jsonb_each_text(
-            models.Location.name_translations
-        ).lateral('translation')
         queryset = models.Participant.query.select_from(
             models.Participant,
         ).filter(
@@ -211,8 +207,6 @@ def participant_list(participant_set_id=0, view=None):
         ).join(
             models.Location,
             models.Participant.location_id == models.Location.id
-        ).join(
-            location_lat_query, true()
         ).outerjoin(
             models.ParticipantRole,
             models.Participant.role_id == models.ParticipantRole.id
@@ -228,12 +222,28 @@ def participant_list(participant_set_id=0, view=None):
         else:
             queryset = queryset.order_by(
                 models.Participant.participant_id.cast(BigInteger))
-    elif request.args.get('sort_by') in ('location_name', 'location',):
+    elif request.args.get('sort_by') == 'location_name':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(text('translation.value')))
+                desc(models.Location.name_translations.op('->>')(user_locale)),
+                desc(models.Location.name_translations.op('->>')(deployment_locale)),
+            )
         else:
-            queryset = queryset.order_by(text('translation.value'))
+            queryset = queryset.order_by(
+                models.Location.name_translations.op('->>')(user_locale),
+                models.Location.name_translations.op('->>')(deployment_locale),
+            )
+    elif request.args.get('sort_by') == 'location':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(descendants.c.name_translations.op('->>')(user_locale)),
+                desc(descendants.c.name_translations.op('->>')(deployment_locale)),
+            )
+        else:
+            queryset = queryset.order_by(
+                descendants.c.name_translations.op('->>')(user_locale),
+                descendants.c.name_translations.op('->>')(deployment_locale),
+            )
     elif request.args.get('sort_by') == 'name':
         # specify the conditions for the order term
         condition1 = full_name_term == None # noqa
