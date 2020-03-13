@@ -7,7 +7,7 @@ import string
 import numpy
 from prettyconf import config
 
-VERSION = config('VERSION', default='v3.0')
+VERSION = config('VERSION', default='v3.1.1')
 COMMIT = config('COMMIT', default='')
 
 postgres_password = Path('/run/secrets/postgres_password')
