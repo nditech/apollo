@@ -1255,9 +1255,10 @@ def quality_assurance_list(form_id):
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if form.quality_checks:
-            queryset = services.submissions.find(
-                submission_type='O',
-                form=form
+            queryset = models.Submission.query.filter(
+                models.Submission.submission_type == 'O',
+                models.Submission.form == form,
+                models.Submission.event == event,
             ).join(
                 models.Submission.location
             ).join(
