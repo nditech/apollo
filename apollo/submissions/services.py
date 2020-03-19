@@ -18,7 +18,10 @@ def export_field_value(form, submission, tag):
 
     if field['type'] == 'multiselect':
         if data:
-            return ','.join(sorted(str(i) for i in data))
+            try:
+                return ','.join(sorted(str(i) for i in data))
+            except TypeError:
+                return data
 
     return data
 
