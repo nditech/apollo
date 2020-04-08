@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from io import BytesIO
 
 from arpeggio import NoMatch
@@ -8,6 +9,7 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 import json
 from flask_security import current_user
+from slugify import slugify
 
 from apollo import core, models
 from apollo.core import uploads
@@ -407,11 +409,12 @@ def export_form(id):
     workbook = utils.export_form(form)
     workbook.save(memory_file)
     memory_file.seek(0)
-    filename = '{}.xls'.format(form.name)
+    current_timestamp = datetime.utcnow()
+    filename = slugify(f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}') + '.xls'
 
     return send_file(
-        memory_file, attachment_filename=filename, as_attachment=True,
-        mimetype='application/vnd.ms-excel')
+        memory_file, attachment_filename=filename,
+        as_attachment=True, mimetype='application/vnd.ms-excel')
 
 
 def import_form_schema():
