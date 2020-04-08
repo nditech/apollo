@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from io import BytesIO
 
 from arpeggio import NoMatch
@@ -407,7 +408,8 @@ def export_form(id):
     workbook = utils.export_form(form)
     workbook.save(memory_file)
     memory_file.seek(0)
-    filename = '{}.xls'.format(form.name)
+    current_timestamp = datetime.utcnow()
+    filename = f'{form.name}-{current_timestamp:%Y%m%d-%H%M%S}.xls'
 
     return send_file(
         memory_file, attachment_filename=filename, as_attachment=True,
