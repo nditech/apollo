@@ -9,6 +9,7 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 import json
 from flask_security import current_user
+from slugify import slugify
 
 from apollo import core, models
 from apollo.core import uploads
@@ -409,7 +410,7 @@ def export_form(id):
     workbook.save(memory_file)
     memory_file.seek(0)
     current_timestamp = datetime.utcnow()
-    filename = f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}.xls'
+    filename = slugify(f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}.xls')
 
     return send_file(
         memory_file, attachment_filename=filename, as_attachment=True,
