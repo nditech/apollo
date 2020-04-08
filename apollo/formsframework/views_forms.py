@@ -410,11 +410,11 @@ def export_form(id):
     workbook.save(memory_file)
     memory_file.seek(0)
     current_timestamp = datetime.utcnow()
-    filename = slugify(f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}.xls')
+    filename = slugify(f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}')
 
     return send_file(
-        memory_file, attachment_filename=filename, as_attachment=True,
-        mimetype='application/vnd.ms-excel')
+        memory_file, attachment_filename=(filename + '.xls'),
+        as_attachment=True, mimetype='application/vnd.ms-excel')
 
 
 def import_form_schema():
