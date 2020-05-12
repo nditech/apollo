@@ -5,7 +5,7 @@ from geoalchemy2.shape import to_shape
 from apollo.dal.serializers import ArchiveSerializer
 from apollo.locations.models import (
     Location, LocationDataField, LocationPath, LocationSet, LocationType,
-    LocationTypePath, Sample)
+    LocationTypePath)
 
 
 class LocationSerializer(object):
@@ -16,15 +16,12 @@ class LocationSerializer(object):
             uuid=data['location_set']).with_entities(LocationSet.id).scalar()
         location_type_id = LocationType.query.filter_by(
             uuid=data['location_type']).with_entities(LocationType.id).scalar()
-        samples = Sample.query.filter(
-            Sample.uuid.in_(data['samples'])).all()
 
         kwargs = data.copy()
         kwargs.pop('location_set')
         kwargs.pop('location_type')
         kwargs['location_set_id'] = location_set_id
         kwargs['location_type_id'] = location_type_id
-        kwargs['samples'] = samples
 
         return Location(**kwargs)
 
@@ -45,7 +42,6 @@ class LocationSerializer(object):
             'extra_data': obj.extra_data,
             'location_set': obj.location_set.uuid.hex,
             'location_type': obj.location_type.uuid.hex,
-            'samples': [s.uuid.hex for s in obj.samples]
         }
 
 
@@ -193,29 +189,6 @@ class LocationTypePathSerializer(object):
         }
 
 
-class SampleSerializer(object):
-    __model__ = Sample
-
-    def deserialize_one(self, data):
-        location_set_id = LocationSet.query.filter_by(
-            uuid=data['location_set']).with_entities(LocationSet.id).scalar()
-
-        kwargs = data.copy()
-        kwargs.pop('location_set')
-        kwargs['location_set_id'] = location_set_id
-
-        return Sample(**kwargs)
-
-    def serialize_one(self, obj):
-        if not isinstance(obj, self.__model__):
-            raise TypeError('Object is not instance of Sample')
-
-        return {
-            'uuid': obj.uuid.hex,
-            'name': obj.name
-        }
-
-
 class LocationSetArchiveSerializer(ArchiveSerializer):
     __model__ = LocationSet
 
@@ -227,7 +200,6 @@ class LocationSetArchiveSerializer(ArchiveSerializer):
 
         if location_set:
             self.serialize_location_set(location_set, zip_file)
-            self.serialize_samples(location_set.samples, zip_file)
             self.serialize_location_types(
                 location_set.location_types, zip_file)
             self.serialize_location_type_paths(
@@ -236,7 +208,6 @@ class LocationSetArchiveSerializer(ArchiveSerializer):
             self.serialize_location_paths(
                 location_set.location_paths, zip_file)
             self.serialize_extra_fields(location_set.extra_fields, zip_file)
-            self.serialize_sample_nodes(location_set, zip_file)
 
     def serialize_location_set(self, obj, zip_file):
         serializer = LocationSetSerializer()
@@ -244,25 +215,6 @@ class LocationSetArchiveSerializer(ArchiveSerializer):
 
         with zip_file.open('location_set.ndjson', 'w') as f:
             f.write(json.dumps(data).encode('utf-8'))
-
-    def serialize_samples(self, samples, zip_file):
-        serializer = SampleSerializer()
-
-        with zip_file.open('samples.ndjson', 'w') as f:
-            for sample in samples:
-                data = serializer.serialize_one(sample)
-                line = f'{json.dumps(data)}\n'
-                f.write(line.encode('utf-8'))
-
-    def serialize_sample_nodes(self, location_set, zip_file):
-        sample_entries = location_set.samples.join(
-            Location.samples).with_entities(Sample.uuid, Location.uuid)
-
-        with zip_file.open('sample_nodes.ndjson', 'w') as f:
-            for sample_uuid, location_uuid in sample_entries:
-                data = json.dumps((sample_uuid.hex, location_uuid.hex))
-                line = f'{data}\n'
-                f.write(line.encode('utf-8'))
 
     def serialize_location_types(self, location_types, zip_file):
         serializer = LocationTypeSerializer()

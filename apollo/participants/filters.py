@@ -12,13 +12,12 @@ from wtforms_alchemy.fields import QuerySelectField
 from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
-from apollo.locations.models import (
-    Location, LocationPath, Sample, samples_locations)
+from apollo.locations.models import Location, LocationPath
 from apollo.wtforms_ext import ExtendedMultipleSelectField
 
 from .models import Participant, ParticipantRole, ParticipantPartner
 from .models import ParticipantGroup, ParticipantGroupType, groups_participants
-from .models import PhoneContact
+from .models import PhoneContact, Sample
 
 
 class ParticipantIDFilter(CharFilter):
@@ -66,7 +65,11 @@ class ParticipantNameFilter(CharFilter):
                         )
                     ).ilike(f'%{value}%')
                 )
-            ).params(name=f'%{value}%').with_entities(Participant.id).subquery()
+            ).params(
+                name=f'%{value}%'
+            ).with_entities(
+                Participant.id
+            ).subquery()
 
             return query.join(subquery, subquery.c.id == Participant.id)
         return query
@@ -164,26 +167,19 @@ class ParticipantPhoneFilter(CharFilter):
         return query
 
 
-def make_participant_sample_filter(location_set_id):
+def make_participant_sample_filter(participant_set_id):
     class ParticipantSampleFilter(ChoiceFilter):
         def __init__(self, *args, **kwargs):
-            choices = services.samples.find(
-                location_set_id=location_set_id
-            ).with_entities(
-                Sample.id, Sample.name).all()
+            choices = Sample.query.filter_by(
+                participant_set_id=participant_set_id
+            ).with_entities(Sample.id, Sample.name).all()
 
             kwargs['choices'] = _make_choices(choices, _('Sample'))
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value):
             if value:
-                query2 = query.join(
-                    samples_locations,
-                    samples_locations.c.location_id == Location.id
-                ).join(
-                    Sample,
-                    samples_locations.c.sample_id == Sample.id
-                )
+                query2 = query.join(Participant.samples)
 
                 return query2.filter(Sample.id == value)
 
@@ -252,6 +248,6 @@ def participant_filterset(participant_set_id, location_set_id=None):
 
     if location_set_id:
         attrs['location'] = make_participant_location_filter(location_set_id)()
-        attrs['sample'] = make_participant_sample_filter(location_set_id)()
+        attrs['sample'] = make_participant_sample_filter(participant_set_id)()
 
     return type('ParticipantFilterSet', (FilterSet,), attrs)

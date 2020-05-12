@@ -77,6 +77,44 @@ class ParticipantSet(BaseModel):
         return fields
 
 
+samples_participants = db.Table(
+    "samples_participants",
+    db.Column(
+        "sample_id",
+        db.Integer,
+        db.ForeignKey("sample.id", ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    ),
+    db.Column(
+        "participant_id",
+        db.Integer,
+        db.ForeignKey("participant.id", ondelete="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    ),
+)
+
+
+class Sample(BaseModel):
+    __tablename__ = "sample"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    participant_set_id = db.Column(
+        db.Integer,
+        db.ForeignKey("participant_set.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    participant_set = db.relationship(
+        "ParticipantSet",
+        backref=db.backref(
+            "samples", cascade="all, delete", lazy="dynamic",
+            passive_deletes=True)
+    )
+
+
 class ParticipantDataField(Resource):
     __mapper_args__ = {'polymorphic_identity': 'participant_data_field'}
     __tablename__ = 'participant_data_field'
@@ -239,6 +277,11 @@ class Participant(BaseModel):
         'PhoneContact',
         backref=db.backref('participants', cascade='all, delete'))
     supervisor = db.relationship('Participant', remote_side=id)
+    samples = db.relationship(
+        "Sample",
+        backref="participants",
+        secondary=samples_participants,
+    )
 
     def __str__(self):
         return self.name or ''

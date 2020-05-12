@@ -7,7 +7,8 @@ from geoalchemy2.shape import to_shape
 
 from apollo import constants
 from apollo.dal.service import Service
-from apollo.locations.models import LocationType, Sample
+from apollo.locations.models import LocationType
+from apollo.participants.models import Sample
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
 
@@ -41,7 +42,7 @@ class SubmissionService(Service):
             is_administrative=True,
             location_set_id=event.location_set_id).all()
         samples = Sample.query.filter_by(
-            location_set_id=event.location_set_id).all()
+            participant_set_id=event.participant_set_id).all()
         tags = form.tags
 
         extra_field_headers = [fi.label for fi in extra_fields]
@@ -116,7 +117,7 @@ class SubmissionService(Service):
                 ] if form.form_type == 'INCIDENT' else ([
                     submission.updated.strftime('%Y-%m-%d %H:%M:%S')
                     if submission.updated else ''] + [
-                        1 if sample in submission.location.samples else 0
+                        1 if sample in submission.participant.samples else 0
                         for sample in samples] + [
                         submission.comments[0].comment.replace('\n', '')
                     if submission.comments else ''])
@@ -156,7 +157,7 @@ class SubmissionService(Service):
                 record += [
                     sib.updated.strftime('%Y-%m-%d %H:%M:%S')
                     if sib.updated else ''] + [
-                        1 if sample in sib.location.samples else 0
+                        1 if sample in sib.participant.samples else 0
                         for sample in samples]
 
             output = StringIO()

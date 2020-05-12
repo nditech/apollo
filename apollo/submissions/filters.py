@@ -12,7 +12,7 @@ from wtforms.compat import text_type
 from wtforms.widgets import html_params, HTMLString
 from wtforms_alchemy.fields import QuerySelectField
 
-from apollo import models, services
+from apollo import models
 from apollo.core import BooleanFilter, CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.settings import TIMEZONE
@@ -42,31 +42,43 @@ class TagLookupFilter(ChoiceFilter):
         return (None, None)
 
 
-def make_submission_sample_filter(location_set_id):
+def make_submission_sample_filter(participant_set_id):
     class SubmissionSampleFilter(ChoiceFilter):
         def __init__(self, *args, **kwargs):
-            sample_choices = services.samples.find(
-                location_set_id=location_set_id
+            sample_choices = models.Sample.query.filter_by(
+                participant_set_id=participant_set_id
+            ).order_by(
+                models.Sample.name
             ).with_entities(models.Sample.id, models.Sample.name).all()
+            self.participant_set_id = participant_set_id
 
             kwargs['choices'] = _make_choices(sample_choices, _('Sample'))
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                joined_classes = [mapper.class_ for mapper in query._join_entities]
+                joined_classes = [
+                    mapper.class_ for mapper in query._join_entities]
                 if models.Location in joined_classes:
                     query1 = query
                 else:
                     query1 = query.join(models.Submission.location)
-                query2 = query1.join(
-                    models.samples_locations,
-                    models.samples_locations.c.location_id == models.Location.id    # noqa
+
+                sample_locations = models.Participant.query.filter_by(
+                    participant_set_id=participant_set_id
                 ).join(
-                    models.Sample,
-                    models.samples_locations.c.sample_id == models.Sample.id
+                    models.Participant.samples
+                ).filter(
+                    models.Sample.participant_set_id == participant_set_id,
+                    models.Sample.id == value
+                ).with_entities(
+                    models.Participant.location_id
                 )
-                return query2.filter(models.Sample.id == value)
+
+                query2 = query1.filter(
+                    models.Submission.location_id.in_(sample_locations)
+                )
+                return query2
 
             return query
 
@@ -75,7 +87,7 @@ def make_submission_sample_filter(location_set_id):
 
 def make_base_submission_filter(event):
     class BaseSubmissionFilterSet(FilterSet):
-        sample = make_submission_sample_filter(event.location_set_id)()
+        sample = make_submission_sample_filter(event.participant_set_id)()
 
     return BaseSubmissionFilterSet
 
@@ -395,7 +407,7 @@ def make_dashboard_filter(event):
     attributes['location'] = make_submission_location_filter(
             event.location_set_id)()
     attributes['sample'] = make_submission_sample_filter(
-        event.location_set_id)()
+        event.participant_set_id)()
 
     return type(
         'SubmissionFilterSet',

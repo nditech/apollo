@@ -14,9 +14,9 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from apollo import helpers, services
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
-from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
-from apollo.participants.models import Participant, PhoneContact
+from apollo.participants.models import (
+    Participant, PhoneContact, Sample)
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
 celery = create_celery_app()
@@ -151,6 +151,18 @@ def update_participants(dataframe, header_map, participant_set, task):
 
     extra_field_names = [f.name for f in participant_set.extra_fields] \
         if participant_set.extra_fields else []
+
+    sample_map = {}
+    # clear existing samples and create new ones
+    if sample_columns:
+        Sample.query.filter_by(participant_set_id=participant_set.id).delete()
+        db.session.commit()
+        sample_map.update({
+            n: Sample(name=n, participant_set=participant_set)
+            for n in sample_columns if _is_valid(n)
+        })
+        db.session.add_all(sample_map.values())
+        db.session.commit()
 
     for idx in index:
         record = dataframe.ix[idx]
@@ -404,28 +416,17 @@ def update_participants(dataframe, header_map, participant_set, task):
                 if not _is_valid(record[column]):
                     continue
 
+                sample = sample_map.get(column)
+                if sample is None:
+                    continue
+
                 try:
                     value = int(record[column])
                     if value == 0:
                         continue
                 except ValueError:
                     continue
-
-                sample = services.samples.find(
-                    name=column, location_set=participant_set.location_set
-                ).first()
-                if sample is None:
-                    sample = services.samples.create(
-                        name=column, location_set=participant_set.location_set)
-                if location is not None:
-                    q = services.samples.filter(
-                        Sample.id == sample.id,
-                        Sample.locations.contains(location)).exists()
-                    if db.session.query(q).scalar():
-                        continue
-                    else:
-                        sample.locations.append(location)
-                        sample.save()
+                participant.samples.append(sample)
 
         # sort out any extra fields
         extra_data = {}

@@ -8,8 +8,7 @@ import sqlalchemy as sa
 from apollo import constants
 from apollo.dal.service import Service
 from apollo.locations.models import (
-    Location, LocationPath, LocationSet, LocationType, LocationTypePath,
-    Sample)
+    Location, LocationPath, LocationSet, LocationType, LocationTypePath)
 
 
 class LocationSetService(Service):
@@ -120,7 +119,3 @@ class LocationTypeService(Service):
 
     def root(self, location_set_id):
         return self.__model__.root(location_set_id)
-
-
-class SampleService(Service):
-    __model__ = Sample
