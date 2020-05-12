@@ -262,9 +262,9 @@ def generate_qa_queries(form):
 
             if used_tags:
                 case_query = case([
-                    (subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
+                    (and_(subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
                     (and_(subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
-                    (and_(subquery == False, 'OK'), # noqa
+                    (subquery == False, 'OK'), # noqa
                     (subquery == None, 'Missing')   # noqa
                 ]).label(check['name'])
             else:
@@ -293,9 +293,9 @@ def get_logical_check_stats(query, form, condition):
 
     if question_codes:
         qa_case_query = case([
-            (qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'), # noqa
+            (and_(qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),    # noqa
             (and_(qa_query == True, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),    # noqa
-            (and_(qa_query == False, 'OK'), # noqa
+            (qa_query == False, 'OK'), # noqa
             (qa_query == None, 'Missing')
         ])
     else:
