@@ -2,8 +2,9 @@ FROM python:3.6
 
 LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 
-ADD . /app/
+ADD requirements/ /app/requirements/
 RUN pip install --no-cache-dir -r /app/requirements/prod.txt
+ADD . /app/
 RUN cd /app/ \
     && make babel-compile
 WORKDIR /app/
