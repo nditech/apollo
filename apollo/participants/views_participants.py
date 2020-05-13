@@ -11,10 +11,10 @@ from flask_babelex import get_locale, lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify
-from sqlalchemy import BigInteger, case, desc, func, text, true
+from sqlalchemy import BigInteger, case, desc, func
 
 from apollo import models, services, utils
-from apollo.core import docs, sentry, uploads
+from apollo.core import docs, sentry, uploads, db
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
@@ -226,7 +226,8 @@ def participant_list(participant_set_id=0, view=None):
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(models.Location.name_translations.op('->>')(user_locale)),
-                desc(models.Location.name_translations.op('->>')(deployment_locale)),
+                desc(models.Location.name_translations.op('->>')(
+                    deployment_locale)),
             )
         else:
             queryset = queryset.order_by(
@@ -237,7 +238,8 @@ def participant_list(participant_set_id=0, view=None):
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
                 desc(descendants.c.name_translations.op('->>')(user_locale)),
-                desc(descendants.c.name_translations.op('->>')(deployment_locale)),
+                desc(descendants.c.name_translations.op('->>')(
+                    deployment_locale)),
             )
         else:
             queryset = queryset.order_by(
@@ -364,17 +366,19 @@ def toggle_phone_verification():
     if request.is_xhr:
         participant_id = request.form.get('participant')
         phone = request.form.get('phone')
-        submission_id = request.form.get('submission')
 
-        submission = Submission.query.get_or_404(submission_id)
-        participant = Participant.query.get_or_404(participant_id)
         phone_contact = PhoneContact.query.filter(
-            PhoneContact.participant == participant,
-            PhoneContact.number == phone).first()
+            PhoneContact.participant_id == participant_id,
+            PhoneContact.number == phone).one()
         phone_contact.verified = not phone_contact.verified
-        submission.sender_verified = phone_contact.verified
         phone_contact.save()
-        submission.save()
+        Submission.query.filter(
+            Submission.participant == phone_contact.participant,
+            Submission.last_phone_number == phone
+        ).update({
+            Submission.sender_verified: phone_contact.verified
+        })
+        db.session.commit()
         return '1' if phone_contact.verified else '0'
     else:
         abort(400)
