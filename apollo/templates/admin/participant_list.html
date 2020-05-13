@@ -168,16 +168,16 @@
         {%- endif -%}
         {% if participant.location is not none %}{% set path_dict = participant.location.make_path() %}{% else %}{% set path_dict = {} %}{% endif %}
         {%- for location_type in location_types -%}
-        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ path_dict.get(location_type.name, 'N/A') }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ path_dict.get(location_type.name, _('N/A')) }}</td>
         {%- endfor -%}
-        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.name|default('N/A', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.location.name|default(_('N/A'), true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.name|default('', true) }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.primary_phone|default('', true) }}</td>
         {%- if not participant_set.gender_hidden %}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.gender_display }}</td>
         {%- endif %}
         {%- if not participant_set.role_hidden %}
-        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.role.name|default('N/A', true) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.role.name|default(_('N/A'), true) }}</td>
         {%- endif %}
         {%- if not participant_set.partner_hidden %}
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ participant.partner|default('', true) }}</td>
