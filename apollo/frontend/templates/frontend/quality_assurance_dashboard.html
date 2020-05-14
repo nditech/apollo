@@ -66,7 +66,7 @@
           .set('Verified', json.Verified || 0)
           .set('OK', json.OK || 0)
           .set('Missing', json.Missing || 0);
-        var labels = ['Missing', 'Verified', 'OK', 'Flagged'];
+        var labels = ['Flagged', 'Verified', 'OK', 'Missing'];
         var labelsMap = d3.map()
           .set('Flagged', "{{ _('Flagged') }}")
           .set('Verified', "{{ _('Verified') }}")

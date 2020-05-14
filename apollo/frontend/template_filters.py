@@ -107,12 +107,12 @@ def reverse_dict(d):
 def qa_status(submission, check):
     result, tags = get_inline_qa_status(submission, check)
     verified_fields = submission.verified_fields or set()
-    if result is True:
-        return QUALITY_STATUSES['OK']
-    elif result is False and tags.issubset(verified_fields):
+    if result is True and not tags.issubset(verified_fields):
+        return QUALITY_STATUSES['FLAGGED']
+    elif result is True and tags.issubset(verified_fields):
         return QUALITY_STATUSES['VERIFIED']
     elif result is False:
-        return QUALITY_STATUSES['FLAGGED']
+        return QUALITY_STATUSES['OK']
     else:
         return None
 

@@ -24,9 +24,9 @@ QUALITY_STATUSES = {
 }
 
 FLAG_CHOICES = (
-    ('0', _('OK')),
+    ('0', _('FLAGGED')),
     ('-1', _('MISSING')),
-    ('2', _('FLAGGED')),
+    ('2', _('OK')),
     ('4', _('VERIFIED')),
 )
 
