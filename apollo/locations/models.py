@@ -23,6 +23,7 @@ class LocationSet(BaseModel):
         'Deployment',
         backref=db.backref('location_sets', cascade='all, delete',
                            passive_deletes=True))
+    is_finalized = db.Column(db.Boolean, default=False)
 
     def __str__(self):
         return self.name or ''
