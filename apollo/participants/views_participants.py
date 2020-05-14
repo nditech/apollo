@@ -180,7 +180,7 @@ def participant_list(participant_set_id=0, view=None):
             models.Participant, models.Location,
         ).filter(
             models.Participant.participant_set_id == participant_set.id
-        ).join(
+        ).outerjoin(
             models.Location,
             models.Participant.location_id == models.Location.id
         ).outerjoin(
@@ -192,7 +192,7 @@ def participant_list(participant_set_id=0, view=None):
     elif request.args.get('sort_by') == 'phone':
         queryset = models.Participant.query.filter(
             models.Participant.participant_set_id == participant_set.id
-        ).join(
+        ).outerjoin(
             models.Location,
             models.Participant.location_id == models.Location.id
         ).join(
@@ -204,7 +204,7 @@ def participant_list(participant_set_id=0, view=None):
             models.Participant,
         ).filter(
             models.Participant.participant_set_id == participant_set.id
-        ).join(
+        ).outerjoin(
             models.Location,
             models.Participant.location_id == models.Location.id
         ).outerjoin(
