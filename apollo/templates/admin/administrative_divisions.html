@@ -104,7 +104,7 @@
         <div class="form-group row align-items-center">
           <label for="parents" class="col-2 control-label text-right">{{ _('Parents') }}</label>
           <div class="col-10">
-            <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents"></select>
+            <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents" {%- if location_set.is_finalized is sameas true %} disabled{% endif %}></select>
             <small class="form-text text-muted">{{ _('All administrative divisions that this is a child of.') }}</small>
             <input type="hidden" class="form-control" id="updateDivisionId" name="id">
           </div>
@@ -153,7 +153,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+        {%- if location_set.is_finalized is not sameas true %}
         <button type="button" class="btn btn-danger" id="updateModalDeleteButton">{{ _('Delete') }}</button>
+        {%- endif %}
         <button type="button" class="btn btn-primary" id="updateModalSaveButton">{{ _('Update') }}</button>
       </div>
     </div><!-- /.modal-content -->
@@ -191,6 +193,30 @@
 {% endif %}
 
 
+<form action="{{ url_for('locationset.locations_finalize', location_set_id=location_set.id) }}" enctype="multipart/form-data" method="post">
+<div class="modal fade" id="finalizeModal" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="finalizeModalLabel">{{ _('Finalize Administrative Divisions') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Cancel') }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ form.hidden_tag() }}
+        <span class="text-danger font-weight-bolder">{{ _("Are you sure you want to finalize the current set of administrative divisions?") }}</span>
+        <br>
+        <span class="text-muted small">{{ _(" After confirmation, you wouldn't be able to make any further changes to the structure.") }}</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="submit" class="btn btn-danger">{{ _('Finalize') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
 
 <form id="save-form" method="POST">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -214,7 +240,10 @@
   </nav>
   <div class="d-flex justify-content-between align-items-center flex-row mt-1 mb-1">
     <div class="btn-toolbar d-md-flex flex-nowrap ml-2" role="toolbar">
+    {%- if location_set.is_finalized is not sameas true %}
+      <button type="button" id="finalizeButton" class="btn btn-danger mr-2" data-toggle="modal" data-target="#finalizeModal">{{ _('Finalize') }}</button>
       <button type="button" id="addDivisionButton" class="btn btn-secondary mr-2">{{ _('Add Division') }}</button>
+    {%- endif %}
       <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary mr-2 d-none d-md-block">{{ _('Export') }}</a>
       {% if not has_admin_divisions %}
       <button type="button" id="exportBtn" class="btn btn-secondary mr-2" data-toggle="modal" data-target="#importModal">{{ _('Import') }}</button>
@@ -225,7 +254,7 @@
 </div>
 
 <div class="card mt-3 border-0">
-  <div id="paper" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}'></div>
+  <div id="paper" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}' data-editable='{% if location_set.is_finalized is not sameas true %}true{% else %}false{% endif %}'></div>
 </div>
 {% endblock %}
 

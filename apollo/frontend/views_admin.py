@@ -26,7 +26,8 @@ from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
 from apollo.locations.views_locations import (
     locations_builder, import_divisions, export_divisions,
-    locations_list, location_edit, locations_import, locations_headers)
+    locations_list, location_edit, locations_import, locations_headers,
+    finalize_location_set)
 from apollo.participants.views_participants import (
     participant_list, participant_list_import, participant_headers,
     participant_edit)
@@ -159,6 +160,7 @@ class DeploymentAdminView(BaseAdminView):
     can_delete = False
     can_edit = True
     column_list = ('name', 'hostnames')
+    column_default_sort = [(models.Deployment.id, True)]
     column_labels = {
         'name': _('Name'), 'hostnames': _('Hostnames'),
         'allow_observer_submission_edit': _('Allow Observer Submission Edit'),
@@ -242,6 +244,7 @@ class EventAdminView(BaseAdminView):
         'end': _('What time the event is to end in the local time.'),
         'forms': _('What forms should be enabled for this event.')
     }
+    column_default_sort = [(models.Event.start, True)]
     form_columns = ('name', 'start', 'end', 'forms', 'participant_set')
     form_rules = [
         rules.FieldSet(
@@ -329,6 +332,7 @@ class UserAdminView(BaseAdminView):
         'roles': _('What roles are assigned to this user.'),
         'permissions': _('Explicitly specifies which non-role permissions (in addition) to assign to the user.'),  # noqa
     }
+    column_default_sort = [(models.User.email, False)]
     form_columns = (
         'email', 'username', 'active', 'roles', 'permissions', 'locale')
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
@@ -412,6 +416,7 @@ class RoleAdminView(BaseAdminView):
         'permissions': _('Specifies which permissions to assign to users with this role.'),  # noqa
         'resources': _('Specifies which resources (e.g. forms) to allow users with this role to access.'),  # noqa
     }
+    column_default_sort = [(models.Role.name, False)]
     form_columns = ('name', 'description', 'permissions', 'resources')
 
     def create_form(self, obj=None):
@@ -461,6 +466,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
         'administrative_divisions': macro('locations_builder'),
         'locations': macro('locations_list'),
     }
+    column_default_sort = [(models.LocationSet.name, False)]
     form_columns = ('name',)
     inline_models = (ExtraDataInlineFormAdmin(models.LocationDataField),)
     inline_model_form_converter = LocationExtraDataModelConverter
@@ -493,6 +499,10 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     def locations_import(self, location_set_id):
         return locations_import(location_set_id)
 
+    @expose('/locations/<int:location_set_id>/finalize', methods=['POST'])
+    def locations_finalize(self, location_set_id):
+        return finalize_location_set(location_set_id)
+
     @expose(
         '/locations/<int:location_set_id>/headers/<int:upload_id>',
         methods=['GET', 'POST']
@@ -520,6 +530,7 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
         'role_hidden': _('If enabled, will hide the role in the participant list.'),  # noqa
         'partner_hidden': _('If enabled, will hide the organization in the participant list.'),  # noqa
     }
+    column_default_sort = [(models.ParticipantSet.name, False)]
     form_columns = (
         'name', 'location_set', 'gender_hidden', 'role_hidden',
         'partner_hidden')

@@ -273,6 +273,14 @@ def locations_builder(view, location_set_id):
         form=form, has_admin_divisions=has_admin_divisions)
 
 
+def finalize_location_set(location_set_id):
+    LocationSet.query.filter(LocationSet.id == location_set_id).update({
+        'is_finalized': True})
+    db.session.commit()
+    return redirect(url_for('locationset.builder',
+                    location_set_id=location_set_id))
+
+
 def export_divisions(location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()

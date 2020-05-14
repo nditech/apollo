@@ -88,13 +88,20 @@
     // this.init = function(options) {
       var paperElement = $('#paper');
       var data = paperElement.data('graph');
+      var editable = paperElement.data('editable');
+      if (typeof (editable) === 'undefined') {
+        editable = true;
+      } else {
+        editable = JSON.parse(editable);
+      }
       // set up graph here
       this.paper = new joint.dia.Paper({
         el: paperElement,
         width: paperElement.width(),
         height: 600,
         model: new joint.dia.Graph,
-        gridSize: 1
+        gridSize: 1,
+        interactive: editable ? true : false
       }).on({'cell:pointerclick': this.launchUpdateModal});
 
       // init graph cells
@@ -148,6 +155,8 @@
     };
 
     this.launchUpdateModal = function(cellView) {
+      if (cellView.model.isLink()) return;
+
       var graph = appRef.paper.model;
       $('#updateDivisionName').val(cellView.model.get('name'));
       $('#updateDivisionId').val(cellView.model.id);

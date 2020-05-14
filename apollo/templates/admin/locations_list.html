@@ -128,6 +128,24 @@
     {{ render_pager(locations, 'locationset.locations_list', args) }}
   </div>
 </div>
+<div class="modal fade" id="finalizeModal" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="finalizeModalLabel">{{ _('Import Locations') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ _('The administrative divisions attached to this location set needs to be finalized before importing locations.') }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -142,6 +160,8 @@ $(function(){
       $form.find(':input').not('button').each(function() { $(this).val(''); })
       $form.submit();
     });
+
+    var finalizeModal = $('#finalizeModal');
 
     var wizard = $('#import-wizard').wizard({
         keyboard : true,
@@ -226,6 +246,9 @@ $(function(){
 
     $('#open-wizard').click(function(e) {
         e.preventDefault();
+      {%- if location_set.is_finalized is not sameas true %}
+        finalizeModal.modal('show');
+      {%- else %}
         wizard.reset();
         var uploadFile = document.getElementById('uploadFile');
         uploadFile.value = ''
@@ -233,6 +256,7 @@ $(function(){
         $('#uploadFile').removeClass('is-invalid');
         $('#uploadFileHelptext').removeClass('invalid-feedback');
         wizard.show();
+      {%- endif %}
     });
 });
 </script>
