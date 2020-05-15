@@ -229,7 +229,7 @@ class QualityAssuranceFilter(ChoiceFilter):
 
                     filter_query = None
 
-                    if condition == '4':
+                    if condition == FLAG_CHOICES[3][0]:
                         # verified
                         if tags:
                             filter_query = and_(
@@ -242,14 +242,14 @@ class QualityAssuranceFilter(ChoiceFilter):
                                 single_qa_query == False,  # noqa
                                 false()
                             )
-                    elif condition == '-1':
+                    elif condition == FLAG_CHOICES[1][0]:
                         # missing
                             filter_query = (single_qa_query == None)    # noqa
-                    elif condition == '0':
-                        # ok
-                        filter_query = (single_qa_query == True)        # noqa
-                    elif condition == '2':
+                    elif condition == FLAG_CHOICES[0][0]:
                         # flagged
+                        filter_query = (single_qa_query == True)        # noqa
+                    elif condition == FLAG_CHOICES[2][0]:
+                        # ok
                         if tags:
                             filter_query = and_(
                                 single_qa_query == False,  # noqa
@@ -280,7 +280,7 @@ class QualityAssuranceFilter(ChoiceFilter):
             question_codes = array(tags)
 
             condition = value['condition']
-            if condition == '4':
+            if condition == FLAG_CHOICES[3][0]:
                 # verified
                 if tags:
                     return query.filter(
@@ -291,14 +291,14 @@ class QualityAssuranceFilter(ChoiceFilter):
                     return query.filter(
                         qa_subquery == False,  # noqa
                         false())
-            elif condition == '-1':
+            elif condition == FLAG_CHOICES[1][0]:
                 # missing
                 return query.filter(qa_subquery == None)  # noqa
-            elif condition == '0':
-                # OK
-                return query.filter(qa_subquery == True)  # noqa
-            elif condition == '2':
+            elif condition == FLAG_CHOICES[0][0]:
                 # flagged
+                return query.filter(qa_subquery == True)  # noqa
+            elif condition == FLAG_CHOICES[2][0]:
+                # OK
                 if tags:
                     return query.filter(
                         qa_subquery == False,   # noqa
