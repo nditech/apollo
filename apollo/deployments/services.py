@@ -4,27 +4,26 @@ from datetime import datetime
 import pytz
 from sqlalchemy import and_, or_
 
-from apollo import settings
 from apollo.dal.service import Service
 from apollo.deployments.models import Event
 from apollo.utils import current_timestamp
-
-app_time_zone = pytz.timezone(settings.TIMEZONE)
 
 
 class EventService(Service):
     __model__ = Event
 
     def default(self):
-        now = current_timestamp()
+        now = current_timestamp(use_app_timezone=True)
 
-        lower_bound = datetime.combine(now, datetime.min.time())
-        upper_bound = datetime.combine(now, datetime.max.time())
+        lower_bound = datetime.combine(
+            now, datetime.min.time(), tzinfo=now.tzinfo)
+        upper_bound = datetime.combine(
+            now, datetime.max.time(), tzinfo=now.tzinfo)
 
-        # convert back to UTC because datetime.combine() returns
+        # convert to UTC because datetime.combine() returns
         # naive objects
-        lower_bound = pytz.utc.localize(lower_bound)
-        upper_bound = pytz.utc.localize(upper_bound)
+        lower_bound = lower_bound.astimezone(pytz.utc)
+        upper_bound = upper_bound.astimezone(pytz.utc)
 
         event = self.filter(
             Event.start <= upper_bound, Event.end >= lower_bound
