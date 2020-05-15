@@ -226,41 +226,48 @@ class QualityAssuranceFilter(ChoiceFilter):
                     qa_expr = build_expression(check)
                     single_qa_query, tags = generate_qa_query(
                         qa_expr, self.qa_form)
+                    uses_null = 'null' in qa_expr.lower()
+                    if tags and uses_null:
+                        null_query = false()
+                    elif tags:
+                        null_query = or_(*[
+                            models.Submission.data[tag] == None # noqa
+                            for tag in tags])
+                    else:
+                        null_query = false()
 
                     filter_query = None
 
                     if condition == FLAG_CHOICES[3][0]:
-                        # verified
+                        # verified: checklists that fail QA,
+                        # have all fields verified, and none are missing
+                        term1 = (single_qa_query == True)   # noqa
                         if tags:
-                            filter_query = and_(
-                                single_qa_query == False,  # noqa
-                                models.Submission.verified_fields.has_all(
-                                    array(tags))
-                            )
+                            term2 = models.Submission.verified_fields.has_all(
+                                array(tags))
                         else:
-                            filter_query = and_(
-                                single_qa_query == False,  # noqa
-                                false()
-                            )
+                            term2 = false()
+                        filter_query = and_(term1, term2, null_query == False)  # noqa
                     elif condition == FLAG_CHOICES[1][0]:
-                        # missing
-                            filter_query = (single_qa_query == None)    # noqa
+                        # missing: checklist has missing data
+                        filter_query = or_(
+                            null_query == True, single_qa_query == None)    # noqa
                     elif condition == FLAG_CHOICES[0][0]:
-                        # flagged
-                        filter_query = (single_qa_query == True)        # noqa
-                    elif condition == FLAG_CHOICES[2][0]:
-                        # ok
+                        # flagged: checklist fails QA, not all fields are
+                        # verified, and none of them are missing
+                        term1 = (single_qa_query == True)   # noqa
                         if tags:
-                            filter_query = and_(
-                                single_qa_query == False,  # noqa
-                                ~models.Submission.verified_fields.has_all(
-                                    array(tags))
-                            )
+                            term2 = ~models.Submission.verified_fields.has_all(
+                                array(tags))
                         else:
-                            filter_query = and_(
-                                single_qa_query == False,  # noqa
-                                true()
-                            )
+                            term2 = true()
+
+                        filter_query = and_(term1, term2, null_query == False)  # noqa
+                    elif condition == FLAG_CHOICES[2][0]:
+                        # ok: checklist passes QA and none of the fields are
+                        # missing
+                        filter_query = and_(
+                            single_qa_query == False, null_query == False)  # noqa
 
                     if filter_query is None:
                         return query.filter(false())
@@ -278,36 +285,49 @@ class QualityAssuranceFilter(ChoiceFilter):
             qa_expr = build_expression(check)
             qa_subquery, tags = generate_qa_query(qa_expr, self.qa_form)
             question_codes = array(tags)
+            uses_null = 'null' in qa_expr.lower()
+            if question_codes:
+                null_query = or_(*[
+                    models.Submission.data[tag] == None # noqa
+                    for tag in question_codes]) if not uses_null else false()
+            else:
+                null_query = false()
 
             condition = value['condition']
             if condition == FLAG_CHOICES[3][0]:
                 # verified
                 if tags:
                     return query.filter(
-                        qa_subquery == False,   # noqa
+                        null_query == False,    # noqa
+                        qa_subquery == True,    # noqa
                         models.Submission.verified_fields.has_all(
                             question_codes))
                 else:
                     return query.filter(
-                        qa_subquery == False,  # noqa
+                        qa_subquery == True,    # noqa
                         false())
             elif condition == FLAG_CHOICES[1][0]:
                 # missing
-                return query.filter(qa_subquery == None)  # noqa
+                if question_codes:
+                    term1 = null_query
+                    term2 = (qa_subquery == None)   # noqa
+
+                    return query.filter(or_(term1, term2))
+
+                return query.filter(qa_subquery == None)    # noqa
             elif condition == FLAG_CHOICES[0][0]:
                 # flagged
-                return query.filter(qa_subquery == True)  # noqa
+                term1 = (qa_subquery == True)   # noqa
+                if question_codes:
+                    term2 = ~models.Submission.verified_fields.has_all(
+                        question_codes)
+                else:
+                    term2 = false()
+                return query.filter(null_query == False, term1, term2)  # noqa
             elif condition == FLAG_CHOICES[2][0]:
                 # OK
-                if tags:
-                    return query.filter(
-                        qa_subquery == False,   # noqa
-                        ~models.Submission.verified_fields.has_all(
-                            question_codes))
-                else:
-                    return query.filter(
-                        qa_subquery == False,   # noqa
-                        true())
+                return query.filter(
+                    null_query == False, qa_subquery == False)  # noqa
         return query
 
 

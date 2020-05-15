@@ -5,7 +5,7 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import Integer, String, and_, case, func, null
+from sqlalchemy import Integer, String, and_, case, false, func, null, or_
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
@@ -255,17 +255,21 @@ def generate_qa_queries(form):
     tag_groups = []
     for check in form.quality_checks:
         expression = build_expression(check)
+        uses_null = 'null' in expression.lower()
         if expression:
             subquery, used_tags = generate_qa_query(expression, form)
 
             tags = array(used_tags)
 
             if used_tags:
+                null_query = or_(*[
+                    Submission.data[tag] == None for tag in used_tags   # noqa
+                ]) if not uses_null else false()
                 case_query = case([
-                    (and_(subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
-                    (and_(subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
-                    (subquery == False, 'OK'), # noqa
-                    (subquery == None, 'Missing')   # noqa
+                    (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
+                    (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
+                    (and_(null_query == False, subquery == False), 'OK'), # noqa
+                    (or_(null_query == True, subquery == None), 'Missing')   # noqa
                 ]).label(check['name'])
             else:
                 case_query = case([
@@ -291,12 +295,20 @@ def get_logical_check_stats(query, form, condition):
         query = query.join(
             Participant, Participant.id == Submission.participant_id)
 
+    if 'null' in complete_expression.lower():
+        null_query = or_(*[
+            Submission.data[tag] == None    # noqa
+            for tag in question_codes
+        ]) if question_codes else false()
+    else:
+        null_query = false()
+
     if question_codes:
         qa_case_query = case([
-            (and_(qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),    # noqa
-            (and_(qa_query == True, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),    # noqa
-            (qa_query == False, 'OK'), # noqa
-            (qa_query == None, 'Missing')
+            (and_(null_query == False, qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
+            (and_(null_query == False, qa_query == True, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
+            (and_(null_query == False, qa_query == False), 'OK'),   # noqa
+            (or_(null_query == False, qa_query == None), 'Missing') # noqa
         ])
     else:
         qa_case_query = case([
