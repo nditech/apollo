@@ -10,7 +10,7 @@ class EventService(Service):
     __model__ = Event
 
     def default(self):
-        now = current_timestamp(use_app_timezone=True)
+        now = current_timestamp()
 
         event = self.filter(
             Event.start <= now, Event.end >= now
