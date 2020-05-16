@@ -28,7 +28,7 @@ def parse_env(env_path):
             yield k, v
 
 
-def current_timestamp(use_app_timezone=False):
+def current_timestamp():
     return utc.localize(datetime.utcnow())
 
 
