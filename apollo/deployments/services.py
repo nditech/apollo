@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-
-import pytz
 from sqlalchemy import and_, or_
 
-from apollo import settings
 from apollo.dal.service import Service
 from apollo.deployments.models import Event
 from apollo.utils import current_timestamp
-
-app_time_zone = pytz.timezone(settings.TIMEZONE)
 
 
 class EventService(Service):
@@ -18,31 +12,23 @@ class EventService(Service):
     def default(self):
         now = current_timestamp()
 
-        lower_bound = datetime.combine(now, datetime.min.time())
-        upper_bound = datetime.combine(now, datetime.max.time())
-
-        # convert back to UTC because datetime.combine() returns
-        # naive objects
-        lower_bound = pytz.utc.localize(lower_bound)
-        upper_bound = pytz.utc.localize(upper_bound)
-
         event = self.filter(
-            Event.start <= upper_bound, Event.end >= lower_bound
-        ).order_by(Event.start.desc()).first()
+            Event.start <= now, Event.end >= now
+        ).order_by(Event.start.desc(), Event.id).first()
 
         if event:
             return event
 
         # if there's no event, pick the closest past event
-        event = self.filter(Event.end <= lower_bound).order_by(
-            Event.end.desc()).first()
+        event = self.filter(Event.end <= now).order_by(
+            Event.end.desc(), Event.id).first()
 
         if event:
             return event
 
         # if there's no event, pick the closest future event
-        event = self.filter(Event.start >= upper_bound).order_by(
-            Event.start).first()
+        event = self.filter(Event.start >= now).order_by(
+            Event.start, Event.id).first()
 
         if event:
             return event
