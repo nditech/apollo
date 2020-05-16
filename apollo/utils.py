@@ -5,9 +5,7 @@ import os
 from uuid import UUID, uuid4
 import warnings
 
-from pytz import timezone, utc
-
-from .settings import TIMEZONE
+from pytz import utc
 
 
 def read_env(env_path=None):
@@ -31,9 +29,6 @@ def parse_env(env_path):
 
 
 def current_timestamp(use_app_timezone=False):
-    if use_app_timezone:
-        app_tz = timezone(TIMEZONE)
-        return app_tz.localize(datetime.now())
     return utc.localize(datetime.utcnow())
 
 
