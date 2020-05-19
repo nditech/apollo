@@ -393,7 +393,9 @@ def get_inline_qa_status(submission, condition):
 
 
 def build_expression(logical_check):
-    if 'criteria' in logical_check:
+    if 'expression' in logical_check:
+        control_expression = logical_check.get('expression')
+    elif 'criteria' in logical_check:
         control_expression = ''
 
         for index, cond in enumerate(logical_check['criteria']):
