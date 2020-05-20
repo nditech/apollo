@@ -227,9 +227,8 @@ class QualityAssuranceFilter(ChoiceFilter):
                     single_qa_query, tags = generate_qa_query(
                         qa_expr, self.qa_form)
                     uses_null = 'null' in qa_expr.lower()
-                    if tags and uses_null:
-                        null_query = false()
-                    elif tags:
+
+                    if tags and uses_null is False:
                         null_query = or_(*[
                             models.Submission.data[tag] == None # noqa
                             for tag in tags])
