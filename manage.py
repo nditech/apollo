@@ -15,7 +15,7 @@ from flask_security import SQLAlchemyUserDatastore
 from apollo.core import db
 from apollo import models, services
 from apollo.manage import \
-    (MessagePlaybackCommand, GunicornServer, CeleryWorker)
+    (MessagePlaybackCommand, GunicornServer, CeleryWorker, CreateUserCommand)
 from apollo.wsgi import application
 
 
@@ -37,6 +37,7 @@ manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 manager.add_command('gunicorn', GunicornServer())
 manager.add_command('worker', CeleryWorker())
+manager.add_command('create_user', CreateUserCommand())
 
 if __name__ == '__main__':
     manager.run()
