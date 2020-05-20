@@ -234,6 +234,10 @@ class QATreeVisitor(BaseVisitor):
             self.lock_null = True
             return null()
 
+        field = self.form.get_field_by_tag(var_name)
+        if field['type'] == 'multiselect':
+            raise ValueError('QA not supported for multi-value fields')
+
         # casting is necessary because PostgreSQL will throw
         # a fit if you attempt some operations that mix JSONB
         # with other types
