@@ -5,7 +5,8 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import Integer, String, and_, case, false, func, null, true
+from sqlalchemy import (
+    Integer, String, and_, case, false, func, null, or_, true)
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
