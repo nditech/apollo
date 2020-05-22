@@ -262,7 +262,7 @@ class InlineQATreeVisitor(BaseVisitor):
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
-        op_type = OperandType.TEXT
+        op_type = OperandType.NUMERIC
 
         if top_level_attr in ['location', 'participant']:
             attribute = getattr(self.submission, top_level_attr)
@@ -301,7 +301,7 @@ class QATreeVisitor(BaseVisitor):
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
-        op_type = OperandType.TEXT
+        op_type = OperandType.NUMERIC
 
         if top_level_attr == 'location':
             if symbol == '.':
