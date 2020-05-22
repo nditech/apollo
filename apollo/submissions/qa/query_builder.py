@@ -335,7 +335,7 @@ def get_logical_check_stats(query, form, condition):
         query = query.join(
             Participant, Participant.id == Submission.participant_id)
 
-    if 'null' in complete_expression.lower():
+    if 'null' not in complete_expression.lower():
         null_query = or_(*[
             Submission.data[tag] == None    # noqa
             for tag in question_codes
