@@ -348,7 +348,7 @@ def get_logical_check_stats(query, form, condition):
             (and_(null_query == False, qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
             (and_(null_query == False, qa_query == True, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
             (and_(null_query == False, qa_query == False), 'OK'),   # noqa
-            (or_(null_query == False, qa_query == None), 'Missing') # noqa
+            (or_(null_query == True, qa_query == None), 'Missing') # noqa
         ])
     else:
         qa_case_query = case([
