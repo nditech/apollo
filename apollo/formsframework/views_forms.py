@@ -247,7 +247,9 @@ def quality_controls(view, form_id):
             quality_control['description'] = quality_check['description']
             quality_control['criteria'] = []
 
-            if 'criteria' in quality_check:
+            if 'expression' in quality_check:
+                quality_control['expression'] = quality_check['expression']
+            elif 'criteria' in quality_check:
                 for index, criterion in enumerate(quality_check['criteria']):
                     quality_control['criteria'].append({
                         'lvalue': criterion['lvalue'],
