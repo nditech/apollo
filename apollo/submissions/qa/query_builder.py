@@ -6,8 +6,7 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import (
-    Integer, String, and_, case, false, func, null, or_, true)
+from sqlalchemy import Integer, String, and_, case, false, func, null, or_
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
@@ -30,10 +29,8 @@ variable = r'[A-Z]+'
 name = r'[a-zA-Z_][a-zA-Z0-9_]*'
 lookup = "$" ("location" / "participant" / "submission") ("." / "@") name
 null = "NULL"
-true = "TRUE"
-false = "FALSE"
 factor = ("+" / "-")? (number / variable / lookup / "(" expression ")")
-value = null / true / false / factor
+value = null / factor
 exponent = value (("^") value)*
 product = exponent (("*" / "/") exponent)*
 sum = product (("+" / "-") product)*
@@ -232,12 +229,6 @@ class InlineQATreeVisitor(BaseVisitor):
         self.submission = kwargs.pop('submission')
         super().__init__(defaults, **kwargs)
 
-    def visit_false(self, node, children):
-        return False, OperandType.BOOLEAN
-
-    def visit_true(self, node, children):
-        return True, OperandType.BOOLEAN
-
     def visit_variable(self, node, children):
         var_name = node.value
         if var_name not in self.form.tags:
@@ -292,12 +283,6 @@ class QATreeVisitor(BaseVisitor):
         self.form = kwargs.pop('form')
         self.variables = set()
         super().__init__(defaults, **kwargs)
-
-    def visit_false(self, node, children):
-        return false(), OperandType.BOOLEAN
-
-    def visit_true(self, node, children):
-        return true(), OperandType.BOOLEAN
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
