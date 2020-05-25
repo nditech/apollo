@@ -415,10 +415,9 @@ def export_form(form):
     if quality_checks and qa_sheet:
         row = 1
         for check in quality_checks:
-            if 'criteria' in check:
-                for term in check['criteria']:
-                    qa_sheet.write(row, 0, check['name'])
-                    qa_sheet.write(row, 1, check['description'])
+            if 'expression' in check:
+                qa_sheet.write(row, 0, check['name'])
+                qa_sheet.write(row, 1, check['description'])
                     qa_sheet.write(row, 2, term['lvalue'])
                     qa_sheet.write(row, 3, term['comparator'])
                     qa_sheet.write(row, 4, term['rvalue'])
