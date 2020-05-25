@@ -101,7 +101,7 @@
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.recipient }}</td>
         <td class="timestamp-date text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d, %Y') }}</td>
         <td class="timestamp-time text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%l:%M %p') }}</td>
-        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ _(left_message.direction.value) }}</td>
+        <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.direction.value }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}" style="word-wrap:break-word">{{ left_message.text }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{{ left_message.message_type.value }}</td>
         <td class="text-monospace{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
