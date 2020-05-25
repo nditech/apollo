@@ -198,7 +198,7 @@
     // and the target is, well, the icon. so we have to go up one more
     // level if that's the case
     var form = event.target.localName.toLowerCase() === 'button' ? event.target.parentElement : event.target.parentElement.parentElement;
-    var result = confirm("{{ _('Are you sure you want to delete this form? All submissions for it will be deleted too!') }}");
+    var result = confirm("{{ _('Are you sure you want to delete this form? All data linked to this form will be deleted too.') }}");
     if (result)
       form.submit();
     event.preventDefault();

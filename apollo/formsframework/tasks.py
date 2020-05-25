@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-from .. import services
 from ..factory import create_celery_app
+from .. import core, models
+
 
 celery = create_celery_app()
 
 
 @celery.task
-def update_submissions(form_pk):
+def delete_form(form_id):
     '''
-    Updates submissions after a form has been updated, so all the fields
-    in the form are existent in the submissions.
+    Deletes linked submissions and deletes the form as well
     '''
-    form = services.forms.get(pk=form_pk)
-    tags = form.tags
-    for submission in services.submissions.find(form=form):
-        for tag in tags:
-            if not hasattr(submission, tag):
-                setattr(submission, tag, None)
-        submission.save()
+    models.Submission.query.filter(
+        models.Submission.form_id == form_id).delete()
+    models.Form.query.filter(models.Form.id == form_id).delete()
+
+    core.db.session.commit()
