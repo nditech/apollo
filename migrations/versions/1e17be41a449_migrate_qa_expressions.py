@@ -27,6 +27,7 @@ def upgrade():
             if 'expression' not in quality_check:
                 quality_check['expression'] = qb.build_expression(
                     quality_check)
+                quality_check.pop('criteria')
         statement = form_table.update().where(
             form_table.c.id == form_id
         ).values(quality_checks=quality_checks)
