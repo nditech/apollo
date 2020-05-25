@@ -20,6 +20,7 @@ from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
+from apollo.tasks import delete_form as delete_form_task
 from apollo.users.models import UserUpload
 from apollo.utils import generate_identifier, strip_bom_header
 
@@ -452,8 +453,6 @@ def import_form_schema():
 def delete_form():
     form_delete_form = FormDeleteForm()
     if form_delete_form.validate_on_submit():
-        models.Form.query.filter_by(
-            id=form_delete_form.data['form_id']).delete()
-        core.db.session.commit()
+        delete_form_task.delay(form_id=form_delete_form.data['form_id'])
 
     return redirect(url_for('formsview.index'))
