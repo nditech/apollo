@@ -280,8 +280,7 @@ def export_form(form):
                        'accredited_voters_tag', 'invalid_votes_tag',
                        'registered_voters_tag', 'blank_votes_tag',
                        'quality_checks_enabled', 'vote_shares']
-    qa_header = ['name', 'description', 'left', 'relation', 'right',
-                 'conjunction']
+    qa_header = ['name', 'description', 'expression']
 
     # output headers
     for col, value in enumerate(survey_header):
@@ -418,18 +417,7 @@ def export_form(form):
             if 'expression' in check:
                 qa_sheet.write(row, 0, check['name'])
                 qa_sheet.write(row, 1, check['description'])
-                    qa_sheet.write(row, 2, term['lvalue'])
-                    qa_sheet.write(row, 3, term['comparator'])
-                    qa_sheet.write(row, 4, term['rvalue'])
-                    qa_sheet.write(row, 5, term['conjunction'])
-                    row += 1
-            else:
-                qa_sheet.write(row, 0, check['name'])
-                qa_sheet.write(row, 1, check['description'])
-                qa_sheet.write(row, 2, check['lvalue'])
-                qa_sheet.write(row, 3, check['comparator'])
-                qa_sheet.write(row, 4, check['rvalue'])
-                qa_sheet.write(row, 5, '&&')
+                qa_sheet.write(row, 2, check['expression'])
                 row += 1
 
     return book
