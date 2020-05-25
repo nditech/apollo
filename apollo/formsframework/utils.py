@@ -8,6 +8,7 @@ from slugify import slugify
 from xlwt import Workbook
 
 from apollo.formsframework.models import Form
+from apollo.submissions.qa.query_builder import build_expression
 from apollo.utils import generate_identifier
 
 gt_constraint_regex = re.compile(r'(?:.*\.\s*\>={0,1}\s*)(\d+)')
@@ -182,6 +183,10 @@ def _process_qa_worksheet(qa_data):
         if 'name' in qa_dict:
             if current_name != qa_dict['name']:
                 if current_check is not None:
+                    if 'expression' not in current_check:
+                        current_check.update(
+                            expression=build_expression(current_check))
+                        current_check.pop('criteria', None)
                     quality_checks.append(current_check)
                 current_name = qa_dict['name']
                 current_check = {
@@ -210,9 +215,15 @@ def _process_qa_worksheet(qa_data):
                     'comparator': qa_dict['relation'],
                     'rvalue': qa_dict['right']
                 }
+                qa_check.update(expression=build_expression(qa_check))
+                qa_check.pop('comparator')
+                qa_check.pop('lvalue')
+                qa_check.pop('rvalue')
                 quality_checks.append(qa_check)
 
     if current_check is not None:
+        current_check.update(expression=build_expression(current_check))
+        current_check.pop('criteria', None)
         quality_checks.append(current_check)
 
     return quality_checks
