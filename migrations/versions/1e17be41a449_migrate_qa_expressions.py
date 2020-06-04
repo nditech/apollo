@@ -22,7 +22,10 @@ def upgrade():
     fetch_query = sa.sql.text(
         "SELECT id, quality_checks FROM form WHERE quality_checks IS NOT NULL OR quality_checks != 'null'::jsonb;")  # noqa
     form_table = Form.__table__
-    for form_id, quality_checks in op.execute(fetch_query).fetchall():
+    connection = op.get_bind()
+    for form_id, quality_checks in connection.execute(fetch_query).fetchall():
+        if not quality_checks:
+            continue
         for quality_check in quality_checks:
             if 'expression' not in quality_check:
                 quality_check['expression'] = qb.build_expression(
