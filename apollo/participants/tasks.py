@@ -153,10 +153,12 @@ def update_participants(dataframe, header_map, participant_set, task):
         if participant_set.extra_fields else []
 
     sample_map = {}
-    # clear existing samples and create new ones
+    # clear existing samples
+    Sample.query.filter_by(participant_set_id=participant_set.id).delete()
+    db.session.commit()
+
+    # and create new ones
     if sample_columns:
-        Sample.query.filter_by(participant_set_id=participant_set.id).delete()
-        db.session.commit()
         sample_map.update({
             n: Sample(name=n, participant_set=participant_set)
             for n in sample_columns if _is_valid(n)
