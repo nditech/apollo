@@ -396,7 +396,7 @@ class UserAdminView(BaseAdminView):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = False
             role.save()
-        flash(_('User(s) successfully disabled.'), 'success')
+        flash(str(_('User(s) successfully disabled.')), 'success')
 
     @action('enable', _('Enable'),
             _('Are you sure you want to enable the selected users?'))
@@ -404,7 +404,7 @@ class UserAdminView(BaseAdminView):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = True
             role.save()
-        flash(_('User(s) successfully enabled.'), 'success')
+        flash(str(_('User(s) successfully enabled.')), 'success')
 
 
 class RoleAdminView(BaseAdminView):
