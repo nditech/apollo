@@ -247,9 +247,12 @@ def locations_builder(view, location_set_id):
         for unused_lt in unused_location_types:
             query = Location.query.filter(Location.location_type == unused_lt)
             if db.session.query(query.exists()).scalar():
-                flash(_('Administrative level %(name)s has locations assigned '
-                        'and cannot be deleted.', name=unused_lt.name),
-                      category='danger')
+                flash(
+                    str(
+                        _('Administrative level %(name)s has locations '
+                          'assigned and cannot be deleted.',
+                          name=unused_lt.name)),
+                    category='danger')
                 break
 
             # explicitly doing this because we didn't add a cascade
@@ -310,7 +313,7 @@ def import_divisions(location_set_id):
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
 
-            flash(_('Your changes have been saved.'), category='info')
+            flash(str(_('Your changes have been saved.')), category='info')
 
             return redirect(url_for('locationset.builder',
                                     location_set_id=location_set_id))
