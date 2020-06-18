@@ -10,8 +10,7 @@ from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from pandas import isnull
 from slugify import slugify
-from sqlalchemy import and_, func
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import and_, exists, func
 from sqlalchemy.sql import select
 
 from apollo import helpers
@@ -346,19 +345,20 @@ def update_locations(data_frame, header_mapping, location_set, task):
         for ans_type_id, des_type_id, depth in all_loc_type_paths:
             ancestor_id = location_path_helper_map.get(ans_type_id)
             descendant_id = location_path_helper_map.get(des_type_id)
-            path = None
+            path_result = None
 
             if ancestor_id is None or descendant_id is None:
                 continue
 
-            with db.session.begin():
-                path = LocationPath.query.filter_by(
-                    ancestor_id=ancestor_id, descendant_id=descendant_id,
-                    location_set_id=location_set.id
-                ).first()
-                db.session.flush()
+            with engine.begin() as connection:
+                stmt = exists().where(and_(
+                    location_path_table.c.ancestor_id == ancestor_id,
+                    location_path_table.c.descendant_id == descendant_id,
+                    location_path_table.c.location_set_id == location_set.id
+                )).select()
+                path_result = connection.execute(stmt)
 
-            if path is None:
+            if not path_result:
                 stmt = location_path_table.insert().values(
                     ancestor_id=ancestor_id, descendant_id=descendant_id,
                     location_set_id=location_set.id, depth=depth
