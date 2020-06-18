@@ -82,7 +82,8 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(data_frame, header_mapping, location_set, task):
+def update_locations(
+        connection, data_frame, header_mapping, location_set, task):
     cache = LocationCache()
 
     mapped_locales = [
@@ -122,9 +123,6 @@ def update_locations(data_frame, header_mapping, location_set, task):
 
     location_table = Location.__table__
     location_path_table = LocationPath.__table__
-
-    # reference to the SQLAlchemy Engine instance
-    engine = db.session.get_bind()
 
     # due to the way the reports are presented, one only wants to report
     # (counts of) errors/warnings once per row of data, even if multiple
@@ -296,14 +294,14 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 location_table.c.location_set_id == location_set.id,
                 location_table.c.code == kwargs['code']
             ))
-            with engine.begin() as connection:
+            with connection.begin():
                 result = connection.execute(s)
                 location_data = result.first()
 
             # create it if it isn't
             if location_data is None:
                 stmt = location_table.insert().values(**kwargs)
-                with engine.begin() as connection:
+                with connection.begin():
                     result = connection.execute(stmt)
                     location_id = result.inserted_primary_key[0]
                     result.close()
@@ -313,7 +311,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     ancestor_id=location_id, descendant_id=location_id,
                     location_set_id=location_set.id, depth=0
                 )
-                with engine.begin() as connection:
+                with connection.begin():
                     result = connection.execute(stmt)
                     result.close()
             else:
@@ -331,7 +329,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     location_table.c.id == location_id
                 ).values(**update_kwargs)
 
-                with engine.begin() as connection:
+                with connection.begin():
                     connection.execute(stmt)
 
             total_locations += 1
@@ -350,7 +348,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
             if ancestor_id is None or descendant_id is None:
                 continue
 
-            with engine.begin() as connection:
+            with connection.begin():
                 stmt = exists().where(and_(
                     location_path_table.c.ancestor_id == ancestor_id,
                     location_path_table.c.descendant_id == descendant_id,
@@ -363,7 +361,7 @@ def update_locations(data_frame, header_mapping, location_set, task):
                     ancestor_id=ancestor_id, descendant_id=descendant_id,
                     location_set_id=location_set.id, depth=depth
                 )
-                with engine.begin() as connection:
+                with connection.begin():
                     result = connection.execute(stmt)
                     result.close()
 
@@ -397,12 +395,15 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first()
 
-    update_locations(
-        dataframe,
-        mappings,
-        location_set,
-        self
-    )
+    engine = db.session.get_bind()
+    with engine.begin() as connection:
+        update_locations(
+            connection,
+            dataframe,
+            mappings,
+            location_set,
+            self
+        )
 
     os.remove(filepath)
     upload.delete()
