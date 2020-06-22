@@ -10,7 +10,7 @@ from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from pandas import isnull
 from slugify import slugify
-from sqlalchemy import and_, func
+from sqlalchemy import and_, exists, func
 from sqlalchemy.sql import select
 
 from apollo import helpers
@@ -82,7 +82,8 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(data_frame, header_mapping, location_set, task):
+def update_locations(
+        connection, data_frame, header_mapping, location_set, task):
     cache = LocationCache()
 
     mapped_locales = [
@@ -293,23 +294,26 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 location_table.c.location_set_id == location_set.id,
                 location_table.c.code == kwargs['code']
             ))
-            result = db.session.get_bind().execute(s)
-            location_data = result.first()
+            with connection.begin():
+                result = connection.execute(s)
+                location_data = result.first()
 
             # create it if it isn't
             if location_data is None:
                 stmt = location_table.insert().values(**kwargs)
-                result = db.session.get_bind().execute(stmt)
-                location_id = result.inserted_primary_key[0]
-                result.close()
+                with connection.begin():
+                    result = connection.execute(stmt)
+                    location_id = result.inserted_primary_key[0]
+                    result.close()
 
                 # add the self-referential path
                 stmt = location_path_table.insert().values(
                     ancestor_id=location_id, descendant_id=location_id,
                     location_set_id=location_set.id, depth=0
                 )
-                result = db.session.get_bind().execute(stmt)
-                result.close()
+                with connection.begin():
+                    result = connection.execute(stmt)
+                    result.close()
             else:
                 # update it if it is
                 location_id = location_data[0]
@@ -324,7 +328,9 @@ def update_locations(data_frame, header_mapping, location_set, task):
                 stmt = location_table.update().where(
                     location_table.c.id == location_id
                 ).values(**update_kwargs)
-                db.session.get_bind().execute(stmt)
+
+                with connection.begin():
+                    connection.execute(stmt)
 
             total_locations += 1
             cache.set_by_dict(
@@ -337,21 +343,27 @@ def update_locations(data_frame, header_mapping, location_set, task):
         for ans_type_id, des_type_id, depth in all_loc_type_paths:
             ancestor_id = location_path_helper_map.get(ans_type_id)
             descendant_id = location_path_helper_map.get(des_type_id)
+            path_result = None
 
             if ancestor_id is None or descendant_id is None:
                 continue
 
-            path = LocationPath.query.filter_by(
-                ancestor_id=ancestor_id, descendant_id=descendant_id,
-                location_set_id=location_set.id
-            ).first()
-            if path is None:
+            with connection.begin():
+                stmt = exists().where(and_(
+                    location_path_table.c.ancestor_id == ancestor_id,
+                    location_path_table.c.descendant_id == descendant_id,
+                    location_path_table.c.location_set_id == location_set.id
+                )).select()
+                path_result = connection.execute(stmt)
+
+            if not path_result:
                 stmt = location_path_table.insert().values(
                     ancestor_id=ancestor_id, descendant_id=descendant_id,
                     location_set_id=location_set.id, depth=depth
                 )
-                result = db.session.get_bind().execute(stmt)
-                result.close()
+                with connection.begin():
+                    result = connection.execute(stmt)
+                    result.close()
 
         processed_records += 1
         task.update_task_info(
@@ -383,12 +395,15 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first()
 
-    update_locations(
-        dataframe,
-        mappings,
-        location_set,
-        self
-    )
+    engine = db.session.get_bind()
+    with engine.begin() as connection:
+        update_locations(
+            connection,
+            dataframe,
+            mappings,
+            location_set,
+            self
+        )
 
     os.remove(filepath)
     upload.delete()
