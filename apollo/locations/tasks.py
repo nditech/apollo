@@ -354,7 +354,7 @@ def update_locations(
                     location_path_table.c.descendant_id == descendant_id,
                     location_path_table.c.location_set_id == location_set.id
                 )).select()
-                path_result = connection.execute(stmt)
+                path_result = connection.execute(stmt).scalar()
 
             if not path_result:
                 stmt = location_path_table.insert().values(
