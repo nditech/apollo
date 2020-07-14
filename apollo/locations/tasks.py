@@ -83,8 +83,7 @@ def map_attribute(location_type, attribute):
 
 
 def update_locations(
-        connection, data_frame, header_mapping, location_set, task):
-    cache = LocationCache()
+        cache, connection, data_frame, header_mapping, location_set, task):
 
     mapped_locales = [
         k.rsplit('_', 1)[-1] for k in header_mapping.keys() if 'name' in k]
@@ -394,16 +393,21 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
 
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first()
+    cache = LocationCache()
 
     engine = db.session.get_bind()
     with engine.begin() as connection:
         update_locations(
+            cache,
             connection,
             dataframe,
             mappings,
             location_set,
             self
         )
+    
+    # clear cache when task is done
+    cache.cache.clear()
 
     os.remove(filepath)
     upload.delete()
