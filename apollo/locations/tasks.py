@@ -34,7 +34,8 @@ Your location import task has been completed.
 
 
 class LocationCache():
-    cache = cachetools.LRUCache(maxsize=50)
+    def __init__(self, maxsize=50):
+        self.cache = cachetools.LRUCache(maxsize=maxsize)
 
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
@@ -83,8 +84,8 @@ def map_attribute(location_type, attribute):
 
 
 def update_locations(
-        cache, connection, data_frame, header_mapping, location_set, task):
-
+        connection, data_frame, header_mapping, location_set, task):
+    cache = LocationCache()
     mapped_locales = [
         k.rsplit('_', 1)[-1] for k in header_mapping.keys() if 'name' in k]
 
@@ -393,21 +394,16 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
 
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first()
-    cache = LocationCache()
 
     engine = db.session.get_bind()
     with engine.begin() as connection:
         update_locations(
-            cache,
             connection,
             dataframe,
             mappings,
             location_set,
             self
         )
-    
-    # clear cache when task is done
-    cache.cache.clear()
 
     os.remove(filepath)
     upload.delete()
