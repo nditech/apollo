@@ -34,7 +34,8 @@ Your location import task has been completed.
 
 
 class LocationCache():
-    cache = cachetools.LRUCache(maxsize=50)
+    def __init__(self, maxsize=50):
+        self.cache = cachetools.LRUCache(maxsize=maxsize)
 
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
@@ -85,7 +86,6 @@ def map_attribute(location_type, attribute):
 def update_locations(
         connection, data_frame, header_mapping, location_set, task):
     cache = LocationCache()
-
     mapped_locales = [
         k.rsplit('_', 1)[-1] for k in header_mapping.keys() if 'name' in k]
 
@@ -354,7 +354,7 @@ def update_locations(
                     location_path_table.c.descendant_id == descendant_id,
                     location_path_table.c.location_set_id == location_set.id
                 )).select()
-                path_result = connection.execute(stmt)
+                path_result = connection.execute(stmt).scalar()
 
             if not path_result:
                 stmt = location_path_table.insert().values(
