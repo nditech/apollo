@@ -307,7 +307,7 @@ class QualityAssuranceFilter(ChoiceFilter):
                         false())
             elif condition == FLAG_CHOICES[1][0]:
                 # missing
-                if question_codes:
+                if tags:
                     term1 = null_query
                     term2 = (qa_subquery == None)   # noqa
 
@@ -317,7 +317,7 @@ class QualityAssuranceFilter(ChoiceFilter):
             elif condition == FLAG_CHOICES[0][0]:
                 # flagged
                 term1 = (qa_subquery == True)   # noqa
-                if question_codes:
+                if tags:
                     term2 = ~models.Submission.verified_fields.has_all(
                         question_codes)
                 else:
