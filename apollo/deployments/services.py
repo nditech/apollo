@@ -35,24 +35,5 @@ class EventService(Service):
 
         return None
 
-    def overlapping_events(self, event):
-        # case 1: all events completely contained within the timespan
-        # of the passed-in event
-        expr1 = and_(Event.start >= event.start, Event.end <= event.end)
-
-        # case 2: all events that start before the passed-in event,
-        # and end before it ends
-        expr2 = and_(Event.start <= event.start, Event.end >= event.start)
-
-        # case 3: all events that start during the passed-in event,
-        # and end after it
-        expr3 = and_(Event.start <= event.end, Event.end >= event.end)
-
-        overlapping = self.filter(
-            Event.deployment_id == event.deployment_id,
-            or_(expr1, expr2, expr3))
-
-        if overlapping.with_entities(Event.id).count() > 0:
-            return overlapping
-
-        return self.query.filter_by(id=event.id)
+    def overlapping_events(self, event, timestamp=None):
+        return self.__model__.overlapping_events(event, timestamp=timestamp)

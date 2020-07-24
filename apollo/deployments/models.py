@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from flask_babelex import gettext
+from sqlalchemy import and_, or_
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.constants import LANGUAGES
@@ -87,3 +88,18 @@ class Event(Resource):
 
     def __str__(self):
         return gettext('Event - %(name)s', name=self.name)
+
+    @classmethod
+    def overlapping_events(cls, event, timestamp=None):
+        # return events overlapping with the specified event at
+        # the current or specified time, or return the specified event
+        # as a query
+        if timestamp is None:
+            timestamp = current_timestamp()
+
+        cond1 = cls.start <= timestamp
+        cond2 = cls.end >= timestamp
+        cond3 = cls.id == event.id
+        term = and_(cond1, cond2)
+
+        return cls.query.filter(or_(term, cond3))
