@@ -36,4 +36,15 @@ class EventService(Service):
         return None
 
     def overlapping_events(self, event, timestamp=None):
-        return self.__model__.overlapping_events(event, timestamp=timestamp)
+        # return events overlapping with the specified event at
+        # the current or specified time, or return the specified event
+        # as a query
+        if timestamp is None:
+            timestamp = current_timestamp()
+
+        cond1 = self.__model__.start <= timestamp
+        cond2 = self.__model__.end >= timestamp
+        cond3 = self.__model__.id == event.id
+        term = and_(cond1, cond2)
+
+        return self.__model__.query.filter(or_(term, cond3))
