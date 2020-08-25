@@ -160,7 +160,8 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     # set up template context
     context = {}
-    context['dataframe'] = make_submission_dataframe(filter_set.qs, form)
+    submission_dataframe = make_submission_dataframe(filter_set.qs, form)
+    context['dataframe'] = submission_dataframe
     context['breadcrumbs'] = breadcrumbs
     context['display_tag'] = display_tag
     context['filter_form'] = filter_set.form
@@ -179,7 +180,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             context['incidents'] = filter_set.qs
         else:
             incidents_summary = generate_incidents_data(
-                form, filter_set.qs, location, grouped, tags)
+                submission_dataframe, form, location, grouped, tags)
             context['incidents_summary'] = incidents_summary
 
         detail_visible = False
@@ -201,7 +202,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             context['field_groups'][group['name']] = process_fields
 
         process_summary = generate_process_data(
-            form, filter_set.qs, location, grouped=True, tags=tags)
+            submission_dataframe, form, location, grouped=True, tags=tags)
         context['process_summary'] = process_summary
 
     return render_template(template_name, **context)
