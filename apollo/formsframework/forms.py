@@ -350,7 +350,7 @@ class FormForm(SecureForm):
     name = wtforms.StringField(
         _('Name'), validators=[wtforms.validators.InputRequired()])
     prefix = wtforms.StringField(
-        _('Prefix'), validators=[wtforms.validators.InputRequired()],
+        _('Form Code'), validators=[wtforms.validators.InputRequired()],
         description=_('What code to identify this form in text messages.'))
     form_type = wtforms.SelectField(
         _('Form Type'), choices=Form.FORM_TYPES,

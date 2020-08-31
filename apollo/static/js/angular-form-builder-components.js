@@ -181,7 +181,7 @@
       $builderProvider.registerComponent("checkbox", {
         group: "Default",
         label: "DD",
-        description: i18n.gettext("Multiple Choices Question"),
+        description: i18n.gettext("Multiple Choice Question"),
         placeholder: "",
         required: false,
         options: [i18n.gettext("Option 1"), i18n.gettext("Option 2")],
