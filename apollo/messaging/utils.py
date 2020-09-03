@@ -65,6 +65,8 @@ def parse_text(text):
     if config.get('TRANSLATE_CHARS'):
         data_section_translated = data_section_stripped.translate(
             config.get('TRANS_TABLE'))
+    else:
+        data_section_translated = data_section_stripped
 
     # reconstruct message with translated characters
     # and punctuation filtered out
