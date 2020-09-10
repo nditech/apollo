@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from itertools import chain
 from operator import itemgetter
 
 from cgi import escape
@@ -57,27 +58,20 @@ def make_submission_sample_filter(participant_set_id):
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                joined_classes = [
-                    mapper.class_ for mapper in query._join_entities]
-                if models.Location in joined_classes:
-                    query1 = query
-                else:
-                    query1 = query.join(models.Submission.location)
-
-                sample_locations = models.Participant.query.filter_by(
-                    participant_set_id=participant_set_id
-                ).join(
+                participants_in_sample = models.Participant.query.join(
                     models.Participant.samples
                 ).filter(
-                    models.Sample.participant_set_id == participant_set_id,
+                    models.Participant.participant_set_id == participant_set_id,    # noqa
                     models.Sample.id == value
-                ).with_entities(
-                    models.Participant.location_id
+                )
+                participant_ids = list(
+                    chain(*participants_in_sample.with_entities(
+                        models.Participant.id).all()))
+
+                query2 = query.filter(
+                    models.Submission.participant_id.in_(participant_ids)
                 )
 
-                query2 = query1.filter(
-                    models.Submission.location_id.in_(sample_locations)
-                )
                 return query2
 
             return query
