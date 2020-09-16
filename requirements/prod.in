@@ -6,8 +6,10 @@ authlib
 awesome-slugify==1.6.5
 babel==2.5.3
 blinker==1.4
+boto3==1.14.62
 cachetools==1.1.5
 celery==4.1.1
+filedepot==0.8.0
 flask-admin==1.5.3
 flask-apispec==0.8.1
 flask-assets==0.12
@@ -48,6 +50,7 @@ pandas==0.23.4
 parsimonious==0.8.0
 parsley==1.3
 passlib==1.7.1
+pillow==7.2.0
 prettyconf==1.2.3
 prometheus-client
 psutil
@@ -57,6 +60,7 @@ python-editor==1.0.3
 python-magic==0.4.15
 pytz==2018.4
 pyxform==0.11.1
+qrcode==6.1
 raven==6.6.0
 redis==3.2.1
 regex==2018.2.3
