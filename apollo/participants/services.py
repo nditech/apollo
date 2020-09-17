@@ -12,7 +12,7 @@ from apollo.dal.service import Service
 from apollo.participants.models import (
     ParticipantSet,
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantRole, PhoneContact, Sample, samples_participants)
+    ParticipantRole, PhoneContact, samples_participants)
 
 number_regex = re.compile('[^0-9]')
 
@@ -59,7 +59,7 @@ class ParticipantService(Service):
         output_buffer.close()
 
         for participant in query:
-            phones = participant.phone_contacts
+            phones = participant.phones
             if phones:
                 phone_numbers = [p.number for p in phones[:3]]
                 phone_numbers += [''] * (3 - len(phone_numbers))

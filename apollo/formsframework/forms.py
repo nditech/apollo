@@ -240,6 +240,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                     submission.sender_verified = phone_contact.verified
 
                     if commit:
+                        phone_contact.touch()
                         phone_contact.save()
                 else:
                     if submission.id is None:
@@ -254,6 +255,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                             number=phone_num, participant_id=participant.id)
 
                     if commit:
+                        phone_contact.touch()
                         phone_contact.save()
 
                 if commit:

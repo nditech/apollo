@@ -329,7 +329,9 @@ class Participant(BaseModel):
         if not hasattr(self, '_phones'):
             phones = PhoneContact.query.filter_by(
                 participant_id=self.id
-            ).order_by(PhoneContact.updated).all()
+            ).order_by(
+                PhoneContact.verified.desc(),
+                PhoneContact.updated.desc()).all()
             self._phones = phones
 
         return self._phones
@@ -390,6 +392,9 @@ class PhoneContact(BaseModel):
     verified = db.Column(db.Boolean, default=False)
 
     participant = db.relationship('Participant')
+
+    def touch(self):
+        self.updated = utils.current_timestamp()
 
 
 class ContactHistory(BaseModel):
