@@ -16,7 +16,7 @@ from apollo.formsframework.models import Form
 from apollo.frontend import route, permissions
 from apollo.frontend.helpers import analysis_breadcrumb_data
 from apollo.services import forms, locations, location_types, submissions
-from apollo.submissions.filters import make_submission_analysis_filter
+from apollo.submissions.filters import make_dashboard_filter
 from apollo.submissions.models import FLAG_STATUSES
 from apollo.submissions.utils import make_submission_dataframe
 
@@ -59,7 +59,7 @@ def _voting_results(form_id, location_id=None):
 
     template_name = 'result_analysis/results.html'
     breadcrumbs = [_('Results Data'), form.name]
-    filter_class = make_submission_analysis_filter(event, form)
+    filter_class = make_dashboard_filter(event)
 
     loc_types = [lt for lt in location_types.root(
                     event.location_set_id).descendants()
