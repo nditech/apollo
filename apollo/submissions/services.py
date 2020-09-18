@@ -90,9 +90,7 @@ class SubmissionService(Service):
                     if submission.participant else '',
                     submission.participant.primary_phone
                     if submission.participant else '',
-                    sorted(submission.participant.phone_contacts, key=lambda p: p.updated, reverse=True)[0].number  # noqa
-                    if submission.participant and
-                    submission.participant.phone_contacts else '',
+                    submission.last_phone_number,
                 ] + [
                     submission.location.make_path().get(loc_type.name, '')
                     for loc_type in location_types
@@ -137,9 +135,7 @@ class SubmissionService(Service):
                     if sib.participant else '',
                     sib.participant.primary_phone
                     if sib.participant else '',
-                    sib.participant.phone_contacts[0].number
-                    if sib.participant and sib.participant.phone_contacts
-                    else '',
+                    sib.last_phone_number,
                 ] + [
                     sib.location.make_path().get(loc_type.name, '')
                     for loc_type in location_types
