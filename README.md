@@ -125,7 +125,7 @@ This parameter determines whether the application server will explicitly check i
 **TIMEZONE**
 (e.g. Africa/Lagos)
 
-The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
+The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this [wikipedia article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 
 **GOOGLE_TAG_MANAGER**
