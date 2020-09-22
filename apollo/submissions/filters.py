@@ -79,8 +79,8 @@ def make_submission_sample_filter(participant_set_id):
     return SubmissionSampleFilter
 
 
-def make_dashboard_sample_filter(participant_set_id):
-    class DashboardSampleFilter(ChoiceFilter):
+def make_location_sample_filter(participant_set_id):
+    class LocationSampleFilter(ChoiceFilter):
         def __init__(self, *args, **kwargs):
             sample_choices = models.Sample.query.filter_by(
                 participant_set_id=participant_set_id
@@ -119,7 +119,7 @@ def make_dashboard_sample_filter(participant_set_id):
 
             return query
 
-    return DashboardSampleFilter
+    return LocationSampleFilter
 
 
 def make_base_submission_filter(event):
@@ -439,11 +439,11 @@ def make_submission_location_filter(location_set_id):
     return AJAXLocationFilter
 
 
-def make_dashboard_filter(event):
+def make_submission_filter(event):
     attributes = {}
     attributes['location'] = make_submission_location_filter(
             event.location_set_id)()
-    attributes['sample'] = make_dashboard_sample_filter(
+    attributes['sample'] = make_location_sample_filter(
         event.participant_set_id)()
 
     return type(

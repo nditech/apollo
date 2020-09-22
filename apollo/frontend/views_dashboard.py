@@ -18,7 +18,7 @@ from ..frontend.helpers import (
     get_checklist_form_dashboard_menu)
 from ..locations.models import LocationType, Location
 from ..deployments.models import Event
-from ..submissions.filters import make_dashboard_filter
+from ..submissions.filters import make_submission_filter
 from ..submissions.models import Submission
 from ..formsframework.models import Form
 from apollo import models
@@ -63,7 +63,7 @@ def main_dashboard(form_id=None):
             Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.id == form_id).first_or_404()
 
-    filter_class = make_dashboard_filter(event)
+    filter_class = make_submission_filter(event)
     if form is not None:
         breadcrumbs.append(form.name)
 
