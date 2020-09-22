@@ -90,7 +90,7 @@ class SubmissionService(Service):
                     if submission.participant else '',
                     submission.participant.primary_phone
                     if submission.participant else '',
-                    submission.last_phone_number,
+                    submission.last_phone_number if submission.last_phone_number else '',
                 ] + [
                     submission.location.make_path().get(loc_type.name, '')
                     for loc_type in location_types
@@ -135,7 +135,7 @@ class SubmissionService(Service):
                     if sib.participant else '',
                     sib.participant.primary_phone
                     if sib.participant else '',
-                    sib.last_phone_number,
+                    sib.last_phone_number if sib.last_phone_number else '',
                 ] + [
                     sib.location.make_path().get(loc_type.name, '')
                     for loc_type in location_types
