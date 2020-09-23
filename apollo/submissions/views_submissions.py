@@ -177,8 +177,15 @@ def submission_list(form_id):
 
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
+            submission_type = 'M'
+
+            # only change the submission type if we are aggregating data
+            # and are not tracking conflicts
+            if mode == 'aggregated' and form.untrack_data_conflicts == True:
+                submission_type = 'O'
+
             queryset = query.filter(
-                models.Submission.submission_type == 'M',
+                models.Submission.submission_type == submission_type,
                 models.Submission.form == form,
                 models.Submission.event == event,
             )
@@ -218,9 +225,7 @@ def submission_list(form_id):
             # if you have columns that have float values
             dataset = aggregate_dataset(queryset.order_by(None), form, True)
         else:
-            dataset = services.submissions.export_list(
-                # query_filterset.qs)
-                queryset)
+            dataset = services.submissions.export_list(queryset)
 
         return Response(
             stream_with_context(dataset),
@@ -1523,9 +1528,13 @@ def update_submission_version(submission):
 @auth.login_required
 def submission_export(form_id):
     form = services.forms.get_or_404(id=form_id)
+    if form.untrack_data_conflicts == True:
+        submission_type = 'O'
+    else:
+        submission_type = 'M'
 
     queryset = services.submissions.find(
-        form=form, submission_type='M').order_by('location')
+        form=form, submission_type=submission_type).order_by('location')
     dataset = aggregated_dataframe(queryset, form).to_csv(
         encoding='utf-8', index=False, float_format='%d')
 
