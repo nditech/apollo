@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import json
-
 from cachetools import cached
 from importlib import import_module
+import json
+
 
 from celery import Celery
+from depot.manager import DepotManager
 from flask import Flask, request
 from flask_babelex import gettext as _
 from flask_security import current_user
@@ -13,6 +14,7 @@ from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
+from apollo import settings
 from apollo.core import (
     babel, cache, db, fdt_available, debug_toolbar, mail, migrate, red,
     sentry, uploads)
@@ -24,6 +26,29 @@ TASK_DESCRIPTIONS = {
     'apollo.participants.tasks.import_participants': _('Import Participants'),
     'apollo.submissions.tasks.init_submissions': _('Generate Checklists')
 }
+
+
+def setup_file_uploads(app):
+    # depot throws a fit if it's configured more than once
+    if DepotManager.get('default') is None:
+        upload_config = {}
+        if settings.UPLOADS_USE_S3:
+            upload_config.update({
+                'depot.backend': 'depot.io.boto3.S3Storage',
+                'depot.access_key_id': settings.AWS_ACCESS_KEY_ID,
+                'depot.secret_access_key': settings.AWS_SECRET_ACCESS_KEY,
+                'depot.region_name': settings.AWS_DEFAULT_REGION,
+                'depot.bucket': settings.AWS_BUCKET_NAME,
+                'depot.endpoint_url':  settings.AWS_ENDPOINT_URL,
+            })
+        else:
+            upload_config.update({
+                'depot.storage_path': str(settings.base_upload_path),
+            })
+
+        DepotManager.configure('default', upload_config)
+
+        app.wsgi_app = DepotManager.make_middleware(app.wsgi_app)
 
 
 def create_app(
@@ -84,6 +109,8 @@ def create_app(
         for configured_app in app.config.get('APPLICATIONS'):
             register_blueprints(
                 app, configured_app, import_module(configured_app).__path__)
+
+    setup_file_uploads(app)
 
     return app
 

@@ -223,3 +223,17 @@ REDIS_URL = 'redis://{host}/{database}'.format(
 KEEPALIVE_INTERVAL = 15  # in seconds
 
 TASK_STATUS_TTL = config('TASK_STATUS_TTL', cast=int, default=300)  # seconds
+
+# attachment settings
+UPLOADS_USE_S3 = config('UPLOADS_USE_S3', cast=config.boolean, default=False)
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID') if UPLOADS_USE_S3 else None
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY') \
+    if UPLOADS_USE_S3 else None
+AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION', default=None)
+AWS_BUCKET_NAME = config('AWS_BUCKET_NAME', default=None)
+AWS_ENDPOINT_URL = config('AWS_ENDPOINT_URL', default=None)
+base_upload_path = Path(default_upload_path)
+# audio_upload_path = base_upload_path.joinpath('audio')
+# file_upload_path = base_upload_path.joinpath('file')
+# image_upload_path = base_upload_path.joinpath('image')
+# video_upload_path = base_upload_path.joinpath('video')
