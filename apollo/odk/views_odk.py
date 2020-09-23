@@ -9,7 +9,7 @@ import pytz
 from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 
-from apollo import services, models, csrf
+from apollo import csrf, models, services, settings
 from apollo.core import db
 from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
@@ -18,7 +18,6 @@ from apollo.odk.utils import make_message_text
 from apollo.services import messages
 from apollo.utils import current_timestamp
 
-DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
 HTTP_OPEN_ROSA_VERSION_HEADER = 'HTTP_X_OPENROSA_VERSION'
 OPEN_ROSA_VERSION = '1.0'
@@ -34,7 +33,7 @@ def make_open_rosa_headers():
         OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
         'Date': pytz.utc.localize(datetime.utcnow()).strftime(
             '%a, %d %b %Y %H:%M:%S %Z'),
-        'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
+        'X-OpenRosa-Accept-Content-Length': settings.MAX_CONTENT_LENGTH
     }
 
 
