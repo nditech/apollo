@@ -155,7 +155,7 @@ class InlineQATreeVisitor(BaseVisitor):
     def visit_variable(self, node, children):
         var_name = node.value
         if var_name not in self.form.tags:
-            raise ValueError('Variable ({}) not in form'.format(var_name))
+            return 'NULL'
 
         return self.submission.data.get(var_name, 'NULL')
 
@@ -211,7 +211,8 @@ class QATreeVisitor(BaseVisitor):
         var_name = node.value
         self.variables.add(var_name)
         if var_name not in self.form.tags:
-            raise ValueError('Variable ({}) not in form'.format(var_name))
+            self.lock_null = True
+            return null()
 
         # casting is necessary because PostgreSQL will throw
         # a fit if you attempt some operations that mix JSONB
