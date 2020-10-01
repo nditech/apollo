@@ -566,3 +566,18 @@ def trim_conflicts(submission, conflict_tags, data_keys):
         if submission.conflicts else set()
 
     return sorted(new_conflicts.union(conflict_keys))
+
+
+class SubmissionAttachment(BaseModel):
+    __tablename__ = 'attachment'
+
+    submission_id = db.Column(
+        db.Integer, db.ForeignKey('submission.id', ondelete='CASCADE'),
+        nullable=False)
+    file_id = db.Column(db.String, nullable=False)
+    thumbnail_id = db.Column(db.String)
+
+    submission = db.relationship(
+        'Submission',
+        backref=db.backref('attachments', cascade='all, delete',
+                           passive_deletes=True))

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+from PIL import Image
 from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
 from apollo.locations.models import Location, LocationPath
 from apollo.submissions.models import Submission
+
+THUMB_SIZE = 150
 
 
 def make_submission_dataframe(query, form, selected_tags=None,
@@ -72,6 +75,27 @@ def make_submission_dataframe(query, form, selected_tags=None,
 
     return pd.concat(
         [df, df_locations], axis=1, join_axes=[df.index])
+
+
+def make_thumbnail(img_file):
+    with Image.open(img_file) as img:
+        thumb_src_img = None
+        width, height = img.size
+
+        # ensure that the thumbnails are square
+        if width == height:
+            thumb_src_img = img
+        elif width > height:
+            thumb_src_img = Image.new(img.mode, (width, width), (0, 0, 0))
+            thumb_src_img.paste(img, (0, (width - height) // 2))
+        else:
+            thumb_src_img = Image.new(img.mode, (height, height), (0, 0, 0))
+            thumb_src_img.paste(img, ((height - width) // 2, 0))
+
+        im_thumb = thumb_src_img.resize(
+            (THUMB_SIZE, THUMB_SIZE), Image.LANCZOS)
+
+        return im_thumb, img.format
 
 
 def update_participant_completion_rating(submission):
