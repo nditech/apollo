@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="form-group row align-items-center">
-          <label for="parents" class="col-2 control-label text-right">{{ _('Parents') }}</label>
+          <label for="parents" class="col-2 control-label text-right">{{ _('Parent(s)') }}</label>
           <div class="col-10">
             <select multiple="multiple" class="form-control" name="parents" id="addDivisionParents"></select>
             <small class="form-text text-muted">{{ _('All administrative divisions that this is a child of.') }}</small>
@@ -102,7 +102,7 @@
           </div>
         </div>
         <div class="form-group row align-items-center">
-          <label for="parents" class="col-2 control-label text-right">{{ _('Parents') }}</label>
+          <label for="parents" class="col-2 control-label text-right">{{ _('Parent(s)') }}</label>
           <div class="col-10">
             <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents" {%- if location_set.is_finalized is sameas true %} disabled{% endif %}></select>
             <small class="form-text text-muted">{{ _('All administrative divisions that this is a child of.') }}</small>
