@@ -59,7 +59,6 @@ FIELD_TYPE_CASTS = {
     'comment': String,
     'integer': Integer,
     'select': Integer,
-    'multiselect': String,
     'string': String,
     'location': String
 }
@@ -157,6 +156,10 @@ class InlineQATreeVisitor(BaseVisitor):
         if var_name not in self.form.tags:
             return 'NULL'
 
+        field = self.form.get_field_by_tag(var_name)
+        if field['type'] == 'multiselect':
+            return 'NULL'
+
         return self.submission.data.get(var_name, 'NULL')
 
     def visit_lookup(self, node, children):
@@ -219,6 +222,10 @@ class QATreeVisitor(BaseVisitor):
         # with other types
         field = self.form.get_field_by_tag(var_name)
         cast_type = FIELD_TYPE_CASTS.get(field['type'])
+
+        if field['type'] == 'multiselect':
+            self.lock_null = True
+            return null()
 
         # there are side effects when attempting to make comparisons
         # between attributes of different types. Naturally, you wouldn't
