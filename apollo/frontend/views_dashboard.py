@@ -63,7 +63,8 @@ def main_dashboard(form_id=None):
             Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.id == form_id).first_or_404()
 
-    filter_class = make_dashboard_filter(event)
+    filter_on_locations = not form.untrack_data_conflicts
+    filter_class = make_dashboard_filter(event, filter_on_locations)
     if form is not None:
         breadcrumbs.append(form.name)
 
