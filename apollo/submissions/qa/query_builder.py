@@ -250,6 +250,9 @@ class QATreeVisitor(BaseVisitor):
 
 
 def generate_qa_query(expression, form):
+    if expression == '':
+        return null(), set()
+
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(expression)
 
@@ -264,29 +267,28 @@ def generate_qa_queries(form):
     for check in form.quality_checks:
         expression = build_expression(check)
         uses_null = 'null' in expression.lower()
-        if expression:
-            subquery, used_tags = generate_qa_query(expression, form)
+        subquery, used_tags = generate_qa_query(expression, form)
 
-            tags = array(used_tags)
+        tags = array(used_tags)
 
-            if used_tags:
-                null_query = or_(*[
-                    Submission.data[tag] == None for tag in used_tags   # noqa
-                ]) if not uses_null else false()
-                case_query = case([
-                    (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
-                    (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
-                    (and_(null_query == False, subquery == False), 'OK'), # noqa
-                    (or_(null_query == True, subquery == None), 'Missing')   # noqa
-                ]).label(check['name'])
-            else:
-                case_query = case([
-                    (subquery == True, 'Flagged'),   # noqa
-                    (subquery == False, 'OK')   # noqa
-                ]).label(check['name'])
+        if used_tags:
+            null_query = or_(*[
+                Submission.data[tag] == None for tag in used_tags   # noqa
+            ]) if not uses_null else false()
+            case_query = case([
+                (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
+                (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
+                (and_(null_query == False, subquery == False), 'OK'), # noqa
+                (or_(null_query == True, subquery == None), 'Missing')   # noqa
+            ]).label(check['name'])
+        else:
+            case_query = case([
+                (subquery == True, 'Flagged'),   # noqa
+                (subquery == False, 'OK')   # noqa
+            ]).label(check['name'])
 
-            subqueries.append(case_query)
-            tag_groups.append(sorted(used_tags))
+        subqueries.append(case_query)
+        tag_groups.append(sorted(used_tags))
 
     return subqueries, tag_groups
 
@@ -340,6 +342,9 @@ class TagVisitor(PTNodeVisitor):
 
 def get_inline_qa_status(submission, condition):
     control_expression = build_expression(condition)
+
+    if control_expression == '':
+        return None, set()
 
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(control_expression)
