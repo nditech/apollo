@@ -378,30 +378,6 @@ class FormSerialNumberFilter(CharFilter):
         return (None, None)
 
 
-class AJAXLocationFilter(ChoiceFilter):
-    field_class = LocationQuerySelectField
-
-    def __init__(self, *args, **kwargs):
-        kwargs['query_factory'] = lambda: []
-        kwargs['get_pk'] = lambda i: i.id
-
-        return super(AJAXLocationFilter, self).__init__(*args, **kwargs)
-
-    def queryset_(self, queryset, value, **kwargs):
-        if value:
-            location_query = models.Location.query.with_entities(
-                models.Location.id
-            ).join(
-                models.LocationPath,
-                models.Location.id == models.LocationPath.descendant_id
-            ).filter(models.LocationPath.ancestor_id == value.id)
-
-            return queryset.filter(
-                models.Submission.location_id.in_(location_query))
-
-        return queryset
-
-
 class QualityAssuranceFilter(ChoiceFilter):
     field_class = fields.FormField
 
@@ -702,7 +678,8 @@ def generate_quality_assurance_filter(event, form):
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
-    attributes['location'] = AJAXLocationFilter()
+    attributes['location'] = make_submission_location_filter(
+        event.location_set_id)()
     attributes['date'] = SubmissionDateFilter()
     attributes['fsn'] = FormSerialNumberFilter()
 
