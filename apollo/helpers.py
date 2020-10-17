@@ -48,7 +48,7 @@ def load_source_file(source_file):
     elif mimetype.startswith('application'):
         # likely an Excel spreadsheet, read all data as strings
         xl = pd.ExcelFile(source_file)
-        ncols = xl.book.sheet_by_index(0)
+        ncols = xl.book.sheet_by_index(0).ncols
         df = xl.parse(0, converters={i: str for i in range(ncols)}).fillna('')
     else:
         raise RuntimeError('Unknown file type')
