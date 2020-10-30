@@ -1,25 +1,26 @@
-# Sinhala translations for PROJECT.
+# Translations template for PROJECT.
 # Copyright (C) 2019 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
+# 
 # Translators:
-# Tim Akinbo <takinbo@timbaobjects.com>, 2019
+# NDItech, 2020
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-11-25 22:55+0000\n"
-"PO-Revision-Date: 2019-08-16 17:49+0000\n"
-"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2019\n"
-"Language: si\n"
-"Language-Team: Sinhala (https://www.transifex.com/nditech/teams/898/si/)\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"PO-Revision-Date: 2020-10-28 19:40+0000\n"
+"Last-Translator: NDItech, 2020\n"
+"Language-Team: Sinhala (https://www.transifex.com/nditech/teams/114236/si/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
+"Language: si\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: apollo/constants.py:12
 msgid "(None)"
@@ -123,8 +124,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:362
 msgid ""
-"Whether data conflicts between observers in the same location are tracked"
-" or not."
+"Whether data conflicts between observers in the same location are tracked or"
+" not."
 msgstr ""
 
 #: apollo/formsframework/forms.py:364
@@ -157,8 +158,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:374
 msgid ""
-"Enabling this option will show the date and time for the submission in "
-"the list view."
+"Enabling this option will show the date and time for the submission in the "
+"list view."
 msgstr ""
 
 #: apollo/formsframework/forms.py:376
@@ -264,8 +265,8 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:46
 msgid ""
-"Checklists are being created for the Event, Form, Role and Location Type "
-"you selected"
+"Checklists are being created for the Event, Form, Role and Location Type you"
+" selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:61
@@ -274,8 +275,7 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:74
 msgid ""
-"Surveys are being created for the Event, Form and Participants you "
-"selected"
+"Surveys are being created for the Event, Form and Participants you selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:94
@@ -611,7 +611,8 @@ msgid "The display label to use for this field."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:108
-msgid "Internal name to use for this attribute. Avoid using spaces in the name."
+msgid ""
+"Internal name to use for this attribute. Avoid using spaces in the name."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:109
@@ -640,8 +641,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:170
 msgid ""
-"Specifies whether to show all locations at an administrative division on "
-"the dashboard."
+"Specifies whether to show all locations at an administrative division on the"
+" dashboard."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:171
@@ -652,8 +653,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:172
 msgid ""
-"An example of a hostname is \"example.com\". Used internally to determine"
-" what deployment to access."
+"An example of a hostname is \"example.com\". Used internally to determine "
+"what deployment to access."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:182
@@ -665,7 +666,8 @@ msgid "Primary Language"
 msgstr ""
 
 #: apollo/frontend/views_admin.py:220
-msgid "Specifies the primary language that will be supported for data uploads."
+msgid ""
+"Specifies the primary language that will be supported for data uploads."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:225
@@ -722,8 +724,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:330
 msgid ""
-"Explicitly specifies which non-role permissions (in addition) to assign "
-"to the user."
+"Explicitly specifies which non-role permissions (in addition) to assign to "
+"the user."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:383
@@ -851,7 +853,8 @@ msgstr "සහභාගී වන්නන්"
 msgid "Tasks"
 msgstr ""
 
-#: apollo/frontend/views_dashboard.py:45 apollo/frontend/views_dashboard.py:226
+#: apollo/frontend/views_dashboard.py:45
+#: apollo/frontend/views_dashboard.py:226
 msgid "Dashboard"
 msgstr "උපකරණ "
 
@@ -888,9 +891,9 @@ msgstr ""
 
 #: apollo/frontend/templates/403.html:37
 msgid ""
-"We understood your request, but we refuse to honor it! You are seeing "
-"this page because you were snooping around! Now paddle along before the "
-"buzzer goes off!"
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
 msgstr ""
 
 #: apollo/frontend/templates/404.html:5
@@ -903,11 +906,10 @@ msgstr ""
 
 #: apollo/frontend/templates/404.html:37
 msgid ""
-"Don't freak out, maybe you entered the wrong address or clicked a bad "
-"link! Who knows, this could even be a fluke! :) I recommend you either "
-"verify the address or click the back arrow (&larr;) at the top left "
-"corner of the page, and cross-check the action you were trying to "
-"perform!"
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page,"
+" and cross-check the action you were trying to perform!"
 msgstr ""
 
 #: apollo/frontend/templates/500.html:5
@@ -920,9 +922,9 @@ msgstr ""
 
 #: apollo/frontend/templates/500.html:37
 msgid ""
-"You shouldn't be seeing this page but you are because you're a genius and"
-" have found a rare bug in the software. Rest assured, we now know about "
-"it and will fix it ASAP!"
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/dashboard.html:25
@@ -1055,11 +1057,11 @@ msgstr "දත්ත වලංගු කිරීමේ දෝෂ පවතී"
 #: apollo/frontend/templates/frontend/submission_edit.html:174
 #: apollo/frontend/templates/frontend/submission_edit.html:548
 msgid ""
-"The data you entered are not valid. Please check the affected questions "
-"and correct them."
+"The data you entered are not valid. Please check the affected questions and "
+"correct them."
 msgstr ""
-"ඔබ ඇතුළත් කළ දත්ත වලංගු නැත.කරුණාකර වැරදීමට ලක් වූ  ප්‍රශ්න පරීක්ෂා කර "
-"ඒවා නිවැරදි කරන්න."
+"ඔබ ඇතුළත් කළ දත්ත වලංගු නැත.කරුණාකර වැරදීමට ලක් වූ  ප්‍රශ්න පරීක්ෂා කර ඒවා "
+"නිවැරදි කරන්න."
 
 #: apollo/frontend/templates/frontend/incident_add.html:97
 #: apollo/frontend/templates/frontend/participant_edit.html:58
@@ -1107,8 +1109,8 @@ msgstr "පරිශීලක ඇතුල්  වීම"
 
 #: apollo/frontend/templates/frontend/login_user.html:60
 msgid ""
-"The username and password you supplied <strong>do not match</strong> any "
-"of the credentials on this system. Please check both and try again."
+"The username and password you supplied <strong>do not match</strong> any of "
+"the credentials on this system. Please check both and try again."
 msgstr ""
 "ඔබ සැපයූ පරිශීලක නාමය සහ මුරපදය <strong> මෙම පද්ධතියේ කිසිදු මුරපදයක් "
 "නොගැලපේ </strong>. කරුණාකර දෙකම පරීක්ෂා කර නැවත උත්සාහ කරන්න."
@@ -1466,14 +1468,14 @@ msgstr "තත්ත්ව සහතික කිරීමේ අනතුරු
 #: apollo/frontend/templates/frontend/submission_edit.html:156
 msgid ""
 "The following quality assurance conditions were flagged while validating "
-"this submission. Please confirm with the participant that the submitted "
-"data is correct. If you find the data to be as reported by the "
-"participant, mark the data point as confirmed."
+"this submission. Please confirm with the participant that the submitted data"
+" is correct. If you find the data to be as reported by the participant, mark"
+" the data point as confirmed."
 msgstr ""
-"මෙම ඉදිරිපත් කිරීම වලංගු කරන අතරතුර පහත සඳහන් තත්ත්ව සහතික කොන්දේසි "
-"සලකුණු කර ඇත. ඉදිරිපත් කළ දත්ත නිවැරදි බව කරුණාකර සහභාගිවන්නා සමඟ තහවුරු "
-"කරන්න. සහභාගිවන්නා විසින් වාර්තා කරන ලද දත්ත ඔබ සොයා ගන්නේ නම්, තහවුරු කළ"
-" පරිදි දත්ත ලක්ෂ්‍යය සලකුණු කරන්න."
+"මෙම ඉදිරිපත් කිරීම වලංගු කරන අතරතුර පහත සඳහන් තත්ත්ව සහතික කොන්දේසි සලකුණු "
+"කර ඇත. ඉදිරිපත් කළ දත්ත නිවැරදි බව කරුණාකර සහභාගිවන්නා සමඟ තහවුරු කරන්න. "
+"සහභාගිවන්නා විසින් වාර්තා කරන ලද දත්ත ඔබ සොයා ගන්නේ නම්, තහවුරු කළ පරිදි "
+"දත්ත ලක්ෂ්‍යය සලකුණු කරන්න."
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:28
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:30
@@ -1533,8 +1535,8 @@ msgstr "ඇමතුම් ලැයිස්තුව එකතු කරන්
 
 #: apollo/frontend/templates/frontend/submission_edit.html:622
 msgid ""
-"You may (optionally) include details of your call or interaction with the"
-" participant here."
+"You may (optionally) include details of your call or interaction with the "
+"participant here."
 msgstr ""
 "ඔබට (විකල්පයක් ලෙස) ඔබගේ ඇමතුම පිළිබඳ විස්තර හෝ සහභාගිවන්නා සමඟ "
 "අන්තර්ක්‍රියාකාරිත්වය මෙහි ඇතුළත් කළ හැකිය."
@@ -1768,7 +1770,8 @@ msgstr ""
 
 #: apollo/locations/forms.py:31
 #, python-format
-msgid "Properties for %(loc_type_name)s were mapped, but no code was specified"
+msgid ""
+"Properties for %(loc_type_name)s were mapped, but no code was specified"
 msgstr ""
 
 #: apollo/locations/models.py:90
@@ -1837,8 +1840,7 @@ msgstr ""
 #: apollo/locations/views_locations.py:250
 #, python-format
 msgid ""
-"Administrative level %(name)s has locations assigned and cannot be "
-"deleted."
+"Administrative level %(name)s has locations assigned and cannot be deleted."
 msgstr ""
 
 #: apollo/locations/views_locations.py:267
@@ -1881,8 +1883,8 @@ msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
 msgstr ""
-"නිරීක්ෂක හැඳුනුම්පත හමු නොවීය. කරුණාකර වලංගු නිරීක්ෂණ හැඳුනුම්පතක් සමඟ "
-"නැවත යවන්න. ඔබ යැව්වේ: {text}"
+"නිරීක්ෂක හැඳුනුම්පත හමු නොවීය. කරුණාකර වලංගු නිරීක්ෂණ හැඳුනුම්පතක් සමඟ නැවත "
+"යවන්න. ඔබ යැව්වේ: {text}"
 
 #: apollo/messaging/helpers.py:100
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
@@ -1934,8 +1936,8 @@ msgstr ""
 
 #: apollo/odk/views_odk.py:276
 msgid ""
-"Your submission was received, but you sent it using an outdated form. "
-"Please download a new copy and resend. Thank you."
+"Your submission was received, but you sent it using an outdated form. Please"
+" download a new copy and resend. Thank you."
 msgstr ""
 
 #: apollo/participants/filters.py:60
@@ -2039,8 +2041,8 @@ msgstr ""
 #: apollo/participants/tasks.py:297
 #, python-format
 msgid ""
-"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
-"not found"
+"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s not"
+" found"
 msgstr ""
 
 #: apollo/participants/tasks.py:486
@@ -2051,8 +2053,7 @@ msgstr ""
 #: apollo/participants/tasks.py:492
 #, python-format
 msgid ""
-"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
-"found"
+"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not found"
 msgstr ""
 
 #: apollo/participants/tasks.py:566
@@ -2477,8 +2478,8 @@ msgstr ""
 #: apollo/templates/admin/administrative_divisions.html:43
 #: apollo/templates/admin/administrative_divisions.html:109
 msgid ""
-"Whether to show location data of this division on the dashboard and other"
-" tables."
+"Whether to show location data of this division on the dashboard and other "
+"tables."
 msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:52
@@ -2488,7 +2489,8 @@ msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:53
 #: apollo/templates/admin/administrative_divisions.html:119
-msgid "Whether to show aggregated data summaries at this administrative level."
+msgid ""
+"Whether to show aggregated data summaries at this administrative level."
 msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:62
@@ -2574,8 +2576,8 @@ msgstr ""
 
 #: apollo/templates/admin/location_headers_errors.html:2
 msgid ""
-"<strong>There was a problem</strong> with your submission. Please correct"
-" the errors and re-submit."
+"<strong>There was a problem</strong> with your submission. Please correct "
+"the errors and re-submit."
 msgstr ""
 
 #: apollo/templates/admin/locations_list.html:54
@@ -2696,10 +2698,3 @@ msgstr ""
 #, python-format
 msgid "The email %(email)s is not available"
 msgstr ""
-
-#~ msgid "Show Moment Column"
-#~ msgstr ""
-
-#~ msgid "Moment"
-#~ msgstr ""
-
