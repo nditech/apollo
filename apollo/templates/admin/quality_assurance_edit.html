@@ -282,7 +282,7 @@
       title: '{{ title }}',
       control: {
         name: '{{ quality_control.name }}',
-        description: '{{ quality_control.description | safe }}',
+        description: {{ quality_control.description | tojson }},
         criteria: {{ quality_control.criteria|tojson }}
       }
     },
