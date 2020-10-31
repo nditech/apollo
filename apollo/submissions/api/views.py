@@ -4,7 +4,7 @@ from flask_apispec import MethodResource, marshal_with, use_kwargs
 from webargs import fields
 
 from apollo.api.common import BaseListResource
-from apollo.api.decorators import login_or_api_key_required
+from apollo.api.decorators import protect
 from apollo.submissions.api.schema import SubmissionSchema
 from apollo.submissions.models import Submission
 
@@ -12,7 +12,7 @@ from apollo.submissions.models import Submission
 @marshal_with(SubmissionSchema)
 @use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class SubmissionItemResource(MethodResource):
-    @login_or_api_key_required
+    @protect
     def get(self, submission_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
 

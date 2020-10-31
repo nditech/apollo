@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
-from flask import g
+from http import HTTPStatus
+
+from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, get_jwt_identity,
+    jwt_refresh_token_required)
 from sqlalchemy import bindparam, func, or_, text, true
+from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
 from apollo.api.common import BaseListResource
-from apollo.api.decorators import login_or_api_key_required
+from apollo.api.decorators import protect
+from apollo.core import csrf
 from apollo.deployments.models import Event
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
@@ -17,7 +24,7 @@ from apollo.participants.models import (
 @marshal_with(ParticipantSchema)
 @use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class ParticipantItemResource(MethodResource):
-    @login_or_api_key_required
+    @protect
     def get(self, participant_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         event = getattr(g, 'event', None)
@@ -118,3 +125,63 @@ class ParticipantListResource(BaseListResource):
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')
 
         return queryset
+
+
+@csrf.exempt
+def participant_login():
+    request_data = request.json
+    participant_id = request_data.get('username')
+    password = request_data.get('password')
+
+    current_events = Event.overlapping_events(Event.default())
+    participant = current_events.join(
+        Participant,
+        Participant.participant_set_id == Event.participant_set_id
+    ).with_entities(
+        Participant
+    ).filter(
+        Participant.participant_id == participant_id,
+        Participant.password == password
+    ).first()
+
+    if participant is None:
+        response = {'message': 'Login failed', 'status': 'error'}
+        return jsonify(response), HTTPStatus.FORBIDDEN
+
+    access_token = create_access_token(str(participant.uuid))
+    refresh_token = create_refresh_token(str(participant.uuid))
+
+    response = {
+        'data': {
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+        },
+        'status': 'ok',
+        'message': 'Login successful'
+    }
+
+    return jsonify(response)
+
+
+@csrf.exempt
+@jwt_refresh_token_required
+def refresh():
+    participant_uuid = get_jwt_identity()
+    try:
+        participant = Participant.query.filter_by(uuid=participant_uuid).one()
+    except NoResultFound:
+        response = {
+            'message': 'Invalid refresh token supplied',
+            'status': 'error'
+        }
+        return jsonify(response, HTTPStatus.BAD_REQUEST)
+
+    access_token = create_access_token(participant.uuid)
+    response = {
+        'data': {
+            'access_token': access_token
+        },
+        'status': 'ok'
+    }
+
+    return jsonify(response)

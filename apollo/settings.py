@@ -239,3 +239,11 @@ AWS_DEFAULT_BUCKET = config('AWS_DEFAULT_BUCKET', default=None)
 AWS_IMAGES_REGION = config('AWS_IMAGES_REGION', default=AWS_DEFAULT_REGION)
 AWS_IMAGES_BUCKET = config('AWS_IMAGES_BUCKET', default=AWS_DEFAULT_BUCKET)
 AWS_ENDPOINT_URL = config('AWS_ENDPOINT_URL', default=None)
+
+# JWT settings
+JWT_TOKEN_LOCATION = config(
+    'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies,headers')
+JWT_SECRET = config('JWT_SECRET')
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+    seconds=config("JWT_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
+)

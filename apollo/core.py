@@ -11,6 +11,7 @@ try:
     fdt_available = True
 except ImportError:
     fdt_available = False
+from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate
@@ -40,6 +41,7 @@ admin = Admin(
 babel = Babel()
 cache = Cache()
 db = SQLAlchemy(session_options={'expire_on_commit': False})
+jwt_manager = JWTManager()
 mail = Mail()
 menu = Menu()
 migrate = Migrate()
