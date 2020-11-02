@@ -245,5 +245,9 @@ JWT_TOKEN_LOCATION = config(
     'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies,headers')
 JWT_SECRET = config('JWT_SECRET')
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(
-    seconds=config("JWT_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
+    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
+)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(
+    seconds=config(
+        "JWT_REFRESH_TOKEN_LIFETIME_SECONDS", cast=int, default=86400)
 )
