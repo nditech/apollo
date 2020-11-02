@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
+from flask_babelex import gettext
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, get_jwt_identity,
     jwt_refresh_token_required)
@@ -145,7 +146,7 @@ def participant_login():
     ).first()
 
     if participant is None:
-        response = {'message': 'Login failed', 'status': 'error'}
+        response = {'message': gettext('Login failed'), 'status': 'error'}
         return jsonify(response), HTTPStatus.FORBIDDEN
 
     access_token = create_access_token(str(participant.uuid))
@@ -157,7 +158,7 @@ def participant_login():
             'refresh_token': refresh_token,
         },
         'status': 'ok',
-        'message': 'Login successful'
+        'message': gettext('Login successful')
     }
 
     return jsonify(response)
@@ -171,7 +172,7 @@ def refresh():
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
     except NoResultFound:
         response = {
-            'message': 'Invalid refresh token supplied',
+            'message': gettext('Invalid refresh token supplied'),
             'status': 'error'
         }
         return jsonify(response, HTTPStatus.BAD_REQUEST)
