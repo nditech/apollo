@@ -217,7 +217,7 @@ def submission():
                 data[tag] = element.text
             elif field_type == 'multiselect':
                 try:
-                    data[tag] = [int(i) for i in element.text.split()]
+                    data[tag] = sorted(int(i) for i in element.text.split())
                 except ValueError:
                     continue
             elif field_type == 'location':
