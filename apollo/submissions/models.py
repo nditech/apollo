@@ -509,6 +509,7 @@ class SubmissionVersion(BaseModel):
         ('WEB', _('Web')),
         ('API', _('API')),
         ('ODK', _('ODK')),
+        ('PWA', _('PWA')),
     )
     id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
