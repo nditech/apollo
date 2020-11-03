@@ -10,6 +10,7 @@ boto3==1.16.8
 cachetools==1.1.5
 celery==4.1.1
 filedepot==0.8.0
+fastjsonschema==2.14.5
 flask-admin==1.5.3
 flask-apispec==0.8.1
 flask-assets==0.12
@@ -39,7 +40,6 @@ gunicorn==19.7.1
 honcho==1.0.1
 itsdangerous==0.24
 jinja2==2.10.1
-jsonschema==3.2.0
 loginpass
 lxml==4.6.2
 mako==1.0.7
