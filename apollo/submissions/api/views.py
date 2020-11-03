@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from http import HTTPStatus
 
+import fastjsonschema
+
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
@@ -151,6 +153,19 @@ def submission():
         }
 
         return response, HTTPStatus.BAD_REQUEST
+
+    # validate payload
+    schema = form.create_schema()
+    try:
+        fastjsonschema.validate(schema, payload)
+    except fastjsonschema.exceptions.JsonSchemaException as ex:
+        path = ex.path[-1]
+        response = {
+            'message': gettext('Invalid data sent for %(name)s', name=path),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
 
     current_event = getattr(g, 'event', Event.default())
     current_events = Event.overlapping_events(current_event)
