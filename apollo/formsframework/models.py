@@ -313,6 +313,72 @@ class Form(Resource):
         hash_engine.update(xform_data)
         return f'md5: {hash_engine.hexdigest()}'
 
+    def create_schema(self):
+        schema = {
+            '$schema': 'http://json-schema.org/schema#',
+            'type': 'object',
+            'properties': {
+                # TODO: remove hardcoded location
+                'location': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'number',
+                        'maxItems': 2,
+                        'minItems': 2,
+                    }
+                }
+            }
+        }
+
+        for tag in self.tags:
+            field = self.get_field_by_tag(tag)
+            schema['properties'].update(
+                make_field_schema(field))
+
+        return schema
+
+
+def make_field_schema(field_spec):
+    field_type = field_spec.get('type')
+    schema_types_map = {
+        'integer': 'integer',
+        'select': 'integer',
+        'multiselect': 'array',
+        'comment': 'string',
+        'string': 'string',
+        'location': 'array',
+    }
+
+    field_schema = {
+        'type': schema_types_map.get(field_type),
+    }
+
+    if field_type == 'integer':
+        field_schema.update(minimum=field_spec.get('min', 0))
+        field_schema.update(maximum=field_spec.get('max', 9999))
+    elif field_type == 'select':
+        field_schema.update(
+            enum=sorted(field_spec['options'].values())
+        )
+    elif field_type == 'multiselect':
+        field_schema.update(
+            items={
+                'type': 'integer',
+                'enum': sorted(field_spec['options'].values())
+            }
+        )
+    elif field_type == 'location':
+        # use latlong coordinates as an array
+        field_schema.update(
+            items={
+                'type': 'number',
+                'maxItems': 2,
+                'minItems': 2,
+            }
+        )
+
+    return {field_spec['tag']: field_schema}
+
 
 class FormBuilderSerializer(object):
     @classmethod
