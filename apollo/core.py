@@ -6,6 +6,7 @@ from flask_admin import expose, Admin, AdminIndexView
 from flask_apispec import FlaskApiSpec
 from flask_babelex import Babel
 from flask_caching import Cache
+from flask_cors import CORS
 try:
     from flask_debugtoolbar import DebugToolbarExtension
     fdt_available = True
@@ -40,6 +41,7 @@ admin = Admin(
     name='Apollo', index_view=AdminHome(name='Dashboard'))
 babel = Babel()
 cache = Cache()
+cors = CORS()
 db = SQLAlchemy(session_options={'expire_on_commit': False})
 jwt_manager = JWTManager()
 mail = Mail()

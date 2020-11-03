@@ -17,7 +17,7 @@ from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo import settings
 from apollo.core import (
-    babel, cache, db, fdt_available, debug_toolbar, jwt_manager, mail,
+    babel, cache, cors, db, fdt_available, debug_toolbar, jwt_manager, mail,
     migrate, red, sentry, uploads)
 from apollo.helpers import register_blueprints
 
@@ -91,6 +91,7 @@ def create_app(
     sentry.init_app(app)
     babel.init_app(app)
     cache.init_app(app)
+    cors.init_app(app)
     db.init_app(app)
     jwt_manager.init_app(app)
     migrate.init_app(app, db)
