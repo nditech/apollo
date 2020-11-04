@@ -39,7 +39,7 @@ The dependencies for building and deploying an Apollo 3 instance are:
 After installing git, you will be able to clone the current version of Apollo from this repo, using:
 
 ```
-git clone https://github.com/nditech/dev-elections.git
+git clone https://github.com/nditech/apollo.git
 ```
 
 After downloading, configure a settings file in the main folder called `settings.ini`. A basic sample settings file is shown below. The install will not work if a settings file is not created with a Secret Key specified. The secret key should be any randomly generated string of characters of similar length to the example provided. For more information on additional configuration settings, read the section "[Application Configuration Settings](#application-configuration-settings)" below.
