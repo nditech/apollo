@@ -132,6 +132,8 @@ def _process_survey_worksheet(sheet_data, form_data):
 
         elif record_type == 'geopoint':
             field['type'] = 'location'
+        elif record_type == 'image':
+            field['type'] = record_type
         else:
             continue
 
@@ -367,6 +369,9 @@ def export_form(form):
                                 current_survey_row, 4, 'comment')
                     elif field['type'] == 'location':
                         survey_sheet.write(current_survey_row, 0, 'geopoint')
+                    elif field['type'] == 'image':
+                        survey_sheet.write(
+                            current_survey_row, 0, field['type'])
                     else:
                         # for questions with choices, write them to the
                         # choices sheet

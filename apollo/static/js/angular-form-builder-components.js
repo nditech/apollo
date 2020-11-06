@@ -223,7 +223,7 @@
         </form>`
       });
 
-      return $builderProvider.registerComponent("textarea", {
+      $builderProvider.registerComponent("textarea", {
         group: "Default",
         label: "Comment",
         description: i18n.gettext("Comment Question"),
@@ -234,6 +234,86 @@
           <label for="{{label}}" class="col-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-8">
             <textarea ng-model="inputText" rows="1" validator-required="{{required}}" validator-group="{{formName}}" id="{{label}}" class="form-control" placeholder="{{placeholder}}"></textarea>
+            <p class="form-text mb-1">{{description}}</p>
+          </div>
+        </div>`,
+        popoverTemplate:
+        `<form>
+          <div class="form-group mb-2">
+            <label class="control-label">{{nameLabel}}</label>
+            <input type="text" ng-model="label" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">{{descriptionLabel}}</label>
+            <input type="text" ng-model="description" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">{{analysisLabel}}</label>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textarea', null)" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group mb-2" ng-if="validationOptions.length > 0">
+            <label class="control-label">{{validationLabel}}</label>
+            <select ng-model="$parent.validation" class="form-control custom-select" ng-options="option.rule as option.label for option in validationOptions"></select>
+          </div>
+          <div class="form-group mb-2 mt-4 text-right">
+            <input type="button" ng-click="popover.remove($event)" class="btn btn-danger mr-1" value="{{deleteLabel}}"/>
+            <input type="button" ng-click="popover.cancel($event)" class="btn btn-secondary mr-1" value="{{cancelLabel}}"/>
+            <input type="submit" ng-click="popover.save($event)" class="btn btn-primary" value="{{saveLabel}}"/>
+          </div>
+        </form>`
+      });
+
+      $builderProvider.registerComponent("location", {
+        group: "Default",
+        label: "Location",
+        description: i18n.gettext("Location"),
+        placeholder: "",
+        required: false,
+        template:
+        `<div class="form-group row">
+          <label for="{{label}}" class="col-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <div class="col-8">
+            <div class="alert alert-dark"><i class="fa fa-map-marker-alt"></i> ${i18n.gettext('Location')}</div>
+            <p class="form-text mb-1">{{description}}</p>
+          </div>
+        </div>`,
+        popoverTemplate:
+        `<form>
+          <div class="form-group mb-2">
+            <label class="control-label">{{nameLabel}}</label>
+            <input type="text" ng-model="label" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">{{descriptionLabel}}</label>
+            <input type="text" ng-model="description" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">{{analysisLabel}}</label>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textarea', null)" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group mb-2" ng-if="validationOptions.length > 0">
+            <label class="control-label">{{validationLabel}}</label>
+            <select ng-model="$parent.validation" class="form-control custom-select" ng-options="option.rule as option.label for option in validationOptions"></select>
+          </div>
+          <div class="form-group mb-2 mt-4 text-right">
+            <input type="button" ng-click="popover.remove($event)" class="btn btn-danger mr-1" value="{{deleteLabel}}"/>
+            <input type="button" ng-click="popover.cancel($event)" class="btn btn-secondary mr-1" value="{{cancelLabel}}"/>
+            <input type="submit" ng-click="popover.save($event)" class="btn btn-primary" value="{{saveLabel}}"/>
+          </div>
+        </form>`
+      });
+
+      return $builderProvider.registerComponent("image", {
+        group: "Default",
+        label: "Image",
+        description: i18n.gettext("Image Attachment"),
+        placeholder: "",
+        required: false,
+        template:
+        `<div class="form-group row">
+          <label for="{{label}}" class="col-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <div class="col-8">
+            <div class="alert alert-dark"><i class="fa fa-image"></i> ${i18n.gettext('Image')}</div>
             <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,

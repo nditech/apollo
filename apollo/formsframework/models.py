@@ -31,7 +31,8 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
 FIELD_TYPES = (
-    'comment', 'integer', 'select', 'multiselect', 'string', 'location'
+    'comment', 'integer', 'select', 'multiselect', 'string', 'location',
+    'image'
 )
 
 FIELD_SUMMARY_TYPES = (
@@ -99,6 +100,7 @@ class Form(Resource):
     show_moment = db.Column(db.Boolean, default=False)
     show_map = db.Column(db.Boolean, default=False)
     show_progress = db.Column(db.Boolean, default=False)
+    allow_attachments = db.Column(db.Boolean, default=False)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
@@ -276,24 +278,18 @@ class Form(Resource):
                             field_element.append(
                                 E.item(E.label(key), E.value(str(value)))
                             )
+                    elif field_type == 'image' and self.allow_attachments:
+                        mediatype = f'{field_type}/*'
+                        field_element = E.upload(
+                            E.label(field['description']), ref=field['tag'],
+                            mediatype=mediatype
+                        )
+                        model.append(E.bind(nodeset=path, type='binary'))
                     else:
                         continue
 
                     grp_element.append(field_element)
                 body.append(grp_element)
-
-        # hard coding a location question here until the form builder
-        # gets updated. please remove once the form builder supports
-        # locations
-        description = gettext('Location')
-        path = '/data/location'
-        data.append(etree.Element('location'))
-        model.append(E.bind(nodeset=path, type='geopoint'))
-
-        grp_element = E.group(E.label(description))
-        field_element = E.input(E.label(description), ref='location')
-        grp_element.append(field_element)
-        body.append(grp_element)
 
         head.append(model)
         root.append(head)
@@ -343,7 +339,10 @@ class FormBuilderSerializer(object):
                 data['component'] = 'checkbox'
             else:
                 data['component'] = 'radio'
-
+        elif field_type == 'image':
+            data['component'] = 'image'
+        elif field_type == 'location':
+            data['component'] = 'location'
         return data
 
     @classmethod
@@ -432,6 +431,8 @@ class FormBuilderSerializer(object):
                             pass
                 else:
                     field['type'] = 'string'
+            elif f['component'] in ('image', 'location'):
+                field['type'] = f['component']
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
