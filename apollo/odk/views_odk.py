@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from uuid import uuid4
 
 from flask import Blueprint, g, make_response, render_template, request
 from flask_babelex import lazy_gettext as _
@@ -9,7 +10,7 @@ import pytz
 from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 
-from apollo import services, models, csrf
+from apollo import csrf, models, services, settings
 from apollo.core import db
 from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
@@ -18,7 +19,6 @@ from apollo.odk import utils
 from apollo.services import messages
 from apollo.utils import current_timestamp
 
-DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
 HTTP_OPEN_ROSA_VERSION_HEADER = 'HTTP_X_OPENROSA_VERSION'
 OPEN_ROSA_VERSION = '1.0'
@@ -34,7 +34,7 @@ def make_open_rosa_headers():
         OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
         'Date': pytz.utc.localize(datetime.utcnow()).strftime(
             '%a, %d %b %Y %H:%M:%S %Z'),
-        'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
+        'X-OpenRosa-Accept-Content-Length': settings.MAX_CONTENT_LENGTH
     }
 
 
@@ -201,6 +201,8 @@ def submission():
 
     tag_finder = etree.XPath('//data/*[local-name() = $tag]')
     data = {}
+    attachments = []
+    deleted_attachments = []
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         field_type = field.get('type')
@@ -217,7 +219,7 @@ def submission():
                 data[tag] = element.text
             elif field_type == 'multiselect':
                 try:
-                    data[tag] = [int(i) for i in element.text.split()]
+                    data[tag] = sorted(int(i) for i in element.text.split())
                 except ValueError:
                     continue
             elif field_type == 'location':
@@ -229,35 +231,45 @@ def submission():
                     geopoint_lon = float(geodata[1])
                 except (IndexError, ValueError):
                     continue
+
+                # store data in GeoJSON format
+                data[tag] = {
+                    'type': 'Point',
+                    'coordinates': [geopoint_lon, geopoint_lat]
+                }
+            elif field_type == 'image':
+                original_field_data = submission.data.get(tag)
+                if form.allow_attachments:
+                    file_wrapper = request.files.get(element.text)
+                    identifier = uuid4()
+
+                    if file_wrapper.mimetype.startswith('image/'):
+                        if original_field_data is not None:
+                            original_attachment = \
+                                models.SubmissionImageAttachment.query.filter_by(   # noqa
+                                    uuid=original_field_data).first()
+                            if original_attachment:
+                                deleted_attachments.append(original_attachment)
+                        if file_wrapper and file_wrapper.filename != '':
+                            data[tag] = identifier.hex
+                            attachments.append(
+                                models.SubmissionImageAttachment(
+                                    photo=file_wrapper, submission=submission,
+                                    uuid=identifier)
+                            )
             else:
                 try:
                     data[tag] = int(element.text)
                 except ValueError:
                     continue
 
-    # hardcoding location lookup since the form builder
-    # doesn't support it yet. please remove when it does
-    geopoint_lat = None
-    geopoint_lon = None
-    try:
-        element = tag_finder(document, tag='location')[0]
-        geodata = element.text.split() if element.text else []
-
-        try:
-            geopoint_lat = float(geodata[0])
-            geopoint_lon = float(geodata[1])
-        except (IndexError, ValueError):
-            pass
-    except IndexError:
-        pass
-
     submission.data = data
     submission.participant_updated = current_timestamp()
-    if (geopoint_lat is not None) and (geopoint_lon is not None):
-        submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
-            longitude=geopoint_lon, latitude=geopoint_lat)
 
     db.session.add(submission)
+    db.session.add_all(attachments)
+    for attachment in deleted_attachments:
+        db.session.delete(attachment)
     db.session.commit()
     models.Submission.update_related(submission, data)
     update_submission_version(submission)
