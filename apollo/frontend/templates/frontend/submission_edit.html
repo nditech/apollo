@@ -280,14 +280,14 @@
         <h5 class="mb-0">{{ group.name }}</h5>
       </div>
       {# check for data validation or quality assurance errors #}
-      {%- for field in group.fields %}
+      {%- for field in group.fields if field['type'] not in ('image', 'location') %}
       {%- if submission_form[field.tag].errors %}{% set ns.has_form_error = true %}{% endif %}
       {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() -%}{% set ns.has_qa_error = true %}{% endif %}
       {%- endfor %}
       <div id="grp{{ loop.index }}" class="card-body {% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %} collapse{% else %} show{% endif %} py-0 px-0">
         <table class="table table-borderless mb-0 table-responsive">
           <tbody>
-          {% for field in group.fields %}
+          {% for field in group.fields if field['type'] not in ('image', 'location') %}
             <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and field.tag not in submission.verified_fields and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle obs-on">
