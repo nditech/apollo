@@ -33,10 +33,6 @@ arpeggio==1.7.1 \
     --hash=sha256:965d62f1b0c3b90669dfcd036f0ad4ede0d9c9044cde456395631b98b1f95997 \
     --hash=sha256:e87bb7afb8fb47158ec7938ea4c43d52cc2beff306bc8692fac3dc5b685ee568 \
     # via -r requirements/prod.in
-attrs==20.2.0 \
-    --hash=sha256:26b54ddbbb9ee1d34d5d3668dd37d6cf74990ab23c828c2888dccdceee395594 \
-    --hash=sha256:fce7fc47dfc976152e82d53ff92fa0407700c21acd20886a13777a0d20e655dc \
-    # via jsonschema
 authlib==0.11 \
     --hash=sha256:3a226f231e962a16dd5f6fcf0c113235805ba206e294717a64fa8e04ae3ad9c4 \
     --hash=sha256:9741db6de2950a0a5cefbdb72ec7ab12f7e9fd530ff47219f1530e79183cbaaf \
