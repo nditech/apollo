@@ -23,7 +23,6 @@ from werkzeug.datastructures import MultiDict
 from apollo import models, services, utils
 from apollo.core import db, docs
 from apollo.frontend import route, permissions
-from apollo.frontend.filters import generate_quality_assurance_filter
 from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
     get_form_list_menu, get_quality_assurance_form_list_menu,
@@ -1154,7 +1153,7 @@ def quality_assurance_dashboard(form_id):
         models.Form.id == form_id,
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
-    filter_class = generate_quality_assurance_filter(g.event, form)
+    filter_class = filters.generate_quality_assurance_filter(g.event, form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
     loc_types = displayable_location_types(
@@ -1216,7 +1215,7 @@ def quality_assurance_list(form_id):
         models.Form.id == form_id,
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
-    filter_class = generate_quality_assurance_filter(event, form)
+    filter_class = filters.generate_quality_assurance_filter(event, form)
 
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
