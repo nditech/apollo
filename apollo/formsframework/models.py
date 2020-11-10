@@ -317,17 +317,7 @@ class Form(Resource):
         schema = {
             '$schema': 'http://json-schema.org/schema#',
             'type': 'object',
-            'properties': {
-                # TODO: remove hardcoded location
-                'location': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'number',
-                        'maxItems': 2,
-                        'minItems': 2,
-                    }
-                }
-            }
+            'properties': {}
         }
 
         for tag in self.tags:
