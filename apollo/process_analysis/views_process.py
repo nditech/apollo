@@ -91,7 +91,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     grouped = False
     display_tag = None
     event = g.event
-    filter_class = filters.make_submission_analysis_filter(event, form)
+    filter_on_locations = False
 
     location_ids = models.LocationPath.query.with_entities(
         models.LocationPath.descendant_id).filter_by(
@@ -116,6 +116,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
         query_kwargs = {'event': event, 'form': form}
         if not form.untrack_data_conflicts and form.form_type == 'CHECKLIST':
             query_kwargs['submission_type'] = 'M'
+            filter_on_locations = True
         else:
             query_kwargs['submission_type'] = 'O'
         queryset = submissions.find(**query_kwargs).filter(
@@ -136,6 +137,8 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
                 filters.make_incident_location_filter(event, form, tag)
 
     # create data filter
+    filter_class = filters.make_submission_analysis_filter(
+        event, form, filter_on_locations)
     filter_set = filter_class(queryset, request.args)
     breadcrumb_data = analysis_breadcrumb_data(form, location, display_tag)
 

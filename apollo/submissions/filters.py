@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from itertools import chain
 from operator import itemgetter
 
 from cgi import escape
@@ -42,7 +43,8 @@ class TagLookupFilter(ChoiceFilter):
         return (None, None)
 
 
-def make_submission_sample_filter(participant_set_id):
+def make_submission_sample_filter(
+        participant_set_id, filter_on_locations=False):
     class SubmissionSampleFilter(ChoiceFilter):
         def __init__(self, *args, **kwargs):
             sample_choices = models.Sample.query.filter_by(
@@ -51,43 +53,68 @@ def make_submission_sample_filter(participant_set_id):
                 models.Sample.name
             ).with_entities(models.Sample.id, models.Sample.name).all()
             self.participant_set_id = participant_set_id
+            self.filter_on_locations = filter_on_locations
 
             kwargs['choices'] = _make_choices(sample_choices, _('Sample'))
             super().__init__(*args, **kwargs)
 
+        def filter_by_locations(self, query, value):
+            joined_classes = [
+                mapper.class_ for mapper in query._join_entities]
+            if models.Location in joined_classes:
+                query1 = query
+            else:
+                query1 = query.join(models.Submission.location)
+
+            sample_locations = models.Participant.query.filter_by(
+                participant_set_id=participant_set_id
+            ).join(
+                models.Participant.samples
+            ).filter(
+                models.Sample.participant_set_id == participant_set_id,
+                models.Sample.id == value
+            ).with_entities(
+                models.Participant.location_id
+            )
+
+            query2 = query1.filter(
+                models.Submission.location_id.in_(sample_locations)
+            )
+            return query2
+
+        def filter_by_participants(self, query, value):
+            participants_in_sample = models.Participant.query.join(
+                models.Participant.samples
+            ).filter(
+                models.Participant.participant_set_id == participant_set_id,
+                models.Sample.id == value
+            )
+            participant_ids = list(
+                chain(*participants_in_sample.with_entities(
+                    models.Participant.id).all()))
+            query2 = query.filter(
+                models.Submission.participant_id.in_(participant_ids))
+
+            return query2
+
         def queryset_(self, query, value, **kwargs):
             if value:
-                joined_classes = [
-                    mapper.class_ for mapper in query._join_entities]
-                if models.Location in joined_classes:
-                    query1 = query
+                if self.filter_on_locations:
+                    return self.filter_by_locations(query, value)
                 else:
-                    query1 = query.join(models.Submission.location)
-
-                sample_locations = models.Participant.query.filter_by(
-                    participant_set_id=participant_set_id
-                ).join(
-                    models.Participant.samples
-                ).filter(
-                    models.Sample.participant_set_id == participant_set_id,
-                    models.Sample.id == value
-                ).with_entities(
-                    models.Participant.location_id
-                )
-
-                query2 = query1.filter(
-                    models.Submission.location_id.in_(sample_locations)
-                )
-                return query2
+                    return self.filter_by_participants(query, value)
 
             return query
 
     return SubmissionSampleFilter
 
 
-def make_base_submission_filter(event):
+def make_base_submission_filter(event, filter_on_locations=False):
     class BaseSubmissionFilterSet(FilterSet):
-        sample = make_submission_sample_filter(event.participant_set_id)()
+        sample = make_submission_sample_filter(
+            event.participant_set_id,
+            filter_on_locations=filter_on_locations
+        )()
 
     return BaseSubmissionFilterSet
 
@@ -113,20 +140,22 @@ class IncidentStatusFilter(ChoiceFilter):
         return (None, None)
 
 
-def make_submission_analysis_filter(event, form):
+def make_submission_analysis_filter(event, form, filter_on_locations=False):
     attributes = {}
     if form.form_type == 'INCIDENT':
         attributes['status'] = IncidentStatusFilter(default='confirmed')
 
     return type(
         'SubmissionAnalysisFilterSet',
-        (make_base_submission_filter(event),),
+        (make_base_submission_filter(
+            event, filter_on_locations=filter_on_locations),),
         attributes
     )
 
 
-def make_incident_location_filter(event, form, tag):
-    base_filter_class = make_submission_analysis_filter(event, form)
+def make_incident_location_filter(event, form, tag, filter_on_locations=False):
+    base_filter_class = make_submission_analysis_filter(
+        event, form, filter_on_locations=filter_on_locations)
 
     attributes = {
         tag: TagLookupFilter(
@@ -402,20 +431,21 @@ def make_submission_location_filter(location_set_id):
     return AJAXLocationFilter
 
 
-def make_dashboard_filter(event):
+def make_dashboard_filter(event, filter_on_locations=False):
     attributes = {}
     attributes['location'] = make_submission_location_filter(
             event.location_set_id)()
     attributes['sample'] = make_submission_sample_filter(
-        event.participant_set_id)()
+        event.participant_set_id, filter_on_locations=filter_on_locations)()
 
     return type(
         'SubmissionFilterSet',
-        (make_base_submission_filter(event),),
+        (make_base_submission_filter(
+            event, filter_on_locations=filter_on_locations),),
         attributes)
 
 
-def make_submission_list_filter(event, form):
+def make_submission_list_filter(event, form, filter_on_locations=False):
     attributes = {}
     form._populate_field_cache()
 
@@ -480,5 +510,6 @@ def make_submission_list_filter(event, form):
 
     return type(
         'SubmissionFilterSet',
-        (make_base_submission_filter(event),),
+        (make_base_submission_filter(
+            event, filter_on_locations=filter_on_locations),),
         attributes)
