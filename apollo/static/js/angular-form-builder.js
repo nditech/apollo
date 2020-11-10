@@ -22,13 +22,13 @@
       var analysisOptsMap = {
         'choice': [
           {option: i18n.gettext('No Analysis'), value: 'N/A'},
-          {option: i18n.gettext('Histogram'), value: 'histogram'}
+          {option: i18n.gettext('Frequency Table'), value: 'histogram'}
         ],
         'numeric': [
           { option: i18n.gettext('No Analysis'), value: 'N/A'},
-          { option: i18n.gettext('Categorical'), value: 'bucket'},
+          { option: i18n.gettext('Target'), value: 'bucket'},
           { option: i18n.gettext('Count'), value: 'count'},
-          { option: i18n.gettext('Histogram'), value: 'histogram'},
+          { option: i18n.gettext('Frequency Table'), value: 'histogram'},
           { option: i18n.gettext('Mean'), value: 'mean'}
         ],
         'default': [
