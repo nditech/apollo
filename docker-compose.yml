@@ -2,6 +2,7 @@ version: "3"
 
 services:
   postgres:
+    restart: always
     build:
       context: ./postgis
     environment:
@@ -11,15 +12,19 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
+    restart: always
     image: redis:4-alpine
 
   web:
+    restart: always
     build: .
     links:
       - postgres
       - redis
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
+    env_file:
+      - ./.env
     volumes:
       - upload_data:/app/uploads
       - ./settings.ini:/app/settings.ini
@@ -28,12 +33,15 @@ services:
     command: ['./wait-for-it.sh', 'postgres:5432', '--', './manage.py', 'gunicorn', '-c', 'gunicorn.conf']
 
   worker:
+    restart: always
     build: .
     links:
       - postgres
       - redis
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
+    env_file:
+      - ./.env
     volumes:
       - upload_data:/app/uploads
       - ./settings.ini:/app/settings.ini
