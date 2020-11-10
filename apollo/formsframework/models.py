@@ -346,7 +346,7 @@ def make_field_schema(field_spec):
         'multiselect': 'array',
         'comment': 'string',
         'string': 'string',
-        'location': 'array',
+        'location': 'object',
     }
 
     field_schema = {
@@ -368,13 +368,17 @@ def make_field_schema(field_spec):
             }
         )
     elif field_type == 'location':
-        # use latlong coordinates as an array
+        # use GeoJSON format
         field_schema.update(
-            items={
-                'type': 'number',
-                'maxItems': 2,
-                'minItems': 2,
-            }
+            properties={
+                'type': {'type': 'string', 'enum': ['Point']},
+                'coordinates': {
+                    'type': 'array',
+                    'minItems': 2,
+                    'items': {'type': 'number'}
+                }
+            },
+            required=['type', 'coordinates']
         )
 
     return {field_spec['tag']: field_schema}
