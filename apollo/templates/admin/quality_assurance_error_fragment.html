@@ -1,0 +1,12 @@
+{{ _('The following errors were encountered and the check %(check)s will always be missing', check=check) }}
+<ul>
+{% for error_message in error_messages %}
+<li>{{ error_message }}</li>
+{% endfor %}
+{% if missing_tags %}
+<li>{{ _('Unrecognised question codes:') }} {{ missing_tags }}</li>
+{% endif %}
+{% if multiselect_tags %}
+<li>{{ _('Unrecognised question codes:') }} {{ multiselect_tags }}</li>
+{% endif %}
+</ul>

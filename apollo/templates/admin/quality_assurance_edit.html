@@ -48,6 +48,31 @@
     </div>
   </div>
 </div>
+<div class="modal fade" tabindex="-1" role="dialog" id="errorModal">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ _('Error in Quality Assurance') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <div class="alert alert-danger fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
+            <strong>{% trans %}The quality assurance was saved, but it has the following errors:{% endtrans %}</strong>
+            <ul id="errorList"></ul>
+            <div class="{{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}"><strong>{% trans %}Invalid question codes:{% endtrans %}</strong> <span id="invalidTags"></span></div>
+            <div class="{{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}"><strong>{% trans %}Multiple choice question codes:{% endtrans %}</strong> <span id="multiSelectTags"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ _('OK') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -130,8 +155,22 @@
         url: '',
         type: 'POST',
         data: {postdata: JSON.stringify(vm.control), csrf_token: "{{ csrf_token() }}"}
-      }).always(function () {
-        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}'
+      }).done(function (data) {
+        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
+      }).fail(function (jqXHR) {
+        var errorResponse = JSON.parse(jqXHR.responseText);
+        var errorList = document.getElementById('errorList');
+        var invalidTags = document.getElementById('invalidTags');
+        var multiSelectTags = document.getElementById('multiSelectTags');
+        for (var i = 0; i < errorResponse.errors.length; i++) {
+          var error = errorResponse.errors[i];
+          var listItem = document.createElement('li');
+          listItem.textContent = error;
+          errorList.appendChild(listItem);
+        };
+        invalidTags.textContent = errorResponse.invalid_tags.join(',');
+        multiSelectTags.textContent = errorResponse.multiselect_tags.join(',');
+        $('#errorModal').modal('show');
       });
     });
 
@@ -145,7 +184,7 @@
         type: 'DELETE',
         data: {csrf_token: "{{ csrf_token() }}"}
       }).always(function () {
-        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}'
+        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
       });
     })
   });
