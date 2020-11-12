@@ -612,8 +612,7 @@ msgid "Hide Organization"
 msgstr "Ocultar organización"
 
 #: apollo/frontend/views_admin.py:519
-msgctxt "apollo/frontend/views_admin.py:519"
-"apollo/frontend/views_admin.py:519"
+msgctxt "apollo/frontend/views_admin.py:519apollo/frontend/views_admin.py:519"
 msgid "\"If enabled"
 msgstr " will hide the gender in the participant list.\""
 
@@ -821,8 +820,8 @@ msgid ""
 "The username and password you supplied <strong>do not match</strong> any of "
 "the credentials on this system. Please check both and try again."
 msgstr ""
-"\"El nombre de usuario y la contraseña que proporcionó <strong>no "
-"coinciden</strong> con ninguna de las credenciales de este sistema. Por favor"
+"\"El nombre de usuario y la contraseña que proporcionó <strong>no coinciden</"
+"strong> con ninguna de las credenciales de este sistema. Por favor"
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Flogin_user.html%3A63+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Flogin_user.html%3A64+apollo%2Fusers%2Fforms.py%3A11
 msgid "Username"
@@ -1371,7 +1370,8 @@ msgstr "Mensaje invalido: %(text)s. Por favor verifique y reenvie!"
 
 #: apollo/messaging/helpers.py:59
 msgid "\"Thank you"
-msgstr " but your message may be missing %(unused_codes)s. You sent: %(text)s\""
+msgstr ""
+" but your message may be missing %(unused_codes)s. You sent: %(text)s\""
 
 #: apollo/messaging/helpers.py:63
 msgid "Thank you! Your report was received! You sent: {text}"
@@ -1395,11 +1395,11 @@ msgstr ""
 
 #: apollo/messaging/helpers.py:100
 msgid ""
-"\"Invalid response(s) for question(s): \"\"{questions}\"\". You sent: {text}"
-"\""
+"\"Invalid response(s) for question(s): \"\"{questions}\"\". You sent: "
+"{text}\""
 msgstr ""
-"\"Respuesta(s) no válida(s) para las pregunta(s): \"\"{questions}\"\". Envió:"
-" {text}\""
+"\"Respuesta(s) no válida(s) para las pregunta(s): \"\"{questions}\"\". "
+"Envió: {text}\""
 
 #: apollo/messaging/helpers.py:110
 msgid "\"Invalid message: \"\"{text}\"\". Please check and resend!\""
@@ -1833,7 +1833,8 @@ msgstr "Resultados"
 
 #: apollo/submissions/models.py:158
 msgid "Participant ID %(part_id)s has no location"
-msgstr "Número de identificación de participante %(part_id)s no tiene ubicación"
+msgstr ""
+"Número de identificación de participante %(part_id)s no tiene ubicación"
 
 #: apollo/submissions/models.py:505
 msgid "Web"
@@ -2263,9 +2264,6 @@ msgstr "Añadir formulario"
 
 msgid "Builder"
 msgstr "Creador"
-
-msgid "Generate checklists"
-msgstr "Crear formularios"
 
 msgid "Checklist form"
 msgstr "Formulario de observación"

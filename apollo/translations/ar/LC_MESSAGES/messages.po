@@ -13,10 +13,10 @@ msgstr ""
 "PO-Revision-Date: 2016-09-14 16:27+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
 "Language: ar\n"
-"Language-Team: Arabic "
-"(http://www.transifex.com/nditech/apollo/language/ar/)\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
-"n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
+"Language-Team: Arabic (http://www.transifex.com/nditech/apollo/language/"
+"ar/)\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,12 +38,6 @@ msgstr "استيراد المواقع"
 #: apollo/templates/admin/participant_list.html:212
 msgid "Import Participants"
 msgstr "استيراد مشاركين"
-
-#: apollo/factory.py:25 apollo/templates/admin/form_list.html:22
-#: apollo/templates/admin/form_list.html:108
-#: apollo/templates/admin/form_list.html:118
-msgid "Generate checklists"
-msgstr ""
 
 #: apollo/factory.py:118
 msgid "FAILED"
@@ -124,8 +118,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:362
 msgid ""
-"Whether data conflicts between observers in the same location are tracked"
-" or not."
+"Whether data conflicts between observers in the same location are tracked or "
+"not."
 msgstr ""
 
 #: apollo/formsframework/forms.py:364
@@ -158,8 +152,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:374
 msgid ""
-"Enabling this option will show the date and time for the submission in "
-"the list view."
+"Enabling this option will show the date and time for the submission in the "
+"list view."
 msgstr ""
 
 #: apollo/formsframework/forms.py:376
@@ -265,8 +259,8 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:46
 msgid ""
-"Checklists are being created for the Event, Form, Role and Location Type "
-"you selected"
+"Checklists are being created for the Event, Form, Role and Location Type you "
+"selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:61
@@ -275,8 +269,7 @@ msgstr "لم يتمّ إنشاء قوائم المراجعة "
 
 #: apollo/formsframework/views_forms.py:74
 msgid ""
-"Surveys are being created for the Event, Form and Participants you "
-"selected"
+"Surveys are being created for the Event, Form and Participants you selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:94
@@ -612,7 +605,8 @@ msgid "The display label to use for this field."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:108
-msgid "Internal name to use for this attribute. Avoid using spaces in the name."
+msgid ""
+"Internal name to use for this attribute. Avoid using spaces in the name."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:109
@@ -641,8 +635,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:170
 msgid ""
-"Specifies whether to show all locations at an administrative division on "
-"the dashboard."
+"Specifies whether to show all locations at an administrative division on the "
+"dashboard."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:171
@@ -653,8 +647,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:172
 msgid ""
-"An example of a hostname is \"example.com\". Used internally to determine"
-" what deployment to access."
+"An example of a hostname is \"example.com\". Used internally to determine "
+"what deployment to access."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:182
@@ -723,8 +717,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:330
 msgid ""
-"Explicitly specifies which non-role permissions (in addition) to assign "
-"to the user."
+"Explicitly specifies which non-role permissions (in addition) to assign to "
+"the user."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:383
@@ -889,12 +883,12 @@ msgstr "محظور!"
 
 #: apollo/frontend/templates/403.html:37
 msgid ""
-"We understood your request, but we refuse to honor it! You are seeing "
-"this page because you were snooping around! Now paddle along before the "
-"buzzer goes off!"
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
 msgstr ""
-"نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول"
-" الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
+"نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول "
+"الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
 
 #: apollo/frontend/templates/404.html:5
 msgid "Page not found"
@@ -906,16 +900,15 @@ msgstr "تبّاً! يبدو أنك أضعت الطريق!"
 
 #: apollo/frontend/templates/404.html:37
 msgid ""
-"Don't freak out, maybe you entered the wrong address or clicked a bad "
-"link! Who knows, this could even be a fluke! :) I recommend you either "
-"verify the address or click the back arrow (&larr;) at the top left "
-"corner of the page, and cross-check the action you were trying to "
-"perform!"
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page, "
+"and cross-check the action you were trying to perform!"
 msgstr ""
-"لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ "
-"الأمر مجرد خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم"
-" العودة للخلف  (&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق "
-"مجدداً من العمل الذي كنت تحاول تنفيذه!"
+"لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ الأمر مجرد "
+"خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم العودة للخلف  "
+"(&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق مجدداً من العمل "
+"الذي كنت تحاول تنفيذه!"
 
 #: apollo/frontend/templates/500.html:5
 msgid "Server Error"
@@ -927,13 +920,13 @@ msgstr "تبّاً! أفسدنا الأمر:("
 
 #: apollo/frontend/templates/500.html:37
 msgid ""
-"You shouldn't be seeing this page but you are because you're a genius and"
-" have found a rare bug in the software. Rest assured, we now know about "
-"it and will fix it ASAP!"
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
 msgstr ""
-"ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في "
-"العثور على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك "
-"الخلل وسنعمل على تصحيحه بأسرع ما يمكن!"
+"ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في العثور "
+"على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك الخلل وسنعمل "
+"على تصحيحه بأسرع ما يمكن!"
 
 #: apollo/frontend/templates/frontend/dashboard.html:25
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:26
@@ -1063,8 +1056,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:174
 #: apollo/frontend/templates/frontend/submission_edit.html:548
 msgid ""
-"The data you entered are not valid. Please check the affected questions "
-"and correct them."
+"The data you entered are not valid. Please check the affected questions and "
+"correct them."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/incident_add.html:97
@@ -1113,8 +1106,8 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:60
 msgid ""
-"The username and password you supplied <strong>do not match</strong> any "
-"of the credentials on this system. Please check both and try again."
+"The username and password you supplied <strong>do not match</strong> any of "
+"the credentials on this system. Please check both and try again."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:63
@@ -1474,9 +1467,9 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:156
 msgid ""
 "The following quality assurance conditions were flagged while validating "
-"this submission. Please confirm with the participant that the submitted "
-"data is correct. If you find the data to be as reported by the "
-"participant, mark the data point as confirmed."
+"this submission. Please confirm with the participant that the submitted data "
+"is correct. If you find the data to be as reported by the participant, mark "
+"the data point as confirmed."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:28
@@ -1537,8 +1530,8 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:622
 msgid ""
-"You may (optionally) include details of your call or interaction with the"
-" participant here."
+"You may (optionally) include details of your call or interaction with the "
+"participant here."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_list.html:144
@@ -1843,8 +1836,7 @@ msgstr "تحرير الموقع "
 #: apollo/locations/views_locations.py:250
 #, python-format
 msgid ""
-"Administrative level %(name)s has locations assigned and cannot be "
-"deleted."
+"Administrative level %(name)s has locations assigned and cannot be deleted."
 msgstr ""
 
 #: apollo/locations/views_locations.py:267
@@ -1882,17 +1874,15 @@ msgstr ""
 
 #: apollo/messaging/helpers.py:90
 msgid ""
-"Observer ID not found. Please resend with valid Observer ID. You sent: "
-"{text}"
+"Observer ID not found. Please resend with valid Observer ID. You sent: {text}"
 msgstr ""
-"هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت:"
-" {نص}"
+"هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت: "
+"{نص}"
 
 #: apollo/messaging/helpers.py:100
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
 msgstr ""
-"إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"}الأسئلة{\" لقد أرسلت: "
-"}نص{ "
+"إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"}الأسئلة{\" لقد أرسلت: }نص{ "
 
 #: apollo/messaging/helpers.py:110
 msgid "Invalid message: \"{text}\". Please check and resend!"
@@ -1940,8 +1930,8 @@ msgstr ""
 
 #: apollo/odk/views_odk.py:276
 msgid ""
-"Your submission was received, but you sent it using an outdated form. "
-"Please download a new copy and resend. Thank you."
+"Your submission was received, but you sent it using an outdated form. Please "
+"download a new copy and resend. Thank you."
 msgstr ""
 
 #: apollo/participants/filters.py:60
@@ -1997,10 +1987,6 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: apollo/participants/services.py:40
-msgid "Location ID"
-msgstr ""
-
 #: apollo/participants/services.py:44
 msgid "Supervisor ID"
 msgstr ""
@@ -2045,8 +2031,8 @@ msgstr "موقع بهوية  %(loc_id)sغير موجودة "
 #: apollo/participants/tasks.py:297
 #, python-format
 msgid ""
-"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
-"not found"
+"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s not "
+"found"
 msgstr ""
 
 #: apollo/participants/tasks.py:486
@@ -2057,8 +2043,7 @@ msgstr "مشرف بهوية%(id)s  غير موجودة "
 #: apollo/participants/tasks.py:492
 #, python-format
 msgid ""
-"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
-"found"
+"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not found"
 msgstr ""
 
 #: apollo/participants/tasks.py:566
@@ -2426,10 +2411,6 @@ msgstr ""
 msgid "Location Code"
 msgstr ""
 
-#: apollo/submissions/services.py:55
-msgid "Registered Voters"
-msgstr ""
-
 #: apollo/submissions/tasks.py:71
 #, python-format
 msgid "Participant ID %(part_id)s was not found"
@@ -2483,8 +2464,8 @@ msgstr ""
 #: apollo/templates/admin/administrative_divisions.html:43
 #: apollo/templates/admin/administrative_divisions.html:109
 msgid ""
-"Whether to show location data of this division on the dashboard and other"
-" tables."
+"Whether to show location data of this division on the dashboard and other "
+"tables."
 msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:52
@@ -2580,8 +2561,8 @@ msgstr ""
 
 #: apollo/templates/admin/location_headers_errors.html:2
 msgid ""
-"<strong>There was a problem</strong> with your submission. Please correct"
-" the errors and re-submit."
+"<strong>There was a problem</strong> with your submission. Please correct "
+"the errors and re-submit."
 msgstr ""
 
 #: apollo/templates/admin/locations_list.html:54
@@ -2703,23 +2684,29 @@ msgstr ""
 msgid "The email %(email)s is not available"
 msgstr ""
 
+#~ msgid "Generate checklists"
+#~ msgstr "إنشاء قوائم المراجعة"
+
+#~ msgid "Location ID"
+#~ msgstr "هوية الموقع"
+
+#~ msgid "Registered Voters"
+#~ msgstr "الناخبون المسجلون"
+
 #~ msgid "Not Applicable"
 #~ msgstr "لا ينطبق"
 
 #~ msgid ""
-#~ "Require exclamation (!) mark in text "
-#~ "message? (Does not apply to Checklist"
-#~ " Forms)"
-#~ msgstr "يتطلب علامة تعجب (!) في رسالة نصية؟ (لا ينطبق على نماذج قوائم المراجعة)"
+#~ "Require exclamation (!) mark in text message? (Does not apply to "
+#~ "Checklist Forms)"
+#~ msgstr ""
+#~ "يتطلب علامة تعجب (!) في رسالة نصية؟ (لا ينطبق على نماذج قوائم المراجعة)"
 
 #~ msgid "Accredited Voters"
 #~ msgstr "الناخبون المعتمدون"
 
 #~ msgid "Invalid Votes"
 #~ msgstr "الأصوات غير الصحيحة"
-
-#~ msgid "Registered Voters"
-#~ msgstr "الناخبون المسجلون"
 
 #~ msgid "Blank Votes"
 #~ msgstr "الأصوات الفارغة"
@@ -2772,16 +2759,11 @@ msgstr ""
 #~ msgid "Master Submission"
 #~ msgstr "البيانات المقدمة الرئيسية"
 
-#~ msgid "Form set"
-#~ msgstr ""
-
 #~ msgid ""
-#~ "Checklists are being created for the "
-#~ "form, role and location type you "
+#~ "Checklists are being created for the form, role and location type you "
 #~ "selected in the current event"
 #~ msgstr ""
-#~ "تمّ إنشاء قوائم المراجعة للنموذج والدور"
-#~ " ونوع الموقع الذي اخترته في إطار "
+#~ "تمّ إنشاء قوائم المراجعة للنموذج والدور ونوع الموقع الذي اخترته في إطار "
 #~ "الحدث الحالي"
 
 #~ msgid "Edit %(name)s"
@@ -2789,9 +2771,6 @@ msgstr ""
 
 #~ msgid "Select column"
 #~ msgstr "حدد عمود "
-
-#~ msgid "Location ID"
-#~ msgstr "هوية الموقع"
 
 #~ msgid "Phone prefix"
 #~ msgstr "بادئة الهاتف"
@@ -2810,12 +2789,6 @@ msgstr ""
 
 #~ msgid "%(label)s Code"
 #~ msgstr "رمز %(label)s  "
-
-#~ msgid "%(label)s Latitude"
-#~ msgstr ""
-
-#~ msgid "%(label)s Longitude"
-#~ msgstr ""
 
 #~ msgid "%(label)s Registered Voters"
 #~ msgstr "الناخبون المسجلون %(label)s "
@@ -2838,26 +2811,11 @@ msgstr ""
 #~ msgid "Are you sure you want to enable selected users?"
 #~ msgstr "هل أنت واثق من أنك تريد تفعيل المستخدمين المختارين؟"
 
-#~ msgid "Dashboard · %(name)s"
-#~ msgstr ""
-
-#~ msgid "Dashboard · %(name)s  · %(group)s"
-#~ msgstr ""
-
-#~ msgid "Add Form"
-#~ msgstr ""
-
 #~ msgid "Builder"
 #~ msgstr "المنشئ"
 
-#~ msgid "Generate checklists"
-#~ msgstr "إنشاء قوائم المراجعة"
-
 #~ msgid "Checklist form"
 #~ msgstr "نموذج قائمة المراجعة"
-
-#~ msgid "Add division"
-#~ msgstr ""
 
 #~ msgid "Administrative Division"
 #~ msgstr "قسم إداري"
@@ -2865,50 +2823,15 @@ msgstr ""
 #~ msgid "Political Division"
 #~ msgstr "قسم سياسي"
 
-#~ msgid "More Options"
-#~ msgstr ""
-
-#~ msgid "Import admin divisions"
-#~ msgstr ""
-
-#~ msgid "Purge Locations"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<strong>WARNING:</strong> This will delete all"
-#~ " locations. This means that everything "
-#~ "else &ndash; checklists, incidents, "
-#~ "participants will be deleted."
-#~ msgstr ""
-
-#~ msgid "Please enter <code id=\"compare\"></code> below to proceed:"
-#~ msgstr ""
-
-#~ msgid "Yes, I understand"
-#~ msgstr ""
-
-#~ msgid "(only .csv, .xls and .xlsx files)"
-#~ msgstr ""
-
-#~ msgid "DELETE"
-#~ msgstr ""
-
-#~ msgid "Invalid File"
-#~ msgstr ""
-
 #~ msgid "User Login"
 #~ msgstr "تسجيل دخول المستخدم"
 
 #~ msgid ""
-#~ "Your username and password <strong>did "
-#~ "not match</strong>. Please try again."
+#~ "Your username and password <strong>did not match</strong>. Please try "
+#~ "again."
 #~ msgstr ""
-#~ "إنّ إسم المستخدم وكلمة المرور "
-#~ "<strong>غير مطابقين</strong>. يُرجى المحاولة "
+#~ "إنّ إسم المستخدم وكلمة المرور <strong>غير مطابقين</strong>. يُرجى المحاولة "
 #~ "مجدداً."
-
-#~ msgid "Username/Email"
-#~ msgstr ""
 
 #~ msgid "IN"
 #~ msgstr "دخول"
@@ -2918,16 +2841,6 @@ msgstr ""
 
 #~ msgid "Performance Evaluation"
 #~ msgstr "تقييم الأداء"
-
-#~ msgid "Purge Participants"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<strong>WARNING:</strong> This will delete all"
-#~ " participants, as well as any data"
-#~ " linked to them &ndash; checklists, "
-#~ "critical incident reports and messages."
-#~ msgstr ""
 
 #~ msgid "Participant Detail"
 #~ msgstr "بيانات المشارك"
@@ -2956,7 +2869,8 @@ msgstr ""
 #~ msgid "Validation Errors!"
 #~ msgstr "أخطاء عند التثبّت من البيانات!"
 
-#~ msgid "The following conditions were flagged while validating this submission."
+#~ msgid ""
+#~ "The following conditions were flagged while validating this submission."
 #~ msgstr "وضعت إشارة إلى جانب الشروط التالية عند التثبّت من البيانات المقدّمة."
 
 #~ msgid "Overridden Field"
@@ -3028,29 +2942,6 @@ msgstr ""
 #~ msgid "conflict"
 #~ msgstr "تضارب"
 
-#~ msgid "data present"
-#~ msgstr ""
-
-#~ msgid "%(location_type)s Name"
-#~ msgstr ""
-
-#~ msgid "Admin level %(name)s has locations assigned and cannot be deleted"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Locations, Checklists, Critical Incidents and"
-#~ " Participants are being deleted."
-#~ msgstr ""
-
-#~ msgid "All roles"
-#~ msgstr ""
-
-#~ msgid "All partners"
-#~ msgstr ""
-
-#~ msgid "Data file"
-#~ msgstr ""
-
 #~ msgid "Participants Performance"
 #~ msgstr "أداء المشاركين"
 
@@ -3059,12 +2950,6 @@ msgstr ""
 
 #~ msgid "Edit Participant · %(participant_id)s"
 #~ msgstr "تحرير المشارك %(participant_id)s"
-
-#~ msgid ""
-#~ "Participants, Checklists, Critical Incidents "
-#~ "and Messages linked to this participant"
-#~ " set are being deleted."
-#~ msgstr ""
 
 #~ msgid "%(form)s Analysis"
 #~ msgstr "تحليل %(form)s "
@@ -3087,20 +2972,8 @@ msgstr ""
 #~ msgid "Edit Submission"
 #~ msgstr "تحرير معلومات مقدمة"
 
-#~ msgid "Allow editing of observer submissions"
-#~ msgstr ""
-
-#~ msgid "Location set"
-#~ msgstr ""
-
-#~ msgid "Participant set"
-#~ msgstr ""
-
 #~ msgid "Reset"
 #~ msgstr "إعادة الضبط"
-
-#~ msgid "%(form)s Summary"
-#~ msgstr ""
 
 #~ msgid "Table"
 #~ msgstr "الجدول"
@@ -3117,53 +2990,11 @@ msgstr ""
 #~ msgid "Quality Assurance — %(name)s"
 #~ msgstr "ضمان الجودة - %(name)s"
 
-#~ msgid ""
-#~ "An error occured while attempting to "
-#~ "reset the password for the supplied "
-#~ "account.\n"
-#~ "                                Please check the "
-#~ "email address and try again."
-#~ msgstr ""
-
-#~ msgid "Reset password"
-#~ msgstr ""
-
 #~ msgid "Insufficient Data"
 #~ msgstr "بيانات ناقصة"
-
-#~ msgid "Require Exclamation"
-#~ msgstr ""
-
-#~ msgid "Track Data Conflicts?"
-#~ msgstr ""
-
-#~ msgid "Name (%(language)s)"
-#~ msgstr ""
 
 #~ msgid "New password"
 #~ msgstr "كلمة المرور الجديدة"
 
-#~ msgid "Sender Verification"
-#~ msgstr ""
-
 #~ msgid "Convergence Chart"
 #~ msgstr "مخطط التقارب"
-
-#~ msgid "Sender Verified"
-#~ msgstr ""
-
-#~ msgid "Sender Unverified"
-#~ msgstr ""
-
-#~ msgid "Has Registered Voters"
-#~ msgstr ""
-
-#~ msgid "Import Forms"
-#~ msgstr ""
-
-#~ msgid "Show Moment Column"
-#~ msgstr ""
-
-#~ msgid "Moment"
-#~ msgstr ""
-

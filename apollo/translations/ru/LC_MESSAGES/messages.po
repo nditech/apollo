@@ -12,11 +12,11 @@ msgstr ""
 "PO-Revision-Date: 2016-09-14 16:27+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
 "Language: ru\n"
-"Language-Team: Russian "
-"(http://www.transifex.com/nditech/apollo/language/ru/)\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) "
-"|| (n%100>=11 && n%100<=14)? 2 : 3)\n"
+"Language-Team: Russian (http://www.transifex.com/nditech/apollo/language/"
+"ru/)\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -124,8 +124,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:362
 msgid ""
-"Whether data conflicts between observers in the same location are tracked"
-" or not."
+"Whether data conflicts between observers in the same location are tracked or "
+"not."
 msgstr ""
 
 #: apollo/formsframework/forms.py:364
@@ -158,8 +158,8 @@ msgstr ""
 
 #: apollo/formsframework/forms.py:374
 msgid ""
-"Enabling this option will show the date and time for the submission in "
-"the list view."
+"Enabling this option will show the date and time for the submission in the "
+"list view."
 msgstr ""
 
 #: apollo/formsframework/forms.py:376
@@ -265,8 +265,8 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:46
 msgid ""
-"Checklists are being created for the Event, Form, Role and Location Type "
-"you selected"
+"Checklists are being created for the Event, Form, Role and Location Type you "
+"selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:61
@@ -275,8 +275,7 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:74
 msgid ""
-"Surveys are being created for the Event, Form and Participants you "
-"selected"
+"Surveys are being created for the Event, Form and Participants you selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:94
@@ -612,7 +611,8 @@ msgid "The display label to use for this field."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:108
-msgid "Internal name to use for this attribute. Avoid using spaces in the name."
+msgid ""
+"Internal name to use for this attribute. Avoid using spaces in the name."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:109
@@ -641,8 +641,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:170
 msgid ""
-"Specifies whether to show all locations at an administrative division on "
-"the dashboard."
+"Specifies whether to show all locations at an administrative division on the "
+"dashboard."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:171
@@ -653,8 +653,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:172
 msgid ""
-"An example of a hostname is \"example.com\". Used internally to determine"
-" what deployment to access."
+"An example of a hostname is \"example.com\". Used internally to determine "
+"what deployment to access."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:182
@@ -723,8 +723,8 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:330
 msgid ""
-"Explicitly specifies which non-role permissions (in addition) to assign "
-"to the user."
+"Explicitly specifies which non-role permissions (in addition) to assign to "
+"the user."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:383
@@ -889,9 +889,9 @@ msgstr ""
 
 #: apollo/frontend/templates/403.html:37
 msgid ""
-"We understood your request, but we refuse to honor it! You are seeing "
-"this page because you were snooping around! Now paddle along before the "
-"buzzer goes off!"
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
 msgstr ""
 
 #: apollo/frontend/templates/404.html:5
@@ -904,11 +904,10 @@ msgstr ""
 
 #: apollo/frontend/templates/404.html:37
 msgid ""
-"Don't freak out, maybe you entered the wrong address or clicked a bad "
-"link! Who knows, this could even be a fluke! :) I recommend you either "
-"verify the address or click the back arrow (&larr;) at the top left "
-"corner of the page, and cross-check the action you were trying to "
-"perform!"
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page, "
+"and cross-check the action you were trying to perform!"
 msgstr ""
 
 #: apollo/frontend/templates/500.html:5
@@ -921,9 +920,9 @@ msgstr ""
 
 #: apollo/frontend/templates/500.html:37
 msgid ""
-"You shouldn't be seeing this page but you are because you're a genius and"
-" have found a rare bug in the software. Rest assured, we now know about "
-"it and will fix it ASAP!"
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/dashboard.html:25
@@ -1054,8 +1053,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:174
 #: apollo/frontend/templates/frontend/submission_edit.html:548
 msgid ""
-"The data you entered are not valid. Please check the affected questions "
-"and correct them."
+"The data you entered are not valid. Please check the affected questions and "
+"correct them."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/incident_add.html:97
@@ -1104,8 +1103,8 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:60
 msgid ""
-"The username and password you supplied <strong>do not match</strong> any "
-"of the credentials on this system. Please check both and try again."
+"The username and password you supplied <strong>do not match</strong> any of "
+"the credentials on this system. Please check both and try again."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:63
@@ -1463,9 +1462,9 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:156
 msgid ""
 "The following quality assurance conditions were flagged while validating "
-"this submission. Please confirm with the participant that the submitted "
-"data is correct. If you find the data to be as reported by the "
-"participant, mark the data point as confirmed."
+"this submission. Please confirm with the participant that the submitted data "
+"is correct. If you find the data to be as reported by the participant, mark "
+"the data point as confirmed."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:28
@@ -1526,8 +1525,8 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:622
 msgid ""
-"You may (optionally) include details of your call or interaction with the"
-" participant here."
+"You may (optionally) include details of your call or interaction with the "
+"participant here."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_list.html:144
@@ -1830,8 +1829,7 @@ msgstr "Редактировать место"
 #: apollo/locations/views_locations.py:250
 #, python-format
 msgid ""
-"Administrative level %(name)s has locations assigned and cannot be "
-"deleted."
+"Administrative level %(name)s has locations assigned and cannot be deleted."
 msgstr ""
 
 #: apollo/locations/views_locations.py:267
@@ -1869,12 +1867,10 @@ msgstr ""
 
 #: apollo/messaging/helpers.py:90
 msgid ""
-"Observer ID not found. Please resend with valid Observer ID. You sent: "
-"{text}"
+"Observer ID not found. Please resend with valid Observer ID. You sent: {text}"
 msgstr ""
 "Этот идентификатор наблюдателя не обнаружен. Повторите отправку с "
-"использованием корректного идентификатора наблюдателя. Вы написали: "
-"{text}"
+"использованием корректного идентификатора наблюдателя. Вы написали: {text}"
 
 #: apollo/messaging/helpers.py:100
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
@@ -1926,8 +1922,8 @@ msgstr ""
 
 #: apollo/odk/views_odk.py:276
 msgid ""
-"Your submission was received, but you sent it using an outdated form. "
-"Please download a new copy and resend. Thank you."
+"Your submission was received, but you sent it using an outdated form. Please "
+"download a new copy and resend. Thank you."
 msgstr ""
 
 #: apollo/participants/filters.py:60
@@ -1983,10 +1979,6 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: apollo/participants/services.py:40
-msgid "Location ID"
-msgstr ""
-
 #: apollo/participants/services.py:44
 msgid "Supervisor ID"
 msgstr ""
@@ -2031,8 +2023,8 @@ msgstr "Место с таким идентификатором (%(loc_id)s) н�
 #: apollo/participants/tasks.py:297
 #, python-format
 msgid ""
-"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
-"not found"
+"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s not "
+"found"
 msgstr ""
 
 #: apollo/participants/tasks.py:486
@@ -2043,8 +2035,7 @@ msgstr "Супервизор с таким идентификатором (%(id)
 #: apollo/participants/tasks.py:492
 #, python-format
 msgid ""
-"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
-"found"
+"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not found"
 msgstr ""
 
 #: apollo/participants/tasks.py:566
@@ -2412,10 +2403,6 @@ msgstr ""
 msgid "Location Code"
 msgstr ""
 
-#: apollo/submissions/services.py:55
-msgid "Registered Voters"
-msgstr ""
-
 #: apollo/submissions/tasks.py:71
 #, python-format
 msgid "Participant ID %(part_id)s was not found"
@@ -2469,8 +2456,8 @@ msgstr ""
 #: apollo/templates/admin/administrative_divisions.html:43
 #: apollo/templates/admin/administrative_divisions.html:109
 msgid ""
-"Whether to show location data of this division on the dashboard and other"
-" tables."
+"Whether to show location data of this division on the dashboard and other "
+"tables."
 msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:52
@@ -2566,8 +2553,8 @@ msgstr ""
 
 #: apollo/templates/admin/location_headers_errors.html:2
 msgid ""
-"<strong>There was a problem</strong> with your submission. Please correct"
-" the errors and re-submit."
+"<strong>There was a problem</strong> with your submission. Please correct "
+"the errors and re-submit."
 msgstr ""
 
 #: apollo/templates/admin/locations_list.html:54
@@ -2689,25 +2676,26 @@ msgstr ""
 msgid "The email %(email)s is not available"
 msgstr ""
 
+#~ msgid "Location ID"
+#~ msgstr "Идентификатор места"
+
+#~ msgid "Registered Voters"
+#~ msgstr "Зарегистрированные избиратели"
+
 #~ msgid "Not Applicable"
 #~ msgstr "Неприменимо"
 
 #~ msgid ""
-#~ "Require exclamation (!) mark in text "
-#~ "message? (Does not apply to Checklist"
-#~ " Forms)"
+#~ "Require exclamation (!) mark in text message? (Does not apply to "
+#~ "Checklist Forms)"
 #~ msgstr ""
-#~ "В сообщении необходим восклицательный (!) "
-#~ "знак? (Неприменимо к спискам.)"
+#~ "В сообщении необходим восклицательный (!) знак? (Неприменимо к спискам.)"
 
 #~ msgid "Accredited Voters"
 #~ msgstr "Аккредитованные избиратели"
 
 #~ msgid "Invalid Votes"
 #~ msgstr "Недействительные бюллетени"
-
-#~ msgid "Registered Voters"
-#~ msgstr "Зарегистрированные избиратели"
 
 #~ msgid "Blank Votes"
 #~ msgstr "Незаполненные бюллетени"
@@ -2748,9 +2736,6 @@ msgstr ""
 #~ msgid "Invalid file."
 #~ msgstr "Поврежденный файл."
 
-#~ msgid "Sign In with Persona"
-#~ msgstr ""
-
 #~ msgid "Confidence Level"
 #~ msgstr "Уровень конфиденциальности"
 
@@ -2760,23 +2745,11 @@ msgstr ""
 #~ msgid "Master Submission"
 #~ msgstr "Основное подтверждение"
 
-#~ msgid "Form set"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Checklists are being created for the "
-#~ "form, role and location type you "
-#~ "selected in the current event"
-#~ msgstr ""
-
 #~ msgid "Edit %(name)s"
 #~ msgstr "Редактировать «%(name)s»"
 
 #~ msgid "Select column"
 #~ msgstr "Выбрать колонку"
-
-#~ msgid "Location ID"
-#~ msgstr "Идентификатор места"
 
 #~ msgid "Phone prefix"
 #~ msgstr "Код телефонного номера"
@@ -2796,101 +2769,20 @@ msgstr ""
 #~ msgid "%(label)s Code"
 #~ msgstr "%(label)s: код"
 
-#~ msgid "%(label)s Latitude"
-#~ msgstr ""
-
-#~ msgid "%(label)s Longitude"
-#~ msgstr ""
-
 #~ msgid "%(label)s Registered Voters"
 #~ msgstr "%(label)s: зарегистрированные избиратели"
-
-#~ msgid "Select form"
-#~ msgstr ""
-
-#~ msgid "Select role"
-#~ msgstr ""
 
 #~ msgid "Location type"
 #~ msgstr "Тип местоположения"
 
-#~ msgid "Select location type"
-#~ msgstr ""
-
-#~ msgid "Are you sure you want to disable selected users?"
-#~ msgstr ""
-
-#~ msgid "Are you sure you want to enable selected users?"
-#~ msgstr ""
-
-#~ msgid "Dashboard · %(name)s"
-#~ msgstr ""
-
-#~ msgid "Dashboard · %(name)s  · %(group)s"
-#~ msgstr ""
-
-#~ msgid "Add Form"
-#~ msgstr ""
-
 #~ msgid "Builder"
 #~ msgstr "Конструктор"
-
-#~ msgid "Generate checklists"
-#~ msgstr ""
-
-#~ msgid "Checklist form"
-#~ msgstr ""
-
-#~ msgid "Add division"
-#~ msgstr ""
 
 #~ msgid "Administrative Division"
 #~ msgstr "Административное деление"
 
 #~ msgid "Political Division"
 #~ msgstr "Политическое деление"
-
-#~ msgid "More Options"
-#~ msgstr ""
-
-#~ msgid "Import admin divisions"
-#~ msgstr ""
-
-#~ msgid "Purge Locations"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<strong>WARNING:</strong> This will delete all"
-#~ " locations. This means that everything "
-#~ "else &ndash; checklists, incidents, "
-#~ "participants will be deleted."
-#~ msgstr ""
-
-#~ msgid "Please enter <code id=\"compare\"></code> below to proceed:"
-#~ msgstr ""
-
-#~ msgid "Yes, I understand"
-#~ msgstr ""
-
-#~ msgid "(only .csv, .xls and .xlsx files)"
-#~ msgstr ""
-
-#~ msgid "DELETE"
-#~ msgstr ""
-
-#~ msgid "Invalid File"
-#~ msgstr ""
-
-#~ msgid "User Login"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Your username and password <strong>did "
-#~ "not match</strong>. Please try again."
-#~ msgstr ""
-
-#~ msgid "Username/Email"
-#~ msgstr ""
 
 #~ msgid "IN"
 #~ msgstr "В"
@@ -2900,16 +2792,6 @@ msgstr ""
 
 #~ msgid "Performance Evaluation"
 #~ msgstr "Оценка работы"
-
-#~ msgid "Purge Participants"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "<strong>WARNING:</strong> This will delete all"
-#~ " participants, as well as any data"
-#~ " linked to them &ndash; checklists, "
-#~ "critical incident reports and messages."
-#~ msgstr ""
 
 #~ msgid "Participant Detail"
 #~ msgstr "Подробности об участнике"
@@ -2935,17 +2817,8 @@ msgstr ""
 #~ msgid "History"
 #~ msgstr "История"
 
-#~ msgid "Validation Errors!"
-#~ msgstr ""
-
-#~ msgid "The following conditions were flagged while validating this submission."
-#~ msgstr ""
-
 #~ msgid "Overridden Field"
 #~ msgstr "Аннулированные поля"
-
-#~ msgid "Verification Status"
-#~ msgstr ""
 
 #~ msgid "No comment."
 #~ msgstr "Нет комментариев."
@@ -2970,9 +2843,6 @@ msgstr ""
 
 #~ msgid "Master Data"
 #~ msgstr "Основные данные"
-
-#~ msgid "Aggregated Data"
-#~ msgstr ""
 
 #~ msgid "First Page"
 #~ msgstr "Первая страница"
@@ -3010,29 +2880,6 @@ msgstr ""
 #~ msgid "conflict"
 #~ msgstr "проблема"
 
-#~ msgid "data present"
-#~ msgstr ""
-
-#~ msgid "%(location_type)s Name"
-#~ msgstr ""
-
-#~ msgid "Admin level %(name)s has locations assigned and cannot be deleted"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Locations, Checklists, Critical Incidents and"
-#~ " Participants are being deleted."
-#~ msgstr ""
-
-#~ msgid "All roles"
-#~ msgstr ""
-
-#~ msgid "All partners"
-#~ msgstr ""
-
-#~ msgid "Data file"
-#~ msgstr ""
-
 #~ msgid "Participants Performance"
 #~ msgstr "Работа участников"
 
@@ -3042,17 +2889,8 @@ msgstr ""
 #~ msgid "Edit Participant · %(participant_id)s"
 #~ msgstr "Редактировать участника · %(participant_id)s"
 
-#~ msgid ""
-#~ "Participants, Checklists, Critical Incidents "
-#~ "and Messages linked to this participant"
-#~ " set are being deleted."
-#~ msgstr ""
-
 #~ msgid "%(form)s Analysis"
 #~ msgstr "%(form)s: анализ"
-
-#~ msgid "Analyses"
-#~ msgstr ""
 
 #~ msgid "Process Analysis"
 #~ msgstr "Анализ процесса"
@@ -3060,29 +2898,14 @@ msgstr ""
 #~ msgid "Results Analysis"
 #~ msgstr "Анализ результатов"
 
-#~ msgid "REJECTED"
-#~ msgstr ""
-
 #~ msgid "Add Submission"
 #~ msgstr "Добавить подчинение"
 
 #~ msgid "Edit Submission"
 #~ msgstr "Редактировать подчинение"
 
-#~ msgid "Allow editing of observer submissions"
-#~ msgstr ""
-
-#~ msgid "Location set"
-#~ msgstr ""
-
-#~ msgid "Participant set"
-#~ msgstr ""
-
 #~ msgid "Reset"
 #~ msgstr "Перезагрузить"
-
-#~ msgid "%(form)s Summary"
-#~ msgstr ""
 
 #~ msgid "Table"
 #~ msgstr "Таблица"
@@ -3099,53 +2922,8 @@ msgstr ""
 #~ msgid "Quality Assurance — %(name)s"
 #~ msgstr "Контроль качества — %(name)s"
 
-#~ msgid ""
-#~ "An error occured while attempting to "
-#~ "reset the password for the supplied "
-#~ "account.\n"
-#~ "                                Please check the "
-#~ "email address and try again."
-#~ msgstr ""
-
-#~ msgid "Reset password"
-#~ msgstr ""
-
-#~ msgid "Insufficient Data"
-#~ msgstr ""
-
-#~ msgid "Require Exclamation"
-#~ msgstr ""
-
-#~ msgid "Track Data Conflicts?"
-#~ msgstr ""
-
-#~ msgid "Name (%(language)s)"
-#~ msgstr ""
-
 #~ msgid "New password"
 #~ msgstr "Новый пароль"
 
-#~ msgid "Sender Verification"
-#~ msgstr ""
-
 #~ msgid "Convergence Chart"
 #~ msgstr "Диаграмма сходимости"
-
-#~ msgid "Sender Verified"
-#~ msgstr ""
-
-#~ msgid "Sender Unverified"
-#~ msgstr ""
-
-#~ msgid "Has Registered Voters"
-#~ msgstr ""
-
-#~ msgid "Import Forms"
-#~ msgstr ""
-
-#~ msgid "Show Moment Column"
-#~ msgstr ""
-
-#~ msgid "Moment"
-#~ msgstr ""
-
