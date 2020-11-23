@@ -73,6 +73,9 @@ class Form(Resource):
         ('SURVEY', _('Survey Form'))
     )
 
+    ALL_FIELD_TYPES = FIELD_TYPES
+    CONFLICT_FIELD_TYPES = ('integer', 'select', 'multiselect', 'string')
+
     __mapper_args__ = {'polymorphic_identity': 'form'}
     __tablename__ = 'form'
 
@@ -160,7 +163,7 @@ class Form(Resource):
 
         return self._field_cache.get(tag)
 
-    def get_group_tags(self, group_name):
+    def get_group_tags(self, group_name, field_types=FIELD_TYPES):
         if not hasattr(self, '_group_cache'):
             self._populate_group_cache()
 
@@ -169,7 +172,7 @@ class Form(Resource):
 
         if grp and grp.get('fields'):
             for f in grp.get('fields'):
-                if f and f.get('tag'):
+                if f and f.get('tag') and f.get('type') in field_types:
                     tags.append(f.get('tag'))
 
         return tags
