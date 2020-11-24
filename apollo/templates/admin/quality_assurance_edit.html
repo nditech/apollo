@@ -102,7 +102,7 @@
     mode: 'multi',
     persist: false,
     options: [
-      {%- for question in form.tags %}
+      {%- for question in form.qa_tags %}
       {value: '{{ question }}', text: '{{ question }}', optgroup: 'fields'},
       {%- endfor %}
       {value: '$submission.serial_no', text: '@form_serial_no', optgroup: 'extra'},

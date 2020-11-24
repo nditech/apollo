@@ -134,6 +134,16 @@ class Form(Resource):
         return sorted(self._field_cache.keys())
 
     @property
+    def qa_tags(self):
+        QA_FIELD_TYPES = ('integer', 'select', 'string')
+        if not hasattr(self, '_field_cache'):
+            self._populate_field_cache()
+
+        return sorted(
+            tag for tag, field in self._field_cache.items()
+            if field['type'] in QA_FIELD_TYPES)
+
+    @property
     def vote_tags(self):
         if not hasattr(self, '_field_cache'):
             self._populate_field_cache()
