@@ -68,7 +68,7 @@ After deploying the containers, the Apollo application can be accessed by config
 
 `ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
-Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with INSERT_SITE_URL indicating places in which the site url should be substituted in.
+Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below. Replace INSERT_SITE_URL with the url for your site. Insert your ssl crt at /etc/ssl/certs/ssl.crt and your ssl key at /etc/ssl/certs/ssl.key.
 
 ```
 server {
@@ -81,10 +81,10 @@ server {
 
 server {
     listen 443;
-    server_name INSERT_SITE_URL;
+    server_name apollodemo.demcloud.org;
     #limit_req zone=one burst=10 nodelay;
     #limit_req_status 429;
-    ssl_trusted_certificate /etc/ssl/certs/demcloud_combined.crt;
+    ssl_trusted_certificate /etc/ssl/certs/ssl.crt;
 
     location / {
         proxy_pass http://localhost:5000;
@@ -98,6 +98,31 @@ server {
         proxy_connect_timeout 300;
         proxy_read_timeout 180;
     }
+
+    ssl on;
+    ssl_certificate /etc/ssl/certs/ssl.crt;
+    ssl_certificate_key /etc/ssl/certs/ssl.key;
+    ssl_session_cache    shared:SSL:10m;
+    ssl_session_timeout  10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS +RC4 RC4";
+
+
+    gzip on;
+    gzip_http_version 1.1;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_proxied any;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # make sure gzip does not lose large gzipped js or css files
+    # see http://blog.leetsoft.com/2007/7/25/nginx-gzip-ssl
+    gzip_buffers 16 8k;
+
+    # Disable gzip for certain browsers.
+    gzip_disable "MSIE [1-6].(?!.*SV1)";
+}
 ```
 
 After changing the file, restart nginx using `service nginx restart` (or `service nginx start` if it has not yet been started).
