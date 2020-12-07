@@ -7,11 +7,10 @@ from io import BytesIO
 from arpeggio import NoMatch
 from arpeggio.cleanpeg import ParserPEG
 from flask import (
-    abort, Blueprint, flash, g, jsonify, redirect, render_template, request,
-    send_file, session, url_for)
+    abort, Blueprint, flash, g, jsonify, redirect, request, send_file, session,
+    url_for)
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
-from jinja2 import Markup
 from slugify import slugify
 
 from apollo import core, models
@@ -358,13 +357,6 @@ def quality_control_edit(view, form_id, qc=None):
                 }
                 return jsonify(data), status_code
             else:
-                if errors:
-                    message_template = 'admin/quality_assurance_error_fragment.html'    # noqa
-                    flash_message = render_template(
-                        message_template, error_messages=error_messages,
-                        invalid_tags=invalid_tags,
-                        multiselect_tags=multiselect_tags)
-                    flash(Markup(flash_message), category='error')
                 return redirect(url_for('formsview.qc', form_id=form.id))
         except ValueError:
             pass

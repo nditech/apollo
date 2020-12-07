@@ -155,22 +155,8 @@
         url: '',
         type: 'POST',
         data: {postdata: JSON.stringify(vm.control), csrf_token: "{{ csrf_token() }}"}
-      }).done(function (data) {
+      }).always(function (data) {
         window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
-      }).fail(function (jqXHR) {
-        var errorResponse = JSON.parse(jqXHR.responseText);
-        var errorList = document.getElementById('errorList');
-        var invalidTags = document.getElementById('invalidTags');
-        var multiSelectTags = document.getElementById('multiSelectTags');
-        for (var i = 0; i < errorResponse.errors.length; i++) {
-          var error = errorResponse.errors[i];
-          var listItem = document.createElement('li');
-          listItem.textContent = error;
-          errorList.appendChild(listItem);
-        };
-        invalidTags.textContent = errorResponse.invalid_tags.join(',');
-        multiSelectTags.textContent = errorResponse.multiselect_tags.join(',');
-        $('#errorModal').modal('show');
       });
     });
 
