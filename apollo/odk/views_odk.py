@@ -327,13 +327,3 @@ def update_submission_version(submission):
         identity=identity,
         deployment_id=submission.deployment_id
     )
-
-
-@route(bp, '/xforms/setup')
-def collect_qr_setup():
-    participant_id = request.args.get('participant')
-    participant = models.Participant.query.filter_by(id=participant_id).first()
-    response = make_response(utils.generate_config_qr_code(participant))
-    response.mimetype = 'image/png'
-
-    return response
