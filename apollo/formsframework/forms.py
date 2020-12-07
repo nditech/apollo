@@ -377,9 +377,6 @@ class FormForm(SecureForm):
     show_progress = wtforms.BooleanField(
         _('Show Daily Progress'),
         description=_('Enabling this option will show the daily progress for this form on the dashboard.'))  # noqa
-    allow_attachments = wtforms.BooleanField(
-        _('Enable attachments'),
-        description=_('Enabling this option will allow participants submit images using ODK.'))  # noqa
     accredited_voters_tag = wtforms.SelectField(
         _('Accredited Voters Field'), choices=[('', '')])
     blank_votes_tag = wtforms.SelectField(

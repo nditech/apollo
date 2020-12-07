@@ -28,7 +28,7 @@
           {%- for field in form -%}
           {%- if field.type != 'CSRFTokenField' -%}
           <div class="form-group row align-items-center {{- " for-checklist" if field.name in ['untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_voters_tag', 'vote_shares'] }}{{- " for-survey" if field.name in ['untrack_data_conflicts', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment'] }}{{- " for-incident" if field.name in ['require_exclamation', 'show_map', 'show_moment'] }}">
-            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment', 'allow_attachments'] %}
+            {% if field.name in ['require_exclamation', 'untrack_data_conflicts', 'calculate_moe', 'quality_checks_enabled', 'show_map', 'show_progress', 'show_moment'] %}
               <div class="col-4">&nbsp;</div>
               <div class="col-8">
                 <div class="custom-control custom-checkbox">

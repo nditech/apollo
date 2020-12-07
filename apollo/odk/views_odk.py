@@ -239,24 +239,23 @@ def submission():
                 }
             elif field_type == 'image':
                 original_field_data = submission.data.get(tag)
-                if form.allow_attachments:
-                    file_wrapper = request.files.get(element.text)
-                    identifier = uuid4()
+                file_wrapper = request.files.get(element.text)
+                identifier = uuid4()
 
-                    if file_wrapper.mimetype.startswith('image/'):
-                        if original_field_data is not None:
-                            original_attachment = \
-                                models.SubmissionImageAttachment.query.filter_by(   # noqa
-                                    uuid=original_field_data).first()
-                            if original_attachment:
-                                deleted_attachments.append(original_attachment)
-                        if file_wrapper and file_wrapper.filename != '':
-                            data[tag] = identifier.hex
-                            attachments.append(
-                                models.SubmissionImageAttachment(
-                                    photo=file_wrapper, submission=submission,
-                                    uuid=identifier)
-                            )
+                if file_wrapper.mimetype.startswith('image/'):
+                    if original_field_data is not None:
+                        original_attachment = \
+                            models.SubmissionImageAttachment.query.filter_by(   # noqa
+                                uuid=original_field_data).first()
+                        if original_attachment:
+                            deleted_attachments.append(original_attachment)
+                    if file_wrapper and file_wrapper.filename != '':
+                        data[tag] = identifier.hex
+                        attachments.append(
+                            models.SubmissionImageAttachment(
+                                photo=file_wrapper, submission=submission,
+                                uuid=identifier)
+                        )
             else:
                 try:
                     data[tag] = int(element.text)

@@ -73,7 +73,6 @@ class Form(Resource):
         ('SURVEY', _('Survey Form'))
     )
 
-    ALL_FIELD_TYPES = FIELD_TYPES
     CONFLICT_FIELD_TYPES = ('integer', 'select', 'multiselect', 'string')
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
@@ -103,7 +102,6 @@ class Form(Resource):
     show_moment = db.Column(db.Boolean, default=False)
     show_map = db.Column(db.Boolean, default=False)
     show_progress = db.Column(db.Boolean, default=False)
-    allow_attachments = db.Column(db.Boolean, default=False)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
@@ -281,8 +279,8 @@ class Form(Resource):
                             field_element.append(
                                 E.item(E.label(key), E.value(str(value)))
                             )
-                    elif field_type == 'image' and self.allow_attachments:
-                        mediatype = f'{field_type}/*'
+                    elif field_type == 'image':
+                        mediatype = 'image/*'
                         field_element = E.upload(
                             E.label(field['description']), ref=field['tag'],
                             mediatype=mediatype

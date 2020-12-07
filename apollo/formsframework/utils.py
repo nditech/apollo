@@ -133,7 +133,7 @@ def _process_survey_worksheet(sheet_data, form_data):
         elif record_type == 'geopoint':
             field['type'] = 'location'
         elif record_type == 'image':
-            field['type'] = record_type
+            field['type'] = 'image'
         else:
             continue
 
