@@ -14,7 +14,7 @@ from apollo.core import db
 from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
-from apollo.odk.utils import make_message_text
+from apollo.odk import utils
 from apollo.services import messages
 from apollo.utils import current_timestamp
 
@@ -262,7 +262,7 @@ def submission():
     models.Submission.update_related(submission, data)
     update_submission_version(submission)
 
-    message_text = make_message_text(form, participant, data)
+    message_text = utils.make_message_text(form, participant, data)
     sender = participant.primary_phone or participant.participant_id
     message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,
@@ -316,3 +316,13 @@ def update_submission_version(submission):
         identity=identity,
         deployment_id=submission.deployment_id
     )
+
+
+@route(bp, '/xforms/setup')
+def collect_qr_setup():
+    participant_id = request.args.get('participant')
+    participant = models.Participant.query.filter_by(id=participant_id).first()
+    response = make_response(utils.generate_config_qr_code(participant))
+    response.mimetype = 'image/png'
+
+    return response
