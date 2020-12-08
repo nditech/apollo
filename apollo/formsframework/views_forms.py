@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from io import BytesIO
 
-from arpeggio import NoMatch
 from arpeggio.cleanpeg import ParserPEG
 from flask import (
     abort, Blueprint, flash, g, jsonify, redirect, request, send_file, session,
@@ -20,9 +19,7 @@ from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
-from apollo.submissions.qa.messages import FlagCause
-from apollo.submissions.qa.query_builder import (
-    GRAMMAR, build_expression, verify_expression)
+from apollo.submissions.qa.query_builder import GRAMMAR
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
 from apollo.users.models import UserUpload
 from apollo.utils import generate_identifier, strip_bom_header
@@ -309,29 +306,6 @@ def quality_control_edit(view, form_id, qc=None):
                 del quality_control['lvalue']
             if 'comparator' in quality_control:
                 del quality_control['comparator']
-
-            # sanity check
-            expression = build_expression(quality_control)
-            if expression == '':
-                errors.add(FlagCause.EMPTY_EXPRESSION)
-            else:
-                try:
-                    parse_tree = parser.parse(expression)
-                    invalid_tags, multiselect_tags = verify_expression(
-                        form, parse_tree)
-
-                    if invalid_tags:
-                        errors.add(FlagCause.MISSING_VARIABLE)
-
-                    if multiselect_tags:
-                        errors.add(FlagCause.MULTISELECT_VARIABLE)
-                except NoMatch:
-                    errors.add(FlagCause.MALFORMED_EXPRESSION)
-
-            # the invalid tags and multi-select tags are returned
-            # as sets
-            invalid_tags = list(invalid_tags)
-            multiselect_tags = list(multiselect_tags)
 
             if form.quality_checks:
                 for i, control in enumerate(form.quality_checks):

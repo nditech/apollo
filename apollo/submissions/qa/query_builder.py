@@ -355,7 +355,7 @@ class TagVisitor(PTNodeVisitor):
 def get_inline_qa_status(submission, condition):
     control_expression = build_expression(condition)
 
-    # short-citcuit for empty expression
+    # short-circuit for empty expression
     if control_expression == '':
         return None, set()
 
