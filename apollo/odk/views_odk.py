@@ -203,6 +203,8 @@ def submission():
     data = {}
     attachments = []
     deleted_attachments = []
+    geopoint_lat = None
+    geopoint_lon = None
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         field_type = field.get('type')
@@ -222,21 +224,6 @@ def submission():
                     data[tag] = sorted(int(i) for i in element.text.split())
                 except ValueError:
                     continue
-            elif field_type == 'location':
-                # TODO: what if there are multiple location
-                # fields in the form?
-                geodata = element.text.split() if element.text else []
-                try:
-                    geopoint_lat = float(geodata[0])
-                    geopoint_lon = float(geodata[1])
-                except (IndexError, ValueError):
-                    continue
-
-                # store data in GeoJSON format
-                data[tag] = {
-                    'type': 'Point',
-                    'coordinates': [geopoint_lon, geopoint_lat]
-                }
             elif field_type == 'image':
                 original_field_data = submission.data.get(tag)
                 file_wrapper = request.files.get(element.text)
@@ -261,9 +248,23 @@ def submission():
                     data[tag] = int(element.text)
                 except ValueError:
                     continue
+    try:
+        element = tag_finder(document, tag='location')[0]
+        geodata = element.text.split() if element.text else []
+
+        try:
+            geopoint_lat = float(geodata[0])
+            geopoint_lon = float(geodata[1])
+        except (IndexError, ValueError):
+            pass
+    except IndexError:
+        pass
 
     submission.data = data
     submission.participant_updated = current_timestamp()
+    if geopoint_lat is not None and geopoint_lon is not None:
+            submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
+                longitude=geopoint_lon, latitude=geopoint_lat)
 
     db.session.add(submission)
     db.session.add_all(attachments)

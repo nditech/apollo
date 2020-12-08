@@ -23,7 +23,7 @@ def make_message_text(form, participant, data):
         field = form.get_field_by_tag(tag)
         if field.get('type') == 'multiselect':
             value_rep = ''.join(str(i) for i in sorted(field_value))
-        elif field.get('type') in ('image', 'location'):
+        elif field.get('type') == 'image':
             continue
         else:
             value_rep = field_value

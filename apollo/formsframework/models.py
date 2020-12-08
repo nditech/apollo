@@ -292,6 +292,15 @@ class Form(Resource):
                     grp_element.append(field_element)
                 body.append(grp_element)
 
+        description = gettext('Location')
+        path = '/data/location'
+        data.append(etree.Element('location'))
+        model.append(E.bind(nodeset=path, type='geopoint'))
+        grp_element = E.group(E.label(description))
+        field_element = E.input(E.label(description), ref='location')
+        grp_element.append(field_element)
+        body.append(grp_element)
+
         head.append(model)
         root.append(head)
         root.append(body)
@@ -342,8 +351,6 @@ class FormBuilderSerializer(object):
                 data['component'] = 'radio'
         elif field_type == 'image':
             data['component'] = 'image'
-        elif field_type == 'location':
-            data['component'] = 'location'
         return data
 
     @classmethod
@@ -432,8 +439,8 @@ class FormBuilderSerializer(object):
                             pass
                 else:
                     field['type'] = 'string'
-            elif f['component'] in ('image', 'location'):
-                field['type'] = f['component']
+            elif f['component'] == 'image':
+                field['type'] = 'image'
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
