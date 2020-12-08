@@ -52,6 +52,8 @@
           {% endfor %}
           </tbody>
         </table>
+        <h6 class="mb-3">{{ _('QR Code for ODK Collect') }}</h6>
+        <div class="text-center"><img src="{{ url_for('xforms.collect_qr_setup') }}?participant={{ participant.id }}" alt="{{ _('QR Code') }}" class="rounded"></div>
       </div>
       <div class="card-footer text-right">
         <button type="button" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</button>

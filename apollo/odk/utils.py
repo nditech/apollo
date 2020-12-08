@@ -6,6 +6,7 @@ import zlib
 from urllib.parse import urljoin
 
 import qrcode
+from PIL import Image
 from flask import url_for
 
 
@@ -58,6 +59,10 @@ def generate_config_qr_code(participant=None):
 
     img_buffer = io.BytesIO()
     img = qr_code.make_image(fill_color='black', back_color='white')
+
+    thumb_size = (256, 256)
+    img.thumbnail(thumb_size, Image.ANTIALIAS)
+
     img.save(img_buffer, format='PNG')
     img_buffer.seek(0)
 
