@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime
-from http import HTTPStatus
 from io import BytesIO
 
 from arpeggio import NoMatch
@@ -21,7 +20,7 @@ from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
-from apollo.submissions.qa.messages import FLAG_MESSAGES, FlagCause
+from apollo.submissions.qa.messages import FlagCause
 from apollo.submissions.qa.query_builder import (
     GRAMMAR, build_expression, verify_expression)
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
@@ -331,7 +330,6 @@ def quality_control_edit(view, form_id, qc=None):
 
             # the invalid tags and multi-select tags are returned
             # as sets
-            error_messages = [FLAG_MESSAGES.get(e) for e in errors]
             invalid_tags = list(invalid_tags)
             multiselect_tags = list(multiselect_tags)
 
@@ -348,14 +346,8 @@ def quality_control_edit(view, form_id, qc=None):
             form.save()
 
             if request.is_xhr:
-                status_code = HTTPStatus.BAD_REQUEST if errors else HTTPStatus.OK   # noqa
-                data = {
-                    'errors': error_messages,
-                    'invalid_tags': invalid_tags,
-                    'multiselect_tags': multiselect_tags,
-                    'status': 'error' if errors else 'ok'
-                }
-                return jsonify(data), status_code
+                data = {}
+                return jsonify(data)
             else:
                 return redirect(url_for('formsview.qc', form_id=form.id))
         except ValueError:

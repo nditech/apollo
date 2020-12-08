@@ -19,15 +19,6 @@
     </ol>
   </nav>
 </div>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
-{% for message in messages %}
-{{ message }}
-{% endfor %}
-</div>
-{% endif %}
-{% endwith %}
 <div id="app" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <form method="post">
   <div class="row mt-3">
