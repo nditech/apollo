@@ -218,6 +218,7 @@ def submission():
 
     data = submission.data.copy() if submission.data else {}
     payload2 = payload.copy()
+    location_data = payload2.pop('location', None)
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         if field['type'] == 'multiselect':
@@ -230,14 +231,21 @@ def submission():
 
     if data != payload2:
         data.update(payload2)
+        geopoint = 'SRID=4326; POINT({lon:f} {lat:f})'.format(
+            lat=location_data.get('latitude'),
+            lon=location_data.get('longitude')
+        ) if location_data is not None else None
         if submission.id is None:
             submission.data = data
+            if geopoint is not None:
+                submission.geom = geopoint
             submission.save()
         else:
             query = Submission.query.filter_by(id=submission.id)
-            query.update(
-                {'data': data, 'unreachable': False},
-                synchronize_session=False)
+            update_params = {'data': data, 'unreachable': False}
+            if geopoint is not None:
+                update_params['geom'] = geopoint
+            query.update(update_params, synchronize_session=False)
             db.session.commit()
 
         submission.update_related(data)
