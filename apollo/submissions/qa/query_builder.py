@@ -64,8 +64,6 @@ FIELD_TYPE_CASTS = {
 
 class BaseVisitor(PTNodeVisitor):
     def __init__(self, defaults=True, **kwargs):
-        self.invalid_variables = set()
-        self.multiple_choice_variables = set()
 
         super().__init__(defaults, **kwargs)
 
@@ -158,12 +156,10 @@ class InlineQATreeVisitor(BaseVisitor):
     def visit_variable(self, node, children):
         var_name = node.value
         if var_name not in self.form.tags:
-            self.invalid_variables.add(var_name)
             return 'NULL'
 
         field = self.form.get_field_by_tag(var_name)
         if field['type'] == 'multiselect':
-            self.multiple_choice_variables.add(var_name)
             return 'NULL'
 
         return self.submission.data.get(var_name, 'NULL')
@@ -221,7 +217,6 @@ class QATreeVisitor(BaseVisitor):
         self.variables.add(var_name)
         if var_name not in self.form.tags:
             self.lock_null = True
-            self.invalid_variables.add(var_name)
             return null()
 
         # casting is necessary because PostgreSQL will throw
@@ -231,7 +226,6 @@ class QATreeVisitor(BaseVisitor):
 
         if field['type'] == 'multiselect':
             self.lock_null = True
-            self.multiple_choice_variables.add(var_name)
             return null()
 
         cast_type = FIELD_TYPE_CASTS.get(field['type'])
@@ -396,10 +390,3 @@ def build_expression(logical_check):
         control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)  # noqa
 
     return control_expression.strip()
-
-
-def verify_expression(form, parse_tree):
-    visitor = QATreeVisitor(form=form)
-    visit_parse_tree(parse_tree, visitor)
-
-    return visitor.invalid_variables, visitor.multiple_choice_variables
