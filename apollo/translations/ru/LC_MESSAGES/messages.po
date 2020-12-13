@@ -42,7 +42,7 @@ msgstr "Выберите событие"
 
 #: apollo/deployments/models.py:89
 msgid "Event - %(name)s"
-msgstr "Событие -  - %(name)s"
+msgstr "Событие - %(name)s"
 
 #: apollo/deployments/utils.py:17
 msgid "English"
@@ -777,7 +777,7 @@ msgid ""
 msgstr ""
 "Имя пользователя и пароль <strong> не совпадают </strong> с данными в этой "
 "системе. Пожалуйста, проверьте имя пользователя и пароль и повторите "
-"попытку. "
+"попытку."
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Flogin_user.html%3A42+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Flogin_user.html%3A43+apollo%2Fusers%2Fforms.py%3A11
 msgid "Username"
@@ -961,7 +961,7 @@ msgid ""
 "account. Please ensure that both values are the same."
 msgstr ""
 "При попытке смены пароля для данной учетной записи произошла ошибка. "
-"Пожалуйста, убедитесь, что оба значения совпадают. "
+"Пожалуйста, убедитесь, что оба значения совпадают."
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Freset_password.html%3A49+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Freset_password.html%3A51
 msgid "Retype Password"
@@ -997,7 +997,7 @@ msgstr "%(num)d комментарии"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:127
 msgid "Checklist"
-msgstr "Список "
+msgstr "Список"
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fsubmission_edit.html%3A130+apollo%2Fsubmissions%2Fviews_submissions.py%3A87+apollo%2Fsubmissions%2Fviews_submissions.py%3A90+apollo%2Fsubmissions%2Fviews_submissions.py%3A386
 msgid "Critical Incidents"
@@ -1017,7 +1017,7 @@ msgstr "История звонков"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:145
 msgid "Quality Assurance Warnings"
-msgstr "Предупреждение о контроле качества "
+msgstr "Предупреждение о контроле качества"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:146
 msgid ""
@@ -1028,7 +1028,7 @@ msgid ""
 msgstr ""
 "Эти контрольные условия были отмечены в процессе проверки данной отправки. "
 "Пожалуйста, уточните у участника отправленные данные. Если участник "
-"подтвердит эти данные, отметьте данные как проверенные. "
+"подтвердит эти данные, отметьте данные как проверенные."
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fmacros%2Fsubmission_list_macros.html%3A15+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fmacros%2Fsubmission_list_macros.html%3A17+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fmacros%2Fsubmission_list_macros.html%3A20+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fsubmission_edit.html%3A387+apollo%2Fparticipants%2Fservices.py%3A39+apollo%2Ftemplates%2Fadmin%2Fparticipant_list.html%3A66+apollo%2Ftemplates%2Fadmin%2Fparticipant_list.html%3A68+apollo%2Ftemplates%2Fadmin%2Fparticipant_list.html%3A70+apollo%2Ftemplates%2Fadmin%2Fquality_assurance.html%3A31
 msgid "ID"
@@ -1064,7 +1064,7 @@ msgstr "Комментариев нет"
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fsubmission_edit.html%3A515+apollo%2Fsubmissions%2Fservices.py%3A63
 msgid "Comment"
-msgstr "Комментарий "
+msgstr "Комментарий"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:518
 msgid "Add Comment"
@@ -1080,7 +1080,7 @@ msgid ""
 "participant here."
 msgstr ""
 "Вы можете добавить детали о вашем звонке (по желанию) или о взаимодействии с "
-"участником здесь. "
+"участником здесь."
 
 #: apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fmacros%2Fsend_message.html%3A7+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fsubmission_list.html%3A65+apollo%2Ffrontend%2Ftemplates%2Ffrontend%2Fsubmission_list.html%3A72+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A19+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A69+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A83+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A135+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A152+apollo%2Ftemplates%2Fadmin%2Fadministrative_divisions.html%3A164+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A32+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A49+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A108+apollo%2Ftemplates%2Fadmin%2Fform_list.html%3A131+apollo%2Ftemplates%2Fadmin%2Flayout.html%3A68+apollo%2Ftemplates%2Fadmin%2Flocation_headers_errors.html%3A9+apollo%2Ftemplates%2Fadmin%2Fquality_assurance_edit.html%3A37
 msgid "Close"
@@ -1224,11 +1224,11 @@ msgstr "Свойства для %(loc_type_name)s были отражены, н�
 
 #: apollo/locations/models.py:72
 msgid "%(location_type)s Name (%(language)s)"
-msgstr "%(location_type)s  Имя (%(language)s)"
+msgstr "%(location_type)s Имя (%(language)s)"
 
 #: apollo/locations/models.py:76
 msgid "%(location_type)s Code"
-msgstr "%(location_type)s  Код"
+msgstr "%(location_type)s Код"
 
 #: apollo/locations/models.py:78
 msgid "%(location_type)s Latitude"
@@ -1240,7 +1240,7 @@ msgstr "%(location_type)s Долгота"
 
 #: apollo/locations/models.py:84
 msgid "%(location_type)s %(field_label)s"
-msgstr "%(location_type)s  %(field_label)s"
+msgstr "%(location_type)s %(field_label)s"
 
 #: apollo/locations/models.py:91
 msgid "%(location_type)s registered voters"
@@ -1285,7 +1285,7 @@ msgstr "Недопустимая форма"
 msgid "Invalid message: %(text)s. Please check and resend!"
 msgstr ""
 "Недопустимое сообщение: %(text)s. Пожалуйста, проверьте и повторите "
-"отправку! "
+"отправку!"
 
 #: apollo/messaging/helpers.py:58
 msgid ""
@@ -1682,7 +1682,7 @@ msgstr "Номер должены быть между %(min)s и %(max)s."
 msgid "Participant and location cannot both be empty"
 msgstr ""
 "Поля \"участник\" и \"местосположение\" не могут одновременно оставаться "
-"пустыми "
+"пустыми"
 
 #: apollo/submissions/models.py:14
 msgid "No Problem"
@@ -1767,7 +1767,7 @@ msgstr "Зарегистрированные избиратели"
 
 #: apollo/submissions/services.py:56
 msgid "Timestamp"
-msgstr "Временная отметка "
+msgstr "Временная отметка"
 
 #: apollo/submissions/views_submissions.py:478
 msgid "Edit Incident"
@@ -1915,7 +1915,7 @@ msgstr "Вы уверены, что хотите удалить это усло�
 
 #: apollo/templates/admin/quality_assurance_edit.html:46
 msgid "Yes"
-msgstr "Да "
+msgstr "Да"
 
 #: apollo/templates/admin/quality_assurance_edit.html:100
 msgid "Fields"
@@ -2086,7 +2086,7 @@ msgstr ""
 "выбраны"
 
 msgid "Edit %(name)s"
-msgstr "Редактировать «%(name)s»"
+msgstr "Редактировать %(name)s"
 
 msgid "Select column"
 msgstr "Выбрать столбец"
@@ -2141,10 +2141,10 @@ msgid "Are you sure you want to enable selected users?"
 msgstr "Вы уверены, что хотите активировать выбраных Вами пользователей?"
 
 msgid "Dashboard · %(name)s"
-msgstr "Информационная панель· %(name)s"
+msgstr "Информационная панель · %(name)s"
 
 msgid "Dashboard · %(name)s  · %(group)s"
-msgstr "Информационная панель · %(name)s  · %(group)s"
+msgstr "Информационная панель · %(name)s · %(group)s"
 
 msgid "Add Form"
 msgstr "Добавить форму"
@@ -2341,7 +2341,7 @@ msgstr "%(location_type)s Название"
 msgid "Admin level %(name)s has locations assigned and cannot be deleted"
 msgstr ""
 "Административный уровень %(name)s привязан к местоположению и не может быть "
-"удален. "
+"удален."
 
 msgid ""
 "Locations, Checklists, Critical Incidents and Participants are being deleted."
