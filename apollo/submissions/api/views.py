@@ -16,7 +16,9 @@ from apollo.core import csrf, db
 from apollo.deployments.models import Event
 from apollo.formsframework.forms import filter_form, filter_participants
 from apollo.frontend.helpers import DictDiffer
+from apollo.odk.utils import make_message_text
 from apollo.participants.models import Participant
+from apollo.services import messages
 from apollo.submissions.api.schema import SubmissionSchema
 from apollo.submissions.models import Submission, SubmissionVersion
 from apollo.utils import current_timestamp
@@ -251,6 +253,15 @@ def submission():
         submission.update_related(data)
         submission.update_master_offline_status()
         update_submission_version(submission)
+
+    message_text = make_message_text(form, participant, data)
+    sender = participant.primary_phone or participant.participant_id
+    message = messages.log_message(
+        event=submission.event, direction='IN', text=message_text,
+        sender=sender, message_type='API')
+    message.participant = participant
+    message.submission_id = submission.id
+    message.save()
 
     # return the submission ID so that any updates
     # (for example, sending attachments) can be done
