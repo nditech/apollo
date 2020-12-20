@@ -48,7 +48,6 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block footer %}
@@ -77,7 +76,7 @@
     mode: 'multi',
     persist: false,
     options: [
-      {%- for question in form.tags %}
+      {%- for question in form.qa_tags %}
       {value: '{{ question }}', text: '{{ question }}', optgroup: 'fields'},
       {%- endfor %}
       {value: '$submission.serial_no', text: '@form_serial_no', optgroup: 'extra'},
@@ -131,7 +130,7 @@
         type: 'POST',
         data: {postdata: JSON.stringify(vm.control), csrf_token: "{{ csrf_token() }}"}
       }).always(function () {
-        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}'
+        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
       });
     });
 
@@ -145,7 +144,7 @@
         type: 'DELETE',
         data: {csrf_token: "{{ csrf_token() }}"}
       }).always(function () {
-        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}'
+        window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
       });
     })
   });

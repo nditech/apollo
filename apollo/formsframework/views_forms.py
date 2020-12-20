@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+import json
 from datetime import datetime
 from io import BytesIO
 
-from arpeggio import NoMatch
 from arpeggio.cleanpeg import ParserPEG
 from flask import (
-    abort, Blueprint, flash, g, redirect, request, send_file, session, url_for)
+    abort, Blueprint, flash, g, jsonify, redirect, request, send_file, session,
+    url_for)
 from flask_babelex import lazy_gettext as _
-import json
 from flask_security import current_user
 from slugify import slugify
 
@@ -288,21 +288,17 @@ def quality_control_edit(view, form_id, qc=None):
             quality_control['description'] = postdata['description']
             quality_control['criteria'] = []
             parser = ParserPEG(GRAMMAR, 'qa')
+            errors = set()
+            invalid_tags = []
+            multiselect_tags = []
 
             for condition in postdata['criteria']:
-                formula = '{lvalue} {comparator} {rvalue}'.format(**condition)
-                try:
-                    parser.parse(formula)
-
-                    # parsing succeeds so it must be good
-                    quality_control['criteria'].append({
-                        'lvalue': condition['lvalue'],
-                        'comparator': condition['comparator'],
-                        'rvalue': condition['rvalue'],
-                        'conjunction': condition['conjunction']
-                    })
-                except NoMatch:
-                    pass
+                quality_control['criteria'].append({
+                    'lvalue': condition['lvalue'],
+                    'comparator': condition['comparator'],
+                    'rvalue': condition['rvalue'],
+                    'conjunction': condition['conjunction']
+                })
 
             if 'rvalue' in quality_control:
                 del quality_control['rvalue']
@@ -324,7 +320,8 @@ def quality_control_edit(view, form_id, qc=None):
             form.save()
 
             if request.is_xhr:
-                return 'true'
+                data = {}
+                return jsonify(data)
             else:
                 return redirect(url_for('formsview.qc', form_id=form.id))
         except ValueError:
@@ -410,7 +407,8 @@ def export_form(id):
     workbook.save(memory_file)
     memory_file.seek(0)
     current_timestamp = datetime.utcnow()
-    filename = slugify(f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}') + '.xls'
+    filename = slugify(
+        f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}') + '.xls'
 
     return send_file(
         memory_file, attachment_filename=filename,
