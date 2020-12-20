@@ -31,8 +31,7 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
 FIELD_TYPES = (
-    'comment', 'integer', 'select', 'multiselect', 'string', 'location',
-    'image'
+    'comment', 'integer', 'select', 'multiselect', 'string', 'image'
 )
 
 FIELD_SUMMARY_TYPES = (
