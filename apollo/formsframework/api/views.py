@@ -24,7 +24,8 @@ class FormItemResource(MethodResource):
 
 
 @use_kwargs(
-    {'event_id': fields.Int(), 'form_type': fields.String()},
+    {'event_id': fields.Int(), 'form_type': fields.String(),
+     'last_modified_after': fields.DateTime()},
     locations=['query'])
 class FormListResource(BaseListResource):
     schema = FormSchema()
@@ -48,5 +49,10 @@ class FormListResource(BaseListResource):
             query = query.join(events_forms).filter(
                 events_forms.c.event_id == event_id
             )
+
+        last_modified = kwargs.get('last_modified_after')
+        if last_modified:
+            last_modified_str = last_modified.strftime('%Y%m%d%H%M%S%f')
+            query = query.filter(Form.version_identifier > last_modified_str)
 
         return query
