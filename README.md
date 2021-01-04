@@ -129,11 +129,11 @@ After changing the file, restart nginx using `service nginx restart` (or `servic
 
 #### Logging in
 
-You should now be able to login to your site by navigating to port `:5000` on your localhost or server (http://localhost:5000 or http://*server-ip-address*:5000). The default login is username: `admin` / password: `admin`. This can be changed upon logging in.
+You should now be able to log in to your site by navigating to the IP or URL for your server, or if you are running it locally without nginx by going to port 5000 on your localhost (http://localhost:5000). The default login is username: `admin` / password: `admin`. This can be changed upon logging in.
 
 ### Application Configuration Settings
 
-Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. Here are a collection of settings parameters and sample values together with an explanation of what they do.
+Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. The syntax is for each setting to use the header listed below with an equal sign and then its value, for example `SSL_REQUIRED=False` or `TIMEZONE=Africa/Lagos`. Here are a collection of settings parameters and sample values together with an explanation of what they do.
 
 **SECRET_KEY**
 (e.g. LBZyd8EY80mALqb7bl8o3da8)
