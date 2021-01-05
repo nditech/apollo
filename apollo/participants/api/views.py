@@ -129,7 +129,7 @@ class ParticipantListResource(BaseListResource):
 
 
 @csrf.exempt
-def participant_login():
+def login():
     request_data = request.json
     participant_id = request_data.get('username')
     password = request_data.get('password')
@@ -149,7 +149,7 @@ def participant_login():
         response = {'message': gettext('Login failed'), 'status': 'error'}
         return jsonify(response), HTTPStatus.FORBIDDEN
 
-    access_token = create_access_token(str(participant.uuid))
+    access_token = create_access_token(str(participant.uuid), fresh=True)
     refresh_token = create_refresh_token(str(participant.uuid))
 
     response = {
@@ -172,10 +172,10 @@ def refresh():
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
     except NoResultFound:
         response = {
-            'message': gettext('Invalid refresh token supplied'),
+            'message': gettext('Invalid token supplied'),
             'status': 'error'
         }
-        return jsonify(response, HTTPStatus.BAD_REQUEST)
+        return jsonify(response), HTTPStatus.UNAUTHORIZED
 
     access_token = create_access_token(participant.uuid)
     response = {

@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 bp.add_url_rule(
     '/api/participants/login',
-    view_func=api_views.participant_login,
+    view_func=api_views.login,
     methods=['POST']
 )
 bp.add_url_rule(
