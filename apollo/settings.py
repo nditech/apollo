@@ -243,7 +243,7 @@ AWS_ENDPOINT_URL = config('AWS_ENDPOINT_URL', default=None)
 # JWT settings
 JWT_TOKEN_LOCATION = config(
     'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies,headers')
-JWT_SECRET = config('JWT_SECRET')
+JWT_SECRET_KEY = config('JWT_SECRET_KEY')
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(
     seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
 )
