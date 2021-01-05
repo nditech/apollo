@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from http import HTTPStatus
+
 from authlib.flask.client import OAuth
 from collections import OrderedDict
-from flask import redirect, url_for
+from flask import jsonify, redirect, url_for
 from flask_admin import expose, Admin, AdminIndexView
 from flask_apispec import FlaskApiSpec
-from flask_babelex import Babel
+from flask_babelex import Babel, gettext
 from flask_caching import Cache
 from flask_cors import CORS
 try:
@@ -57,6 +59,14 @@ debug_toolbar = DebugToolbarExtension() if fdt_available else None
 uploads = UploadSet('uploads', DEFAULTS)
 webpack = Webpack()
 docs = FlaskApiSpec()
+
+
+@jwt_manager.expired_token_loader
+def process_expired_token(decoded_token):
+    return jsonify({
+        'status': 'error',
+        'message': gettext('Token has expired')
+    }), HTTPStatus.UNAUTHORIZED
 
 
 class Filter(object):
