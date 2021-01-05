@@ -16,9 +16,6 @@
 .daily .axis text {
   text-anchor: end;
 }
-.table-hide {
-  empty-cells: hide;
-}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
@@ -65,14 +62,10 @@
   <div class="col-12 mb-2 mt-4 p-0">
     <h5 class="text-center">{{ _('Daily Progress Report') }}</h5>
     <div class="table-responsive mb-n3 mt-4">
-      <table class="table table-sm table-hover table-bordered table-hide">
-        <thead class="thead-light">
+      <table id="progress-extended" class="table table-striped" style="width:100%">
+        <thead>
           <tr>
-            <td style="border-top-style: none; border-left-style: none; border-bottom-style: none;"></td>
-            <th class="text-center" colspan="{{ event_days|length }}">{{ _('Days') }}</th>
-          </tr>
-          <tr>
-            <th></th>
+            <th scope="col">{% trans %}Location{% endtrans %}</th>
             {% for day in event_days -%}
             <th scope="col" class="text-center timestamp-date" data-timestamp="{{ day|timestamp }}">{{ day.strftime('%b %-d') }}</th>
             {% endfor %}
@@ -84,7 +77,7 @@
           <tr>
             <td>{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</td>
             {% for day in event_days -%}
-            <td class="text-center text-monospace" title="{% trans index=loop.index %}Day {{ index }}{% endtrans %}">{{ item.data[day] or 0 }}</th>
+            <td class="text-center text-monospace" title="{% trans index=loop.index %}Day {{ index }}{% endtrans %}">{{ item.data[day] or 0 }}</td>
             {% endfor %}
             <td class="text-center text-monospace" title="{% trans %}Total{% endtrans %}">{{ item.data.total or 0 }}</td>
           <tr>
@@ -97,11 +90,8 @@
   <div class="col-12 mb-2 mt-4 p-0">
     <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ _('Daily Progress Report') }}{% if not location and not request.args.location %}</a>{% endif %}</h5>
     <div class="table-responsive mb-n3 mt-4">
-      <table class="table table-sm table-hover table-bordered">
+      <table id="progress" class="table" style="width:100%">
         <thead class="thead-light">
-          <tr>
-            <th class="text-center" colspan="{{ event_days|length }}">{{ _('Days') }}</th>
-          </tr>
           <tr>
             {% for day in event_days -%}
             <th scope="col" class="text-center timestamp-date" data-timestamp="{{ day|timestamp }}">{{ day.strftime('%b %-d') }}</th>
@@ -188,6 +178,35 @@ $(function () {
   });
   LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
   $('select.select2-locations').select2(LocationOptions);
+  $('tr:not(:has(*))').remove();
+  let table = $('#progress-extended').DataTable({
+    searching: false,
+    info: false,
+    ordering: false,
+    paging: false,
+    lengthChange: false,
+    fixedColumns: {
+      leftColumns: 1,
+      rightColumns: 1
+    },
+    scrollX: true,
+    scrollY: '500px',
+    scrollCollapse: true
+  });
+  table.columns.adjust().draw();
+  $('#progress').DataTable({
+    searching: false,
+    info: false,
+    ordering: false,
+    paging: false,
+    lengthChange: false,
+    fixedColumns: {
+      leftColumns: 0,
+      rightColumns: 1
+    },
+    scrollX: true,
+    scrollCollapse: true
+  });
 });
 </script>
 {% endblock %}
