@@ -56,6 +56,10 @@ def _get_group_coverage(query, form, group, location_type):
         return coverage_list
 
     group_tags = form.get_group_tags(group['name'])
+    conflict_group_tags = []
+    if not form.untrack_data_conflicts:
+        conflict_group_tags = form.get_group_tags(
+            group['name'], form.CONFLICT_FIELD_TYPES)
 
     # get the location closure table depth
     sample_sub = query.first()
@@ -69,41 +73,52 @@ def _get_group_coverage(query, form, group, location_type):
         return coverage_list
 
     # get conflict submissions first
-    if group_tags:
+    if conflict_group_tags:
         conflict_query = query.filter(
             Submission.conflicts != None,
-            Submission.conflicts.has_any(array(group_tags)),
+            Submission.conflicts.has_any(array(conflict_group_tags)),
             Submission.unreachable == False)  # noqa
     else:
         conflict_query = query.filter(false())
 
     if group_tags:
-        missing_query = query.filter(
+        terms = [
             ~Submission.data.has_any(array(group_tags)),
-            or_(
-                Submission.conflicts == None,
-                ~Submission.conflicts.has_any(array(group_tags))),
-            Submission.unreachable == False)  # noqa
+            Submission.unreachable == False     # noqa
+        ]
+        if conflict_group_tags:
+            terms.append(or_(
+                Submission.conflicts == None,   # noqa
+                ~Submission.conflicts.has_any(array(conflict_group_tags))
+            ))
+
+        missing_query = query.filter(*terms)
     else:
         missing_query = query
 
     if group_tags:
-        complete_query = query.filter(
-            or_(
-                Submission.conflicts == None,  # noqa
-                ~Submission.conflicts.has_any(array(group_tags))),
-            Submission.data.has_all(array(group_tags)))
+        terms = [Submission.data.has_all(array(group_tags))]
+        if conflict_group_tags:
+            terms.append(or_(
+                Submission.conflicts == None,   # noqa
+                ~Submission.conflicts.has_any(array(conflict_group_tags)),
+            ))
+        complete_query = query.filter(*terms)
     else:
         complete_query = query.filter(false())
 
     if group_tags:
-        partial_query = query.filter(
-            or_(
-                Submission.conflicts == None,
-                ~Submission.conflicts.has_any(array(group_tags))),
+        terms = [
             ~Submission.data.has_all(array(group_tags)),
             Submission.data.has_any(array(group_tags)),
-            Submission.unreachable == False)  # noqa
+            Submission.unreachable == False     # noqa
+        ]
+        if conflict_group_tags:
+            terms.append(or_(
+                Submission.conflicts == None,   # noqa
+                ~Submission.conflicts.has_any(array(conflict_group_tags))
+            ))
+        partial_query = query.filter(*terms)
     else:
         partial_query = query.filter(false())
 

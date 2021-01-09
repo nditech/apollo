@@ -37,7 +37,7 @@
       <div class="card-body py-0 px-0">
         <table id="dataTable" class="table table-borderless mb-0 table-responsive">
           <tbody>
-          {% for field in group.fields %}
+          {% for field in group.fields if field['type'] != 'image' %}
             <tr>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">

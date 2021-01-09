@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from depot.fields.sqlalchemy import UploadedFileField
+from depot.fields.specialized.image import UploadedImageWithThumb
 from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
 from geoalchemy2 import Geometry  # noqa
@@ -553,6 +555,23 @@ class SubmissionVersion(BaseModel):
             added = set(self.data.keys())
 
         return {'added': added, 'deleted': deleted, 'changed': changed}
+
+
+class SubmissionImageAttachment(BaseModel):
+    __tablename__ = 'image_attachment'
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    submission_id = db.Column(
+        db.Integer, db.ForeignKey('submission.id', ondelete='CASCADE'),
+        nullable=False)
+    photo = db.Column(
+        UploadedFileField(upload_storage='images',
+                          upload_type=UploadedImageWithThumb))
+
+    submission = db.relationship(
+        'Submission',
+        backref=db.backref('image_attachments', cascade='all, delete',
+                           passive_deletes=True))
 
 
 def trim_conflicts(submission, conflict_tags, data_keys):

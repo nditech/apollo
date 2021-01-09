@@ -31,7 +31,7 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
 FIELD_TYPES = (
-    'comment', 'integer', 'select', 'multiselect', 'string', 'location'
+    'comment', 'integer', 'select', 'multiselect', 'string', 'image'
 )
 
 FIELD_SUMMARY_TYPES = (
@@ -71,6 +71,8 @@ class Form(Resource):
         ('INCIDENT', _('Incident Form')),
         ('SURVEY', _('Survey Form'))
     )
+
+    CONFLICT_FIELD_TYPES = ('integer', 'select', 'multiselect', 'string')
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
     __tablename__ = 'form'
@@ -158,7 +160,7 @@ class Form(Resource):
 
         return self._field_cache.get(tag)
 
-    def get_group_tags(self, group_name):
+    def get_group_tags(self, group_name, field_types=FIELD_TYPES):
         if not hasattr(self, '_group_cache'):
             self._populate_group_cache()
 
@@ -167,7 +169,7 @@ class Form(Resource):
 
         if grp and grp.get('fields'):
             for f in grp.get('fields'):
-                if f and f.get('tag'):
+                if f and f.get('tag') and f.get('type') in field_types:
                     tags.append(f.get('tag'))
 
         return tags
@@ -276,20 +278,23 @@ class Form(Resource):
                             field_element.append(
                                 E.item(E.label(key), E.value(str(value)))
                             )
+                    elif field_type == 'image':
+                        mediatype = 'image/*'
+                        field_element = E.upload(
+                            E.label(field['description']), ref=field['tag'],
+                            mediatype=mediatype
+                        )
+                        model.append(E.bind(nodeset=path, type='binary'))
                     else:
                         continue
 
                     grp_element.append(field_element)
                 body.append(grp_element)
 
-        # hard coding a location question here until the form builder
-        # gets updated. please remove once the form builder supports
-        # locations
         description = gettext('Location')
         path = '/data/location'
         data.append(etree.Element('location'))
         model.append(E.bind(nodeset=path, type='geopoint'))
-
         grp_element = E.group(E.label(description))
         field_element = E.input(E.label(description), ref='location')
         grp_element.append(field_element)
@@ -343,7 +348,8 @@ class FormBuilderSerializer(object):
                 data['component'] = 'checkbox'
             else:
                 data['component'] = 'radio'
-
+        elif field_type == 'image':
+            data['component'] = 'image'
         return data
 
     @classmethod
@@ -432,6 +438,8 @@ class FormBuilderSerializer(object):
                             pass
                 else:
                     field['type'] = 'string'
+            elif f['component'] == 'image':
+                field['type'] = 'image'
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}

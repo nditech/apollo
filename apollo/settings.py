@@ -223,3 +223,19 @@ REDIS_URL = 'redis://{host}/{database}'.format(
 KEEPALIVE_INTERVAL = 15  # in seconds
 
 TASK_STATUS_TTL = config('TASK_STATUS_TTL', cast=int, default=300)  # seconds
+
+# attachment settings
+base_upload_path = Path(
+    config('DEFAULT_STORAGE_PATH', default=default_upload_path))
+image_upload_path = Path(
+    config('IMAGES_STORAGE_PATH', default=base_upload_path.joinpath('images')))
+ATTACHMENTS_USE_S3 = config(
+    'ATTACHMENTS_USE_S3', cast=config.boolean, default=False)
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID') if ATTACHMENTS_USE_S3 else None
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY') \
+    if ATTACHMENTS_USE_S3 else None
+AWS_DEFAULT_REGION = config('AWS_DEFAULT_REGION', default=None)
+AWS_DEFAULT_BUCKET = config('AWS_DEFAULT_BUCKET', default=None)
+AWS_IMAGES_REGION = config('AWS_IMAGES_REGION', default=AWS_DEFAULT_REGION)
+AWS_IMAGES_BUCKET = config('AWS_IMAGES_BUCKET', default=AWS_DEFAULT_BUCKET)
+AWS_ENDPOINT_URL = config('AWS_ENDPOINT_URL', default=None)

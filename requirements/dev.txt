@@ -14,6 +14,10 @@ amqp==2.5.0 \
 aniso8601==0.82 \
     --hash=sha256:e33ffc4ff6882e6a318c07844e346cd6160abe2f48cc2e797d2fe5f36364789e \
     # via -r requirements/prod.in
+anyascii==0.1.7 \
+    --hash=sha256:d0eb076933a9eaf1138cb365a5e2e35360ffbbf3200bf33419aaa17d5f8599f5 \
+    --hash=sha256:f100a4f716867bcf0a3b05d8a183dd122fc1d55304a10127bee256e602452d61 \
+    # via filedepot
 anyjson==0.3.3 \
     --hash=sha256:37812d863c9ad3e35c0734c42e0bf0320ce8c3bed82cd20ad54cb34d158157ba \
     # via -r requirements/prod.in
@@ -53,6 +57,14 @@ billiard==3.5.0.5 \
 blinker==1.4 \
     --hash=sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6 \
     # via -r requirements/prod.in, flask-debugtoolbar, flask-mail, flask-principal
+boto3==1.16.8 \
+    --hash=sha256:0f8f9ef5e902e05b32f4b7ae3bf948a47675613f5a99185f63d2ef4183225086 \
+    --hash=sha256:207d129d808659b6d5668dc106918aa906373cf00652a53422131e7218df39cf \
+    # via -r requirements/prod.in
+botocore==1.19.8 \
+    --hash=sha256:2e03401b4e0bc1f32fa11b7d1025975a2955f185dd2650fda6e33c70daeaba4c \
+    --hash=sha256:da7ecc69b6e2ea42fb849928635c0689cae32a95cb38f82b21213d276e75a4a4 \
+    # via boto3, s3transfer
 cachetools==1.1.5 \
     --hash=sha256:9810dd6afaec9e9eaae5ec33f2aa7117214a7a3f8427e70ab23939fe4d1bf279 \
     --hash=sha256:f2557ea12eb1e1f9740ed3cd218089eecdd92be1df810402459fa6f2fd8b42f2 \
@@ -175,6 +187,9 @@ entrypoints==0.3 \
 et-xmlfile==1.0.1 \
     --hash=sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b \
     # via openpyxl
+filedepot==0.8.0 \
+    --hash=sha256:25316ecd352e16524b4d321dbad08e9beb563d5de5447f3ed312daec5d011849 \
+    # via -r requirements/prod.in
 flake8==3.7.7 \
     --hash=sha256:859996073f341f2670741b51ec1e67a01da142831aa1fdc6242dbf88dffbe661 \
     --hash=sha256:a796a115208f5c03b18f332f7c11729812c8c3ded6c46319c59b53efd3819da8 \
@@ -341,6 +356,10 @@ jinja2==2.10.1 \
     --hash=sha256:065c4f02ebe7f7cf559e49ee5a95fb800a9e4528727aec6f24402a5374c65013 \
     --hash=sha256:14dd6caf1527abb21f08f86c784eac40853ba93edb79552aa1e4b8aef1b61c7b \
     # via -r requirements/prod.in, flask, flask-babelex
+jmespath==0.10.0 \
+    --hash=sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9 \
+    --hash=sha256:cdf6525904cc597730141d61b36f2e4b8ecc257c420fa2f4549bac2c2d0cb72f \
+    # via boto3, botocore
 kombu==4.6.0 \
     --hash=sha256:14997e6d76d36f2b296f57e37fd1d388e4e0159edea8368a8c6f4620a355a722 \
     --hash=sha256:27345bb569eb6bb583bca27dfc0ef181ca6c59c40c6e203cecaa0aeca84360be \
@@ -630,7 +649,7 @@ pyflakes==2.1.1 \
 python-dateutil==2.7.2 \
     --hash=sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df \
     --hash=sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e \
-    # via -r requirements/prod.in, alembic, pandas
+    # via -r requirements/prod.in, alembic, botocore, pandas
 python-editor==1.0.3 \
     --hash=sha256:a3c066acee22a1c94f63938341d4fb374e3fdd69366ed6603d7b24bed1efc565 \
     # via -r requirements/prod.in, alembic
@@ -688,10 +707,14 @@ regex==2018.2.3 \
     --hash=sha256:f5fa8f1eb6e6b6323db3b249a9fef4b4dca3a3260b6f1a39dee629baa4a8004a \
     --hash=sha256:fa62d5a67788cd320228b3d266a00ad3c7a877cf501441944f92b2e575de3845 \
     # via -r requirements/prod.in, awesome-slugify
-requests==2.21.0 \
-    --hash=sha256:502a824f31acdacb3a35b6690b5fbf0bc41d63a24a45c4004352b0242707598e \
-    --hash=sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b \
+requests==2.24.0 \
+    --hash=sha256:b3559a131db72c33ee969480840fff4bb6dd111de7dd27c8ee1f820f4f00231b \
+    --hash=sha256:fe75cc94a9443b9246fc7049224f75604b113c36acb93f87b80ed42c44cbb898 \
     # via -r requirements/prod.in, authlib
+s3transfer==0.3.3 \
+    --hash=sha256:2482b4259524933a022d59da830f51bd746db62f047d6eb213f2f8855dcb8a13 \
+    --hash=sha256:921a37e2aefc64145e7b73d50c71bb4f26f46e4c9f414dc648c6245ff92cf7db \
+    # via boto3
 shapely==1.6.4.post2 \
     --hash=sha256:0378964902f89b8dbc332e5bdfa08e0bc2f7ab39fecaeb17fbb2a7699a44fe71 \
     --hash=sha256:34e7c6f41fb27906ccdf2514ee44a5774b90b39a256b6511a6a57d11ffe64999 \
@@ -741,10 +764,10 @@ unittest2==1.1.0 \
     --hash=sha256:13f77d0875db6d9b435e1d4f41e74ad4cc2eb6e1d5c824996092b3430f088bb8 \
     --hash=sha256:22882a0e418c284e1f718a822b3b022944d53d2d908e1690b319a9d3eb2c0579 \
     # via pyxform
-urllib3==1.24.3 \
-    --hash=sha256:2393a695cd12afedd0dcb26fe5d50d0cf248e5a66f75dbd89a3d4eb333a61af4 \
-    --hash=sha256:a637e5fae88995b256e3409dc4d52c2e2e0ba32c42a6365fee8bbd2238de3cfb \
-    # via requests
+urllib3==1.25.11 \
+    --hash=sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2 \
+    --hash=sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e \
+    # via botocore, requests
 validators==0.13.0 \
     --hash=sha256:ea9bf8bf22aa692c205e12830d90b3b93950e5122d22bed9eb2f2fece0bba298 \
     # via wtforms-components
