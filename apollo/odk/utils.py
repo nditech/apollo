@@ -9,6 +9,8 @@ import qrcode
 from PIL import Image
 from flask import url_for
 
+from apollo.settings import SSL_REQUIRED
+
 
 def make_message_text(form, participant, data):
     message_body = f'{form.prefix} {participant.participant_id}'
@@ -32,10 +34,12 @@ def make_message_text(form, participant, data):
 
 
 def generate_config_qr_code(participant=None):
+    scheme = 'https' if SSL_REQUIRED else 'http'
     settings = {
         'general': {
             'server_url': urljoin(
-                url_for('dashboard.index', _external=True), 'xforms'
+                url_for('dashboard.index', _external=True, _scheme=scheme),
+                'xforms'
             )
         },
         'admin': {}
