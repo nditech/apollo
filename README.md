@@ -54,11 +54,13 @@ SSL_REQUIRED=False
 
 In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start the database, task queue, worker and main application containers individually.
 
-To build and start the application, simply run:
+To build and start the application, simply run (from within the main folder):
 
-`make docker`
+`sudo docker-compose up -d`
 
-The main application container and worker containers will be built and run together with the supporting database and task queue containers. After running the command initially, subsequent builds will use cached container images. To deploy the code from scratch without drawing upon the cached images (for example to incorporate subsequent any changes made to the Apollo code outside of the docker containers), run `docker-compose build --no-cache`.
+The main application container and worker containers will be built and run together with the supporting database and task queue containers. After running the command initially, subsequent builds will use cached container images. To see which containers are running, use `sudo docker ps`.
+
+To deploy the code from scratch without drawing upon the cached images (for example to incorporate subsequent any changes made to the Apollo code outside of the docker containers), run `docker-compose build --no-cache`.
 
 
 
