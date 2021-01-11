@@ -131,7 +131,7 @@ class ParticipantListResource(BaseListResource):
 @csrf.exempt
 def login():
     request_data = request.json
-    participant_id = request_data.get('username')
+    participant_id = request_data.get('participant_id')
     password = request_data.get('password')
 
     current_events = Event.overlapping_events(Event.default())
