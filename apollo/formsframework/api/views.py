@@ -30,6 +30,7 @@ class FormItemResource(MethodResource):
 class FormListResource(BaseListResource):
     schema = FormSchema()
 
+    @protect
     def get_items(self, **kwargs):
         deployment = getattr(g, 'deployment', None)
         if deployment:
