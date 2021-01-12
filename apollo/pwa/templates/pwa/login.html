@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ _('Apollo') }}</title>
+</head>
+<body>
+  <div x-data="loginApp()">
+    <form>
+      <fieldset>
+        <div>
+          <label for="participant_id">{{ _('Participant ID') }}</label>
+          <input type="text" name="participant_id" id="participant_id" placeholder="{{ _('Participant ID') }}" x-model="participant_id" required>
+        </div>
+        <div>
+          <label for="password">{{ _('Password') }}</label>
+          <input type="password" name="password" id="password" placeholder="{{ _('Password') }}" x-model="password" required>
+        </div>
+        <div>
+          <input type="button" value="{{ _('Login') }}" @click="loginHandler"></div>
+      </fieldset>
+    </form>
+  </div>
+  <script src="{{ url_for('pwa.static', filename='vendor/alpinejs/alpine.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/localforage/localforage.js') }}"></script>
+  <script>
+    let endpoints = {
+      login: "{{ url_for('participants.login') }}",
+      refresh: "{{ url_for('participants.refresh') }}",
+      submit: "{{ url_for('submissions.submission') }}",
+      list: "{{ url_for('forms.api_form_list') }}",
+    };
+
+    let pages = {
+      login: "{{ url_for('pwa.login') }}",
+      index: "{{ url_for('pwa.index') }}"
+    }
+
+    let loginApp = () => {
+      return {
+        participant_id: '',
+        password: '',
+        loginHandler() {
+          let statusCode = 0;
+          fetch(endpoints.login, {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+              participant_id: this.participant_id,
+              password: this.password
+            })
+          }).then(response => {
+            statusCode = response.status
+            return response.json()
+          }).then(data => {
+            if (statusCode !== 200)
+              console.error(data);
+            else {
+              localforage.setItem('tokens', data.data);
+              window.location.href = pages.index;
+            }
+          })
+        }
+      }
+
+    };
+
+    let loader = () => {
+    };
+
+    document.addEventListener('DOMContentLoaded', loader);
+  </script>
+</body>
+</html>

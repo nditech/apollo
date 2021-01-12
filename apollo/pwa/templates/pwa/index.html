@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ _('Apollo') }}</title>
+</head>
+<body>
+  <div x-data="app()" x-init="init()">
+    <template x-if="showList()">
+      <div>
+        <template x-for="form in forms" :key="form.id">
+          <div>
+            <span x-text="form.name"></span>
+            <button x-text="form.form_type === 'INCIDENT' ? 'Report' : 'Edit'" @click="currentForm = form"></button>
+          </div>
+        </template>
+      </div>
+    </template>
+    <template x-if="!showList()">
+      <div>
+        <h3 x-text="currentForm.name"></h3>
+        <form>
+          <template x-for="group in currentForm.data.groups">
+            <div>
+              <h4 x-text="group.name"></h4>
+              <template x-for="field in group.fields">
+                <div>
+                  <template x-if="field.type === 'integer'">
+                    <div>
+                      <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
+                      <input type="number" :name="field.tag" :min="field.min" :max="field.max">
+                    </div>
+                  </template>
+                  <template x-if="field.type === 'select'">
+                    <div>
+                      <strong><span x-text="field.tag"></span> - <span x-text="field.description"></span></strong>
+                      <template x-for="[label, value] in Object.entries(field.options)" :key="value">
+                        <div>
+                          <label :for="field.tag" x-text="label"></label>
+                          <input type="radio" :name="field.tag" :value="value">
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                  <template x-if="field.type === 'multiselect'">
+                    <div>
+                      <strong><span x-text="field.tag"></span> - <span x-text="field.description"></span></strong>
+                      <template x-for="[label, value] in Object.entries(field.options)" :key="value">
+                        <div>
+                          <label :for="field.tag" x-text="label"></label>
+                          <input type="checkbox" :name="field.tag" :value="value">
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                  <template x-if="field.type === 'string'">
+                    <div>
+                      <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
+                      <input type="text" :name="field.tag">
+                    </div>
+                  </template>
+                  <template x-if="field.type === 'comment'">
+                    <div>
+                      <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
+                      <textarea :name="field.tag" :id="field.tag" cols="30" rows="10"></textarea>>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <hr>
+            </div>
+          </template>
+        </form>
+        <button @click="currentForm = null">Back</button>
+      </div>
+    </template>
+    <button @click="getForms()" type="submit">Get forms</button>
+  </div>
+  <script src="{{ url_for('pwa.static', filename='vendor/alpinejs/alpine.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/localforage/localforage.js') }}"></script>
+  <script>
+    let endpoints = {
+      login: "{{ url_for('participants.login') }}",
+      refresh: "{{ url_for('participants.refresh') }}",
+      submit: "{{ url_for('submissions.submission') }}",
+      list: "{{ url_for('forms.api_form_list') }}",
+    };
+
+    let pages = {
+      login: "{{ url_for('pwa.login') }}"
+    }
+
+    let loader = () => {
+      localforage.getItem('tokens').then(tokens => {
+        if (tokens === null)
+          window.location.href = pages.login;
+      });
+    };
+
+    let app = () => {
+      return {
+        showList: function() {
+          if (this.currentForm === null)
+            if (this.forms !== null || this.forms.length !== 0)
+              return true;
+          else
+            return false;
+        },
+        currentForm: null,
+        forms: [],
+        tokens: null,
+        currentSubmission: null,
+        getForms: function() {
+          let instance = this;
+          if (instance.tokens !== null) {
+            let statusCode = 0;
+            fetch(endpoints.list, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${instance.tokens.access_token}`
+              }
+            })
+              .then(response => {
+                statusCode = response.status;
+                return response.json();
+              })
+              .then(data => {
+                if (statusCode !== 200) {
+                  console.error(data);
+                } else {
+                  instance.forms = data.objects;
+                  localforage.setItem('forms', data.objects);
+                }
+              });
+          }
+        },
+        init: function() {
+          let instance = this;
+          localforage.getItem('tokens').then(tokens => {
+            instance.tokens = tokens;
+          });
+          localforage.getItem('forms').then(forms => {
+            instance.forms = forms || [];
+            console.log(forms);
+          });
+        }
+      }
+    };
+    document.addEventListener('DOMContentLoaded', loader);
+  </script>
+</body>
+</html>
