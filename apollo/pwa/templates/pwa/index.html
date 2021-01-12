@@ -12,7 +12,7 @@
         <template x-for="form in forms" :key="form.id">
           <div>
             <span x-text="form.name"></span>
-            <button x-text="form.form_type === 'INCIDENT' ? 'Report' : 'Edit'" @click="currentForm = form"></button>
+            <button x-text="form.form_type === 'INCIDENT' ? 'Report' : 'Edit'" @click="loadForm(form)"></button>
           </div>
         </template>
       </div>
@@ -29,7 +29,7 @@
                   <template x-if="field.type === 'integer'">
                     <div>
                       <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
-                      <input type="number" :name="field.tag" :min="field.min" :max="field.max">
+                      <input type="number" :name="field.tag" :min="field.min" :max="field.max" x-model="currentSubmission[field.tag]">
                     </div>
                   </template>
                   <template x-if="field.type === 'select'">
@@ -38,7 +38,7 @@
                       <template x-for="[label, value] in Object.entries(field.options)" :key="value">
                         <div>
                           <label :for="field.tag" x-text="label"></label>
-                          <input type="radio" :name="field.tag" :value="value">
+                          <input type="radio" :name="field.tag" :value="value" x-model="currentSubmission[field.tag]">
                         </div>
                       </template>
                     </div>
@@ -49,7 +49,7 @@
                       <template x-for="[label, value] in Object.entries(field.options)" :key="value">
                         <div>
                           <label :for="field.tag" x-text="label"></label>
-                          <input type="checkbox" :name="field.tag" :value="value">
+                          <input type="checkbox" :name="field.tag" :value="value" x-model="currentSubmission[field.tag]">
                         </div>
                       </template>
                     </div>
@@ -57,18 +57,19 @@
                   <template x-if="field.type === 'string'">
                     <div>
                       <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
-                      <input type="text" :name="field.tag">
+                      <input type="text" :name="field.tag" x-model="currentSubmission[field.tag]">
                     </div>
                   </template>
                   <template x-if="field.type === 'comment'">
                     <div>
                       <label :for="field.tag"><span x-text="field.tag"></span> - <span x-text="field.description"></span></label>
-                      <textarea :name="field.tag" :id="field.tag" cols="30" rows="10"></textarea>>
+                      <textarea :name="field.tag" :id="field.tag" cols="30" rows="10" x-model="currentSubmission[field.tag]"></textarea>>
                     </div>
                   </template>
                 </div>
               </template>
               <hr>
+              <button type="button" @click="saveSubmission()">Save</button>
             </div>
           </template>
         </form>
@@ -111,6 +112,31 @@
         forms: [],
         tokens: null,
         currentSubmission: null,
+        submissions: {},
+        saveSubmission: function() {
+          this.submissions[this.currentForm.form_id] = this.currentSubmission;
+          localforage.setItem('submissions', this.submissions.originalTarget);
+        },
+        clearForm: function() {
+          this.currentForm = null;
+          this.currentSubmission = null;
+        },
+        loadForm: function(form) {
+          this.currentForm = form;
+          if (this.submissions[form.id] === null || this.submissions[form.id] === undefined) {
+            let sub = {};
+            form.data.groups.forEach(group => {
+              group.fields.forEach(field => {
+                if (field.type === 'multiselect')
+                  sub[field.tag] = [];
+                else
+                  sub[field.tag] = null;
+              });
+            })
+            
+            this.currentSubmission = sub;
+          }
+        },
         getForms: function() {
           let instance = this;
           if (instance.tokens !== null) {
@@ -139,11 +165,15 @@
           let instance = this;
           localforage.getItem('tokens').then(tokens => {
             instance.tokens = tokens;
+            if (tokens === null)
+              window.location.href = pages.login;
           });
           localforage.getItem('forms').then(forms => {
             instance.forms = forms || [];
-            console.log(forms);
           });
+          localforage.getItem('submissions').then(submissions => {
+            instance.submissions = submissions || {};
+          })
         }
       }
     };
