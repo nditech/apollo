@@ -70,7 +70,7 @@ After deploying the containers, the Apollo application can be accessed by config
 
 `ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
-Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below. Replace INSERT_SITE_URL with the url for your site. Insert your ssl crt at /etc/ssl/certs/ssl.crt and your ssl key at /etc/ssl/certs/ssl.key.
+Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below. Replace INSERT_SITE_URL with the url for your site (replace INSERT_SITE_URL in both places). Insert your ssl crt at /etc/ssl/certs/ssl.crt and your ssl key at /etc/ssl/certs/ssl.key.
 
 ```
 server {
@@ -83,7 +83,7 @@ server {
 
 server {
     listen 443;
-    server_name apollodemo.demcloud.org;
+    server_name INSERT_SITE_URL;
     #limit_req zone=one burst=10 nodelay;
     #limit_req_status 429;
     ssl_trusted_certificate /etc/ssl/certs/ssl.crt;
@@ -131,7 +131,7 @@ After changing the file, restart nginx using `service nginx restart` (or `servic
 
 #### Logging in
 
-You should now be able to log in to your site by navigating to the IP or URL for your server, or if you are running it locally without nginx by going to port 5000 on your localhost (http://localhost:5000). The default login is username: `admin` / password: `admin`. This can be changed upon logging in.
+You should now be able to log in to your site by navigating to the IP or URL for your server, or if you are running it locally without nginx by going to port 5000 on your localhost (http://localhost:5000). The default login is username: `admin` / password: `admin`. This needs to be changed upon logging in.
 
 ### Application Configuration Settings
 
