@@ -234,8 +234,8 @@ def submission():
     if data != payload2:
         data.update(payload2)
         geopoint = 'SRID=4326; POINT({lon:f} {lat:f})'.format(
-            lat=location_data.get('latitude'),
-            lon=location_data.get('longitude')
+            lat=location_data.get('coordinates')[1],
+            lon=location_data.get('coordinates')[0]
         ) if location_data is not None else None
         if submission.id is None:
             submission.data = data
