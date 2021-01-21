@@ -325,6 +325,10 @@ class Form(Resource):
             schema['properties'].update(
                 make_field_schema(field))
 
+        # hard code location field
+        field = {'type': 'location', 'tag': 'location'}
+        schema['properties'].update(make_field_schema(field))
+
         return schema
 
 
