@@ -113,7 +113,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{optionsLabel}}</label>
-            <textarea class="form-control" rows="3" ng-model="optionsText"/>
+            <textarea class="form-control" rows="3" ng-model="optionsText"></textarea>
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{analysisLabel}}</label>
@@ -160,7 +160,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{optionsLabel}}</label>
-            <textarea class="form-control" rows="3" ng-model="optionsText"/>
+            <textarea class="form-control" rows="3" ng-model="optionsText"></textarea>
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{analysisLabel}}</label>
@@ -209,7 +209,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{optionsLabel}}</label>
-            <textarea class="form-control" rows="3" ng-model="optionsText"/>
+            <textarea class="form-control" rows="3" ng-model="optionsText"></textarea>
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{analysisLabel}}</label>
@@ -289,7 +289,7 @@
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{analysisLabel}}</label>
-            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('textarea', null)" class="form-control custom-select"></select>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in getAnalysisOptions('image', null)" class="form-control custom-select"></select>
           </div>
           <div class="form-group mb-2" ng-if="validationOptions.length > 0">
             <label class="control-label">{{validationLabel}}</label>
