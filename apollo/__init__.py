@@ -52,7 +52,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     """Returns the frontend application instance"""
     app = factory.create_app(__name__, __path__, settings_override)
 
-    app.wsgi_app = WhiteNoise(app.wsgi_app, root=app.static_folder, prefix='static/')
+    app.wsgi_app = WhiteNoise(
+        app.wsgi_app, root=app.static_folder, prefix='static/')
 
     # Init assets
     assets.init_app(app)
@@ -65,7 +66,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     userdatastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
 
     security_ctx = security.init_app(
-        app, userdatastore,login_form=DeploymentLoginForm,
+        app, userdatastore, login_form=DeploymentLoginForm,
         register_blueprint=register_security_blueprint)
 
     @security_ctx.send_mail_task

@@ -46,7 +46,7 @@ def configure_image_storage(base_config: typing.Dict) -> None:
         DepotManager.configure('images', configuration)
 
 
-def setup_attachment_storages(app: Flask) -> None:
+def setup_attachment_storages() -> None:
     if DepotManager.get() is None:
         base_config = {}
         if settings.ATTACHMENTS_USE_S3:
@@ -66,8 +66,6 @@ def setup_attachment_storages(app: Flask) -> None:
 
         # TODO: configure default storage?
         configure_image_storage(base_config)
-
-        app.wsgi_app = DepotManager.make_middleware(app.wsgi_app)
 
 
 def create_app(
@@ -130,7 +128,7 @@ def create_app(
                 app, configured_app, import_module(configured_app).__path__)
 
     # set up processing for attachments
-    setup_attachment_storages(app)
+    setup_attachment_storages()
 
     return app
 
