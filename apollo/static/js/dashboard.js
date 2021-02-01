@@ -77,7 +77,7 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
 
     var color = d3.scaleOrdinal().range(colors);
     var labels_color = d3.scaleOrdinal().range(label_colors);
-    var total = dataMap.values().reduce(function (prev, curr, idx, arr) { return prev + curr; });
+    var total = Array.from(dataMap.values()).reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
     var pieData = [];
     labels.forEach(function (label) {
@@ -175,7 +175,7 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
     totals.append("text")
       .data([total_label])
       .attr("x", window.rtl ? w - 35 + 30 : 35)
-      .attr("y", h/2 + 32 + (dataMap.values().length + 1) * 16)
+      .attr("y", h/2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace font-weight-bold')
       .text(function (d) { return d });
@@ -183,7 +183,7 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
     totals.append("text")
       .data([total])
       .attr("x", window.rtl ? (w - (125 - (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
-      .attr("y", h / 2 + 32 + (dataMap.values().length + 1) * 16)
+      .attr("y", h / 2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
       .attr("dy", ".29em")
       .attr('class', 'text-monospace font-weight-bold')
       .text(function (d) { return '· ' + d });
@@ -201,7 +201,7 @@ function drawBarChart(el, dataMap, labels, labelsMap, colors, total_label) {
     var color_rtl = d3.scaleOrdinal().range(colors.slice(0).reverse());
     var labels_rtl = labels.slice(0).reverse();
 
-    var total = dataMap.values().reduce(function (prev, curr, idx, arr) { return prev + curr; });
+    var total = Array.from(dataMap.values()).reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
     var y = d3.scaleLinear().range([height/2 - topMargin, 0]).domain([0, total]);
     var x = d3.scaleBand().rangeRound([0, width - leftMargin]).align(.1);
@@ -293,7 +293,7 @@ function drawBarChart(el, dataMap, labels, labelsMap, colors, total_label) {
     totals.append("text")
         .data([total_label])
         .attr("x", window.rtl ? width - 35 + rightMargin + leftMargin : 35)
-        .attr("y", height/2 + 32 + (dataMap.values().length + 1) * 16)
+        .attr("y", height/2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
         .attr("dy", ".29em")
         .attr('class', 'text-monospace font-weight-bold')
         .text(function (d) { return d });
@@ -301,7 +301,7 @@ function drawBarChart(el, dataMap, labels, labelsMap, colors, total_label) {
     totals.append("text")
         .data([total])
         .attr("x", window.rtl ? (width - (125 - (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
-        .attr("y", height/2 + 32 + (dataMap.values().length + 1) * 16)
+        .attr("y", height/2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
         .attr("dy", ".29em")
         .attr('class', 'text-monospace font-weight-bold')
         .text(function (d) { return '· ' + d });

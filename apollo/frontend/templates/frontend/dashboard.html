@@ -146,13 +146,13 @@
   $(function () {
       $('.chart').each(function(idx, el) {
         var json = JSON.parse(el.dataset.chart);
-        var dataMap = d3.map()
+        var dataMap = new Map()
           .set('Missing', json.Missing + (json.Conflict || 0))
           .set('Partial', json.Partial)
           .set('Complete', json.Complete)
           .set('No Signal', json.Offline);
         var labels = ['Missing', 'Partial', 'Complete', 'No Signal'];
-        var labelsMap = d3.map()
+        var labelsMap = new Map()
           .set('Missing', "{{ _('Missing') }}")
           .set('Partial', "{{ _('Partial') }}")
           .set('Complete', "{{ _('Complete') }}")
