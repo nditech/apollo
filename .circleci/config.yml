@@ -23,3 +23,9 @@ jobs:
       - checkout
       - run: sudo pip install -r requirements/dev.txt
       - run: nosetests apollo/
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build

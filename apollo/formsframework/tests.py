@@ -40,8 +40,8 @@ class QuestionnaireTest(TestCase):
         self.checklist_form = Form(name='TCF', form_type='CHECKLIST')
         self.checklist_form.data = {'groups': [grp1]}
 
-        a = AttributeDict(tag='A', description='A', type='boolean')
-        b = AttributeDict(tag='B', description='B', type='boolean')
+        a = AttributeDict(tag='A', description='A', type='integer')
+        b = AttributeDict(tag='B', description='B', type='integer')
 
         grp2 = AttributeDict(name='Other', slug='Other')
         grp2.fields = []
@@ -79,7 +79,7 @@ class QuestionnaireTest(TestCase):
         filter_form.return_value = [self.checklist_form]
         filter_participants.return_value = []
 
-        sample_text = 'AB'
+        sample_text = 'A1B1'
         responses = parse_responses(sample_text, self.incident_form)[0]
         q = build_questionnaire(self.incident_form, MultiDict(responses))
 

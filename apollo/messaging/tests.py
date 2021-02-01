@@ -75,8 +75,8 @@ class ResponseParserTest(TestCase):
 class MessagePartialTest(TestCase):
     def setUp(self):
         f1 = AttributeDict(tag='AA', type='integer')
-        f2 = AttributeDict(tag='BA', type='boolean')
-        f3 = AttributeDict(tag='D', type='boolean')
+        f2 = AttributeDict(tag='BA', type='integer')
+        f3 = AttributeDict(tag='D', type='integer')
         f4 = AttributeDict(tag='EA', type='multiselect')
         f5 = AttributeDict(tag='Comment1', type='comment')
         f6 = AttributeDict(tag='Comment2', type='comment')
