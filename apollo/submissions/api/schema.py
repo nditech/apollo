@@ -5,9 +5,15 @@ from apollo.api.schema import BaseModelSchema
 from apollo.submissions.models import Submission
 
 
+class LocationSchema(ma.Schema):
+    latitude = ma.fields.Float(required=True)
+    longitude = ma.fields.Float(required=True)
+
+
 class SubmissionSchema(BaseModelSchema):
     incident_status = ma.fields.Method('get_incident_status')
     submission_type = ma.fields.Method('get_submission_type')
+    location = ma.fields.Nested(LocationSchema)
 
     class Meta:
         model = Submission

@@ -5,7 +5,7 @@ from sqlalchemy import or_, text, bindparam
 from webargs import fields
 
 from apollo.api.common import BaseListResource
-from apollo.api.decorators import login_or_api_key_required
+from apollo.api.decorators import protect
 from apollo.deployments.models import Event
 from apollo.locations.api.schema import LocationSchema, LocationTypeSchema
 from apollo.locations.models import (
@@ -15,7 +15,7 @@ from apollo.locations.models import (
 @marshal_with(LocationTypeSchema)
 @use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class LocationTypeItemResource(MethodResource):
-    @login_or_api_key_required
+    @protect
     def get(self, loc_type_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         if deployment:
@@ -78,7 +78,7 @@ class LocationTypeListResource(BaseListResource):
 @marshal_with(LocationSchema)
 @use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class LocationItemResource(MethodResource):
-    @login_or_api_key_required
+    @protect
     def get(self, location_id, **kwargs):
         event_id = kwargs.get('event_id')
         if event_id is None:

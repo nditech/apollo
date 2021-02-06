@@ -35,6 +35,26 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 logger = logging.getLogger(__name__)
 
 bp.add_url_rule(
+    '/api/participants/login',
+    view_func=api_views.login,
+    methods=['POST']
+)
+bp.add_url_rule(
+    '/api/participants/refresh',
+    view_func=api_views.refresh,
+    methods=['POST']
+)
+bp.add_url_rule(
+    '/api/participants/logout',
+    view_func=api_views.logout,
+    methods=['DELETE']
+)
+bp.add_url_rule(
+    '/api/participants/logout2',
+    view_func=api_views.logout2,
+    methods=['DELETE']
+)
+bp.add_url_rule(
     '/api/participants/<int:participant_id>',
     view_func=api_views.ParticipantItemResource.as_view(
         'api_participant_item'))
