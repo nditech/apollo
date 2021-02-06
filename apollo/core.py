@@ -6,11 +6,13 @@ from flask_admin import expose, Admin, AdminIndexView
 from flask_apispec import FlaskApiSpec
 from flask_babelex import Babel
 from flask_caching import Cache
+from flask_cors import CORS
 try:
     from flask_debugtoolbar import DebugToolbarExtension
     fdt_available = True
 except ImportError:
     fdt_available = False
+from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate
@@ -39,7 +41,9 @@ admin = Admin(
     name='Apollo', index_view=AdminHome(name='Dashboard'))
 babel = Babel()
 cache = Cache()
+cors = CORS()
 db = SQLAlchemy(session_options={'expire_on_commit': False})
+jwt_manager = JWTManager()
 mail = Mail()
 menu = Menu()
 migrate = Migrate()
