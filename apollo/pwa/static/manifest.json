@@ -1,0 +1,29 @@
+{
+    "name": "Apollo",
+    "short_name": "Apollo",
+    "start_url": "/pwa/",
+    "scope": "/pwa",
+    "display": "fullscreen",
+    "icons": [
+        {
+            "src": "/pwa/static/img/icons-48.png",
+            "type": "image/png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "/pwa/static/img/icons-72.png",
+            "type": "image/png",
+            "sizes": "72x72"
+        },
+        {
+            "src": "/pwa/static/img/icons-96.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "/pwa/static/img/icons-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ]
+}
