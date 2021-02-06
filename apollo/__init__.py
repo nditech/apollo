@@ -131,11 +131,11 @@ def create_app(settings_override=None, register_security_blueprint=True):
     # content security policy
     @app.after_request
     def content_security_policy(response):
-        response.headers['Content-Security-Policy'] = "default-src 'self' " + \
+        response.headers['Content-Security-Policy'] = "default-src 'self' blob: " + \
             "*.googlecode.com *.google-analytics.com fonts.gstatic.com fonts.googleapis.com " + \
             "*.googletagmanager.com " + \
             "cdn.heapanalytics.com heapanalytics.com " + \
-            "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
+            "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:"
         return response
 
     def handle_authorize(remote, token, user_info):
