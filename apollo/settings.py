@@ -139,6 +139,7 @@ APPLICATIONS = config(
         "apollo.process_analysis",
         "apollo.result_analysis",
         "apollo.sse",
+        "apollo.pwa",
         "apollo.odk")''')
 
 BIG_N = config('BIG_N', cast=int, default=0) or numpy.inf
