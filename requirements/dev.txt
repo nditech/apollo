@@ -196,7 +196,9 @@ et-xmlfile==1.0.1 \
     --hash=sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b
     # via openpyxl
 filedepot==0.8.0 \
-    --hash=sha256:25316ecd352e16524b4d321dbad08e9beb563d5de5447f3ed312daec5d011849
+    --hash=sha256:25316ecd352e16524b4d321dbad08e9beb563d5de5447f3ed312daec5d011849 \
+    --hash=sha256:467593c61f5ba8307205a3536313a774b37df91c9a937c5267c11aee5256e77e \
+    --hash=sha256:afbc235655f06356e46caa80190512e4d9222abfaca856041be5a74c665fa094
     # via -r prod.in
 flake8==3.7.7 \
     --hash=sha256:859996073f341f2670741b51ec1e67a01da142831aa1fdc6242dbf88dffbe661 \
@@ -221,6 +223,10 @@ flask-caching==1.3.3 \
     --hash=sha256:21236d2b4567deb9fc95e474a604602097189e834629c24f4d62937abc963636 \
     --hash=sha256:5af1759e5ae3424abec918537f0201a1476ae9442452bcb5c8787468a9de0f5a
     # via -r prod.in
+flask-cors==3.0.10 \
+    --hash=sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438 \
+    --hash=sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de
+    # via -r prod.in
 flask-debugtoolbar==0.10.1 \
     --hash=sha256:3d9657bc0c3633ace429e3ff451742bb59d1b7a7b95c9eb23a65ac9be2812959 \
     --hash=sha256:ec810083123aae0632eb32ba11e1cb4cdace81e7ce6c5009dd06c5204afbce52
@@ -231,6 +237,9 @@ flask-gravatar==0.5.0 \
     # via -r prod.in
 flask-httpauth==2.7.0 \
     --hash=sha256:f779799a74994cd047569785becd3a3a1c95032aa5aefecb1819faf3becb008b
+    # via -r prod.in
+flask-jwt-extended==3.25.0 \
+    --hash=sha256:b2e4dba91661e4697b30269106386c2b29e416a00d9ff66b26c462edddc10078
     # via -r prod.in
 flask-login==0.4.1 \
     --hash=sha256:c815c1ac7b3e35e2081685e389a665f2c74d7e077cb93cecabaea352da4752ec
@@ -300,9 +309,11 @@ flask==1.0 \
     #   flask-assets
     #   flask-babelex
     #   flask-caching
+    #   flask-cors
     #   flask-debugtoolbar
     #   flask-gravatar
     #   flask-httpauth
+    #   flask-jwt-extended
     #   flask-login
     #   flask-mail
     #   flask-menu
@@ -723,6 +734,10 @@ pyflakes==2.1.1 \
     --hash=sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0 \
     --hash=sha256:d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2
     # via flake8
+pyjwt==1.7.1 \
+    --hash=sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e \
+    --hash=sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96
+    # via flask-jwt-extended
 python-dateutil==2.7.2 \
     --hash=sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df \
     --hash=sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e
@@ -829,6 +844,8 @@ six==1.11.0 \
     #   -r prod.in
     #   cryptography
     #   flask-apispec
+    #   flask-cors
+    #   flask-jwt-extended
     #   flask-menu
     #   parsimonious
     #   pip-tools
@@ -915,9 +932,13 @@ werkzeug==0.15.3 \
     #   flask
     #   flask-caching
     #   flask-debugtoolbar
+    #   flask-jwt-extended
 whitenoise==3.3.1 \
     --hash=sha256:15f43b2e701821b95c9016cf469d29e2a546cb1c7dead584ba82c36f843995cf \
     --hash=sha256:9d81515f2b5b27051910996e1e860b1332e354d9e7bcf30c98f21dcb6713e0dd
+    # via -r prod.in
+wrapt==1.12.1 \
+    --hash=sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7
     # via -r prod.in
 wtforms-alchemy==0.16.6 \
     --hash=sha256:1e65ab91d9a137c396526ba41663f7ade57f3935d458386d08b5c23df2bd25c2
