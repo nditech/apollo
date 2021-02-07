@@ -237,12 +237,17 @@ def logout():
     jti = get_raw_jwt()['jti']
     red.set(jti, 'true', settings.JWT_ACCESS_TOKEN_EXPIRES * 1.1)
 
+    # unset cookies if they are used
+    unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
+
     response = {
         'status': 'ok',
         'message': gettext('Access token revoked')
     }
     resp = jsonify(response)
-    unset_access_cookies(resp)
+
+    if unset_cookies:
+        unset_access_cookies(resp)
 
     return resp
 
@@ -253,11 +258,16 @@ def logout2():
     jti = get_raw_jwt()['jti']
     red.set(jti, 'true', settings.JWT_REFRESH_TOKEN_EXPIRES * 1.1)
 
+    # unset cookies if they are used
+    unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
+
     response = {
         'status': 'ok',
         'message': gettext('Refresh token revoked')
     }
     resp = jsonify(response)
-    unset_refresh_cookies(resp)
+
+    if unset_cookies:
+        unset_refresh_cookies(resp)
 
     return resp
