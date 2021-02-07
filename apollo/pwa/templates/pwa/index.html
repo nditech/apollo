@@ -91,8 +91,8 @@
     // database setup
     const db = new Dexie('apollo');
     db.version(1).stores({
-      forms: '++',
-      participant: '++',
+      forms: '',
+      participant: '',
       submissions: '++id, form'
     });
     db.open().catch(() => {
@@ -195,7 +195,7 @@
           let dt = new Date();
           if (dt.getHours() < 12)
             return '{{ _("Good morning") }}';
-          else if (12 < dt.getHours() && dt.getHours() < 17)
+          else if (12 >= dt.getHours() && dt.getHours() < 17)
             return '{{ _("Good afternoon") }}';
           else
             return '{{ _("Good evening") }}';
