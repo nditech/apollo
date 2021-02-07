@@ -23,8 +23,9 @@
     </nav>
     <main class="container h-100">
       <div class="row h-75 align-items-center">
-        <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+        <div class="col-md-6 offset-md-3">
           <login-form v-if="participant === null" @authenticated="authenticationSuccess"></login-form>
+          <landing v-else :participant="participant" @logged-out="loggedOut"></landing>
         </div>
       </div>
     </main>
@@ -57,6 +58,16 @@
           </div>
         </div>
       </form>
+    </div>
+  </template>
+  <template id="landing">
+    <div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+          <p>{{ _('If this is not you, please') }} <a @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</a></p>
+        </div>
+      </div>
     </div>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -172,6 +183,31 @@
       template: '#login-form'
     });
 
+    // landing component
+    Vue.component('landing', {
+      computed: {
+      },
+      data() {
+        return {};
+      },
+      methods: {
+        greeting() {
+          let dt = new Date();
+          if (dt.getHours() < 12)
+            return '{{ _("Good morning") }}';
+          else if (12 < dt.getHours() && dt.getHours() < 17)
+            return '{{ _("Good afternoon") }}';
+          else
+            return '{{ _("Good evening") }}';
+        },
+        logout() {
+          this.$emit('logged-out');
+        }
+      },
+      props: ['participant'],
+      template: '#landing'
+    });
+
     // main app
     let vm;
     vm = new Vue({
@@ -214,6 +250,12 @@
             '{{ _("Could not save data to the database") }}',
             '{{ _("OK") }}',
           ));
+        },
+        loggedOut() {
+          client.logout(this.participant.tokens.accessToken);
+          client.logout2(this.participant.tokens.refreshToken);
+          this.participant = null;
+          this.clearDatabase();
         }
       },
       mounted() {
