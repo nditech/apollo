@@ -5,6 +5,9 @@
 
 {%- block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slick.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/slick-theme.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
 {% endblock %}
 
 
@@ -272,6 +275,25 @@
         </table>
       </div>
     </div>
+
+    {% if submission.image_attachments -%}
+    <div class="card text-white bg-secondary mb-3 sticky-top" id="images">
+      <div class="card-header">
+        <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
+      </div>
+      <div class="card-body">
+        <div class='slick m-3'>
+          {% for image in submission.image_attachments -%}
+          <div class="d-flex justify-content-center mb-3">
+            <a href="{{ image.photo.url }}" data-lightbox="image-1">
+              <img src="{{ image.photo.thumb_url }}">
+            </a>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+    </div>
+    {%- endif %}
 
     {% for group in form.data.groups %}
     {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
@@ -648,11 +670,19 @@
 {%- block scripts %}
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/slick.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
+    $('.slick').slick({
+        dots: true,
+        infinite: true,
+        slidesToShow: 5,
+        slidesToScroll: 5
+    });
 
     $('.tonow').each(function (index) {
       var timestamp = moment.unix(Number($(this).data('timestamp')));
