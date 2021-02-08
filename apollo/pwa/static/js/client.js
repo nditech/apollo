@@ -45,8 +45,9 @@ class APIClient {
     }).then(this._getResult);
   };
 
-  getForms = (accessToken) => {
-    return fetch(this.endpoints.list, {
+  getForms = (accessToken, events) => {
+    const endpoint = (events === [] || events === undefined || events === null) ? this.endpoints.list : `${this.endpoints.list}?events=${events.join(',')}`;
+    return fetch(endpoint, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
