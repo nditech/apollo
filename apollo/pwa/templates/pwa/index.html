@@ -25,7 +25,14 @@
       <div class="row h-75 align-items-center">
         <div class="col-md-6 offset-md-3">
           <login-form v-if="participant === null" @authenticated="authenticationSuccess"></login-form>
-          <landing v-else :participant="participant" @logged-out="loggedOut"></landing>
+          <div v-else>
+            <div class="mb-3">
+              <welcome :participant="participant" @logged-out="loggedOut(true)"></welcome>
+            </div>
+            <div class="mb-3">
+              <form-list :participant="participant" :forms="forms" @forms-loaded="formsLoaded" @unauthorized="loggedOut(false)"></form-list>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -60,14 +67,40 @@
       </form>
     </div>
   </template>
-  <template id="landing">
-    <div>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
-          <p>{{ _('If this is not you, please') }} <a @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</a></p>
+  <template id="welcome">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+            <p>{{ _('If this is not you, please') }} <a @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</a></p>
+          </div>
         </div>
       </div>
+    </div>
+  </template>
+  <template id="form-list">
+    <div class="card">
+      <h5 class="card-header">{{ _('Forms') }}</h5>
+      <div class="list-group list-group-flush">
+        <div class="list-group-item" v-for="form in forms" :key="form.id">[[ form.name ]] <button class="btn btn-outline-dark float-end">[[ actionLabel(form) ]]</button></div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-outline-dark" @click="refreshForms">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+          </svg>
+          {{ _('Load forms') }}
+        </button>
+      </div>
+    </div>
+  </template>
+  <template id="submission-list">
+    <div class="card">
+      <h5 class="card-header"></h5>
+      <div class="list-group list-group-flush"></div>
+      <div class="card-footer"></div>
     </div>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -183,8 +216,8 @@
       template: '#login-form'
     });
 
-    // landing component
-    Vue.component('landing', {
+    // welcome component
+    Vue.component('welcome', {
       computed: {
       },
       data() {
@@ -204,14 +237,62 @@
           this.$emit('logged-out');
         }
       },
-      props: ['participant'],
-      template: '#landing'
+      props: ['forms', 'participant'],
+      template: '#welcome'
+    });
+
+    // form list component
+    Vue.component('form-list', {
+      data() {
+        return {};
+      },
+      methods: {
+        async refreshForms() {
+          let instance = this;
+          let result;
+          try {
+            result = await client.getForms(instance.participant.tokens.accessToken, instance.participant.events);
+            if (result.status === 200) {
+              result.result.then(data => {
+                instance.$emit('forms-loaded', data.objects);
+              });
+            } else {
+              instance.$emit('unauthorized');
+            }
+          } catch (error) {
+            Notiflix.Report.Failure(
+              '{{ _("Error") }}',
+              '{{ _("Could not load forms. Might you be offline?") }}',
+              '{{ _("OK") }}',
+            );
+          }
+        },
+        actionLabel(form) {
+          if (form.form_type === 'CHECKLIST')
+            return '{{ _("Edit") }}';
+          else
+            return '{{ _("View submissions") }}';
+        }
+      },
+      mounted () {
+        if (this.forms === null)
+          this.refreshForms();
+      },
+      props: ['forms', 'participant'],
+      template: '#form-list'
+    });
+
+    // submission list (for incidents and surveys)
+    Vue.component('submission-list', {
+      props: ['form', 'submissions'],
+      template: '#submission-list'
     });
 
     // main app
     let vm;
     vm = new Vue({
       data: {
+        forms: null,
         participant: null
       },
       el: '#app',
@@ -219,6 +300,18 @@
         authenticationSuccess(participant) {
           this.participant = participant;
           this.saveParticipantToDatabase(participant);
+        },
+        formsLoaded(forms) {
+          this.forms = forms.reduce((registry, form) => {
+            registry[form.id] = form;
+            return registry;
+          }, {});
+          this.saveFormsToDB(this.forms);
+        },
+        saveFormsToDB(forms) {
+          db.transaction('rw', db.forms, () => {
+            db.forms.put(forms, 1);
+          });
         },
         clearDatabase() {
           db.transaction('rw', [db.forms, db.participant, db.submissions], () => {
@@ -251,12 +344,13 @@
             '{{ _("OK") }}',
           ));
         },
-        loggedOut() {
+        loggedOut(clearAll) {
           client.logout(this.participant.tokens.accessToken);
           client.logout2(this.participant.tokens.refreshToken);
           this.participant = null;
-          this.clearDatabase();
-        }
+          if (clearAll)
+            this.clearDatabase();
+        },
       },
       mounted() {
         this.loadParticipantFromDatabase();
