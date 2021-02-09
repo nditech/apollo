@@ -24,14 +24,15 @@
     <main class="container h-100">
       <div class="row h-75 align-items-center">
         <div class="col-md-6 offset-md-3">
-          <login-form v-if="participant === null" @authenticated="authenticationSuccess"></login-form>
+          <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
           <div v-else>
             <div class="mb-3">
               <welcome :participant="participant" @logged-out="loggedOut(true)"></welcome>
             </div>
             <div class="mb-3">
-              <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" @load-forms="refreshForms" @unauthorized="loggedOut(false)" @edit-submission="editSubmission"></form-list>
-              <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission"></submission-editor>
+              <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" @load-forms="refreshForms" @unauthorized="loggedOut(false)" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
+              <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission"></submission-editor>
+              <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :incidents="incidents[currentForm.id]" :surveys="surveys[currentForm.id]" @edit-submission="editSubmission"></submission-list>
             </div>
           </div>
         </div>
@@ -60,7 +61,7 @@
             </div>
             <div class="mb-3">
               <div class="d-grid gap-2">
-                <button class="btn btn-primary" @click="authenticate($event)">{{ _('Login') }}</button>
+                <button class="btn btn-primary" @click="authenticate($event)" :disabled="!navigatorOnline">{{ _('Login') }}</button>
               </div>
             </div>
           </div>
@@ -87,7 +88,7 @@
         <div class="list-group-item" v-for="form in forms" :key="form.id">[[ form.name ]] <button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
       </div>
       <div class="card-footer">
-        <button class="btn btn-outline-dark" @click="refreshForms">
+        <button class="btn btn-outline-dark" @click="refreshForms" :disabled="!navigatorOnline">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
             <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
             <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
@@ -99,9 +100,15 @@
   </template>
   <template id="submission-list">
     <div class="card">
-      <h5 class="card-header"></h5>
-      <div class="list-group list-group-flush"></div>
-      <div class="card-footer"></div>
+      <h5 class="card-header">[[ form.name ]]</h5>
+      <div class="list-group list-group-flush">
+        <div class="list-group-item" v-for="(submission, index) in submissions">
+          [[ index + 1 ]] <button class="btn btn-outline-dark float-end" @click="editSubmission(submission)">{{ _('Edit') }}</button>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-outline-dark" @click="newSubmission">{{ _('Add new') }}</button>
+      </div>
     </div>
   </template>
   <template id="submission-editor">
@@ -109,6 +116,12 @@
       <h5 class="card-header">[[ form.name ]]</h5>
       <div class="card-body">
         <form>
+          <fieldset v-if="form.form_type === 'SURVEY'">
+            <div class="mb-3">
+              <label for="serial" class="form-label">{{ _('Serial number') }}</label>
+              <input class="form-control" name="serial" id="serial" v-model="submission.serial">
+            </div>
+          </fieldset>
           <fieldset v-for="group in form.data.groups">
             <legend>[[ group.name ]]</legend>
             <div v-for="field in group.fields">
@@ -151,8 +164,8 @@
         </form>
       </div>
       <div class="card-footer">
-        <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Back') }}</button>
-        <button class="btn btn-outline-dark" @click="postSubmission">{{ _('Submit') }}</button>
+        <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Save and go to form list') }}</button>
+        <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline">{{ _('Submit') }}</button>
       </div>
     </div>
   </template>
@@ -310,7 +323,7 @@
             });
         }
       },
-      props: [],
+      props: ['navigatorOnline'],
       template: '#login-form'
     });
 
@@ -352,7 +365,6 @@
             return '{{ _("View submissions") }}';
         },
         formAction(form) {
-          console.log('Starting edit or list');
           if (form.form_type === 'CHECKLIST')
             this.$emit('edit-submission', form, null);
           else
@@ -362,14 +374,29 @@
           this.$emit('load-forms');
         }
       },
-      props: ['forms'],
+      props: ['forms', 'navigatorOnline'],
       template: '#form-list'
     });
 
     // submission list (for incidents and surveys)
     Vue.component('submission-list', {
+      computed: {
+        submissions() {
+          if (this.form.form_type === 'INCIDENT')
+            return this.incidents;
+          else
+            return this.surveys;
+        }
+      },
       data() { return {}; },
-      methods: {},
+      methods: {
+        editSubmission(submission) {
+          this.$emit('edit-submission', this.form, submission);
+        },
+        newSubmission() {
+          this.$emit('edit-submission', this.form, null);
+        }
+      },
       props: ['form', 'incidents', 'surveys'],
       template: '#submission-list'
     });
@@ -429,7 +456,7 @@
         this.images = this.submission.images;
         this.location = this.submission.location;
       },
-      props: ['form', 'submission'],
+      props: ['form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
     });
 
@@ -442,6 +469,7 @@
         currentSubmission: null,
         forms: null,
         incidents: null,
+        navigatorOnline: navigator.onLine,
         participant: null,
         surveys: null
       },
@@ -521,6 +549,8 @@
           client.logout(this.participant.tokens.accessToken);
           client.logout2(this.participant.tokens.refreshToken);
           this.participant = null;
+          this.currentForm = null;
+          this.currentSubmission = null;
           if (clearAll)
             this.clearDatabase();
         },
@@ -676,6 +706,10 @@
           let reset = single ? true : false;
           submission.posted = new Date();
           this.saveSubmissionToDatabase(submission, reset);
+        },
+        showSubmissionList(form) {
+          if (form.form_type !== 'CHECKLIST')
+            this.currentForm = form;
         }
       },
       mounted() {
@@ -684,6 +718,12 @@
         this.loadChecklistsFromDatabase();
         this.loadIncidentsFromDatabase();
         this.loadSurveysFromDatabase();
+
+        let onlineHook = () => {
+          this.navigatorOnline = navigator.onLine;
+        };
+        window.addEventListener('offline', onlineHook);
+        window.addEventListener('online', onlineHook);
       }
     });
   </script>
