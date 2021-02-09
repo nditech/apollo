@@ -454,7 +454,7 @@
       },
       mounted() {
         this.images = this.submission.images;
-        this.location = this.submission.location;
+        this.location = this.submission.data.location;
       },
       props: ['form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
