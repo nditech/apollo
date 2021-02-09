@@ -2,7 +2,7 @@
     "name": "Apollo",
     "short_name": "Apollo",
     "start_url": "/pwa/",
-    "scope": "/pwa",
+    "scope": "/pwa/",
     "display": "fullscreen",
     "icons": [
         {
