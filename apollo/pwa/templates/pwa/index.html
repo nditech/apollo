@@ -30,7 +30,8 @@
               <welcome :participant="participant" @logged-out="loggedOut(true)"></welcome>
             </div>
             <div class="mb-3">
-              <form-list :participant="participant" :forms="forms" @forms-loaded="formsLoaded" @unauthorized="loggedOut(false)"></form-list>
+              <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" @load-forms="refreshForms" @unauthorized="loggedOut(false)" @edit-submission="editSubmission"></form-list>
+              <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission"></submission-editor>
             </div>
           </div>
         </div>
@@ -83,7 +84,7 @@
     <div class="card">
       <h5 class="card-header">{{ _('Forms') }}</h5>
       <div class="list-group list-group-flush">
-        <div class="list-group-item" v-for="form in forms" :key="form.id">[[ form.name ]] <button class="btn btn-outline-dark float-end">[[ actionLabel(form) ]]</button></div>
+        <div class="list-group-item" v-for="form in forms" :key="form.id">[[ form.name ]] <button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
       </div>
       <div class="card-footer">
         <button class="btn btn-outline-dark" @click="refreshForms">
@@ -101,6 +102,65 @@
       <h5 class="card-header"></h5>
       <div class="list-group list-group-flush"></div>
       <div class="card-footer"></div>
+    </div>
+  </template>
+  <template id="submission-editor">
+    <div class="card">
+      <h5 class="card-header">[[ form.name ]]</h5>
+      <div class="card-body">
+        <form>
+          <fieldset v-for="group in form.data.groups">
+            <legend>[[ group.name ]]</legend>
+            <div v-for="field in group.fields">
+              <div class="mb-3" v-if="field.type === 'integer'">
+                <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+                <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min">
+              </div>
+              <div class="mb-3" v-else-if="field.type === 'select'">
+                <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+                <div class="form-check" v-for="(value, label) in field.options">
+                  <label :for="field.tag" class="form-label">[[ label ]]</label>
+                  <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                </div>
+              </div>
+              <div class="mb-3" v-else-if="field.type === 'multiselect'">
+                <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+                <div class="form-check" v-for="(value, label) in field.options">
+                  <label :for="field.tag" class="form-label">[[ label ]]</label>
+                  <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                </div>
+              </div>
+              <div class="mb-3" v-else-if="field.type === 'string'">
+                <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+                <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]">
+              </div>
+              <div class="mb-3" v-else-if="field.type === 'comment'">
+                <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+                <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]"></textarea>
+              </div>
+              <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage"></image-field>
+            </div>
+          </fieldset>
+          <fieldset v-if="canRetrieveLocation">
+            <legend>{{ _('Location') }}</legend>
+            <div class="mb-3">
+              <pre>([[ coordinates[1] ]], [[ coordinates[0] ]])</pre>
+              <button class="btn btn-outline-dark" @click="getLocation($event)">{{ _('Get location') }}</button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Back') }}</button>
+        <button class="btn btn-outline-dark" @click="postSubmission">{{ _('Submit') }}</button>
+      </div>
+    </div>
+  </template>
+  <template id="image-field">
+    <div class="mb-3">
+      <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="200"></div>
+      <label :for="field.tag" class="form-label">[[ field.description ]]</label>
+      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)">
     </div>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -126,7 +186,9 @@
     db.version(1).stores({
       forms: '',
       participant: '',
-      submissions: '++id, form'
+      checklists: '++id, form',
+      incidents: '++id, form',
+      surveys: '++id, form, serial',
     });
     db.open().catch(() => {
       Notiflix.Report.Failure(
@@ -151,6 +213,42 @@
 
     // app setup
     Vue.options.delimiters = ['[[', ']]'];
+
+    // image field component
+    Vue.component('image-field', {
+      data() {
+        return {};
+      },
+      methods: {
+        processFile(event) {
+          let instance = this;
+          let imageFile = event.target.files[0];
+          imageResizer.toBlob(imageFile, {max: 200})
+            .then(previewBlob => {
+              convertBlobToBase64(previewBlob)
+                .then(convertedBlob => {
+                  instance.$refs.viewer.src = convertedBlob;
+                  instance.$emit('update-image', imageFile, instance.field);
+                });
+              });
+        },
+      },
+      mounted() {
+        let instance = this;
+        let imageFile = instance.initialData;
+        if (imageFile === null || imageFile === undefined)
+          return;
+        imageResizer.toBlob(imageFile, {max: 200})
+          .then(previewBlob => {
+            convertBlobToBase64(previewBlob)
+              .then(convertedBlob => {
+                instance.$refs.viewer.src = convertedBlob;
+              });
+          });
+      },
+      props: ['field', 'initialData'],
+      template: '#image-field'
+    });
 
     // component for online status
     Vue.component('connectivity-indicator', {
@@ -247,6 +345,108 @@
         return {};
       },
       methods: {
+        actionLabel(form) {
+          if (form.form_type === 'CHECKLIST')
+            return '{{ _("Edit") }}';
+          else
+            return '{{ _("View submissions") }}';
+        },
+        formAction(form) {
+          console.log('Starting edit or list');
+          if (form.form_type === 'CHECKLIST')
+            this.$emit('edit-submission', form, null);
+          else
+            this.$emit('show-submission-list', form);
+        },
+        refreshForms() {
+          this.$emit('load-forms');
+        }
+      },
+      props: ['forms'],
+      template: '#form-list'
+    });
+
+    // submission list (for incidents and surveys)
+    Vue.component('submission-list', {
+      data() { return {}; },
+      methods: {},
+      props: ['form', 'incidents', 'surveys'],
+      template: '#submission-list'
+    });
+
+    Vue.component('submission-editor', {
+      computed: {
+        coordinates() {
+          if (this.location)
+            return this.location
+          else
+            return ['{{ _("N/A") }}', '{{ _("N/A") }}']
+        }
+      },
+      data() {
+        return {
+          canRetrieveLocation: 'geolocation' in navigator,
+          location: null,
+          images: {}
+        };
+      },
+      methods: {
+        updateImage(imageData, field) {
+          let instance = this;
+          instance.images[field.tag] = imageData;
+        },
+        updateSubmission() {
+          if (this.location)
+            this.submission.data.location = this.location;
+
+          if (this.images !== {})
+            this.submission.images = this.images;
+        },
+        stopEditing() {
+          this.updateSubmission();
+          this.$emit('save-submission', this.submission, true);
+        },
+        postSubmission() {
+          this.updateSubmission();
+          this.$emit('post-submission', this.submission);
+        },
+        getLocation(event) {
+          event.preventDefault();
+          let instance = this;
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              instance.location = [position.coords.longitude, position.coords.latitude];
+            },
+            () => Notiflix.Report.Failure(
+              '{{ _("Error") }}',
+              '{{ _("There was an error retreiving your location") }}',
+              '{{ _("OK") }}',
+            )
+          );
+        }
+      },
+      mounted() {
+        this.images = this.submission.images;
+        this.location = this.submission.location;
+      },
+      props: ['form', 'submission'],
+      template: '#submission-editor',
+    });
+
+    // main app
+    let vm;
+    vm = new Vue({
+      data: {
+        checklists: null,
+        currentForm: null,
+        currentSubmission: null,
+        forms: null,
+        incidents: null,
+        participant: null,
+        surveys: null
+      },
+      el: '#app',
+      methods: {
         async refreshForms() {
           let instance = this;
           let result;
@@ -254,7 +454,7 @@
             result = await client.getForms(instance.participant.tokens.accessToken, instance.participant.events);
             if (result.status === 200) {
               result.result.then(data => {
-                instance.$emit('forms-loaded', data.objects);
+                instance.formsLoaded(data.objects);
               });
             } else {
               instance.$emit('unauthorized');
@@ -267,57 +467,30 @@
             );
           }
         },
-        actionLabel(form) {
-          if (form.form_type === 'CHECKLIST')
-            return '{{ _("Edit") }}';
-          else
-            return '{{ _("View submissions") }}';
-        }
-      },
-      mounted () {
-        if (this.forms === null)
-          this.refreshForms();
-      },
-      props: ['forms', 'participant'],
-      template: '#form-list'
-    });
-
-    // submission list (for incidents and surveys)
-    Vue.component('submission-list', {
-      props: ['form', 'submissions'],
-      template: '#submission-list'
-    });
-
-    // main app
-    let vm;
-    vm = new Vue({
-      data: {
-        forms: null,
-        participant: null
-      },
-      el: '#app',
-      methods: {
         authenticationSuccess(participant) {
           this.participant = participant;
           this.saveParticipantToDatabase(participant);
+          this.refreshForms();
         },
         formsLoaded(forms) {
           this.forms = forms.reduce((registry, form) => {
             registry[form.id] = form;
             return registry;
           }, {});
-          this.saveFormsToDB(this.forms);
+          this.saveFormstoDatabase(this.forms);
         },
-        saveFormsToDB(forms) {
+        saveFormstoDatabase(forms) {
           db.transaction('rw', db.forms, () => {
             db.forms.put(forms, 1);
           });
         },
         clearDatabase() {
-          db.transaction('rw', [db.forms, db.participant, db.submissions], () => {
+          db.transaction('rw', [db.forms, db.participant, db.checklists, db.incidents, db.surveys], () => {
             db.forms.clear();
             db.participant.clear();
-            db.submissions.clear();
+            db.checklists.clear();
+            db.incidents.clear();
+            db.surveys.clear();
           });
         },
         loadParticipantFromDatabase() {
@@ -351,9 +524,166 @@
           if (clearAll)
             this.clearDatabase();
         },
+        newSubmission(form) {
+          let submission = {
+            created: new Date(),
+            errorMessage: null,
+            form: form.id,
+            images: {},
+            posted: null,
+            status: 'ok',
+            updated: null
+          };
+          submission.data = form.data.groups.reduce((acc, group) => {
+            group.fields.forEach(field => {
+              if (field.type === 'multiselect')
+                acc[field.tag] = [];
+            });
+            return acc;
+          }, {});
+
+          if (form.form_type === 'CHECKLIST') {
+            this.checklists = this.checklists || {};
+            this.checklists[form.id] = submission;
+          }
+          else {
+            let storage = form.form_type === 'INCIDENT' ? this.incidents : this.surveys;
+            storage = storage || {};
+            let collection = storage[form.id] || [];
+            collection.push(submission);
+          }
+
+          return submission;
+        },
+        editSubmission(form, sub) {
+          let submission;
+          if (sub === null || sub === undefined) {
+            if (form.form_type === 'CHECKLIST') {
+              submission = this.checklists[form.id] || this.newSubmission(form);
+            } else
+              submission = this.newSubmission(form);
+          } else
+            submission = sub;
+          this.currentForm = form;
+          this.currentSubmission = submission;
+        },
+        saveSubmissionToDatabase(submission, reset) {
+          let instance = this;
+          let form = instance.forms[submission.form];
+          let table;
+          submission.updated = new Date();
+          switch (form.form_type) {
+            case 'CHECKLIST':
+              table = db.checklists;
+              break;
+            case 'INCIDENT':
+              table = db.incidents;
+              break;
+            case 'SURVEY':
+              table = db.surveys;
+              break;
+          }
+
+          db.transaction('rw', table, () => {
+            table.put(submission);
+          });
+
+          if (reset) {
+            instance.currentSubmission = null;
+            instance.currentForm = null;
+          }
+        },
+        _loadCollectionFromDatabase(collection, callback) {
+          let instance = this;
+          collection.toArray()
+            .then(entries => callback(entries));
+        },
+        loadFormsFromDatabase() {
+          let instance = this;
+          db.forms.get(1)
+            .then(forms => {
+              instance.forms = forms;
+            });
+        },
+        loadChecklistsFromDatabase() {
+          let instance = this;
+          instance._loadCollectionFromDatabase(db.checklists, entries => {
+            instance.checklists = entries.reduce((registry, submission) => {
+              registry[submission.form] = submission;
+              return registry;
+            }, {});
+          });
+        },
+        loadIncidentsFromDatabase() {
+          let instance = this;
+          instance._loadCollectionFromDatabase(db.incidents, entries => {
+            instance.incidents = entries.reduce((registry, incident) => {
+              let storage = registry[incident.form] || [];
+              storage.push(incident);
+              registry[incident.form] = storage;
+              return registry;
+            }, {});
+          });
+        },
+        loadSurveysFromDatabase() {
+          let instance = this;
+          instance._loadCollectionFromDatabase(db.surveys, entries => {
+            instance.surveys = entries.reduce((registry, survey) => {
+              let storage = registry[survey.form] || [];
+              storage.push(survey);
+              registry[survey.form] = storage;
+              return registry;
+            }, {});
+          });
+        },
+        async postSubmission(submission, single) {
+          let formData = new FormData();
+          for (let key of Object.keys(submission.images)) {
+            formData.append(key, submission.images[key], submission.images[key].name);
+          }
+          let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
+          formData.append('submission', JSON.stringify(subCopy));
+          try {
+            let result = await client.submit(this.participant.tokens.accessToken, formData);
+            if (result.status !== 200) {
+              if (single)
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  data.message,
+                  '{{ _("OK") }}',
+                );
+              else {
+                submission.status = 'error';
+                submission.errorMessage = data.message;
+              }
+            } else {
+              submission.status = 'ok';
+            }
+          } catch (error) {
+            submission.status = 'error';
+            submission.errorMessage = '{{ _("Offline") }}';
+
+            if (single) {
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Error posting data. Might you be offline?") }}',
+                '{{ _("OK") }}',
+              );
+            }
+          }
+
+          // set posted, and reset editor if editing
+          let reset = single ? true : false;
+          submission.posted = new Date();
+          this.saveSubmissionToDatabase(submission, reset);
+        }
       },
       mounted() {
         this.loadParticipantFromDatabase();
+        this.loadFormsFromDatabase();
+        this.loadChecklistsFromDatabase();
+        this.loadIncidentsFromDatabase();
+        this.loadSurveysFromDatabase();
       }
     });
   </script>
