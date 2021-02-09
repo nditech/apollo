@@ -1,9 +1,12 @@
-const DYNAMIC_CACHE_NAME = 'apollo-cache-dynamic-v1';
-const STATIC_CACHE_NAME = 'apollo-cache-static-v1';
+const CACHE_NAME = 'apollo-cache-static-v1';
 
 const CACHED_URLS = [
     '/pwa/',
     '/pwa/static/css/main.css',
+    '/pwa/static/img/icons-48.png',
+    '/pwa/static/img/icons-72.png',
+    '/pwa/static/img/icons-96.png',
+    '/pwa/static/img/icons-192.png',
     '/pwa/static/js/app.js',
     '/pwa/static/js/client.js',
     '/pwa/static/vendor/animate.css/animate.min.css',
@@ -19,9 +22,34 @@ const CACHED_URLS = [
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(STATIC_CACHE_NAME)
+        caches.open(CACHE_NAME)
             .then(cache => cache.addAll(CACHED_URLS)));
 });
 
 self.addEventListener('fetch', (event) => {
+    const requestURL = new URL(event.request.url);
+    if (requestURL.pathname === '/pwa/') {
+        event.respondWith(
+            caches.open(CACHE_NAME).then(
+                cache => cache.match('/pwa/').then(
+                    cacheResponse => {
+                        let fetchPromise = fetch('/pwa/').then(
+                            networkResponse => {
+                                cache.put('/pwa/', networkResponse.clone());
+                                return networkResponse;
+                            }
+                        );
+                        return cacheResponse || fetchPromise;
+                    }
+                )
+            )
+        )
+    } else if (CACHED_URLS.includes(requestURL.href) || CACHED_URLS.includes(requestURL.pathname)) {
+        event.respondWith(
+            caches.open(CACHE_NAME).then(
+                cache => cache.match(event.request)
+                    .then(response => response || fetch(event.request))
+            )
+        );
+    }
 });
