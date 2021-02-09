@@ -666,7 +666,7 @@
             }, {});
           });
         },
-        async postSubmission(submission, single) {
+        async postSubmission(submission, single = true) {
           let formData = new FormData();
           for (let key of Object.keys(submission.images)) {
             formData.append(key, submission.images[key], submission.images[key].name);
@@ -676,6 +676,7 @@
           try {
             let result = await client.submit(this.participant.tokens.accessToken, formData);
             if (result.status !== 200) {
+              let data = await result.result;
               if (single)
                 Notiflix.Report.Failure(
                   '{{ _("Error") }}',
@@ -687,6 +688,11 @@
                 submission.errorMessage = data.message;
               }
             } else {
+              Notiflix.Report.Success(
+                '{{ _("Success") }}',
+                '{{ _("Data successfully submitted") }}',
+                '{{ _("OK") }}',
+              );
               submission.status = 'ok';
             }
           } catch (error) {
