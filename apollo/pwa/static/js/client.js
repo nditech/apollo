@@ -34,12 +34,11 @@ class APIClient {
     }).then(this._getResult);
   };
 
-  submit = (accessToken, submission) => {
+  submit = (accessToken, formData) => {
     return fetch(this.endpoints.submit, {
-      body: JSON.stringify(submission),
+      body: formData,
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${accessToken}`
       },
       method: 'POST'
     }).then(this._getResult);
