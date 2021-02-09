@@ -23,6 +23,8 @@ def export_field_value(form, submission, tag):
                 return ','.join(sorted(str(i) for i in data))
             except TypeError:
                 return data
+    elif field['type'] == 'image':
+        return data is not None
 
     return data
 
