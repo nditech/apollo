@@ -6,5 +6,5 @@ if ('serviceWorker' in navigator) {
             console.error('service worker registration failed:', error);
         });
 } else {
-    console.log('Not found')
+    console.log('Not found');
 }
