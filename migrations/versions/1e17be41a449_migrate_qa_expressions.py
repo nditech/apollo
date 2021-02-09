@@ -1,7 +1,7 @@
 """migrate QA expressions
 
 Revision ID: 1e17be41a449
-Revises: 32263b7ab47e
+Revises: d1b58fcfbd26
 Create Date: 2020-05-23 18:00:25.856539
 
 """
@@ -12,7 +12,7 @@ from apollo.submissions.qa import query_builder as qb
 
 # revision identifiers, used by Alembic.
 revision = '1e17be41a449'
-down_revision = '32263b7ab47e'
+down_revision = 'd1b58fcfbd26'
 branch_labels = None
 depends_on = None
 
