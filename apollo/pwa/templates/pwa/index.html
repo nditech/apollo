@@ -598,7 +598,10 @@
             storage = storage || {};
             let collection = storage[form.id] || [];
             collection.push(submission);
-            
+            if (form.form_type === 'INCIDENT')
+              instance.incidents = Object.assign({}, storage);
+            else
+              instance.surveys = Object.assign({}, storage);
           }
 
           return submission;
