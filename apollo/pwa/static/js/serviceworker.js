@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apollo-cache-static-v1';
+const CACHE_NAME = 'apollo-cache-static-v2';
 
 const CACHED_URLS = [
     '/pwa/',
@@ -52,4 +52,17 @@ self.addEventListener('fetch', (event) => {
             )
         );
     }
+});
+
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then(
+            (cacheNames) => Promise.all(cacheNames.map((cacheName) => {
+                if (CACHE_NAME !== cacheName && cacheName.startsWith('apollo-cache-static')) {
+                    return caches.delete(cacheName);
+                }
+            }))
+        )
+    );
 });
