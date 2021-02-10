@@ -80,6 +80,8 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+            <p>{{ _('Participant ID') }}: [[ participant.participant_id ]]</p>
+            <p>{{ _('Location') }}: [[ participant.location ]]</p>
             <p>{{ _('If this is not you, please') }} <a @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</a></p>
           </div>
         </div>

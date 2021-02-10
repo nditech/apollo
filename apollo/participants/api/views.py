@@ -176,6 +176,7 @@ def login():
                 'last_name': participant.last_name,
                 'full_name': participant.full_name,
                 'participant_id': participant_id,
+                'location': participant.location.name,
             },
         },
         'status': 'ok',
