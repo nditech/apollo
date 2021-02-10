@@ -32,8 +32,8 @@
             </div>
             <div class="mb-3">
               <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" @load-forms="refreshForms" @unauthorized="loggedOut(false)" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
-              <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission"></submission-editor>
-              <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :incidents="incidents[currentForm.id]" :surveys="surveys[currentForm.id]" @edit-submission="editSubmission"></submission-list>
+              <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
+              <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :incidents="incidents[currentForm.id]" :surveys="surveys[currentForm.id]" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
             </div>
           </div>
         </div>
@@ -109,6 +109,7 @@
       </div>
       <div class="card-footer">
         <button class="btn btn-outline-dark" @click="newSubmission">{{ _('Add new') }}</button>
+        <button class="btn btn-outline-dark" @click="clearForm">{{ _('Back') }}</button>
       </div>
     </div>
   </template>
@@ -166,6 +167,7 @@
       </div>
       <div class="card-footer">
         <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Save and go to form list') }}</button>
+        <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel and go to form list') }}</button>
         <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline">{{ _('Submit') }}</button>
       </div>
     </div>
@@ -392,6 +394,9 @@
       },
       data() { return {}; },
       methods: {
+        clearForm() {
+          this.$emit('clear-form');
+        },
         editSubmission(submission) {
           this.$emit('edit-submission', this.form, submission);
         },
@@ -420,6 +425,9 @@
         };
       },
       methods: {
+        clearForm() {
+          this.$emit('clear-form');
+        },
         updateImage(imageData, field) {
           let instance = this;
           instance.images[field.tag] = imageData;
@@ -477,6 +485,10 @@
       },
       el: '#app',
       methods: {
+        clearCurrentForm() {
+          this.currentForm = null;
+          this.currentSubmission = null;
+        },
         async refreshForms() {
           let instance = this;
           let result;
@@ -557,6 +569,7 @@
             this.clearDatabase();
         },
         newSubmission(form) {
+          let instance = this;
           let submission = {
             created: new Date(),
             errorMessage: null,
@@ -575,14 +588,17 @@
           }, {});
 
           if (form.form_type === 'CHECKLIST') {
-            this.checklists = this.checklists || {};
-            this.checklists[form.id] = submission;
+            let checklists = instance.checklists || {};
+            let checklist = {};
+            checklist[form.id] = submission;
+            instance.checklists = Object.assign({}, checklists, checklist);
           }
           else {
-            let storage = form.form_type === 'INCIDENT' ? this.incidents : this.surveys;
+            let storage = form.form_type === 'INCIDENT' ? instance.incidents : instance.surveys;
             storage = storage || {};
             let collection = storage[form.id] || [];
             collection.push(submission);
+            
           }
 
           return submission;
@@ -621,8 +637,7 @@
           });
 
           if (reset) {
-            instance.currentSubmission = null;
-            instance.currentForm = null;
+            instance.clearCurrentForm();
           }
         },
         _loadCollectionFromDatabase(collection, callback) {
