@@ -739,8 +739,13 @@
           this.saveSubmissionToDatabase(submission, reset);
         },
         showSubmissionList(form) {
-          if (form.form_type !== 'CHECKLIST')
+          if (form.form_type !== 'CHECKLIST') {
             this.currentForm = form;
+            if (form.form_type === 'INCIDENT')
+              this.loadIncidentsFromDatabase();
+            else
+              this.loadSurveysFromDatabase();
+          }
         }
       },
       mounted() {
