@@ -254,7 +254,7 @@ class QATreeVisitor(BaseVisitor):
 
 def generate_qa_query(expression, form):
     # short-circuit for empty expressions
-    if expression == '':
+    if expression == '' or expression == "=":
         return null(), set()
 
     parser = ParserPEG(GRAMMAR, 'qa')
