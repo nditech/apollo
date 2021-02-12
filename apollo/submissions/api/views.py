@@ -155,7 +155,7 @@ def submission():
             'status': 'error'
         }
 
-        return response, HTTPStatus.BAD_REQUEST
+        return jsonify(response), HTTPStatus.BAD_REQUEST
 
     participant = filter_participants(form, participant.participant_id)
     if participant is None:
@@ -164,7 +164,7 @@ def submission():
             'status': 'error'
         }
 
-        return response, HTTPStatus.BAD_REQUEST
+        return jsonify(response), HTTPStatus.BAD_REQUEST
 
     # validate payload
     schema_class = form.create_schema()
