@@ -6,7 +6,7 @@ from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, get_jti,
-    get_jwt_identity, get_raw_jwt, jwt_refresh_token_required,
+    get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
     set_access_cookies, set_refresh_cookies, unset_access_cookies,
     unset_refresh_cookies)
 from sqlalchemy import bindparam, func, or_, text, true
@@ -233,7 +233,7 @@ def refresh():
 
 
 @csrf.exempt
-@protect
+@jwt_required
 def logout():
     jti = get_raw_jwt()['jti']
     red.set(jti, 'true', settings.JWT_ACCESS_TOKEN_EXPIRES * 1.1)
