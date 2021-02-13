@@ -174,7 +174,7 @@ def login():
             },
         },
         'status': 'ok',
-        'message': gettext('Login successful')
+        'message': gettext('Logged in successfully')
     }
 
     if send_jwts_in_response:
@@ -199,7 +199,7 @@ def logout():
 
     response = {
         'status': 'ok',
-        'message': gettext('Access token revoked')
+        'message': gettext('Logged out successfully')
     }
     resp = jsonify(response)
 
