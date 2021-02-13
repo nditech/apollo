@@ -187,8 +187,10 @@
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/f2/f2.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
@@ -198,8 +200,6 @@
       list: "{{ url_for('forms.api_form_list') }}",
       login: "{{ url_for('participants.login') }}",
       logout: "{{ url_for('participants.logout') }}",
-      logout2: "{{ url_for('participants.logout2') }}",
-      refresh: "{{ url_for('participants.refresh') }}",
       submit: "{{ url_for('submissions.submission') }}",
     };
     const client = new APIClient(endpoints);
@@ -314,10 +314,6 @@
               if (result.status === 200) {
                 result.result.then(data => {
                   let participant = data.data.participant;
-                  participant.tokens = {
-                    accessToken: data.data.access_token,
-                    refreshToken: data.data.refresh_token
-                  };
                   instance.$emit('authenticated', participant);
                 });
               } else {
@@ -499,7 +495,7 @@
           let instance = this;
           let result;
           try {
-            result = await client.getForms(instance.participant.tokens.accessToken, instance.participant.events);
+            result = await client.getForms(instance.participant.events);
             if (result.status === 200) {
               result.result.then(data => {
                 instance.formsLoaded(data.objects);
@@ -566,8 +562,7 @@
           ));
         },
         loggedOut(clearAll) {
-          client.logout(this.participant.tokens.accessToken);
-          client.logout2(this.participant.tokens.refreshToken);
+          client.logout(Cookie.get('csrf_access_token'));
           this.participant = null;
           this.currentForm = null;
           this.currentSubmission = null;
@@ -692,17 +687,6 @@
             }, {});
           });
         },
-        async refresh() {
-          let instance = this;
-          let result = await client.refresh(instance.participant.tokens.refreshToken);
-          if (result.status === 200) {
-            let data = await result.result;
-            let participant = Object.assign({}, instance.participant, {tokens: {accessToken: data.access_token}});
-            instance.participant = participant;
-            console.log(participant);
-            instance.saveParticipantToDatabase(participant);
-          }
-        },
         async postSubmission(submission, single = true) {
           let formData = new FormData();
           for (let key of Object.keys(submission.images)) {
@@ -721,7 +705,7 @@
             // if the API returns anything else,
             // we break out of this loop.
             try {
-              let result = await client.submit(this.participant.tokens.accessToken, formData);
+              let result = await client.submit(formData, Cookie.get('csrf_access_token'));
               // if we get a 401, we can send a refresh
               if (result.status === 401) {
                 if (tries === 1) {
@@ -732,9 +716,6 @@
                   );
                   this.participant = null;
                   return;
-                } else {
-                  this.refresh();
-                  continue;
                 }
               } else if (result.status !== 200) {
                 let data = await result.result;

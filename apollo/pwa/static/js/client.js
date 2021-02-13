@@ -24,51 +24,33 @@ class APIClient {
       }).then(this._getResult);
   };
 
-  refresh = (refreshToken) => {
-    return fetch(this.endpoints.refresh, {
-      headers: {
-          'Authorization': `Bearer ${refreshToken}`,
-          'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    }).then(this._getResult);
-  };
-
-  submit = (accessToken, formData) => {
+  submit = (formData, csrf_token) => {
     return fetch(this.endpoints.submit, {
       body: formData,
+      credentials: 'same-origin',
       headers: {
-        'Authorization': `Bearer ${accessToken}`
+        'X-CSRF-TOKEN': csrf_token
       },
       method: 'POST'
     }).then(this._getResult);
   };
 
-  getForms = (accessToken, events) => {
+  getForms = (events) => {
     const endpoint = (events === [] || events === undefined || events === null) ? this.endpoints.list : `${this.endpoints.list}?events=${events.join(',')}`;
     return fetch(endpoint, {
+      credentials: 'same-origin',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       }
     }).then(this._getResult);
   };
 
-  logout = (accessToken) => {
+  logout = (csrf_token) => {
     return fetch(this.endpoints.logout, {
+      credentials: 'same-origin',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      method: 'DELETE'
-    });
-  }
-
-  logout2 = (refreshToken) => {
-    return fetch(this.endpoints.logout2, {
-      headers: {
-        'Authorization': `Bearer ${refreshToken}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrf_token
       },
       method: 'DELETE'
     });
