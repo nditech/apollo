@@ -40,18 +40,8 @@ bp.add_url_rule(
     methods=['POST']
 )
 bp.add_url_rule(
-    '/api/participants/refresh',
-    view_func=api_views.refresh,
-    methods=['POST']
-)
-bp.add_url_rule(
     '/api/participants/logout',
     view_func=api_views.logout,
-    methods=['DELETE']
-)
-bp.add_url_rule(
-    '/api/participants/logout2',
-    view_func=api_views.logout2,
     methods=['DELETE']
 )
 bp.add_url_rule(

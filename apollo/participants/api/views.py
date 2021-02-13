@@ -5,12 +5,9 @@ from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import (
-    create_access_token, create_refresh_token, get_jti,
-    get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
-    set_access_cookies, set_refresh_cookies, unset_access_cookies,
-    unset_refresh_cookies)
+    create_access_token, get_jti, get_raw_jwt, jwt_required,
+    set_access_cookies, unset_access_cookies)
 from sqlalchemy import bindparam, func, or_, text, true
-from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
 from apollo import settings
@@ -154,13 +151,10 @@ def login():
 
     access_token = create_access_token(
         identity=str(participant.uuid), fresh=True)
-    refresh_token = create_refresh_token(identity=str(participant.uuid))
 
     access_jti = get_jti(encoded_token=access_token)
-    refresh_jti = get_jti(encoded_token=refresh_token)
 
     red.set(access_jti, 'false', settings.JWT_ACCESS_TOKEN_EXPIRES * 1.1)
-    red.set(refresh_jti, 'false', settings.JWT_REFRESH_TOKEN_EXPIRES * 1.1)
 
     # only return tokens if client explicitly requests it
     # and cookies are disabled
@@ -181,44 +175,6 @@ def login():
         },
         'status': 'ok',
         'message': gettext('Login successful')
-    }
-
-    if send_jwts_in_response:
-        response['data'].update(
-            access_token=access_token, refresh_token=refresh_token)
-
-        return jsonify(response)
-
-    resp = jsonify(response)
-    set_access_cookies(resp, access_token)
-    set_refresh_cookies(resp, refresh_token)
-
-    return resp
-
-
-@csrf.exempt
-@jwt_refresh_token_required
-def refresh():
-    participant_uuid = get_jwt_identity()
-    try:
-        participant = Participant.query.filter_by(uuid=participant_uuid).one()
-    except NoResultFound:
-        response = {
-            'message': gettext('Invalid token supplied'),
-            'status': 'error'
-        }
-        return jsonify(response), HTTPStatus.UNAUTHORIZED
-
-    access_token = create_access_token(participant.uuid)
-
-    # only return tokens if client explicitly requests it
-    # and cookies are disabled
-    send_jwts_in_response = 'cookies' not in settings.JWT_TOKEN_LOCATION or \
-        (request.headers.get('X-TOKEN-IN-BODY') is not None)
-
-    response = {
-        'data': {},
-        'status': 'ok'
     }
 
     if send_jwts_in_response:
@@ -249,26 +205,5 @@ def logout():
 
     if unset_cookies:
         unset_access_cookies(resp)
-
-    return resp
-
-
-@csrf.exempt
-@jwt_refresh_token_required
-def logout2():
-    jti = get_raw_jwt()['jti']
-    red.set(jti, 'true', settings.JWT_REFRESH_TOKEN_EXPIRES * 1.1)
-
-    # unset cookies if they are used
-    unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
-
-    response = {
-        'status': 'ok',
-        'message': gettext('Refresh token revoked')
-    }
-    resp = jsonify(response)
-
-    if unset_cookies:
-        unset_refresh_cookies(resp)
 
     return resp
