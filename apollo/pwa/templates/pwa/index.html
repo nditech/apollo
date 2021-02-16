@@ -474,11 +474,15 @@
         }
       },
       mounted() {
-        this.images = this.submission.images;
-        this.location = this.submission.data.location;
+        let instance = this;
+        instance.images = instance.submission.images;
+        instance.location = instance.submission.data.location;
 
         // save every minute
-        this.intervalHandle = setInterval(this.saveSubmission, 60 * 1000);
+        instance.intervalHandle = setInterval(() => {
+          instance.saveSubmission();
+          Notiflix.Notify.Success('{{ _("Data saved") }}')
+        }, 60 * 1000);
       },
       props: ['form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
