@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ g.locale.language }}">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/animate.css/animate.min.css') }}">
   {% if g.locale.text_direction == 'rtl' %}
@@ -10,16 +11,15 @@
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
   {% endif %}
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='css/main.css') }}">
   <link rel="manifest" href="{{ url_for('pwa.static', filename='manifest.json') }}">
   <title>{{ page_title }}</title>
 </head>
 <body class="h-100">
   <div id="app">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top mb-6">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top-mb-6">
       <div class="container-fluid">
         <a class="navbar-brand">{{ page_title }}</a>
-        <connectivity-indicator></connectivity-indicator>
+        <connectivity-indicator :is-online="navigatorOnline"></connectivity-indicator>
       </div>
     </nav>
     <main class="container h-100">
@@ -29,13 +29,13 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <welcome :participant="participant" @logged-out="loggedOut(true)"></welcome>
+                <welcome :participant="participant" @logged-out="loggedOut"></welcome>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" @load-forms="refreshForms" @unauthorized="loggedOut(false)" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
+                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-count="submissionCount" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
                   <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
-                  <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :incidents="incidents[currentForm.id]" :surveys="surveys[currentForm.id]" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
+                  <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :submissions="submissionsSubset(currentForm)" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
                 </transition>
               </div>
             </div>
@@ -51,130 +51,158 @@
     </div>
   </template>
   <template id="login-form">
-    <div class="form-signin">
-      <form>
-        <div class="card">
-          <h5 class="card-header">{{ _('Login') }}</h5>
-          <div class="card-body">
-            <div class="mb-3">
-              <label for="participant_id" class="visually-hidden">{{ _('Participant ID') }}</label>
-              <input type="text" class="form-control bg-light" id="participant_id" placeholder="{{ _('Participant ID') }}" v-model="participant_id">
-            </div>
-            <div class="mb-3">
-              <label for="password" class="visually-hidden">{{ _('Password') }}</label>
-              <input type="password" class="form-control bg-light" id="password" placeholder="{{ _('Password') }}" v-model="password">
-            </div>
-            <div class="mb-3">
-              <div class="d-grid gap-2">
-                <button class="btn btn-primary" @click="authenticate($event)" :disabled="!navigatorOnline">{{ _('Login') }}</button>
+    <div class="row">
+      <div class="col">
+        <div class="form-signin">
+          <form>
+            <div class="card shadow-sm">
+              <h5 class="card-header">{{ _('Login') }}</h5>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="participant_id" class="visually-hidden">{{ _('Participant ID') }}</label>
+                  <input type="text" class="form-control bg-light" id="participant_id" placeholder="{{ _('Participant ID') }}" v-model="participant_id">
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="visually-hidden">{{ _('Password') }}</label>
+                  <input type="password" class="form-control bg-light" id="password" placeholder="{{ _('Password') }}" v-model="password">
+                </div>
+                <div class="mb-3">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-primary" @click.prevent="authenticate" :disabled="!navigatorOnline">{{ _('Login') }}</button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   </template>
   <template id="welcome">
     <div class="row">
       <div class="col">
-        <div class="card">
+        <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
-            <p>{{ _('Participant ID') }}: [[ participant.participant_id ]]</p>
-            <p>{{ _('Location') }}: [[ participant.location ]]</p>
-            <p>{{ _('If this is not you, please') }} <a @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</a></p>
+            <div class="row mb-3">
+              <div class="col-4"><strong>{{ _('Participant ID') }}</strong></div>
+              <div class="col">[[ participant.participant_id ]]</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-4"><strong>{{ _('Location') }}</strong></div>
+              <div class="col">[[ participant.location ]]</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">{{ _('If this is not you, please') }} <button @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</button></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </template>
   <template id="form-list">
-    <div class="card">
-      <h5 class="card-header">{{ _('Forms') }}</h5>
-      <div class="list-group list-group-flush">
-        <div class="list-group-item" v-for="form in forms" :key="form.id">[[ form.name ]] <button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-outline-dark" @click="refreshForms" :disabled="!navigatorOnline">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-          </svg>
-          {{ _('Load forms') }}
-        </button>
+    <div class="row">
+      <div class="col">
+        <div class="card shadow-sm">
+          <h5 class="card-header">{{ _('Forms') }}</h5>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item" v-for="form in forms" :key="form.id">
+              <div class="row">
+                <div class="col-sm-12 col-md-6">[[ form.name ]]</div>
+                <div class="col-sm-6 col-md-3">
+                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
+                  <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
+                </div>
+                <div class="col-sm-6 col-md-3"><button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </template>
   <template id="submission-list">
-    <div class="card">
-      <h5 class="card-header">[[ form.name ]]</h5>
-      <div class="list-group list-group-flush">
-        <div class="list-group-item" v-for="(submission, index) in submissions">
-          [[ index + 1 ]] <button class="btn btn-outline-dark float-end" @click="editSubmission(submission)">{{ _('Edit') }}</button>
+    <div class="row">
+      <div class="col">
+        <div class="card shadow-sm">
+          <h5 class="card-header">[[ form.name ]]</h5>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item" v-for="(submission, index) in submissions">
+              <div class="row">
+                <div class="col-3">[[ index + 1]]</div>
+                <div class="col"><button class="btn btn-outline-dark float-end" @click="editSubmission(submission)">{{ _('Edit') }}</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-outline-dark" @click="newSubmission">{{ _('Add new') }}</button>
+            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Back') }}</button>
+          </div>
         </div>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-outline-dark" @click="newSubmission">{{ _('Add new') }}</button>
-        <button class="btn btn-outline-dark" @click="clearForm">{{ _('Back') }}</button>
       </div>
     </div>
   </template>
   <template id="submission-editor">
-    <div class="card">
-      <h5 class="card-header">[[ form.name ]]</h5>
-      <div class="card-body">
-        <form>
-          <fieldset v-if="form.form_type === 'SURVEY'">
-            <div class="mb-3">
-              <label for="serial" class="form-label">{{ _('Serial number') }}</label>
-              <input class="form-control" name="serial" id="serial" v-model="submission.serial">
-            </div>
-          </fieldset>
-          <fieldset v-for="group in form.data.groups">
-            <legend>[[ group.name ]]</legend>
-            <div v-for="field in group.fields">
-              <div class="mb-3" v-if="field.type === 'integer'">
-                <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min">
-              </div>
-              <div class="mb-3" v-else-if="field.type === 'select'">
-                <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                <div class="form-check" v-for="(value, label) in field.options">
-                  <label :for="field.tag" class="form-label">[[ label ]]</label>
-                  <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+    <div class="row">
+      <div class="col">
+        <div class="card shadown-sm">
+          <h5 class="card-header">[[ form.name ]]</h5>
+          <div class="card-body">
+            <form>
+              <fieldset v-if="form.form_type === 'SURVEY'">
+                <div class="mb-3">
+                  <label for="serial" class="form-label">{{ _('Serial number') }}</label>
+                  <input class="form-control" name="serial" id="serial" v-model="submission.serial">
                 </div>
-              </div>
-              <div class="mb-3" v-else-if="field.type === 'multiselect'">
-                <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                <div class="form-check" v-for="(value, label) in field.options">
-                  <label :for="field.tag" class="form-label">[[ label ]]</label>
-                  <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+              </fieldset>
+              <!-- TODO: add accordions here -->
+              <fieldset v-for="(group, index) in form.data.groups">
+                <legend>[[ group.name ]]</legend>
+                <div v-for="field in group.fields">
+                  <div class="mb-3" v-if="field.type === 'integer'">
+                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                    <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min">
+                  </div>
+                  <div class="mb-3" v-else-if="field.type === 'select'">
+                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                    <div class="form-check" v-for="(value, label) in field.options">
+                      <label :for="field.tag" class="form-label">[[ label ]]</label>
+                      <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                    </div>
+                  </div>
+                  <div class="mb-3" v-else-if="field.type === 'multiselect'">
+                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                    <div class="form-check" v-for="(value, label) in field.options">
+                      <label :for="field.tag" class="form-label">[[ label ]]</label>
+                      <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                    </div>
+                  </div>
+                  <div class="mb-3" v-else-if="field.type === 'string'">
+                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                    <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]">
+                  </div>
+                  <div class="mb-3" v-else-if="field.type === 'comment'">
+                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                    <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]"></textarea>
+                  </div>
+                  <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage"></image-field>
                 </div>
-              </div>
-              <div class="mb-3" v-else-if="field.type === 'string'">
-                <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]">
-              </div>
-              <div class="mb-3" v-else-if="field.type === 'comment'">
-                <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]"></textarea>
-              </div>
-              <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage"></image-field>
-            </div>
-          </fieldset>
-          <fieldset v-if="canRetrieveLocation">
-            <legend>{{ _('Location') }}</legend>
-            <div class="mb-3">
-              <pre>([[ coordinates[1] ]], [[ coordinates[0] ]])</pre>
-              <button class="btn btn-outline-dark" @click="getLocation($event)">{{ _('Get location') }}</button>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Save and go to form list') }}</button>
-        <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel and go to form list') }}</button>
-        <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline">{{ _('Submit') }}</button>
+              </fieldset>
+              <fieldset v-if="canRetrieveLocation">
+                <legend>{{ _('Location') }}</legend>
+                <div class="mb-3">
+                  <pre>([[ coordinates[1] ]], [[ coordinates[0] ]])</pre>
+                  <button class="btn btn-outline-dark" @click.prevent="getLocation">{{ _('Get location') }}</button>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Save and go to form list') }}</button>
+            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel and go to form list') }}</button>
+            <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline">{{ _('Submit') }}</button>
+          </div>
+        </div>
       </div>
     </div>
   </template>
@@ -187,9 +215,9 @@
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='vendor/f2/f2.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/svg-gauge/gauge.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
@@ -207,11 +235,9 @@
     // database setup
     const db = new Dexie('apollo');
     db.version(1).stores({
-      forms: '',
-      participant: '',
-      checklists: '++id, form',
-      incidents: '++id, form',
-      surveys: '++id, form, serial',
+      forms: 'id, participant_id',
+      participants: 'participant_id, lastLogin',
+      submissions: '++id, finalized, form, participant_id, posted'
     });
     db.open().catch(() => {
       Notiflix.Report.Failure(
@@ -275,23 +301,7 @@
 
     // component for online status
     Vue.component('connectivity-indicator', {
-      data() {
-        return {
-          isOnline: navigator.onLine
-        };
-      },
-
-      methods: {
-        toggleOnlineStatus() {
-          this.isOnline = navigator.onLine;
-        }
-      },
-
-      mounted() {
-        window.addEventListener('offline', this.toggleOnlineStatus);
-        window.addEventListener('online', this.toggleOnlineStatus);
-      },
-
+      props: ['isOnline'],
       template: '#connectivity-indicator'
     });
 
@@ -304,8 +314,7 @@
         };
       },
       methods: {
-        authenticate(event) {
-          event.preventDefault();
+        authenticate() {
           let instance = this;
           Notiflix.Loading.Standard('{{ _("Please wait") }}');
           client.authenticate(this.participant_id, this.password)
@@ -314,6 +323,7 @@
               if (result.status === 200) {
                 result.result.then(data => {
                   let participant = data.data.participant;
+                  participant.lastLogin = new Date();
                   instance.$emit('authenticated', participant);
                 });
               } else {
@@ -375,25 +385,14 @@
             this.$emit('edit-submission', form, null);
           else
             this.$emit('show-submission-list', form);
-        },
-        refreshForms() {
-          this.$emit('load-forms');
         }
       },
-      props: ['forms', 'navigatorOnline'],
+      props: ['forms', 'submissionCount', 'submissions'],
       template: '#form-list'
     });
 
     // submission list (for incidents and surveys)
     Vue.component('submission-list', {
-      computed: {
-        submissions() {
-          if (this.form.form_type === 'INCIDENT')
-            return this.incidents;
-          else
-            return this.surveys;
-        }
-      },
       data() { return {}; },
       methods: {
         clearForm() {
@@ -406,11 +405,16 @@
           this.$emit('edit-submission', this.form, null);
         }
       },
-      props: ['form', 'incidents', 'surveys'],
+      props: ['form', 'submissions'],
       template: '#submission-list'
     });
 
+    // submission editor
     Vue.component('submission-editor', {
+      beforeDestroy() {
+        if (this.intervalHandle)
+          clearInterval(this.intervalHandle);
+      },
       computed: {
         coordinates() {
           if (this.location)
@@ -423,7 +427,9 @@
         return {
           canRetrieveLocation: 'geolocation' in navigator,
           location: null,
-          images: {}
+          images: {},
+          intervalHandle: null,
+          lastSave: new Date(0)
         };
       },
       methods: {
@@ -441,16 +447,19 @@
           if (this.images !== {})
             this.submission.images = this.images;
         },
-        stopEditing() {
+        saveSubmission(reset = false) {
           this.updateSubmission();
-          this.$emit('save-submission', this.submission, true);
+          this.lastSave = new Date();
+          this.$emit('save-submission', this.submission, reset);
+        },
+        stopEditing() {
+          this.saveSubmission(true);
         },
         postSubmission() {
           this.updateSubmission();
           this.$emit('post-submission', this.submission);
         },
-        getLocation(event) {
-          event.preventDefault();
+        getLocation() {
           let instance = this;
           navigator.geolocation.getCurrentPosition(
             position => {
@@ -467,6 +476,9 @@
       mounted() {
         this.images = this.submission.images;
         this.location = this.submission.data.location;
+
+        // save every minute
+        this.intervalHandle = setInterval(this.saveSubmission, 60 * 1000);
       },
       props: ['form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
@@ -475,15 +487,33 @@
     // main app
     let vm;
     vm = new Vue({
+      beforeDestroy() {
+        if (this.formSyncIntervalHandle)
+          clearInterval(this.formSyncIntervalHandle);
+        if (this.submissionSyncIntervalHandle)
+          clearInterval(this.submissionSyncIntervalHandle);
+      },
+      computed: {
+        submissionCount() {
+          let instance = this;
+          if (instance.forms === null || instance.submissions === null)
+            return {};
+          return instance.forms.reduce((acc, form) => {
+            acc[form.id] = instance.submissionsSubset(form).length;
+            return acc;
+          }, {});
+        }
+      },
       data: {
         checklists: null,
         currentForm: null,
         currentSubmission: null,
-        forms: null,
-        incidents: null,
+        forms: [],
+        formSyncIntervalHandle: null,
         navigatorOnline: navigator.onLine,
         participant: null,
-        surveys: null
+        submissions: [],
+        submissionSyncIntervalHandle: null
       },
       el: '#app',
       methods: {
@@ -493,6 +523,10 @@
         },
         async refreshForms() {
           let instance = this;
+          // early exit if user isn't logged in or is offline
+          if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
+            return;
+
           let result;
           try {
             result = await client.getForms(instance.participant.events);
@@ -517,32 +551,34 @@
           this.refreshForms();
         },
         formsLoaded(forms) {
-          this.forms = forms.reduce((registry, form) => {
-            registry[form.id] = form;
-            return registry;
-          }, {});
+          this.forms = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
           this.saveFormstoDatabase(this.forms);
         },
         saveFormstoDatabase(forms) {
           db.transaction('rw', db.forms, () => {
-            db.forms.put(forms, 1);
-          });
+            db.forms.bulkPut(forms);
+          }).catch(() => Notiflix.Report.Failure(
+            '{{ _("Error") }}',
+            '{{ _("Could not save data to the database") }}',
+            '{{ _("OK") }}',
+          ));
         },
         clearDatabase() {
-          db.transaction('rw', [db.forms, db.participant, db.checklists, db.incidents, db.surveys], () => {
+          db.transaction('rw', [db.forms, db.participants, db.submissions], () => {
             db.forms.clear();
-            db.participant.clear();
-            db.checklists.clear();
-            db.incidents.clear();
-            db.surveys.clear();
+            db.participants.clear();
+            db.submissions.clear();
           });
         },
-        loadParticipantFromDatabase() {
+        loadParticipantFromDatabase(callback) {
           let instance = this;
-          db.participant.get(1)
+          db.participants.orderBy('lastLogin').first()
             .then(participant => {
-              if (participant)
+              if (participant !== undefined)
                 instance.participant = participant;
+              else
+                instance.participant = null;
+              callback();
             })
             .catch(() =>
               Notiflix.Report.Failure(
@@ -553,32 +589,38 @@
             );
         },
         saveParticipantToDatabase(participant) {
-          db.transaction('rw', db.participant, () => {
-            db.participant.put(participant, 1);
+          db.transaction('rw', db.participants, () => {
+            db.participants.put(participant);
           }).catch(() => Notiflix.Report.Failure(
             '{{ _("Error") }}',
             '{{ _("Could not save data to the database") }}',
             '{{ _("OK") }}',
           ));
         },
-        loggedOut(clearAll) {
+        loggedOut() {
           client.logout(Cookie.get('csrf_access_token'));
           this.participant = null;
           this.currentForm = null;
           this.currentSubmission = null;
-          if (clearAll)
-            this.clearDatabase();
         },
         newSubmission(form) {
           let instance = this;
+          if (instance.submissions === null)
+            instance.submissions = [];
+
+          if (form.form_type === 'CHECKLIST' && instance.submissionsSubset(form).length > 0)
+            return instance.submissionsSubset(form)[0];
+
           let submission = {
             created: new Date(),
             errorMessage: null,
+            finalized: false,
             form: form.id,
             images: {},
             posted: null,
             status: 'ok',
-            updated: null
+            updated: null,
+            participant_id: instance.participant.participant_id
           };
           submission.data = form.data.groups.reduce((acc, group) => {
             group.fields.forEach(field => {
@@ -588,56 +630,25 @@
             return acc;
           }, {});
 
-          if (form.form_type === 'CHECKLIST') {
-            let checklists = instance.checklists || {};
-            let checklist = {};
-            checklist[form.id] = submission;
-            instance.checklists = Object.assign({}, checklists, checklist);
-          }
-          else {
-            let storage = form.form_type === 'INCIDENT' ? instance.incidents : instance.surveys;
-            storage = storage || {};
-            let collection = storage[form.id] || [];
-            collection.push(submission);
-            if (form.form_type === 'INCIDENT')
-              instance.incidents = Object.assign({}, storage);
-            else
-              instance.surveys = Object.assign({}, storage);
-          }
-
+          instance.submissions.push(submission);
           return submission;
         },
         editSubmission(form, sub) {
           let submission;
-          if (sub === null || sub === undefined) {
-            if (form.form_type === 'CHECKLIST') {
-              submission = this.checklists[form.id] || this.newSubmission(form);
-            } else
+          if (sub === null || sub === undefined)
               submission = this.newSubmission(form);
-          } else
+          else
             submission = sub;
+
           this.currentForm = form;
           this.currentSubmission = submission;
         },
         saveSubmissionToDatabase(submission, reset) {
           let instance = this;
-          let form = instance.forms[submission.form];
-          let table;
           submission.updated = new Date();
-          switch (form.form_type) {
-            case 'CHECKLIST':
-              table = db.checklists;
-              break;
-            case 'INCIDENT':
-              table = db.incidents;
-              break;
-            case 'SURVEY':
-              table = db.surveys;
-              break;
-          }
 
-          db.transaction('rw', table, () => {
-            table.put(submission);
+          db.transaction('rw', db.submissions, () => {
+            db.submissions.put(submission);
           });
 
           if (reset) {
@@ -646,45 +657,21 @@
         },
         _loadCollectionFromDatabase(collection, callback) {
           let instance = this;
-          collection.toArray()
+          if (instance.participant === null || instance.participant === undefined)
+            return;
+          collection.where({participant_id: instance.participant.participant_id}).toArray()
             .then(entries => callback(entries));
         },
         loadFormsFromDatabase() {
           let instance = this;
-          db.forms.get(1)
-            .then(forms => {
-              instance.forms = forms;
-            });
-        },
-        loadChecklistsFromDatabase() {
-          let instance = this;
-          instance._loadCollectionFromDatabase(db.checklists, entries => {
-            instance.checklists = entries.reduce((registry, submission) => {
-              registry[submission.form] = submission;
-              return registry;
-            }, {});
+          instance._loadCollectionFromDatabase(db.forms, forms => {
+            instance.forms = forms;
           });
         },
-        loadIncidentsFromDatabase() {
+        loadSubmissionsFromDatabase() {
           let instance = this;
-          instance._loadCollectionFromDatabase(db.incidents, entries => {
-            instance.incidents = entries.reduce((registry, incident) => {
-              let storage = registry[incident.form] || [];
-              storage.push(incident);
-              registry[incident.form] = storage;
-              return registry;
-            }, {});
-          });
-        },
-        loadSurveysFromDatabase() {
-          let instance = this;
-          instance._loadCollectionFromDatabase(db.surveys, entries => {
-            instance.surveys = entries.reduce((registry, survey) => {
-              let storage = registry[survey.form] || [];
-              storage.push(survey);
-              registry[survey.form] = storage;
-              return registry;
-            }, {});
+          instance._loadCollectionFromDatabase(db.submissions, submissions => {
+            instance.submissions = submissions;
           });
         },
         async postSubmission(submission, single = true) {
@@ -759,27 +746,32 @@
           this.saveSubmissionToDatabase(submission, reset);
         },
         showSubmissionList(form) {
-          if (form.form_type !== 'CHECKLIST') {
+          if (form.form_type !== 'CHECKLIST')
             this.currentForm = form;
-            if (form.form_type === 'INCIDENT')
-              this.loadIncidentsFromDatabase();
-            else
-              this.loadSurveysFromDatabase();
-          }
+        },
+        submissionsSubset(form) {
+          return this.submissions.filter(submission => submission.form === form.id);
         }
       },
       mounted() {
-        this.loadParticipantFromDatabase();
-        this.loadFormsFromDatabase();
-        this.loadChecklistsFromDatabase();
-        this.loadIncidentsFromDatabase();
-        this.loadSurveysFromDatabase();
+        this.loadParticipantFromDatabase(() => {
+          if (this.participant !== null) {
+            this.loadFormsFromDatabase();
+            this.loadSubmissionsFromDatabase();
+          }
+        });
 
         let onlineHook = () => {
           this.navigatorOnline = navigator.onLine;
         };
         window.addEventListener('offline', onlineHook);
         window.addEventListener('online', onlineHook);
+
+        // set up form refresh and submission sync timers
+        // forms, every fifteen minutes
+        this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
+
+        // submissions, every fifteen
       }
     });
   </script>

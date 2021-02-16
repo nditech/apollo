@@ -17,6 +17,7 @@ const CACHED_URLS = [
     '/pwa/static/vendor/image-blob-reduce/image-blob-reduce.min.js',
     '/pwa/static/vendor/notiflix/notiflix-2.7.0.min.css',
     '/pwa/static/vendor/notiflix/notiflix-2.7.0.min.js',
+    '/pwa/static/vendor/svg-gauge/gauge.min.js',
     '/pwa/static/vendor/vue/vue.min.js',
 ];
 
