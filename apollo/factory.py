@@ -103,8 +103,8 @@ def create_app(
     jwt_manager.expired_token_loader(jwt_hooks.process_expired_token)
     jwt_manager.invalid_token_loader(jwt_hooks.process_invalid_token)
     jwt_manager.revoked_token_loader(jwt_hooks.process_revoked_token)
-    jwt_manager.token_in_blacklist_loader(
-        jwt_hooks.check_if_token_is_blacklisted)
+    jwt_manager.token_in_blocklist_loader(
+        jwt_hooks.check_if_token_is_blocklisted)
 
     if app.config.get('SSL_REQUIRED'):
         SSLify(app)

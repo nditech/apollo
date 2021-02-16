@@ -8,7 +8,7 @@ from flask import (
 )
 from flask_admin import AdminIndexView
 from flask_jwt_extended import (
-    create_access_token, get_jwt_identity, get_raw_jwt, set_access_cookies)
+    create_access_token, get_jwt_identity, get_jwt, set_access_cookies)
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
@@ -146,7 +146,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     @app.after_request
     def refresh_expiring_jwts(response):
         try:
-            expiration_timestamp = get_raw_jwt()['exp']
+            expiration_timestamp = get_jwt()['exp']
             now = utils.current_timestamp()
             target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
             if target_timestamp > expiration_timestamp:

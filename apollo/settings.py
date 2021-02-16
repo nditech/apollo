@@ -253,6 +253,3 @@ JWT_REFRESH_TOKEN_EXPIRES = timedelta(
         "JWT_REFRESH_TOKEN_LIFETIME_SECONDS", cast=int, default=86400)
 )
 JWT_ERROR_MESSAGE_KEY = 'message'
-JWT_BLACKLIST_ENABLED = config(
-    'ENABLE_TOKEN_BLACKLIST', cast=config.boolean, default=True)
-JWT_BLACKLIST_CHECK_TOKENS = ['access', 'refresh']
