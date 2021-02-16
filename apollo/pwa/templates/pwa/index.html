@@ -161,46 +161,46 @@
                 <div v-for="field in group.fields">
                   <div class="mb-3" v-if="field.type === 'integer'">
                     <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min">
+                    <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
                   </div>
                   <div class="mb-3" v-else-if="field.type === 'select'">
                     <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                     <div class="form-check" v-for="(value, label) in field.options">
                       <label :for="field.tag" class="form-label">[[ label ]]</label>
-                      <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                      <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
                     </div>
                   </div>
                   <div class="mb-3" v-else-if="field.type === 'multiselect'">
                     <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                     <div class="form-check" v-for="(value, label) in field.options">
                       <label :for="field.tag" class="form-label">[[ label ]]</label>
-                      <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]">
+                      <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
                     </div>
                   </div>
                   <div class="mb-3" v-else-if="field.type === 'string'">
                     <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]">
+                    <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
                   </div>
                   <div class="mb-3" v-else-if="field.type === 'comment'">
                     <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]"></textarea>
+                    <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
                   </div>
-                  <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage"></image-field>
+                  <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
                 </div>
               </fieldset>
               <fieldset v-if="canRetrieveLocation">
                 <legend>{{ _('Location') }}</legend>
                 <div class="mb-3">
                   <pre>([[ coordinates[1] ]], [[ coordinates[0] ]])</pre>
-                  <button class="btn btn-outline-dark" @click.prevent="getLocation">{{ _('Get location') }}</button>
+                  <button class="btn btn-outline-dark" @click.prevent="getLocation" :disabled="locked">{{ _('Get location') }}</button>
                 </div>
               </fieldset>
             </form>
           </div>
           <div class="card-footer">
-            <button class="btn btn-outline-dark" @click="stopEditing">{{ _('Save and go to form list') }}</button>
-            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel and go to form list') }}</button>
-            <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline">{{ _('Submit') }}</button>
+            <button class="btn btn-outline-dark" @click="stopEditing" :disabled="locked">{{ _('Back') }}</button>
+            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel') }}</button>
+            <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@
     <div class="mb-3">
       <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="200"></div>
       <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)">
+      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -295,7 +295,7 @@
               });
           });
       },
-      props: ['field', 'initialData'],
+      props: ['disabled', 'field', 'initialData'],
       template: '#image-field'
     });
 
@@ -421,6 +421,9 @@
             return this.location
           else
             return ['{{ _("N/A") }}', '{{ _("N/A") }}']
+        },
+        locked() {
+          return (this.submission.posted !== null && this.form.form_type === 'INCIDENT');
         }
       },
       data() {
@@ -479,10 +482,11 @@
         instance.location = instance.submission.data.location;
 
         // save every minute
-        instance.intervalHandle = setInterval(() => {
-          instance.saveSubmission();
-          Notiflix.Notify.Success('{{ _("Data saved") }}')
-        }, 60 * 1000);
+        if (!instance.locked)
+          instance.intervalHandle = setInterval(() => {
+            instance.saveSubmission();
+            Notiflix.Notify.Success('{{ _("Data saved") }}')
+          }, 60 * 1000);
       },
       props: ['form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
@@ -623,6 +627,7 @@
             images: {},
             posted: null,
             status: 'ok',
+            type: form.form_type,
             updated: null,
             participant_id: instance.participant.participant_id
           };
@@ -682,7 +687,7 @@
           if (!this.navigatorOnline)
             return;
           let formData = new FormData();
-          for (let key of Object.keys(submission.images)) {
+          for (let key of Object.keys(submission.images || {})) {
             formData.append(key, submission.images[key], submission.images[key].name);
           }
           let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
@@ -761,7 +766,7 @@
         postFinalizedSubmissions() {
           let instance = this;
           instance.submissions
-            .filter(submission => submission.finalized === true && submission.posted === null)
+            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted))
             .forEach(submission => instance.postSubmission(false));
         }
       },
