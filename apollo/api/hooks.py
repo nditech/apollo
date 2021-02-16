@@ -32,7 +32,4 @@ def check_if_token_is_blacklisted(decoded_token):
     jti = decoded_token['jti']
     entry = red.get(jti)
 
-    if entry is None:
-        return True
-
-    return entry == b'true'
+    return entry is not None

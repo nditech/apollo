@@ -5,8 +5,8 @@ from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import (
-    create_access_token, get_jti, get_raw_jwt, jwt_required,
-    set_access_cookies, unset_access_cookies)
+    create_access_token, get_raw_jwt, jwt_required, set_access_cookies,
+    unset_access_cookies)
 from sqlalchemy import bindparam, func, or_, text, true
 from webargs import fields
 
@@ -152,10 +152,6 @@ def login():
     access_token = create_access_token(
         identity=str(participant.uuid), fresh=True)
 
-    access_jti = get_jti(encoded_token=access_token)
-
-    red.set(access_jti, 'false', settings.JWT_ACCESS_TOKEN_EXPIRES * 1.1)
-
     # only return tokens if client explicitly requests it
     # and cookies are disabled
     send_jwts_in_response = 'cookies' not in settings.JWT_TOKEN_LOCATION or \
@@ -192,7 +188,7 @@ def login():
 @jwt_required
 def logout():
     jti = get_raw_jwt()['jti']
-    red.set(jti, 'true', settings.JWT_ACCESS_TOKEN_EXPIRES * 1.1)
+    red.set(jti, '', settings.JWT_ACCESS_TOKEN_EXPIRES.total_seconds())
 
     # unset cookies if they are used
     unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
