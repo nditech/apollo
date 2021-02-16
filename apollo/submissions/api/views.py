@@ -121,7 +121,7 @@ class SubmissionListResource(BaseListResource):
 
 
 @csrf.exempt
-@jwt_required
+@jwt_required()
 def submission():
     try:
         request_data = json.loads(request.form.get('submission'))

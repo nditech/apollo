@@ -185,7 +185,7 @@ def login():
 
 
 @csrf.exempt
-@jwt_required
+@jwt_required()
 def logout():
     jti = get_jwt()['jti']
     red.set(jti, '', settings.JWT_ACCESS_TOKEN_EXPIRES.total_seconds())
