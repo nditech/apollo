@@ -220,7 +220,8 @@ def submission():
                 location=participant.location,
                 created=current_timestamp(),
                 event=event,
-                deployment_id=event.deployment_id)
+                deployment_id=event.deployment_id,
+                data={})
 
     # if submission is None, there's no submission
     if submission is None:
