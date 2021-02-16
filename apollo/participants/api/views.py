@@ -188,7 +188,7 @@ def login():
 @jwt_required()
 def logout():
     jti = get_jwt()['jti']
-    red.set(jti, '', settings.JWT_ACCESS_TOKEN_EXPIRES.total_seconds())
+    red.set(jti, '', int(settings.JWT_ACCESS_TOKEN_EXPIRES.total_seconds()))
 
     # unset cookies if they are used
     unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
