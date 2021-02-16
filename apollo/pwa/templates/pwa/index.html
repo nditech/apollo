@@ -679,6 +679,8 @@
           });
         },
         async postSubmission(submission, single = true) {
+          if (!this.navigatorOnline)
+            return;
           let formData = new FormData();
           for (let key of Object.keys(submission.images)) {
             formData.append(key, submission.images[key], submission.images[key].name);
@@ -755,6 +757,12 @@
         },
         submissionsSubset(form) {
           return this.submissions.filter(submission => submission.form === form.id);
+        },
+        postFinalizedSubmissions() {
+          let instance = this;
+          instance.submissions
+            .filter(submission => submission.finalized === true && submission.posted === null)
+            .forEach(submission => instance.postSubmission(false));
         }
       },
       mounted() {
@@ -775,7 +783,8 @@
         // forms, every fifteen minutes
         this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
 
-        // submissions, every fifteen
+        // submissions, every fifteen minutes
+        this.submissionSyncIntervalHandle = setInterval(this.postFinalizedSubmissions, 15 * 60 * 1000);
       }
     });
   </script>
