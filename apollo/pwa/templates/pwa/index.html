@@ -693,68 +693,42 @@
           let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
           formData.append('submission', JSON.stringify(subCopy));
 
-          for (let tries = 0; tries < 2; tries++) {
-            // definitely a better way of doing this, but
-            // the general idea is that if we get a 401
-            // once, we will request a new access token
-            // automatically and attempt to send again.
-            // if it happens again,
-            // we request that the user logs in again
-            // if the API returns anything else,
-            // we break out of this loop.
-            try {
-              let result = await client.submit(formData, Cookie.get('csrf_access_token'));
-              // if we get a 401, we can send a refresh
-              if (result.status === 401) {
-                if (tries === 1) {
-                  Notiflix.Report.Warning(
-                    '{{ _("Session expired") }}',
-                    '{{ _("Please login again to send your data") }}',
-                    '{{ _("OK") }}',
-                  );
-                  this.participant = null;
-                  return;
-                }
-              } else if (result.status !== 200) {
-                let data = await result.result;
-                if (single)
-                  Notiflix.Report.Failure(
-                    '{{ _("Error") }}',
-                    data.message,
-                    '{{ _("OK") }}',
-                  );
-                else {
-                  submission.status = 'error';
-                  submission.errorMessage = data.message;
-                }
-              } else {
-                if (single)
-                  Notiflix.Report.Success(
-                    '{{ _("Success") }}',
-                    '{{ _("Data successfully submitted") }}',
-                    '{{ _("OK") }}',
-                  );
-                submission.status = 'ok';
-              }
-            } catch (error) {
-              submission.status = 'error';
-              submission.errorMessage = '{{ _("Offline") }}';
-  
+          try {
+            let result = await client.submit(formData, Cookie.get('csrf_access_token'));
+            if (result.status === 401) {
               if (single) {
-                Notiflix.Report.Failure(
-                  '{{ _("Error") }}',
-                  '{{ _("Error posting data. Might you be offline?") }}',
+                Notiflix.Report.Warning(
+                  '{{ _("Session expired") }}',
+                  '{{ _("Please login again to send your data") }}',
                   '{{ _("OK") }}',
                 );
+                this.participant = null;
               }
+            } else if (result.status !== 200) {
+              let data = await result.result;
+              if (single)
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  data.message,
+                  '{{ _("OK") }}',
+                );
+            } else {
+              submission.posted = new Date();
+              this.saveSubmissionToDatabase(submission, single);
+              Notiflix.Report.Success(
+                '{{ _("Success") }}',
+                '{{ _("Data successfully submitted") }}',
+                '{{ _("OK") }}',
+              );
             }
-            break;
+          } catch (error) {
+            if (single)
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Error posting data. Might you be offline?") }}',
+                '{{ _("OK") }}',
+              );
           }
-
-          // set posted, and reset editor if editing
-          let reset = single ? true : false;
-          submission.posted = new Date();
-          this.saveSubmissionToDatabase(submission, reset);
         },
         showSubmissionList(form) {
           if (form.form_type !== 'CHECKLIST')
