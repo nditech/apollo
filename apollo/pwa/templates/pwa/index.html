@@ -124,13 +124,15 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col"><button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
+                <div class="col">
+                  <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)">{{ _('Add new') }}</button>
+                  <button class="btn btn-outline-dark float-end me-2" @click="formAction(form)">[[ actionLabel(form) ]]</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   </template>
   <template id="submission-list">
     <div class="row">
@@ -498,6 +500,9 @@
             return [];
           
           return computeCompletion(form, submission, submission.images);
+        },
+        newSubmission(form) {
+          this.$emit('edit-submission', form, null);
         }
       },
       props: ['forms', 'submissionCount', 'submissions'],
