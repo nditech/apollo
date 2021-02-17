@@ -229,7 +229,16 @@
     </div>
   </template>
   <template id="completion-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title :id="titleID">[[ title ]]</title><path :fill="fillColor" d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z"/></svg>
+    <component :is="currentComponent" :title="title" :title-id="titleID"></component>
+  </template>
+  <template id="completion-icon-complete">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+  </template>
+  <template id="completion-icon-partial">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
+  </template>
+  <template id="completion-icon-missing">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
@@ -240,6 +249,23 @@
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script>
+    const formSorter = (a, b) => {
+      const FORM_TYPE_MAP = {
+        CHECKLIST: 1,
+        SURVEY: 2,
+        INCIDENT: 3
+      };
+      if (a.form_type !== b.form_type)
+        return FORM_TYPE_MAP[a.form_type] - FORM_TYPE_MAP[b.form_type];
+      
+      if (a.name > b.name)
+        return 1;
+      else if (a.name < b.name)
+        return -1;
+      else
+        return a.id - b.id;
+    };
+
     const computeCompletion = (form, submission, images) => {
       return form.data.groups.map(
         group => {
@@ -296,15 +322,28 @@
     // app setup
     Vue.options.delimiters = ['[[', ']]'];
 
+    Vue.component('completion-icon-complete', {
+      props: ['title', 'titleID'],
+      template: '#completion-icon-complete'
+    });
+    Vue.component('completion-icon-partial', {
+      props: ['title', 'titleID'],
+      template: '#completion-icon-partial'
+    });
+    Vue.component('completion-icon-missing', {
+      props: ['title', 'titleID'],
+      template: '#completion-icon-missing'
+    });
+
     Vue.component('completion-icon', {
       computed: {
-        fillColor() {
+        currentComponent() {
           if (this.completion.filled === 0)
-            return '#EF4444';
+            return 'completion-icon-missing';
           else if (this.completion.filled < this.completion.total)
-            return '#FCD34D';
+            return 'completion-icon-partial';
           else
-            return '#34D399';
+            return 'completion-icon-complete';
         },
         title() {
           let status;
@@ -623,7 +662,7 @@
               instance.$emit('unauthorized');
             }
           } catch (error) {
-            if (quiet)
+            if (!quiet)
               Notiflix.Report.Failure(
                 '{{ _("Error") }}',
                 '{{ _("Could not load forms. Might you be offline?") }}',
@@ -635,9 +674,12 @@
           this.participant = participant;
           this.saveParticipantToDatabase(participant);
           this.refreshForms(false);
+          this.loadSubmissionsFromDatabase();
         },
         formsLoaded(forms) {
-          this.forms = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
+          let formsWithParticipantIds = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
+          formsWithParticipantIds.sort(formSorter);
+          this.forms = formsWithParticipantIds;
           this.saveFormstoDatabase(this.forms);
         },
         saveFormstoDatabase(forms) {
@@ -658,10 +700,10 @@
         },
         loadParticipantFromDatabase(callback) {
           let instance = this;
-          db.participants.orderBy('lastLogin').first()
-            .then(participant => {
-              if (participant !== undefined)
-                instance.participant = participant;
+          db.participants.toCollection().reverse().sortBy('lastLogin')
+            .then(participants => {
+              if (participants.length !== 0)
+                instance.participant = participants[0];
               else
                 instance.participant = null;
               callback();
@@ -688,6 +730,8 @@
           this.participant = null;
           this.currentForm = null;
           this.currentSubmission = null;
+          this.forms = [];
+          this.submissions = [];
         },
         newSubmission(form) {
           let instance = this;
@@ -752,6 +796,8 @@
         loadFormsFromDatabase() {
           let instance = this;
           instance._loadCollectionFromDatabase(db.forms, forms => {
+            if (forms.length > 0)
+              forms.sort(formSorter);
             instance.forms = forms;
           });
         },
