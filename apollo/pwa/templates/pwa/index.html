@@ -24,7 +24,7 @@
     </nav>
     <main class="container h-100">
       <div class="row h-75 align-items-center">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-sm-8 offset-sm-2 mt-6">
           <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
@@ -33,7 +33,7 @@
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-count="submissionCount" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
+                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-count="submissionCount" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
                   <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
                   <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :submissions="submissionsSubset(currentForm)" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
                 </transition>
@@ -108,12 +108,23 @@
           <div class="list-group list-group-flush">
             <div class="list-group-item" v-for="form in forms" :key="form.id">
               <div class="row">
-                <div class="col-sm-12 col-md-6">[[ form.name ]]</div>
-                <div class="col-sm-6 col-md-3">
+                <div class="col mb-2">[[ form.name ]]</div>
+              </div>
+              <div class="row">
+                <div class="col mb-2">
                   <span class="badge bg-secondary">[[ form.form_type ]]</span>
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
                 </div>
-                <div class="col-sm-6 col-md-3"><button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
+              </div>
+              <div class="row">
+                <div class="col mb-2">
+                  <div v-if="form.form_type === 'CHECKLIST'">
+                    <completion-icon v-for="(completion, index) in getCompletion(form)" :key="index" :completion="completion"></completion-icon>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col"><button class="btn btn-outline-dark float-end" @click="formAction(form)">[[ actionLabel(form) ]]</button></div>
               </div>
             </div>
           </div>
@@ -130,6 +141,10 @@
             <div class="list-group-item" v-for="(submission, index) in submissions">
               <div class="row">
                 <div class="col-3">[[ index + 1]]</div>
+                <div class="col">
+                  <completion-icon v-for="(completion, index) in getCompletion(form, submission)" :key="index" :completion="completion"></completion-icon>
+                </div>
+              </div>
                 <div class="col"><button class="btn btn-outline-dark float-end" @click="editSubmission(submission)">{{ _('Edit') }}</button></div>
               </div>
             </div>
@@ -213,16 +228,34 @@
       <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
   </template>
+  <template id="completion-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title :id="titleID">[[ title ]]</title><path :fill="fillColor" d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z"/></svg>
+  </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='vendor/svg-gauge/gauge.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script>
+    const computeCompletion = (form, submission, images) => {
+      return form.data.groups.map(
+        group => {
+          let completion = {total: group.fields.length, group: group.name};
+          completion.filled = group.fields.reduce((acc, field) => {
+            if (field.type === 'image')
+              acc += (images[field.tag] !== undefined ? 1 : 0);
+            else
+              acc += (submission.data[field.tag] !== undefined ? 1 : 0);
+            return acc;
+          }, 0);
+          
+          return completion;
+        });
+    };
+
     // API setup
     const endpoints = {
       list: "{{ url_for('forms.api_form_list') }}",
@@ -262,6 +295,37 @@
 
     // app setup
     Vue.options.delimiters = ['[[', ']]'];
+
+    Vue.component('completion-icon', {
+      computed: {
+        fillColor() {
+          if (this.completion.filled === 0)
+            return '#EF4444';
+          else if (this.completion.filled < this.completion.total)
+            return '#FCD34D';
+          else
+            return '#34D399';
+        },
+        title() {
+          let status;
+          if (this.completion.filled === 0)
+            status = '{{ _("Missing") }}';
+          else if (this.completion.filled < this.completion.total)
+            status = '{{ _("Partial") }}';
+          else
+            status = '{{ _("Complete") }}';
+          
+          return `${this.completion.group} - ${status}`;
+        }
+      },
+      methods: {
+        titleID() {
+          return '_' + Math.random().toString(36).substr(2, 9);
+        }
+      },
+      props: ['completion'],
+      template: '#completion-icon'
+    });
 
     // image field component
     Vue.component('image-field', {
@@ -378,13 +442,23 @@
           if (form.form_type === 'CHECKLIST')
             return '{{ _("Edit") }}';
           else
-            return '{{ _("View submissions") }}';
+            return '{{ _("View") }}';
         },
         formAction(form) {
           if (form.form_type === 'CHECKLIST')
             this.$emit('edit-submission', form, null);
           else
             this.$emit('show-submission-list', form);
+        },
+        getCompletion(form) {
+          if (form.form_type !== 'CHECKLIST')
+            return [];
+          
+          let submission = this.submissions.find(submission => submission.form === form.id);
+          if (submission === undefined)
+            return [];
+          
+          return computeCompletion(form, submission, submission.images);
         }
       },
       props: ['forms', 'submissionCount', 'submissions'],
@@ -400,6 +474,9 @@
         },
         editSubmission(submission) {
           this.$emit('edit-submission', this.form, submission);
+        },
+        getCompletion(form, submission) {
+          return computeCompletion(form, submission, submission.images);
         },
         newSubmission() {
           this.$emit('edit-submission', this.form, null);
@@ -738,11 +815,11 @@
         submissionsSubset(form) {
           return this.submissions.filter(submission => submission.form === form.id);
         },
-        postFinalizedSubmissions() {
+        syncSubmissions() {
           let instance = this;
           instance.submissions
-            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted))
-            .forEach(submission => instance.postSubmission(false));
+            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
+            .forEach(submission => instance.postSubmission(submission, false));
         }
       },
       mounted() {
@@ -764,7 +841,7 @@
         this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
 
         // submissions, every fifteen minutes
-        this.submissionSyncIntervalHandle = setInterval(this.postFinalizedSubmissions, 15 * 60 * 1000);
+        this.submissionSyncIntervalHandle = setInterval(this.syncSubmissions, 15 * 60 * 1000);
       }
     });
   </script>
