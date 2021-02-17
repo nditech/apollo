@@ -793,11 +793,12 @@
             } else {
               submission.posted = new Date();
               this.saveSubmissionToDatabase(submission, single);
-              Notiflix.Report.Success(
-                '{{ _("Success") }}',
-                '{{ _("Data successfully submitted") }}',
-                '{{ _("OK") }}',
-              );
+              if (single)
+                Notiflix.Report.Success(
+                  '{{ _("Success") }}',
+                  '{{ _("Data successfully submitted") }}',
+                  '{{ _("OK") }}',
+                );
             }
           } catch (error) {
             if (single)
