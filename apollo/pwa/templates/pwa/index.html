@@ -529,7 +529,7 @@
           this.currentForm = null;
           this.currentSubmission = null;
         },
-        async refreshForms() {
+        async refreshForms(quiet = true) {
           let instance = this;
           // early exit if user isn't logged in or is offline
           if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
@@ -546,17 +546,18 @@
               instance.$emit('unauthorized');
             }
           } catch (error) {
-            Notiflix.Report.Failure(
-              '{{ _("Error") }}',
-              '{{ _("Could not load forms. Might you be offline?") }}',
-              '{{ _("OK") }}',
-            );
+            if (quiet)
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Could not load forms. Might you be offline?") }}',
+                '{{ _("OK") }}',
+              );
           }
         },
         authenticationSuccess(participant) {
           this.participant = participant;
           this.saveParticipantToDatabase(participant);
-          this.refreshForms();
+          this.refreshForms(false);
         },
         formsLoaded(forms) {
           this.forms = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
