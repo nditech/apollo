@@ -313,6 +313,9 @@ class Submission(BaseModel):
         db.session.commit()
 
     def update_master_offline_status(self):
+        if self.master is None:
+            return
+
         siblings = self.siblings
         master_offline_status = self.master.unreachable
 
