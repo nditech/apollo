@@ -295,7 +295,8 @@ def submission():
             db.session.commit()
 
         submission.update_related(data)
-        submission.update_master_offline_status()
+        if submission.master is not None:
+            submission.update_master_offline_status()
         update_submission_version(submission)
 
     message_text = make_message_text(form, participant, data)
