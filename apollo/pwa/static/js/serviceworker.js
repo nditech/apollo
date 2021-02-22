@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apollo-cache-static-v2';
+const CACHE_NAME = 'apollo-cache-static-v3';
 
 const CACHED_URLS = [
     '/pwa/',
@@ -9,6 +9,7 @@ const CACHED_URLS = [
     '/pwa/static/img/icons-192.png',
     '/pwa/static/js/app.js',
     '/pwa/static/js/client.js',
+    '/pwa/static/js/diff.js',
     '/pwa/static/vendor/animate.css/animate.min.css',
     '/pwa/static/vendor/bootstrap/css/bootstrap.min.css',
     '/pwa/static/vendor/bootstrap/css/bootstrap.rtl.min.css',
