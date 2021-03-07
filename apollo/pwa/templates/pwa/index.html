@@ -30,7 +30,7 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <welcome :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut"></welcome>
+                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut"></user-info>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
@@ -79,7 +79,7 @@
       </div>
     </div>
   </template>
-  <template id="welcome">
+  <template id="user-info">
     <div class="row">
       <div class="col">
         <div class="card shadow-sm">
@@ -186,44 +186,44 @@
                   <input class="form-control" name="serial" id="serial" v-model="submission.serial">
                 </div>
               </fieldset>
-              <!-- TODO: add accordions here -->
               <fieldset v-for="(group, index) in form.data.groups">
-                <legend>[[ group.name ]]</legend>
-                <div v-for="field in group.fields">
-                  <div class="mb-3" v-if="field.type === 'integer'">
-                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
-                  </div>
-                  <div class="mb-3" v-else-if="field.type === 'select'">
-                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <div class="form-check" v-for="(value, label) in field.options">
-                      <label :for="field.tag" class="form-label">[[ label ]]</label>
-                      <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                <div class="card mb-2">
+                  <h6 class="card-header"><a :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
+                  <div class="card-body collapse" :id="`group-${index}`">
+                    <div v-for="field in group.fields">
+                      <div class="mb-3" v-if="field.type === 'integer'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
+                        <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'select'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <div class="form-check" v-for="(value, label) in field.options">
+                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                        </div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'multiselect'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <div class="form-check" v-for="(value, label) in field.options">
+                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                        </div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'string'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'comment'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
+                      </div>
+                      <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
+                    </div>
+                    <div class="mb-3">
+                      <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
                     </div>
                   </div>
-                  <div class="mb-3" v-else-if="field.type === 'multiselect'">
-                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <div class="form-check" v-for="(value, label) in field.options">
-                      <label :for="field.tag" class="form-label">[[ label ]]</label>
-                      <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
-                    </div>
-                  </div>
-                  <div class="mb-3" v-else-if="field.type === 'string'">
-                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
-                  </div>
-                  <div class="mb-3" v-else-if="field.type === 'comment'">
-                    <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                    <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
-                  </div>
-                  <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
-                </div>
-              </fieldset>
-              <fieldset v-if="canRetrieveLocation">
-                <legend>{{ _('Location') }}</legend>
-                <div class="mb-3">
-                  <pre>([[ coordinates[1] ]], [[ coordinates[0] ]])</pre>
-                  <button class="btn btn-outline-dark" @click.prevent="getLocation" :disabled="locked">{{ _('Get location') }}</button>
                 </div>
               </fieldset>
             </form>
@@ -239,7 +239,7 @@
   </template>
   <template id="image-field">
     <div class="mb-3">
-      <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="200"></div>
+      <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
       <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
       <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
@@ -271,11 +271,14 @@
         Notiflix.Report.Info(
           '{{ _("Update available") }}',
           '{{ _("The application has been updated. Please refresh to get the updates") }}',
-          '{{ _("OK") }}'
+          '{{ _("OK") }}',
+          function() {
+            window.location.reload(true);
+          }
         );
       }
     });
-  
+
     const formSorter = (a, b) => {
       const FORM_TYPE_MAP = {
         CHECKLIST: 1,
@@ -323,7 +326,7 @@
     db.version(1).stores({
       forms: 'id, participant_id',
       participants: 'participant_id, lastLogin',
-      submissions: '++id, finalized, form, participant_id, posted'
+      submissions: '++id, form, participant_id, posted, [id+participant_id]'
     });
     db.open().catch(() => {
       Notiflix.Report.Failure(
@@ -402,7 +405,7 @@
         processFile(event) {
           let instance = this;
           let imageFile = event.target.files[0];
-          imageResizer.toBlob(imageFile, {max: 200})
+          imageResizer.toBlob(imageFile, {max: 320})
             .then(previewBlob => {
               convertBlobToBase64(previewBlob)
                 .then(convertedBlob => {
@@ -417,7 +420,7 @@
         let imageFile = instance.initialData;
         if (imageFile === null || imageFile === undefined)
           return;
-        imageResizer.toBlob(imageFile, {max: 200})
+        imageResizer.toBlob(imageFile, {max: 320})
           .then(previewBlob => {
             convertBlobToBase64(previewBlob)
               .then(convertedBlob => {
@@ -473,8 +476,8 @@
       template: '#login-form'
     });
 
-    // welcome component
-    Vue.component('welcome', {
+    // user-info component
+    Vue.component('user-info', {
       computed: {
       },
       data() {
@@ -495,7 +498,7 @@
         }
       },
       props: ['forms', 'participant', 'pendingSubmissions'],
-      template: '#welcome'
+      template: '#user-info'
     });
 
     // form list component
@@ -603,37 +606,68 @@
           let instance = this;
           instance.images[field.tag] = imageData;
         },
-        updateSubmission() {
-          if (this.location)
-            this.submission.data.location = this.location;
+        async updateSubmission(callback, silent) {
+          let instance = this;
 
-          if (this.images !== {})
-            this.submission.images = this.images;
+          if (instance.images !== {})
+            instance.submission.images = instance.images;
+
+          if ('geolocation' in navigator) {
+            // geolocation is supported
+            let permission = await navigator.permissions.query({name: 'geolocation'});
+            if (permission.state === 'denied') {
+              callback();
+            }
+            else {
+              navigator.geolocation.getCurrentPosition(
+                // success callback
+                position => {
+                  let location = [position.coords.longitude, position.coords.latitude];
+                  instance.submission.data.location = location;
+                  instance.location = location;
+
+                  callback();
+                },
+
+                // error callback
+                () => {
+                  if (!silent)
+                    Notiflix.Report.Failure(
+                      '{{ _("Error") }}',
+                      '{{ _("There was an error retreiving your location") }}',
+                      '{{ _("OK") }}'
+                    );
+                  callback();
+                },
+
+                // options
+                {
+                  enableHighAccuracy: true,
+                  timeout: 60000,
+                  maximumAge: 0
+                }
+              );
+            }
+          } else {
+            // geolocation isn't supported. just call the callback
+            callback();
+          }
         },
-        saveSubmission(reset = false) {
-          this.updateSubmission();
-          this.lastSave = new Date();
-          this.$emit('save-submission', this.submission, reset);
+        saveSubmission(reset = false, silent = false) {
+          let instance = this;
+          this.updateSubmission(() => {
+            instance.lastSave = new Date();
+            instance.$emit('save-submission', instance.submission, reset);
+          }, silent);
         },
         stopEditing() {
           this.saveSubmission(true);
         },
         postSubmission() {
-          this.updateSubmission();
-          this.$emit('post-submission', this.submission);
-        },
-        getLocation() {
           let instance = this;
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              instance.location = [position.coords.longitude, position.coords.latitude];
-            },
-            () => Notiflix.Report.Failure(
-              '{{ _("Error") }}',
-              '{{ _("There was an error retreiving your location") }}',
-              '{{ _("OK") }}',
-            )
-          );
+          this.updateSubmission(() => {
+            instance.$emit('post-submission', instance.submission);
+          });
         }
       },
       mounted() {
@@ -644,7 +678,7 @@
         // save every minute
         if (!instance.locked)
           instance.intervalHandle = setInterval(() => {
-            instance.saveSubmission();
+            instance.saveSubmission(false, true);
             Notiflix.Notify.Success('{{ _("Data saved") }}')
           }, 60 * 1000);
       },
@@ -800,7 +834,6 @@
           let submission = {
             created: new Date(),
             errorMessage: null,
-            finalized: false,
             form: form.id,
             images: {},
             posted: null,
