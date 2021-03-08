@@ -2,6 +2,8 @@
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
+{%- from 'admin/task_toast.html' import render_toast_parent, render_toast_template -%}
+{%- set toast_app_id = 'app' -%}
 
 {% block head_css %}
 {{ super() }}
@@ -214,21 +216,21 @@
   <div class="wizard-card" data-cardname="uploadFile">
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
-    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participantset.participants_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <div class="custom-file">
-        <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
-        <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
-        <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
-      </div>
-    </form>
+      <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participantset.participants_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="custom-file">
+          <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
+          <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+          <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
+        </div>
+      </form>
     </div>
   </div>
-
+  
   <div class="wizard-card pr-0" data-cardname="mapFields">
     <h3>{{ _('Map Fields') }}</h3>
     <div class="wizard-input-section overflow-auto"></div>
   </div>
-
+  
   <div class="wizard-card" data-cardname="finalize">
     <h3>{{ _('Finalize') }}</h3>
     <div class="wizard-input-section">
@@ -236,7 +238,7 @@
         <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
       </div>
     </div>
-
+    
     <div class="wizard-failure">
       <div class="alert alert-danger">
         {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
@@ -246,12 +248,29 @@
 </div>
 {%- endblock -%}
 
+{% block footer %}
+{{ render_toast_parent(toast_app_id) }}
+{% endblock footer %}
+
 {%- block tail_js -%}
 {{ super() }}
+{{ render_toast_template() }}
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/EventSource.js') }}"></script>
+<script src="{{ url_for('static', filename='js/promise-polyfill.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/fetch.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/task-toasts.js') }}"></script>
 <script type="text/javascript">
 $(function(){
+  var taskAppSelector = '#{{ toast_app_id }}';
+  var taskNames = ['import_participants'];
+  var taskListUrl = "{{ url_for('users.task_list') }}";
+  var eventStreamUrl = "{{ url_for('sse.stream', channel=channel) }}";
+
+  var vm = setupTaskToasts(taskAppSelector, taskNames, taskListUrl, eventStreamUrl);
+
     $('#filter_reset').on('click', function() {
       var $form = $(this).parents('form').first();
       $form.find(':input').not('button').each(function() { $(this).val(''); })
@@ -333,6 +352,7 @@ $(function(){
             wizard.submitSuccess();
             wizard.updateProgressBar(0);
             wizard.close();
+            vm.loadRunningTasks();
         }).fail(function () {
           wizard.submitFailure();
           wizard.showButtons();

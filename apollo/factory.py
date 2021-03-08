@@ -164,6 +164,7 @@ def create_celery_app(app=None):
                     'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
+                    'name': self.request.task.split('.')[-1],
                 }
 
                 if channel is not None:
@@ -182,6 +183,7 @@ def create_celery_app(app=None):
                     'progress': self.task_info,
                     'description': TASK_DESCRIPTIONS.get(self.request.task),
                     'quit': True,
+                    'name': self.request.task.split('.')[-1],
                 }
 
                 if channel is not None:
@@ -202,7 +204,9 @@ def create_celery_app(app=None):
                 'id': request.id,
                 'status': _('RUNNING'),
                 'progress': task_metadata.get('result'),
-                'description': TASK_DESCRIPTIONS.get(self.request.task)
+                'description': TASK_DESCRIPTIONS.get(self.request.task),
+                'name': self.request.task.split('.')[-1],
+                'quit': False,
             }
 
             if channel is not None:
