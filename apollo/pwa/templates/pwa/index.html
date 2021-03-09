@@ -278,18 +278,21 @@
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/diff.js') }}"></script>
   <script>
+    const promptToUpdate = () => {\
+      Notiflix.Confirm.Show(
+        '{{ _("Update available") }}',
+        '{{ _("There is an update available. Click Yes to get the update.") }}',
+        '{{ _("Yes") }}',
+        '{{ _("No") }}',
+        () => {
+          window.location.reload(true);
+        }
+      );
+    };
+
     window['isUpdateAvailable'].then(isAvailable => {
-      if (isAvailable) {
-        Notiflix.Confirm.Show(
-          '{{ _("Update available") }}',
-          '{{ _("There is an update available. Click Yes to get the update.") }}',
-          '{{ _("Yes") }}',
-          '{{ _("No") }}',
-          () => {
-            window.location.reload(true);
-          }
-        );
-      }
+      if (isAvailable)
+        promptToUpdate();
     });
 
     const formSorter = (a, b) => {
