@@ -348,6 +348,7 @@
       login: "{{ url_for('participants.login') }}",
       logout: "{{ url_for('participants.logout') }}",
       submit: "{{ url_for('submissions.submission') }}",
+      versionCheck: "{{ url_for('pwa.version_check') }}",
     };
     const client = new APIClient(endpoints);
 
@@ -749,6 +750,8 @@
           clearInterval(this.formSyncIntervalHandle);
         if (this.submissionSyncIntervalHandle)
           clearInterval(this.submissionSyncIntervalHandle);
+        if (this.commitCheckIntervalHandle)
+          clearInterval(this.commitCheckIntervalHandle);
       },
       computed: {
         pendingSubmissions() {
@@ -775,6 +778,8 @@
         }
       },
       data: {
+        commit: '{{ commit }}',
+        commitCheckIntervalHandle: null,
         currentForm: null,
         currentSubmission: null,
         forms: [],
@@ -782,7 +787,8 @@
         navigatorOnline: navigator.onLine,
         participant: null,
         submissions: [],
-        submissionSyncIntervalHandle: null
+        submissionSyncIntervalHandle: null,
+        updateNotificationCleared: true
       },
       el: '#app',
       methods: {
@@ -814,6 +820,23 @@
                 '{{ _("OK") }}',
               );
           }
+        },
+        commitCheck() {
+          let instance = this;
+          fetch(endpoints.versionCheck)
+            .then(response => response.json())
+            .then(payload => {
+              const serverCommit = payload.commit;
+              if (serverCommit !== instance.commit) {
+                if (!instance.updateNotificationCleared) {
+                  // don't pop another while one is up
+                  return;
+                }
+
+                instance.updateNotificationCleared = false;
+                promptToUpdate();
+              }
+            }).catch(() => {});
         },
         authenticationSuccess(participant) {
           this.participant = participant;
@@ -1031,6 +1054,8 @@
         },
         syncSubmissions() {
           let instance = this;
+          if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
+            return;
           instance.submissions
             .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
             .forEach(submission => instance.postSubmission(submission, false));
@@ -1056,6 +1081,9 @@
 
         // submissions, every fifteen minutes
         this.submissionSyncIntervalHandle = setInterval(this.syncSubmissions, 15 * 60 * 1000);
+
+        // version checks, every two hours
+        this.commitCheckIntervalHandle = setInterval(this.commitCheck, 2 * 60 * 60 * 1000);
       }
     });
   </script>
