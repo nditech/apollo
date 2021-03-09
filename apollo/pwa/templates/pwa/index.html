@@ -541,12 +541,6 @@
         return {};
       },
       methods: {
-        actionLabel(form) {
-          if (form.form_type === 'CHECKLIST')
-            return '{{ _("Edit") }}';
-          else
-            return '{{ _("View") }}';
-        },
         formAction(form) {
           if (form.form_type === 'CHECKLIST')
             this.$emit('edit-submission', form, null);
