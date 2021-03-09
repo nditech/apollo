@@ -278,7 +278,7 @@
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/diff.js') }}"></script>
   <script>
-    const promptToUpdate = () => {\
+    const promptToUpdate = () => {
       Notiflix.Confirm.Show(
         '{{ _("Update available") }}',
         '{{ _("There is an update available. Click Yes to get the update.") }}',
