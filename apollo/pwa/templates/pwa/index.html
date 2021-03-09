@@ -188,7 +188,7 @@
               </fieldset>
               <fieldset v-for="(group, index) in form.data.groups">
                 <div class="card mb-2">
-                  <h6 class="card-header"><a :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
+                  <h6 class="card-header" v-bind:class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
                   <div class="card-body collapse" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
@@ -310,6 +310,21 @@
         });
       });
 
+      return completion;
+    };
+
+    const computeGroupCompletion = (form, submission, images, index) => {
+      let group = form.data.groups[index];
+
+      let completion = {total: group.fields.length};
+      completion.filled = group.fields.reduce((acc, field) => {
+        if (field.type === 'image')
+          acc += (images[field.tag] !== undefined ? 1 : 0);
+        else
+          acc += (submission.data[field.tag] !== undefined ? 1 : 0);
+        return acc;
+      }, 0);
+      
       return completion;
     };
 
@@ -597,6 +612,16 @@
       methods: {
         clearForm() {
           this.$emit('clear-form');
+        },
+        getCompletionClass(index) {
+          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+
+          if (completion.filled === 0)
+            return {'bg-danger': true, 'bg-gradient': true};
+          else if (completion.filled < completion.total)
+            return {'bg-warning': true, 'bg-gradient': true};
+          else
+            return {'bg-primary': true, 'bg-gradient': true};
         },
         updateImage(imageData, field) {
           let instance = this;
