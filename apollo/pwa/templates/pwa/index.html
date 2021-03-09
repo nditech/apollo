@@ -159,31 +159,6 @@
       </div>
     </div>
   </template>
-  <template id="submission-list">
-    <div class="row">
-      <div class="col">
-        <div class="card shadow-sm mt-3">
-          <h5 class="card-header">[[ form.name ]]</h5>
-          <div class="list-group list-group-flush">
-            <div class="list-group-item" v-for="(submission, index) in submissions">
-              <div class="row">
-                <div class="col-3">[[ index + 1]]</div>
-                <div class="col">
-                  <completion-icon v-for="(completion, index) in getCompletion(form, submission)" :key="index" :completion="completion"></completion-icon>
-                </div>
-              </div>
-                <div class="col"><button class="btn btn-outline-dark float-end" @click="editSubmission(submission)">{{ _('Edit') }}</button></div>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <button class="btn btn-outline-dark" @click="newSubmission">{{ _('Add new') }}</button>
-            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Back') }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
   <template id="submission-editor">
     <div class="row">
       <div class="col">
@@ -589,27 +564,6 @@
       },
       props: ['forms', 'submissionGroups', 'submissions'],
       template: '#form-list'
-    });
-
-    // submission list (for incidents and surveys)
-    Vue.component('submission-list', {
-      data() { return {}; },
-      methods: {
-        clearForm() {
-          this.$emit('clear-form');
-        },
-        editSubmission(submission) {
-          this.$emit('edit-submission', this.form, submission);
-        },
-        getCompletion(form, submission) {
-          return computeCompletion(form, submission, submission.images);
-        },
-        newSubmission() {
-          this.$emit('edit-submission', this.form, null);
-        }
-      },
-      props: ['form', 'submissions'],
-      template: '#submission-list'
     });
 
     // submission editor
