@@ -120,6 +120,8 @@
                 <div class="col mb-2">
                   <span class="badge bg-secondary">[[ form.form_type ]]</span>
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
+                  <span class="badge bg-warning text-dark" v-if="isPending(submissionGroups[form.id][0])">PENDING</span>
+                  <span>[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
                 </div>
               </div>
               <div class="row">
@@ -556,6 +558,21 @@
         },
         editSubmission(form, submission) {
           this.$emit('edit-submission', form, submission);
+        },
+        isPending(submission) {
+          if (!submission)
+            return false;
+          if (submission.posted === null)
+            return true;
+          else if (submission.posted < submission.updated)
+            return true;
+          
+          return false;
+        },
+        formatLastUpdate(submission) {
+          if (!submission) return '';
+          const prefix = "{{ _('Updated') }}"
+          return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
         }
       },
       props: ['forms', 'submissionGroups', 'submissions'],
