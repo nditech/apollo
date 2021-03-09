@@ -125,13 +125,13 @@
               <div class="row">
                 <div class="col mb-2">
                   <div v-if="form.form_type === 'CHECKLIST'">
-                    <completion-icon v-for="(completion, index) in getCompletion(form)" :key="index" :completion="completion"></completion-icon>
+                    <completion-icon :completion="getCompletion(form)"></completion-icon>
                   </div>
                   <div v-else>
                     <button class="btn btn-outline-dark rounded-pill" v-for="(submission, index) in submissionGroups[form.id]" @click="editSubmission(form, submission)">
                       <span v-if="form.form_type === 'INCIDENT'">[[ index + 1 ]]</span>
                       <span v-else>[[ submission.serial ]]</span>
-                      <completion-icon v-for="(completion, idx) in getCompletion(form, submission)" :key="idx" :completion="completion"></completion-icon>
+                      <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
                     </button>
                   </div>
                 </div>
@@ -245,16 +245,16 @@
     </div>
   </template>
   <template id="completion-icon">
-    <component :is="currentComponent" :title="title" :title-id="titleID"></component>
+    <component :is="currentComponent" :title="title"></component>
   </template>
   <template id="completion-icon-complete">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
   </template>
   <template id="completion-icon-partial">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
   </template>
   <template id="completion-icon-missing">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title :id="titleID">[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
@@ -269,11 +269,12 @@
   <script>
     window['isUpdateAvailable'].then(isAvailable => {
       if (isAvailable) {
-        Notiflix.Report.Info(
+        Notiflix.Confirm.Show(
           '{{ _("Update available") }}',
-          '{{ _("The application has been updated. Please refresh to get the updates") }}',
-          '{{ _("OK") }}',
-          function() {
+          '{{ _("There is an update available. Click Yes to get the update.") }}',
+          '{{ _("Yes") }}',
+          '{{ _("No") }}',
+          () => {
             window.location.reload(true);
           }
         );
@@ -298,19 +299,18 @@
     };
 
     const computeCompletion = (form, submission, images) => {
-      return form.data.groups.map(
-        group => {
-          let completion = {total: group.fields.length, group: group.name};
-          completion.filled = group.fields.reduce((acc, field) => {
-            if (field.type === 'image')
-              acc += (images[field.tag] !== undefined ? 1 : 0);
-            else
-              acc += (submission.data[field.tag] !== undefined ? 1 : 0);
-            return acc;
-          }, 0);
-          
-          return completion;
+      let completion = {total: 0, filled: 0};
+      form.data.groups.forEach(group => {
+        group.fields.forEach(field => {
+          completion.total += 1;
+          if (field.type === 'image')
+            completion.filled += (images[field.tag] !== undefined ? 1 : 0);
+          else
+            completion.filled += (submission.data[field.tag] !== undefined ? 1 : 0);
         });
+      });
+
+      return completion;
     };
 
     // API setup
@@ -354,15 +354,15 @@
     Vue.options.delimiters = ['[[', ']]'];
 
     Vue.component('completion-icon-complete', {
-      props: ['title', 'titleID'],
+      props: ['title'],
       template: '#completion-icon-complete'
     });
     Vue.component('completion-icon-partial', {
-      props: ['title', 'titleID'],
+      props: ['title'],
       template: '#completion-icon-partial'
     });
     Vue.component('completion-icon-missing', {
-      props: ['title', 'titleID'],
+      props: ['title'],
       template: '#completion-icon-missing'
     });
 
@@ -385,12 +385,7 @@
           else
             status = '{{ _("Complete") }}';
           
-          return `${this.completion.group} - ${status}`;
-        }
-      },
-      methods: {
-        titleID() {
-          return '_' + Math.random().toString(36).substr(2, 9);
+          return status;
         }
       },
       props: ['completion'],
