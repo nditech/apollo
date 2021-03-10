@@ -38,6 +38,7 @@
 {%- if not daily_stratified_progress %}
 {% if data %}
 <div class="row">
+{%- if session['dashboard_chart_type'] != 'bar' %}
 {% for row in data %}
   <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-2 mt-4 p-0">
   {%- if group -%}
@@ -45,11 +46,30 @@
   {%- else -%}
     <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if not location %}</a>{% endif %}</h5>
   {% endif %}
-    <div class="chart text-center" data-chart='{{ row|tojson }}'>
-    </div>
+    <div class="chart text-center" data-chart='{{ row|tojson }}'></div>
   </div>
 {% endfor %}
+{%- endif %}
 </div>
+{%- if session['dashboard_chart_type'] == 'bar' %}
+<pre style="display:none" id="csvdata">
+Id,Link,Name,Complete,Offline,Partial,Missing
+{% for row in data -%}
+{{ row.id }},
+{%- if group %}
+{%- if next_location -%}
+{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location_=row.get('id', ''), **args) }}
+{%- endif %}
+{%- else %}
+{%- if not location and not request.args.location -%}
+{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}
+{%- endif %}
+{%- endif -%}
+,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Missing }}
+{% endfor -%}
+</pre>
+<div id="barchart"></div>
+{%- endif %}
 {% else %}
 <div class="card border-light">
   <div class="card-header text-center">{{ _('No Data Available') }}</div>
@@ -144,6 +164,7 @@
   }
 
   $(function () {
+      {%- if session['dashboard_chart_type'] != 'bar' %}
       $('.chart').each(function(idx, el) {
         var json = JSON.parse(el.dataset.chart);
         var dataMap = new Map()
@@ -161,12 +182,15 @@
         var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
         var total_label = "{{ _('Total') }}";
 
-      {%- if session['dashboard_chart_type'] == 'bar' %}
-        drawBarChart(el, dataMap, labels, labelsMap, colors, total_label);
-      {%- else %}
         drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
-      {%- endif %}
       });
+      {%- else %}
+      let rawData = d3.select('#csvdata').text();
+      let csvData = d3.csvParse(rawData);
+      let colors = ["#007bff", "#aaaaaa", "#ffc107", "#dc3545"];
+
+      drawNormalizedBarchart('#barchart', csvData, colors);
+      {%- endif %}
   });
 </script>
 <script type="text/javascript">

@@ -310,3 +310,81 @@ function drawBarChart(el, dataMap, labels, labelsMap, colors, total_label) {
 function numDigits(number) {
   return parseInt(Math.log(number) / Math.log(10));
 }
+
+function drawNormalizedBarchart(el, csvData, colors) {
+  var status = csvData.columns.slice(3);
+  var locations = [...new Set(d3.map(csvData, (d) => d.Name))];
+  var margin = {top: 10, right: 30, bottom: 20, left: 100},
+      subplot_margin = {right: 400},
+      width = 760 - margin.left - margin.right,
+      height = (55 * locations.length) - margin.top - margin.bottom;
+  var totals = [];
+  csvData.forEach((d) => {
+      tot = 0;
+      for (i in status) { name = status[i]; tot += +d[name]; }
+      totals.push(tot.toString());
+  });
+
+  var svg = d3.select(el)
+      .append('svg')
+          .attr('width', width + margin.left + margin.right + subplot_margin.right)
+          .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+  var y = d3.scaleBand()
+      .domain(locations)
+      .range([height, 0])
+      .paddingInner([0.2])
+      .paddingOuter([0.1]);
+
+  var x = d3.scaleLinear()
+      .domain([0, 1])
+      .range([0, width]);
+
+  var color = d3.scaleOrdinal()
+      .domain(status)
+      .range(colors);
+
+  csvData.forEach((d) => {
+      tot = 0;
+      for (i in status) { name = status[i]; tot += +d[name]; }
+      for (i in status) { name = status[i]; d[name] = d[name] / tot; }
+  });
+
+  var stackedData = d3.stack()
+      .keys(status)(csvData)
+
+  svg.append('g')
+      .selectAll('g')
+      .data(stackedData)
+      .enter().append('g')
+          .attr('fill', (d) => color(d.key))
+          .selectAll('rect')
+          .data((d) => d)
+          .enter().append('rect')
+              .attr('height', y.bandwidth())
+              .attr('width', (d) => x(d[1]) - x(d[0]))
+              .attr('x', (d) => x(d[0]))
+              .transition().duration(0)
+              .attr('y', (d) => y(d.data.Name));
+
+  svg.append('g')
+      .attr('class', 'y-axis')
+      .transition().duration(750)
+      .call(d3.axisLeft(y).tickSizeOuter(0).tickSizeInner(0).tickPadding(9));
+
+  if (csvData.length && csvData[0].Link) {
+    d3.selectAll('.tick')
+        .attr('style', 'cursor: pointer')
+        .data(csvData)
+        .on('click', (e, d) => {
+          location.href = d.Link;
+        });
+  }
+
+  svg.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(d3.axisBottom(x).tickFormat(d3.format('.0%')));
+}
