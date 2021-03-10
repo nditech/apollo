@@ -16,9 +16,10 @@ from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo import settings
+from apollo.api import hooks as jwt_hooks
 from apollo.core import (
-    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, red,
-    sentry, uploads)
+    babel, cache, db, cors, debug_toolbar, fdt_available, jwt_manager,
+    mail, migrate, red, sentry, uploads)
 from apollo.helpers import register_blueprints
 
 
@@ -89,12 +90,21 @@ def create_app(
     sentry.init_app(app)
     babel.init_app(app)
     cache.init_app(app)
+    cors.init_app(app)
     db.init_app(app)
+    jwt_manager.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
     red.init_app(app)
 
     configure_uploads(app, uploads)
+
+    # set up JWT callbacks
+    jwt_manager.expired_token_loader(jwt_hooks.process_expired_token)
+    jwt_manager.invalid_token_loader(jwt_hooks.process_invalid_token)
+    jwt_manager.revoked_token_loader(jwt_hooks.process_revoked_token)
+    jwt_manager.token_in_blocklist_loader(
+        jwt_hooks.check_if_token_is_blocklisted)
 
     if app.config.get('SSL_REQUIRED'):
         SSLify(app)

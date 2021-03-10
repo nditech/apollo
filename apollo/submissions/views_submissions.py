@@ -45,10 +45,19 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 bp.add_url_rule(
     '/api/submissions',
-    view_func=api_views.SubmissionListResource.as_view('api_submission_list'))
+    view_func=api_views.SubmissionListResource.as_view('api_submission_list'),
+    methods=['GET']
+)
+bp.add_url_rule(
+    '/api/submissions',
+    view_func=api_views.submission,
+    methods=['POST', 'PUT']
+)
 bp.add_url_rule(
     '/api/submissions/<int:submission_id>',
-    view_func=api_views.SubmissionItemResource.as_view('api_submission_item'))
+    view_func=api_views.SubmissionItemResource.as_view('api_submission_item'),
+    methods=['GET']
+)
 
 docs.register(
     api_views.SubmissionItemResource, 'submissions.api_submission_item')

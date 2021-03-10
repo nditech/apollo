@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="{{ g.locale.language }}" dir="{{ g.locale.text_direction }}">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/animate.css/animate.min.css') }}">
+  {% if g.locale.text_direction == 'rtl' %}
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/bootstrap/css/bootstrap.rtl.min.css') }}">
+  {% else %}
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='css/main.css') }}">
+  <link rel="manifest" href="{{ url_for('pwa.static', filename='manifest.json') }}">
+  <title>{{ page_title }}</title>
+</head>
+<body class="h-100">
+  <div id="app">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top-mb-6">
+      <div class="container-fluid">
+        <a class="navbar-brand">{{ page_title }}</a>
+        <connectivity-indicator :is-online="navigatorOnline"></connectivity-indicator>
+      </div>
+    </nav>
+    <main class="container h-100">
+      <div class="row h-75 align-items-center">
+        <div class="col-sm-8 offset-sm-2 mt-6">
+          <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
+            <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
+            <div v-else>
+              <div class="mb-3">
+                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut"></user-info>
+              </div>
+              <div class="mb-3">
+                <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
+                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-groups="groupedSubmissions" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
+                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
+                  <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :submissions="submissionsSubset(currentForm)" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
+                </transition>
+              </div>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </main>
+  </div>
+  <template id="connectivity-indicator">
+    <div class="d-flex text-light">
+      <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="isOnline"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.636 5.636a1 1 0 00-1.414-1.414c-4.296 4.296-4.296 11.26 0 15.556a1 1 0 001.414-1.414 9 9 0 010-12.728zm14.142-1.414a1 1 0 10-1.414 1.414 9 9 0 010 12.728 1 1 0 101.414 1.414c4.296-4.296 4.296-11.26 0-15.556zM8.464 8.464A1 1 0 007.05 7.05a7 7 0 000 9.9 1 1 0 101.414-1.414 5 5 0 010-7.072zM16.95 7.05a1 1 0 10-1.414 1.414 5 5 0 010 7.072 1 1 0 001.414 1.414 7 7 0 000-9.9zM9 12a3 3 0 116 0 3 3 0 01-6 0z" fill="currentColor"/></svg>
+      <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" v-else><path fill-rule="evenodd" clip-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414L15.535 16.95l2.829 2.828 1.929 1.93a1 1 0 001.414-1.415l-1.253-1.254c3.607-4.321 3.382-10.76-.676-14.817a1 1 0 10-1.414 1.414 9.001 9.001 0 01.668 11.982l-1.425-1.425a7.002 7.002 0 00-.657-9.143 1 1 0 10-1.414 1.414 5.002 5.002 0 01.636 6.294l-1.465-1.465a3 3 0 00-4-4l-7-7zM3.75 8.4a1 1 0 00-1.834-.8C.161 11.624.928 16.485 4.222 19.778a1 1 0 001.414-1.414A9.004 9.004 0 013.749 8.4zm3.32 2.766a1 1 0 00-1.972-.332A6.992 6.992 0 007.05 16.95a1 1 0 101.414-1.414 4.993 4.993 0 01-1.394-4.37z" fill="currentColor"/></svg>
+    </div>
+  </template>
+  <template id="login-form">
+    <div class="row">
+      <div class="col">
+        <div class="form-signin">
+          <form>
+            <div class="card shadow-sm mt-3">
+              <h5 class="card-header">{{ _('Login') }}</h5>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="participant_id" class="visually-hidden">{{ _('Participant ID') }}</label>
+                  <input type="text" class="form-control bg-light" id="participant_id" placeholder="{{ _('Participant ID') }}" v-model="participant_id">
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="visually-hidden">{{ _('Password') }}</label>
+                  <input type="password" class="form-control bg-light" id="password" placeholder="{{ _('Password') }}" v-model="password">
+                </div>
+                <div class="mb-3">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-primary" @click.prevent="authenticate" :disabled="!navigatorOnline">{{ _('Login') }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="user-info">
+    <div class="row">
+      <div class="col">
+        <div class="card shadow-sm mt-3">
+          <div class="card-body">
+            <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+            <div class="row mb-3">
+              <div class="col-4"><strong>{{ _('Participant ID') }}</strong></div>
+              <div class="col">[[ participant.participant_id ]]</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-4"><strong>{{ _('Location') }}</strong></div>
+              <div class="col">[[ participant.location ]]</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">{{ _('If this is not you, please') }} <button @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</button></div>
+            </div>
+            <div class="row" v-if="pendingSubmissions > 0">
+              <div class="col">
+                <div class="alert alert-info">{{ _('Pending submissions:') }} <strong>[[ pendingSubmissions ]]</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="form-list">
+    <div class="row">
+      <div class="col">
+        <div class="card shadow-sm mt-3">
+          <h5 class="card-header">{{ _('Forms') }}</h5>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item" v-for="form in forms" :key="form.id">
+              <div class="row">
+                <div class="col mb-2">[[ form.name ]]</div>
+              </div>
+              <div class="row">
+                <div class="col mb-2">
+                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
+                  <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
+                  <span class="badge bg-warning text-dark" v-if="form.form_type === 'CHECKLIST' && isPending(submissionGroups[form.id][0])">PENDING</span>
+                  <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
+                </div>
+              </div>
+              <div class="row" v-if="form.form_type !== 'CHECKLIST'">
+                <div class="col">
+                  <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)">{{ _('Add new') }}</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col mb-2">
+                  <div v-if="form.form_type === 'CHECKLIST'">
+                    <completion-icon :completion="getCompletion(form)"></completion-icon>
+                  </div>
+                  <div class="card mt-2" v-else>
+                    <h5 class="card-header"><a class="text-dark" :href="`#sub-list-${form.id}`" data-bs-toggle="collapse" role="button">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</a></h5>
+                    <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
+                      <div class="list-group-item"  v-for="(submission, index) in submissionGroups[form.id]">
+                        <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
+                        <span class="badge bg-warning text-dark" v-if="isPending(submission)">PENDING</span>
+                        <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
+                        <span>[[ formatLastUpdate(submission) ]]</span>
+                        <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" v-if="form.form_type === 'CHECKLIST'">
+                <div class="col">
+                  <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="formAction(form)">{{ _('Edit') }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="submission-editor">
+    <div class="row">
+      <div class="col">
+        <div class="card shadown-sm mt-3">
+          <h5 class="card-header">[[ form.name ]]</h5>
+          <div class="card-body">
+            <form>
+              <fieldset v-if="form.form_type === 'SURVEY'">
+                <div class="mb-3">
+                  <label for="serial" class="form-label">{{ _('Serial number') }}</label>
+                  <input class="form-control" name="serial" id="serial" v-model="submission.serial">
+                </div>
+              </fieldset>
+              <fieldset v-for="(group, index) in form.data.groups">
+                <div class="card mb-2">
+                  <h6 class="card-header" v-bind:class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
+                  <div class="card-body collapse" :id="`group-${index}`">
+                    <div v-for="field in group.fields">
+                      <div class="mb-3" v-if="field.type === 'integer'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
+                        <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'select'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <div class="form-check" v-for="(value, label) in field.options">
+                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                        </div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'multiselect'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <div class="form-check" v-for="(value, label) in field.options">
+                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                        </div>
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'string'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
+                      </div>
+                      <div class="mb-3" v-else-if="field.type === 'comment'">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
+                      </div>
+                      <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
+                    </div>
+                    <div class="mb-3">
+                      <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-outline-dark" @click="stopEditing" :disabled="locked">{{ _('Back') }}</button>
+            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel') }}</button>
+            <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="image-field">
+    <div class="mb-3">
+      <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
+      <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
+    </div>
+  </template>
+  <template id="completion-icon">
+    <component :is="currentComponent" :title="title"></component>
+  </template>
+  <template id="completion-icon-complete">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+  </template>
+  <template id="completion-icon-partial">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
+  </template>
+  <template id="completion-icon-missing">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
+  </template>
+  <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/luxon/luxon.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='js/diff.js') }}"></script>
+  <script>
+    const promptToUpdate = () => {
+      Notiflix.Confirm.Show(
+        '{{ _("Update available") }}',
+        '{{ _("There is an update available. Click Yes to get the update.") }}',
+        '{{ _("Yes") }}',
+        '{{ _("No") }}',
+        () => {
+          window.location.reload(true);
+        }
+      );
+    };
+
+    window['isUpdateAvailable'].then(isAvailable => {
+      if (isAvailable)
+        promptToUpdate();
+    });
+
+    const formSorter = (a, b) => {
+      const FORM_TYPE_MAP = {
+        CHECKLIST: 1,
+        SURVEY: 2,
+        INCIDENT: 3
+      };
+      if (a.form_type !== b.form_type)
+        return FORM_TYPE_MAP[a.form_type] - FORM_TYPE_MAP[b.form_type];
+      
+      if (a.name > b.name)
+        return 1;
+      else if (a.name < b.name)
+        return -1;
+      else
+        return a.id - b.id;
+    };
+
+    const computeCompletion = (form, submission, images) => {
+      let completion = {total: 0, filled: 0};
+      form.data.groups.forEach(group => {
+        group.fields.forEach(field => {
+          completion.total += 1;
+          if (field.type === 'image')
+            completion.filled += (images[field.tag] !== undefined ? 1 : 0);
+          else
+            completion.filled += (submission.data[field.tag] !== undefined ? 1 : 0);
+        });
+      });
+
+      return completion;
+    };
+
+    const computeGroupCompletion = (form, submission, images, index) => {
+      let group = form.data.groups[index];
+
+      let completion = {total: group.fields.length};
+      completion.filled = group.fields.reduce((acc, field) => {
+        if (field.type === 'image')
+          acc += (images[field.tag] !== undefined ? 1 : 0);
+        else
+          acc += (submission.data[field.tag] !== undefined ? 1 : 0);
+        return acc;
+      }, 0);
+      
+      return completion;
+    };
+
+    // API setup
+    const endpoints = {
+      list: "{{ url_for('forms.api_form_list') }}",
+      login: "{{ url_for('participants.login') }}",
+      logout: "{{ url_for('participants.logout') }}",
+      submit: "{{ url_for('submissions.submission') }}",
+      versionCheck: "{{ url_for('pwa.version_check') }}",
+    };
+    const client = new APIClient(endpoints);
+
+    // database setup
+    const db = new Dexie('apollo');
+    db.version(1).stores({
+      forms: 'id, participant_id',
+      participants: 'participant_id, lastLogin',
+      submissions: '++id, form, participant_id, posted, [id+participant_id]'
+    });
+    db.open().catch(() => {
+      Notiflix.Report.Failure(
+        '{{ _("Error") }}',
+        '{{ _("There was an error with the data storage") }}',
+        '{{ _("OK") }}',
+      );
+    });
+
+    // image reducer
+    const imageResizer = new ImageBlobReduce({
+      pica: ImageBlobReduce.pica({features: ['js', 'wasm', 'ww']})
+    });
+    const convertBlobToBase64 = blob => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result);
+      }
+      reader.readAsDataURL(blob);
+    });
+
+    // app setup
+    Vue.options.delimiters = ['[[', ']]'];
+
+    Vue.component('completion-icon-complete', {
+      props: ['title'],
+      template: '#completion-icon-complete'
+    });
+    Vue.component('completion-icon-partial', {
+      props: ['title'],
+      template: '#completion-icon-partial'
+    });
+    Vue.component('completion-icon-missing', {
+      props: ['title'],
+      template: '#completion-icon-missing'
+    });
+
+    Vue.component('completion-icon', {
+      computed: {
+        currentComponent() {
+          if (this.completion.filled === 0)
+            return 'completion-icon-missing';
+          else if (this.completion.filled < this.completion.total)
+            return 'completion-icon-partial';
+          else
+            return 'completion-icon-complete';
+        },
+        title() {
+          let status;
+          if (this.completion.filled === 0)
+            status = '{{ _("Missing") }}';
+          else if (this.completion.filled < this.completion.total)
+            status = '{{ _("Partial") }}';
+          else
+            status = '{{ _("Complete") }}';
+          
+          return status;
+        }
+      },
+      props: ['completion'],
+      template: '#completion-icon'
+    });
+
+    // image field component
+    Vue.component('image-field', {
+      data() {
+        return {};
+      },
+      methods: {
+        processFile(event) {
+          let instance = this;
+          let imageFile = event.target.files[0];
+          imageResizer.toBlob(imageFile, {max: 320})
+            .then(previewBlob => {
+              convertBlobToBase64(previewBlob)
+                .then(convertedBlob => {
+                  instance.$refs.viewer.src = convertedBlob;
+                  instance.$emit('update-image', imageFile, instance.field);
+                });
+              });
+        },
+      },
+      mounted() {
+        let instance = this;
+        let imageFile = instance.initialData;
+        if (imageFile === null || imageFile === undefined)
+          return;
+        imageResizer.toBlob(imageFile, {max: 320})
+          .then(previewBlob => {
+            convertBlobToBase64(previewBlob)
+              .then(convertedBlob => {
+                instance.$refs.viewer.src = convertedBlob;
+              });
+          });
+      },
+      props: ['disabled', 'field', 'initialData'],
+      template: '#image-field'
+    });
+
+    // component for online status
+    Vue.component('connectivity-indicator', {
+      props: ['isOnline'],
+      template: '#connectivity-indicator'
+    });
+
+    // login component
+    Vue.component('login-form', {
+      data() {
+        return {
+          participant_id: null,
+          password: null
+        };
+      },
+      methods: {
+        authenticate() {
+          let instance = this;
+          Notiflix.Loading.Standard('{{ _("Please wait") }}');
+          client.authenticate(this.participant_id, this.password)
+            .then(result => {
+              Notiflix.Loading.Remove();
+              if (result.status === 200) {
+                result.result.then(data => {
+                  let participant = data.data.participant;
+                  participant.lastLogin = new Date();
+                  instance.$emit('authenticated', participant);
+                });
+              } else {
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  '{{ _("Please check your credentials and try again") }}',
+                  '{{ _("OK") }}',
+                );
+              }
+            })
+            .catch(() => {
+              Notiflix.Loading.Remove();
+            });
+        }
+      },
+      props: ['navigatorOnline'],
+      template: '#login-form'
+    });
+
+    // user-info component
+    Vue.component('user-info', {
+      computed: {
+      },
+      data() {
+        return {};
+      },
+      methods: {
+        greeting() {
+          let dt = new Date();
+          if (dt.getHours() < 12)
+            return '{{ _("Good morning") }}';
+          else if (12 >= dt.getHours() && dt.getHours() < 17)
+            return '{{ _("Good afternoon") }}';
+          else
+            return '{{ _("Good evening") }}';
+        },
+        logout() {
+          this.$emit('logged-out');
+        }
+      },
+      props: ['forms', 'participant', 'pendingSubmissions'],
+      template: '#user-info'
+    });
+
+    // form list component
+    Vue.component('form-list', {
+      computed: {
+        submissionCount() {
+          return Object.entries(this.submissionGroups).reduce((acc, [form_id, submissions]) => {
+            acc[form_id] = submissions.length;
+            return acc;
+          }, {});
+        }
+      },
+      data() {
+        return {};
+      },
+      methods: {
+        formAction(form) {
+          if (form.form_type === 'CHECKLIST')
+            this.$emit('edit-submission', form, null);
+          else
+            this.$emit('show-submission-list', form);
+        },
+        getCompletion(form, submission = undefined) {
+          let sub = submission;
+          if (form.form_type === 'CHECKLIST') {
+            sub = this.submissions.find(submission => submission.form === form.id);
+            if (sub === undefined)
+              sub = {data: {}, images: {}};
+          } else {
+            if (sub === null || sub === undefined)
+              return [];
+          }
+
+          return computeCompletion(form, sub, sub.images);
+        },
+        newSubmission(form) {
+          this.$emit('edit-submission', form, null);
+        },
+        editSubmission(form, submission) {
+          this.$emit('edit-submission', form, submission);
+        },
+        isLocked(submission) {
+          if (submission.type === 'INCIDENT' && submission.posted)
+            return true;
+          return false;
+        },
+        isPending(submission) {
+          if (!submission)
+            return false;
+          if (submission.posted === null)
+            return true;
+          else if (submission.posted < submission.updated)
+            return true;
+          
+          return false;
+        },
+        formatLastUpdate(submission) {
+          if (!submission) return '';
+          const prefix = "{{ _('Updated') }}"
+          return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
+        }
+      },
+      props: ['forms', 'submissionGroups', 'submissions'],
+      template: '#form-list'
+    });
+
+    // submission editor
+    Vue.component('submission-editor', {
+      beforeDestroy() {
+        if (this.intervalHandle)
+          clearInterval(this.intervalHandle);
+      },
+      computed: {
+        coordinates() {
+          if (this.location)
+            return this.location
+          else
+            return ['{{ _("N/A") }}', '{{ _("N/A") }}']
+        },
+        locked() {
+          return (this.submission.posted !== null && this.form.form_type === 'INCIDENT');
+        }
+      },
+      data() {
+        return {
+          canRetrieveLocation: 'geolocation' in navigator,
+          location: null,
+          images: {},
+          intervalHandle: null,
+          lastSave: new Date(0)
+        };
+      },
+      methods: {
+        clearForm() {
+          this.$emit('clear-form');
+        },
+        getCompletionClass(index) {
+          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+
+          if (completion.filled === 0)
+            return {'bg-danger': true, 'bg-gradient': true};
+          else if (completion.filled < completion.total)
+            return {'bg-warning': true, 'bg-gradient': true};
+          else
+            return {'bg-primary': true, 'bg-gradient': true};
+        },
+        updateImage(imageData, field) {
+          let instance = this;
+          instance.images[field.tag] = imageData;
+        },
+        async updateSubmission(callback, silent) {
+          let instance = this;
+
+          if (instance.images !== {})
+            instance.submission.images = instance.images;
+
+          if ('geolocation' in navigator) {
+            // geolocation is supported
+            let permission = await navigator.permissions.query({name: 'geolocation'});
+            if (permission.state === 'denied') {
+              callback();
+            }
+            else {
+              navigator.geolocation.getCurrentPosition(
+                // success callback
+                position => {
+                  let location = [position.coords.longitude, position.coords.latitude];
+                  instance.submission.data.location = location;
+                  instance.location = location;
+
+                  callback();
+                },
+
+                // error callback
+                () => {
+                  if (!silent)
+                    Notiflix.Notify.Failure('{{ _("There was an error retreiving your location") }}', 2000);
+                  callback();
+                },
+
+                // options
+                {
+                  enableHighAccuracy: true,
+                  timeout: 60000,
+                  maximumAge: 0
+                }
+              );
+            }
+          } else {
+            // geolocation isn't supported. just call the callback
+            callback();
+          }
+        },
+        saveSubmission(reset = false, silent = false) {
+          let instance = this;
+          this.updateSubmission(() => {
+            instance.lastSave = new Date();
+            instance.$emit('save-submission', instance.submission, reset);
+          }, silent);
+        },
+        stopEditing() {
+          this.saveSubmission(true);
+        },
+        postSubmission() {
+          let instance = this;
+          this.updateSubmission(() => {
+            instance.$emit('post-submission', instance.submission);
+          });
+        }
+      },
+      mounted() {
+        let instance = this;
+        instance.images = instance.submission.images;
+        instance.location = instance.submission.data.location;
+
+        // save every minute
+        if (!instance.locked)
+          instance.intervalHandle = setInterval(() => {
+            instance.saveSubmission(false, true);
+            Notiflix.Notify.Success('{{ _("Data saved") }}')
+          }, 60 * 1000);
+      },
+      props: ['form', 'navigatorOnline', 'submission'],
+      template: '#submission-editor',
+    });
+
+    // main app
+    let vm;
+    vm = new Vue({
+      beforeDestroy() {
+        if (this.formSyncIntervalHandle)
+          clearInterval(this.formSyncIntervalHandle);
+        if (this.submissionSyncIntervalHandle)
+          clearInterval(this.submissionSyncIntervalHandle);
+        if (this.commitCheckIntervalHandle)
+          clearInterval(this.commitCheckIntervalHandle);
+      },
+      computed: {
+        pendingSubmissions() {
+          let instance = this;
+          return instance.submissions.filter(submission => {
+            if (submission.posted === null)
+              return true;
+            
+            if (submission.updated > submission.posted)
+              return true;
+            
+            return false;
+          }).length;
+        },
+        groupedSubmissions() {
+          let instance = this;
+          if (instance.forms === null || instance.forms === [] || instance.submissions === null || instance.submissions === [])
+            return {};
+          
+          return instance.forms.reduce((acc, form) => {
+            acc[form.id] = instance.submissionsSubset(form);
+            return acc;
+          }, {});
+        }
+      },
+      data: {
+        commit: '{{ commit }}',
+        commitCheckIntervalHandle: null,
+        currentForm: null,
+        currentSubmission: null,
+        forms: [],
+        formSyncIntervalHandle: null,
+        navigatorOnline: navigator.onLine,
+        participant: null,
+        submissions: [],
+        submissionSyncIntervalHandle: null,
+        updateNotificationCleared: true
+      },
+      el: '#app',
+      methods: {
+        clearCurrentForm() {
+          this.currentForm = null;
+          this.currentSubmission = null;
+        },
+        async refreshForms(quiet = true) {
+          let instance = this;
+          // early exit if user isn't logged in or is offline
+          if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
+            return;
+
+          let result;
+          try {
+            result = await client.getForms(instance.participant.events);
+            if (result.status === 200) {
+              result.result.then(data => {
+                instance.formsLoaded(data.objects);
+              });
+            } else {
+              instance.$emit('unauthorized');
+            }
+          } catch (error) {
+            if (!quiet)
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Could not load forms. Might you be offline?") }}',
+                '{{ _("OK") }}',
+              );
+          }
+        },
+        commitCheck() {
+          let instance = this;
+          fetch(endpoints.versionCheck)
+            .then(response => response.json())
+            .then(payload => {
+              const serverCommit = payload.commit;
+              if (serverCommit !== instance.commit) {
+                if (!instance.updateNotificationCleared) {
+                  // don't pop another while one is up
+                  return;
+                }
+
+                instance.updateNotificationCleared = false;
+                promptToUpdate();
+              }
+            }).catch(() => {});
+        },
+        authenticationSuccess(participant) {
+          this.participant = participant;
+          this.saveParticipantToDatabase(participant);
+          this.refreshForms(false);
+          this.loadSubmissionsFromDatabase();
+        },
+        formsLoaded(forms) {
+          let formsWithParticipantIds = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
+          formsWithParticipantIds.sort(formSorter);
+          this.forms = formsWithParticipantIds;
+          this.saveFormstoDatabase(this.forms);
+        },
+        saveFormstoDatabase(forms) {
+          db.transaction('rw', db.forms, () => {
+            db.forms.bulkPut(forms);
+          }).catch(() => Notiflix.Report.Failure(
+            '{{ _("Error") }}',
+            '{{ _("Could not save data to the database") }}',
+            '{{ _("OK") }}',
+          ));
+        },
+        clearDatabase() {
+          db.transaction('rw', [db.forms, db.participants, db.submissions], () => {
+            db.forms.clear();
+            db.participants.clear();
+            db.submissions.clear();
+          });
+        },
+        loadParticipantFromDatabase(callback) {
+          let instance = this;
+          db.participants.toCollection().reverse().sortBy('lastLogin')
+            .then(participants => {
+              if (participants.length !== 0)
+                instance.participant = participants[0];
+              else
+                instance.participant = null;
+              callback();
+            })
+            .catch(() =>
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Could not load data from database") }}',
+                '{{ _("OK") }}',
+              )
+            );
+        },
+        saveParticipantToDatabase(participant) {
+          db.transaction('rw', db.participants, () => {
+            db.participants.put(participant);
+          }).catch(() => Notiflix.Report.Failure(
+            '{{ _("Error") }}',
+            '{{ _("Could not save data to the database") }}',
+            '{{ _("OK") }}',
+          ));
+        },
+        loggedOut() {
+          client.logout(Cookie.get('csrf_access_token'));
+          this.participant = null;
+          this.currentForm = null;
+          this.currentSubmission = null;
+          this.forms = [];
+          this.submissions = [];
+        },
+        newSubmission(form) {
+          let instance = this;
+          if (instance.submissions === null)
+            instance.submissions = [];
+
+          if (form.form_type === 'CHECKLIST' && instance.submissionsSubset(form).length > 0)
+            return instance.submissionsSubset(form)[0];
+
+          let submission = {
+            created: new Date(),
+            errorMessage: null,
+            form: form.id,
+            images: {},
+            posted: null,
+            status: 'ok',
+            type: form.form_type,
+            updated: null,
+            participant_id: instance.participant.participant_id
+          };
+          submission.data = form.data.groups.reduce((acc, group) => {
+            group.fields.forEach(field => {
+              if (field.type === 'multiselect')
+                acc[field.tag] = [];
+            });
+            return acc;
+          }, {});
+
+          instance.submissions.push(submission);
+          return submission;
+        },
+        editSubmission(form, sub) {
+          let submission;
+          if (sub === null || sub === undefined)
+              submission = this.newSubmission(form);
+          else
+            submission = sub;
+
+          this.currentForm = form;
+          this.currentSubmission = submission;
+        },
+        async saveSubmissionToDatabase(submission, reset) {
+          let instance = this;
+          let shouldUpdate = false;
+
+          if (submission.id !== undefined) {
+            try {
+              let savedSubmission = await db.submissions.get({id: submission.id, participant_id: instance.participant.participant_id});
+              if (savedSubmission !== undefined) {
+                let diffs = diff(submission, savedSubmission);
+                if (diffs !== {})
+                  shouldUpdate = true;
+              } else {
+                // at this point, we might be invoking a disaster
+                console.error('Fatal');
+                return;
+              }
+            } catch (error) {
+              console.log(error);
+              return;
+            }
+          } else {
+            shouldUpdate = true;
+          }
+
+          if (shouldUpdate)
+            submission.updated = new Date();
+
+          db.transaction('rw', db.submissions, () => {
+            db.submissions.put(submission);
+          });
+
+          if (reset) {
+            instance.clearCurrentForm();
+          }
+        },
+        _loadCollectionFromDatabase(collection, callback) {
+          let instance = this;
+          if (instance.participant === null || instance.participant === undefined)
+            return;
+          collection.where({participant_id: instance.participant.participant_id}).toArray()
+            .then(entries => callback(entries));
+        },
+        loadFormsFromDatabase() {
+          let instance = this;
+          instance._loadCollectionFromDatabase(db.forms, forms => {
+            if (forms.length > 0)
+              forms.sort(formSorter);
+            instance.forms = forms;
+          });
+        },
+        loadSubmissionsFromDatabase() {
+          let instance = this;
+          instance._loadCollectionFromDatabase(db.submissions, submissions => {
+            instance.submissions = submissions;
+          });
+        },
+        async postSubmission(submission, single = true) {
+          if (!this.navigatorOnline)
+            return;
+          let formData = new FormData();
+          for (let key of Object.keys(submission.images || {})) {
+            formData.append(key, submission.images[key], submission.images[key].name);
+          }
+          let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
+          formData.append('submission', JSON.stringify(subCopy));
+
+          try {
+            let result = await client.submit(formData, Cookie.get('csrf_access_token'));
+            if (result.status === 401) {
+              if (single) {
+                Notiflix.Report.Warning(
+                  '{{ _("Session expired") }}',
+                  '{{ _("Please login again to send your data") }}',
+                  '{{ _("OK") }}',
+                );
+                this.participant = null;
+              }
+            } else if (result.status !== 200) {
+              let data = await result.result;
+              if (single)
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  data.message,
+                  '{{ _("OK") }}',
+                );
+            } else {
+              submission.posted = new Date();
+              this.saveSubmissionToDatabase(submission, single);
+              if (single)
+                Notiflix.Report.Success(
+                  '{{ _("Success") }}',
+                  '{{ _("Data successfully submitted") }}',
+                  '{{ _("OK") }}',
+                );
+            }
+          } catch (error) {
+            if (single)
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Error posting data. Might you be offline?") }}',
+                '{{ _("OK") }}',
+              );
+          }
+        },
+        showSubmissionList(form) {
+          if (form.form_type !== 'CHECKLIST')
+            this.currentForm = form;
+        },
+        submissionsSubset(form) {
+          return this.submissions.filter(submission => submission.form === form.id);
+        },
+        syncSubmissions() {
+          let instance = this;
+          if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
+            return;
+          instance.submissions
+            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
+            .forEach(submission => instance.postSubmission(submission, false));
+        }
+      },
+      mounted() {
+        this.loadParticipantFromDatabase(() => {
+          if (this.participant !== null) {
+            this.loadFormsFromDatabase();
+            this.loadSubmissionsFromDatabase();
+          }
+        });
+
+        let onlineHook = () => {
+          this.navigatorOnline = navigator.onLine;
+        };
+        window.addEventListener('offline', onlineHook);
+        window.addEventListener('online', onlineHook);
+
+        // set up form refresh and submission sync timers
+        // forms, every fifteen minutes
+        this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
+
+        // submissions, every fifteen minutes
+        this.submissionSyncIntervalHandle = setInterval(this.syncSubmissions, 15 * 60 * 1000);
+
+        // version checks, every two hours
+        this.commitCheckIntervalHandle = setInterval(this.commitCheck, 2 * 60 * 60 * 1000);
+      }
+    });
+  </script>
+</body>
+</html>

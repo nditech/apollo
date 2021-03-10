@@ -139,6 +139,7 @@ APPLICATIONS = config(
         "apollo.process_analysis",
         "apollo.result_analysis",
         "apollo.sse",
+        "apollo.pwa",
         "apollo.odk")''')
 
 BIG_N = config('BIG_N', cast=int, default=0) or numpy.inf
@@ -239,3 +240,18 @@ AWS_DEFAULT_BUCKET = config('AWS_DEFAULT_BUCKET', default=None)
 AWS_IMAGES_REGION = config('AWS_IMAGES_REGION', default=AWS_DEFAULT_REGION)
 AWS_IMAGES_BUCKET = config('AWS_IMAGES_BUCKET', default=AWS_DEFAULT_BUCKET)
 AWS_ENDPOINT_URL = config('AWS_ENDPOINT_URL', default=None)
+
+# JWT settings
+JWT_TOKEN_LOCATION = config(
+    'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies')
+JWT_SECRET_KEY = config('JWT_SECRET_KEY', default=SECRET_KEY)
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
+)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(
+    seconds=config(
+        "JWT_REFRESH_TOKEN_LIFETIME_SECONDS", cast=int, default=86400)
+)
+JWT_ERROR_MESSAGE_KEY = 'message'
+JWT_COOKIE_SECURE = SESSION_COOKIE_SECURE
+JWT_ACCESS_COOKIE_PATH = '/api'

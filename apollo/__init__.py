@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timedelta
+
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import (
     g, redirect, render_template, request, session, url_for
 )
 from flask_admin import AdminIndexView
+from flask_jwt_extended import (
+    create_access_token, get_jwt_identity, get_jwt, set_access_cookies)
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
@@ -12,7 +16,7 @@ from flask_security.utils import login_user, url_for_security
 from loginpass import create_flask_blueprint, Facebook, Google
 from werkzeug.urls import url_encode
 from whitenoise import WhiteNoise
-from apollo import assets, models, services
+from apollo import assets, models, services, utils
 
 from apollo.frontend import permissions, template_filters
 from apollo.core import (
@@ -131,12 +135,27 @@ def create_app(settings_override=None, register_security_blueprint=True):
     # content security policy
     @app.after_request
     def content_security_policy(response):
-        response.headers['Content-Security-Policy'] = "default-src 'self' " + \
+        response.headers['Content-Security-Policy'] = "default-src 'self' blob: " + \
             "*.googlecode.com *.google-analytics.com fonts.gstatic.com fonts.googleapis.com " + \
             "*.googletagmanager.com " + \
             "cdn.heapanalytics.com heapanalytics.com " + \
-            "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
+            "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:"
         return response
+
+    # automatic token refresh
+    @app.after_request
+    def refresh_expiring_jwts(response):
+        try:
+            expiration_timestamp = get_jwt()['exp']
+            now = utils.current_timestamp()
+            target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+            if target_timestamp > expiration_timestamp:
+                access_token = create_access_token(identity=get_jwt_identity())
+                set_access_cookies(response, access_token)
+
+            return response
+        except (KeyError, RuntimeError):
+            return response
 
     def handle_authorize(remote, token, user_info):
         if user_info and 'email' in user_info:

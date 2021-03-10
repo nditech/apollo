@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
-from flask import g
+from http import HTTPStatus
+
+from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
+from flask_babelex import gettext
+from flask_jwt_extended import (
+    create_access_token, get_jwt, jwt_required, set_access_cookies,
+    unset_access_cookies)
 from sqlalchemy import bindparam, func, or_, text, true
 from webargs import fields
 
+from apollo import settings
 from apollo.api.common import BaseListResource
-from apollo.api.decorators import login_or_api_key_required
+from apollo.api.decorators import protect
+from apollo.core import csrf, red
 from apollo.deployments.models import Event
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
@@ -17,7 +25,7 @@ from apollo.participants.models import (
 @marshal_with(ParticipantSchema)
 @use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class ParticipantItemResource(MethodResource):
-    @login_or_api_key_required
+    @protect
     def get(self, participant_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         event = getattr(g, 'event', None)
@@ -118,3 +126,80 @@ class ParticipantListResource(BaseListResource):
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')
 
         return queryset
+
+
+@csrf.exempt
+def login():
+    request_data = request.json
+    participant_id = request_data.get('participant_id')
+    password = request_data.get('password')
+
+    current_events = Event.overlapping_events(Event.default())
+    participant = current_events.join(
+        Participant,
+        Participant.participant_set_id == Event.participant_set_id
+    ).with_entities(
+        Participant
+    ).filter(
+        Participant.participant_id == participant_id,
+        Participant.password == password
+    ).first()
+
+    if participant is None:
+        response = {'message': gettext('Login failed'), 'status': 'error'}
+        return jsonify(response), HTTPStatus.FORBIDDEN
+
+    access_token = create_access_token(
+        identity=str(participant.uuid), fresh=True)
+
+    # only return tokens if client explicitly requests it
+    # and cookies are disabled
+    send_jwts_in_response = 'cookies' not in settings.JWT_TOKEN_LOCATION or \
+        (request.headers.get('X-TOKEN-IN-BODY') is not None)
+
+    response = {
+        'data': {
+            'participant': {
+                'events': [ev.id for ev in participant.participant_set.events],
+                'first_name': participant.first_name,
+                'other_names': participant.other_names,
+                'last_name': participant.last_name,
+                'full_name': participant.full_name,
+                'participant_id': participant_id,
+                'location': participant.location.name,
+            },
+        },
+        'status': 'ok',
+        'message': gettext('Logged in successfully')
+    }
+
+    if send_jwts_in_response:
+        response['data'].update(access_token=access_token)
+
+        return jsonify(response)
+
+    resp = jsonify(response)
+    set_access_cookies(resp, access_token)
+
+    return resp
+
+
+@csrf.exempt
+@jwt_required()
+def logout():
+    jti = get_jwt()['jti']
+    red.set(jti, '', int(settings.JWT_ACCESS_TOKEN_EXPIRES.total_seconds()))
+
+    # unset cookies if they are used
+    unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
+
+    response = {
+        'status': 'ok',
+        'message': gettext('Logged out successfully')
+    }
+    resp = jsonify(response)
+
+    if unset_cookies:
+        unset_access_cookies(resp)
+
+    return resp

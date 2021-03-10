@@ -8,6 +8,7 @@ import re
 from flask_babelex import gettext, lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
+from marshmallow import Schema, fields, validate
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_json import NestedMutableJson
 from sqlalchemy_utils import ChoiceType
@@ -312,6 +313,40 @@ class Form(Resource):
         hash_engine = hashlib.md5()
         hash_engine.update(xform_data)
         return f'md5: {hash_engine.hexdigest()}'
+
+    def create_schema(self):
+        attrs = {
+            tag: _get_schema_field(self.get_field_by_tag(tag))
+            for tag in self.tags
+        }
+
+        attrs['location'] = fields.List(
+            fields.Float(), validate=validate.Length(min=2, max=2))
+
+        attrs['Meta'] = type(
+            'GeneratedMeta',
+            (getattr(Schema, 'Meta', object),),
+            {'register': False})
+
+        schema_cls = type('GeneratedSchema', (Schema,), attrs)
+
+        return schema_cls
+
+
+def _get_schema_field(form_field):
+    if form_field['type'] == 'integer':
+        return fields.Int(
+            validate=validate.Range(
+                min=form_field.get('min', 0),
+                max=form_field.get('max', 9999)))
+    elif form_field['type'] in ('comment', 'string', 'image'):
+        return fields.Str()
+    elif form_field['type'] in ('select', 'multiselect'):
+        choices = form_field['options'].values()
+        if form_field['type'] == 'select':
+            return fields.Int(validate=validate.OneOf(choices))
+        else:
+            return fields.List(fields.Int(validate=validate.OneOf(choices)))
 
 
 class FormBuilderSerializer(object):
