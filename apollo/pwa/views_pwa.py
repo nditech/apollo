@@ -25,6 +25,8 @@ def index():
             commit = parser.get('settings', 'commit')
         except Error:
             commit = 'unknown'
+    else:
+        commit = 'unknown'
 
     context = {'commit': commit}
     page_title = _('Apollo')

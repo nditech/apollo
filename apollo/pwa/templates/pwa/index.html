@@ -758,7 +758,7 @@
             }
           } catch (error) {
             if (!quiet)
-              Notiflix.Report.Failure(
+              Notiflix.Report.Warning(
                 '{{ _("Error") }}',
                 '{{ _("Could not load forms. Might you be offline?") }}',
                 '{{ _("OK") }}',
@@ -982,9 +982,9 @@
             }
           } catch (error) {
             if (single)
-              Notiflix.Report.Failure(
+              Notiflix.Report.Warning(
                 '{{ _("Error") }}',
-                '{{ _("Error posting data. Might you be offline?") }}',
+                '{{ _("Error posting data. Might you be offline? You could try again when you are online, or wait for it to get automatically posted.") }}',
                 '{{ _("OK") }}',
               );
           }
