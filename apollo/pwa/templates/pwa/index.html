@@ -265,9 +265,13 @@
       );
     };
 
-    window['isUpdateAvailable'].then(isAvailable => {
-      if (isAvailable)
-        promptToUpdate();
+    document.addEventListener('DOMContentLoaded', () => {
+      if ('isUpdateAvailable' in window) {
+        window.isUpdateAvailable.then(isAvailable => {
+          if (isAvailable)
+            promptToUpdate();
+        });
+      }
     });
 
     const formSorter = (a, b) => {
