@@ -622,36 +622,30 @@
 
           if ('geolocation' in navigator) {
             // geolocation is supported
-            let permission = await navigator.permissions.query({name: 'geolocation'});
-            if (permission.state === 'denied') {
-              callback();
-            }
-            else {
-              navigator.geolocation.getCurrentPosition(
-                // success callback
-                position => {
-                  let location = [position.coords.longitude, position.coords.latitude];
-                  instance.submission.data.location = location;
-                  instance.location = location;
+            navigator.geolocation.getCurrentPosition(
+              // success callback
+              position => {
+                let location = [position.coords.longitude, position.coords.latitude];
+                instance.submission.data.location = location;
+                instance.location = location;
 
-                  callback();
-                },
+                callback();
+              },
 
-                // error callback
-                () => {
-                  if (!silent)
-                    Notiflix.Notify.Failure('{{ _("There was an error retreiving your location") }}', 2000);
-                  callback();
-                },
+              // error callback
+              () => {
+                if (!silent)
+                  Notiflix.Notify.Failure('{{ _("There was an error retreiving your location") }}', 2000);
+                callback();
+              },
 
-                // options
-                {
-                  enableHighAccuracy: true,
-                  timeout: 60000,
-                  maximumAge: 0
-                }
-              );
-            }
+              // options
+              {
+                enableHighAccuracy: true,
+                timeout: 60000,
+                maximumAge: 0
+              }
+            );
           } else {
             // geolocation isn't supported. just call the callback
             callback();
