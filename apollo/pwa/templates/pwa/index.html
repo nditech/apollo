@@ -635,7 +635,7 @@
               // error callback
               () => {
                 if (!silent)
-                  Notiflix.Notify.Failure('{{ _("There was an error retreiving your location") }}', 2000);
+                  Notiflix.Notify.Warning('{{ _("Could not retrieve your location") }}', 2000);
                 callback();
               },
 
