@@ -178,7 +178,7 @@
                   <div class="card-body collapse" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
                         <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
                         <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
