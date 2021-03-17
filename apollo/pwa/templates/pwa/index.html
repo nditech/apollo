@@ -890,7 +890,7 @@
             try {
               let savedSubmission = await db.submissions.get({id: submission.id, participant_id: instance.participant.participant_id});
               if (savedSubmission !== undefined) {
-                let diffs = diff(submission, savedSubmission);
+                let diffs = diff(submission.data, savedSubmission.data);
                 if (diffs !== {})
                   shouldUpdate = true;
               } else {
