@@ -869,7 +869,6 @@
             return acc;
           }, {});
 
-          instance.submissions.push(submission);
           return submission;
         },
         editSubmission(form, sub) {
@@ -903,6 +902,7 @@
               return;
             }
           } else {
+            instance.submissions.push(submission);
             shouldUpdate = true;
           }
 
