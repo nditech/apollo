@@ -150,7 +150,7 @@
               </div>
               <div class="row" v-if="form.form_type === 'CHECKLIST'">
                 <div class="col">
-                  <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="formAction(form)">{{ _('Edit') }}</button>
+                  <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="editChecklist(form)">{{ _('Edit') }}</button>
                 </div>
               </div>
             </div>
@@ -518,11 +518,8 @@
         return {};
       },
       methods: {
-        formAction(form) {
-          if (form.form_type === 'CHECKLIST')
-            this.$emit('edit-submission', form, null);
-          else
-            this.$emit('show-submission-list', form);
+        editChecklist(form) {
+          this.$emit('edit-submission', form, null);
         },
         getCompletion(form, submission = undefined) {
           let sub = submission;
