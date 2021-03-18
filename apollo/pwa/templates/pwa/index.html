@@ -233,13 +233,16 @@
     <component :is="currentComponent" :title="title"></component>
   </template>
   <template id="completion-icon-complete">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+    <span class="badge bg-primary rounded-pill">
+      [[ title ]]
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+    </span>
   </template>
   <template id="completion-icon-partial">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
-  </template>
-  <template id="completion-icon-missing">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
+    <span class="badge bg-warning rounded-pill text-dark">
+      [[ title ]]
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
+    </span>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
@@ -369,16 +372,12 @@
       props: ['title'],
       template: '#completion-icon-partial'
     });
-    Vue.component('completion-icon-missing', {
-      props: ['title'],
-      template: '#completion-icon-missing'
-    });
 
     Vue.component('completion-icon', {
       computed: {
         currentComponent() {
           if (this.completion.filled === 0)
-            return 'completion-icon-missing';
+            return null;
           else if (this.completion.filled < this.completion.total)
             return 'completion-icon-partial';
           else
@@ -387,7 +386,7 @@
         title() {
           let status;
           if (this.completion.filled === 0)
-            status = '{{ _("Missing") }}';
+            status = null;
           else if (this.completion.filled < this.completion.total)
             status = '{{ _("Partial") }}';
           else
@@ -554,7 +553,7 @@
             return false;
           if (submission.posted === null)
             return true;
-          else if (submission.posted < submission.updated)
+          else if (Math.abs(submission.posted.getTime() - submission.updated.getTime()) > 500)
             return true;
           
           return false;
@@ -701,7 +700,7 @@
             if (submission.posted === null)
               return true;
             
-            if (submission.updated > submission.posted)
+            if (Math.abs(submission.updated.getTime() - submission.posted.getTime()) > 500)
               return true;
             
             return false;
