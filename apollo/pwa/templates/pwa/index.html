@@ -30,13 +30,12 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut"></user-info>
+                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></user-info>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-groups="groupedSubmissions" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
-                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
-                  <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :submissions="submissionsSubset(currentForm)" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
+                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-groups="groupedSubmissions" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission"></form-list>
+                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" :can-get-location="participant.allowLocationAccess" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
                 </transition>
               </div>
             </div>
@@ -95,6 +94,14 @@
             </div>
             <div class="row mb-3">
               <div class="col">{{ _('If this is not you, please') }} <button @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</button></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col">
+                <div class="form-check form-switch">
+                  <input type="checkbox" id="location-access-toggle" class="form-check-input" :checked="participant.allowLocationAccess" @change="toggleLocationAccess">
+                  <label for="location-access-toggle" class="form-check-label">{{ _('Allow app to access my location when needed') }}</label>
+                </div>
+              </div>
             </div>
             <div class="row" v-if="pendingSubmissions > 0">
               <div class="col">
@@ -487,6 +494,9 @@
         return {};
       },
       methods: {
+        toggleLocationAccess(event) {
+          this.$emit('toggle-location-access', event.target.checked);
+        },
         greeting() {
           let dt = new Date();
           if (dt.getHours() < 12)
@@ -615,7 +625,7 @@
           if (instance.images !== {})
             instance.submission.images = instance.images;
 
-          if ('geolocation' in navigator) {
+          if ('geolocation' in navigator && instance.canGetLocation) {
             // geolocation is supported
             navigator.geolocation.getCurrentPosition(
               // success callback
@@ -675,7 +685,7 @@
             Notiflix.Notify.Success('{{ _("Data saved") }}')
           }, 60 * 1000);
       },
-      props: ['form', 'navigatorOnline', 'submission'],
+      props: ['canGetLocation', 'form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
     });
 
@@ -729,6 +739,12 @@
       },
       el: '#app',
       methods: {
+        locationAccessToggled(isAllowed) {
+          let instance = this;
+          instance.participant.allowLocationAccess = isAllowed;
+
+          instance.saveParticipantToDatabase(instance.participant);
+        },
         clearCurrentForm() {
           this.currentForm = null;
           this.currentSubmission = null;
@@ -777,6 +793,7 @@
         },
         authenticationSuccess(participant) {
           this.participant = participant;
+          this.participant.allowLocationAccess = this.allowLocationAccess;
           this.saveParticipantToDatabase(participant);
           this.refreshForms(false);
           this.loadSubmissionsFromDatabase();
@@ -1001,6 +1018,7 @@
       mounted() {
         this.loadParticipantFromDatabase(() => {
           if (this.participant !== null) {
+            this.participant.allowLocationAccess = this.participant.allowLocationAccess || false;
             this.loadFormsFromDatabase();
             this.loadSubmissionsFromDatabase();
           }
