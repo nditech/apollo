@@ -133,7 +133,7 @@ class Event(Resource):
 
         cond1 = cls.start <= timestamp
         cond2 = cls.end >= timestamp
-        cond3 = cls.id == event.id
+        cond3 = (cls.id == event.id) if event else (cls.id == None) # noqa
         term = and_(cond1, cond2)
 
         return cls.query.filter(or_(term, cond3))
