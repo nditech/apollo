@@ -121,11 +121,10 @@
           <div class="list-group list-group-flush">
             <div class="list-group-item" v-for="form in forms" :key="form.id">
               <div class="row">
-                <div class="col mb-2">[[ form.name ]]</div>
+                <div class="col mb-2">[[ form.name ]] <span class="badge bg-secondary">[[ form.form_type ]]</span></div>
               </div>
               <div class="row">
                 <div class="col mb-2">
-                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
                   <span class="badge bg-warning text-dark" v-if="form.form_type === 'CHECKLIST' && isPending(submissionGroups[form.id][0])">PENDING</span>
                   <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
