@@ -35,7 +35,7 @@
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
                   <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-groups="groupedSubmissions" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission"></form-list>
-                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" :can-get-location="participant.allowLocationAccess" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
+                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" :is-location-access-allowed="participant.allowLocationAccess" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
                 </transition>
               </div>
             </div>
@@ -624,7 +624,7 @@
           if (instance.images !== {})
             instance.submission.images = instance.images;
 
-          if ('geolocation' in navigator && instance.canGetLocation) {
+          if (instance.canRetrieveLocation && instance.isLocationAccessAllowed) {
             // geolocation is supported
             navigator.geolocation.getCurrentPosition(
               // success callback
@@ -638,7 +638,7 @@
 
               // error callback
               () => {
-                if (!silent)
+                if (instance.isLocationAccessAllowed && !silent)
                   Notiflix.Notify.Warning('{{ _("Could not retrieve your location") }}', 2000);
                 callback();
               },
@@ -659,6 +659,7 @@
           let instance = this;
           this.updateSubmission(() => {
             instance.lastSave = new Date();
+            instance.submission.updated = instance.lastSave;
             instance.$emit('save-submission', instance.submission, reset);
           }, silent);
         },
@@ -684,7 +685,7 @@
             Notiflix.Notify.Success('{{ _("Data saved") }}')
           }, 60 * 1000);
       },
-      props: ['canGetLocation', 'form', 'navigatorOnline', 'submission'],
+      props: ['isLocationAccessAllowed', 'form', 'navigatorOnline', 'submission'],
       template: '#submission-editor',
     });
 
@@ -900,7 +901,7 @@
           if (submission.id !== undefined) {
             try {
               let savedSubmission = await db.submissions.get({id: submission.id, participant_id: instance.participant.participant_id});
-              if (savedSubmission !== undefined) {
+              if (savedSubmission != undefined) {
                 let diffs = diff(submission.data, savedSubmission.data);
                 if (diffs !== {})
                   shouldUpdate = true;
@@ -917,9 +918,6 @@
             instance.submissions.push(submission);
             shouldUpdate = true;
           }
-
-          if (shouldUpdate)
-            submission.updated = new Date();
 
           db.transaction('rw', db.submissions, () => {
             db.submissions.put(submission);
@@ -980,7 +978,7 @@
                   '{{ _("OK") }}',
                 );
             } else {
-              submission.posted = new Date();
+              submission.posted = submission.updated = new Date();
               this.saveSubmissionToDatabase(submission, single);
               if (single)
                 Notiflix.Report.Success(
