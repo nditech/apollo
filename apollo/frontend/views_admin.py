@@ -4,6 +4,7 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import magic
+import pytz
 from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
@@ -17,9 +18,7 @@ from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
-from flask_wtf.file import FileField
 from jinja2 import contextfunction
-import pytz
 from slugify import slugify
 from wtforms import (
     BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
@@ -231,11 +230,6 @@ class DeploymentAdminView(BaseAdminView):
             if not mimetype.startswith('image'):
                 return
 
-            if 'svg' in mimetype:
-                model.brand_image = logo_file
-                model.brand_image_is_svg = True
-                return
-
             logo_image = Image.open(BytesIO(logo_bytes))
             resized_logo = resize_image(logo_image, 300)
             with BytesIO() as buf:
@@ -275,6 +269,9 @@ class DeploymentAdminView(BaseAdminView):
             _('Logo'),
             description=_('Will be resized as necessary. SVG not supported.'))
         form_class.remove_brand = BooleanField(_('Remove logo'))
+
+        # logo support
+        form_class.logo = FileField(_('Logo'))
 
         return form_class
 
