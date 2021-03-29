@@ -5,6 +5,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 import magic
 import pytz
+from PIL import Image
 from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
@@ -47,6 +48,22 @@ utc_time_zone = pytz.utc
 excluded_perm_actions = ['view_forms', 'access_event']
 
 DATETIME_FORMAT_SPEC = '%Y-%m-%d %H:%M:%S %Z'
+
+
+def resize_logo(pil_image: Image):
+    background_color = (255, 255, 255, 0)
+
+    width, height = pil_image.size
+    if width == height:
+        return pil_image
+    elif width > height:
+        result = Image.new('RGBA', (width, width), background_color)
+        result.paste(pil_image, (0, (width - height) // 2))
+        return result
+    else:
+        result = Image.new('RBBA', (height, height), background_color)
+        result.paste(pil_image, ((height - width) // 2, 0))
+        return result
 
 
 class MultipleSelect2Field(fields.Select2Field):
