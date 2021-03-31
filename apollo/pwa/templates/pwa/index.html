@@ -184,33 +184,33 @@
                   <div class="card-body collapse" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
-                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
+                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="updateField(field.tag)">
                         <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="updateField(field.tag)">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="updateField(field.tag)">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'string'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
+                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="updateField(field.tag)">
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'comment'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="updateField(field.tag)"></textarea>
                       </div>
-                      <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
+                      <image-field v-else-if="field.type === 'image'" :field="field" :submission="submission" @update-image="updateImage" @remove-image="removeImage(field.tag)" :disabled="locked"></image-field>
                     </div>
                     <div class="mb-3">
                       <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
@@ -231,7 +231,8 @@
   <template id="image-field">
     <div class="mb-3">
       <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
-      <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
+      <button type="button" class="btn btn-outline-dark m-2" v-if="hasContent" @click="removeImage">{{ _('Remove') }}</button>
+      <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass">[[ field.tag ]]</span> [[ field.description ]]</label>
       <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
   </template>
@@ -408,11 +409,28 @@
     // image field component
     Vue.component('image-field', {
       data() {
-        return {};
+        return {
+          hasContent: false,
+          updated: false
+        };
       },
       methods: {
+        fieldLabelClass() {
+          let tag = this.field.tag;
+          if (this.submission.posted !== null) {
+            if (this.submission.modified[tag] && this.submission.modified > this.submission.posted) {
+              return 'text-warning';
+            }
+          } else {
+            if (this.submission.modified[tag])
+              return 'text-warning';
+          }
+
+          return '';
+        },
         processFile(event) {
           let instance = this;
+          instance.hasContent = true;
           let imageFile = event.target.files[0];
           imageResizer.toBlob(imageFile, {max: 320})
             .then(previewBlob => {
@@ -423,12 +441,18 @@
                 });
               });
         },
+        removeImage() {
+          this.hasContent = false;
+          this.$refs.viewer.src = '';
+          this.$emit('remove-image', this.field.tag);
+        }
       },
       mounted() {
         let instance = this;
-        let imageFile = instance.initialData;
+        let imageFile = instance.submission.images[instance.field.tag] || null;
         if (imageFile === null || imageFile === undefined)
           return;
+        instance.hasContent = true;
         imageResizer.toBlob(imageFile, {max: 320})
           .then(previewBlob => {
             convertBlobToBase64(previewBlob)
@@ -437,7 +461,7 @@
               });
           });
       },
-      props: ['disabled', 'field', 'initialData'],
+      props: ['disabled', 'field', 'submission'],
       template: '#image-field'
     });
 
@@ -614,9 +638,34 @@
           else
             return {'bg-primary': true, 'bg-gradient': true};
         },
+        fieldLabelClass(tag) {
+          if (this.submission.posted !== null) {
+            if (this.submission.modified[tag] && this.submission.modified > this.submission.posted) {
+              return 'text-warning';
+            }
+          } else {
+            if (this.submission.modified[tag])
+              return 'text-warning';
+          }
+          
+          return '';
+        },
+        updateField(tag) {
+          let modified = this.submission.modified || {};
+          let timestamp = new Date();
+          modified[tag] = timestamp;
+          this.submission.modified = modified;
+          this.submission.updated = timestamp;
+        },
+        removeImage(tag) {
+          let instance = this;
+          delete instance.images[tag];
+          instance.updateField(tag);
+        },
         updateImage(imageData, field) {
           let instance = this;
           instance.images[field.tag] = imageData;
+          instance.updateField(field.tag);
         },
         async updateSubmission(callback, silent) {
           let instance = this;
@@ -872,7 +921,8 @@
             status: 'ok',
             type: form.form_type,
             updated: null,
-            participant_id: instance.participant.participant_id
+            participant_id: instance.participant.participant_id,
+            modified: {}
           };
           submission.data = form.data.groups.reduce((acc, group) => {
             group.fields.forEach(field => {
@@ -896,28 +946,6 @@
         },
         async saveSubmissionToDatabase(submission, reset) {
           let instance = this;
-          let shouldUpdate = false;
-
-          if (submission.id !== undefined) {
-            try {
-              let savedSubmission = await db.submissions.get({id: submission.id, participant_id: instance.participant.participant_id});
-              if (savedSubmission != undefined) {
-                let diffs = diff(submission.data, savedSubmission.data);
-                if (diffs !== {})
-                  shouldUpdate = true;
-              } else {
-                // at this point, we might be invoking a disaster
-                console.error('Fatal');
-                return;
-              }
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-          } else {
-            instance.submissions.push(submission);
-            shouldUpdate = true;
-          }
 
           db.transaction('rw', db.submissions, () => {
             db.submissions.put(submission);
