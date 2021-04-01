@@ -77,21 +77,19 @@ def generate_identifier():
     return hex(val)[2:-1]
 
 
-def make_image_square(pil_image: Image) -> Image:
-    '''Returns a perfectly squared copy of the image in PNG (+ alpha)
-    format if the original is not, or the original if it is'''
+def resize_image(pil_image: Image, new_size: int) -> Image:
     background_color = (255, 255, 255, 0)
     image_mode = 'RGBA'
 
     width, height = pil_image.size
     if width == height:
-        return pil_image
+        return pil_image.resize((new_size, new_size), Image.LANCZOS)
 
     if width > height:
         result = Image.new(image_mode, (width, width), background_color)
         result.paste(pil_image, (0, (width - height) // 2))
-        return result
+        return result.resize((new_size, new_size), Image.LANCZOS)
     else:
         result = Image.new(image_mode, (height, height), background_color)
         result.paste(pil_image, ((height - width) // 2, 0))
-        return result
+        return result.resize((new_size, new_size), Image.LANCZOS)

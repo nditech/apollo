@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from depot.fields.sqlalchemy import UploadedFileField
+from depot.fields.specialized.image import UploadedImageWithThumb
 from flask_babelex import gettext
 from sqlalchemy import and_, or_
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -23,6 +25,10 @@ def _default_event_end():
         datetime.combine(current_timestamp(), datetime.max.time()))
 
 
+class NavbarIcon(UploadedImageWithThumb):
+    thumbnail_size = (30, 30)
+
+
 class Deployment(BaseModel):
     __tablename__ = 'deployment'
 
@@ -30,7 +36,8 @@ class Deployment(BaseModel):
     name = db.Column(db.String, nullable=False)
     hostnames = db.Column(ARRAY(db.String), nullable=False)
     allow_observer_submission_edit = db.Column(db.Boolean, default=True)
-    logo = db.Column(db.String)
+    brand_image = db.Column(
+        UploadedFileField(upload_storage='images', upload_type=NavbarIcon))
     include_rejected_in_votes = db.Column(db.Boolean, default=False)
     is_initialized = db.Column(db.Boolean, default=False)
     dashboard_full_locations = db.Column(db.Boolean, default=True)

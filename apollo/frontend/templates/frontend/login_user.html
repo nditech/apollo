@@ -54,7 +54,11 @@
               {% endif %}
               {%- endwith %}
               <div class="card">
+                {% if g.deployment.brand_image %}
+                <img src="{{ g.deployment.brand_image.url }}" width="300" height="300" class="card-img-top" alt="Apollo">
+                {% else %}
                 <img src="{{ url_for('static', filename='img/logo.png') }}" class="card-img-top" alt="Apollo">
+                {% endif %}
                 <div class="card-body">{% if login_user_form.errors %}
                   <div class="alert alert-danger" role="alert">
                     {{ _('The username and password you supplied <strong>do not match</strong> any of the credentials on this system. Please check both and try again.') }}
