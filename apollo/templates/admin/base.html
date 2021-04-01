@@ -53,7 +53,12 @@
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="container">
           <a class="navbar-brand mb-0 mt-1 h1" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
-              <img src="{{ url_for('static', filename='img/brand.png') }}" width="30" height="30" class="d-inline-block align-middle" alt="Apollo"> {{ admin_view.admin.name }}
+            {% if g.deployment.brand_image %}
+            <img src="{{ g.deployment.brand_image.thumb_url }}" width="30" height="30" class="d-inline-block align-middle" alt="Apollo">
+            {% else %}
+            <img src="{{ url_for('static', filename='img/brand.png') }}" width="30" height="30" class="d-inline-block align-middle" alt="Apollo">
+            {% endif %}
+              {{ admin_view.admin.name }}
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="{{ _('Toggle Navigation') }}"><span
