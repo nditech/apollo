@@ -17,11 +17,12 @@ from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
+from flask_wtf.file import FileField
 from jinja2 import contextfunction
 import pytz
 from slugify import slugify
 from wtforms import (
-    FileField, PasswordField, SelectField, SelectMultipleField, validators)
+    BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
 
 from apollo import models, services, settings
 from apollo.core import admin, db
@@ -183,7 +184,8 @@ class DeploymentAdminView(BaseAdminView):
                 'name', 'allow_observer_submission_edit',
                 'dashboard_full_locations',
                 'enable_partial_response_for_messages', 'hostnames',
-                'primary_locale', 'other_locales', 'brand_image'
+                'primary_locale', 'other_locales', 'brand_image',
+                'remove_brand',
             ),
             _('Deployment')
         )
@@ -209,10 +211,14 @@ class DeploymentAdminView(BaseAdminView):
             model.primary_locale = None
         model.other_locales = [loc for loc in model.other_locales if loc != '']
 
-        logo_file = request.files.get(form.brand_image.name)
-        if logo_file is None:
+        if hasattr(form, 'remove_brand') and form.remove_brand.data:
+            model.brand_image = None
             return
 
+        if not form.brand_image.data:
+            return
+
+        logo_file = form.brand_image.data
         logo_bytes = logo_file.read()
         if len(logo_bytes) == 0:
             deployment = models.Deployment.query.filter(
@@ -236,6 +242,12 @@ class DeploymentAdminView(BaseAdminView):
                 resized_logo.save(buf, format='PNG')
                 contents = buf.getvalue()
                 model.brand_image = contents
+
+    def on_form_prefill(self, form, id):
+        deployment = self.get_one(id)
+        if deployment.brand_image is None:
+            form.remove_brand.render_kw = {'disabled': True}
+        return form
 
     def get_query(self):
         return models.Deployment.query.filter_by(
@@ -262,6 +274,7 @@ class DeploymentAdminView(BaseAdminView):
         form_class.brand_image = FileField(
             _('Logo'),
             description=_('Will be resized as necessary. SVG not supported.'))
+        form_class.remove_brand = BooleanField(_('Remove logo'))
 
         return form_class
 
