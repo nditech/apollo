@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from http import HTTPStatus
+from itertools import groupby
+from operator import itemgetter
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import (
-    create_access_token, get_jwt, jwt_required, set_access_cookies,
-    unset_access_cookies)
+    create_access_token, get_jwt, get_jwt_identity, jwt_required,
+    set_access_cookies, unset_access_cookies)
 from sqlalchemy import bindparam, func, or_, text, true
+from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
 from apollo import settings
@@ -15,11 +18,14 @@ from apollo.api.common import BaseListResource
 from apollo.api.decorators import protect
 from apollo.core import csrf, red
 from apollo.deployments.models import Event
+from apollo.formsframework.api.schema import FormSchema
+from apollo.formsframework.models import Form, events_forms
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
     Participant, ParticipantSet, ParticipantFirstNameTranslations,
     ParticipantFullNameTranslations, ParticipantLastNameTranslations,
     ParticipantOtherNamesTranslations)
+from apollo.submissions.models import Submission
 
 
 @marshal_with(ParticipantSchema)
@@ -203,3 +209,73 @@ def logout():
         unset_access_cookies(resp)
 
     return resp
+
+
+def _get_form_data(participant):
+    # get incident forms
+    incident_forms = Form.query.join(events_forms).filter(
+        Event.participant_set_id == participant.participant_set_id,
+        Form.form_type == 'INCIDENT'
+    ).with_entities(Form).order_by(Form.name, Form.id)
+
+    # get participant submissions
+    participant_submissions = Submission.query.filter(
+        Submission.participant_id == participant.id
+    ).join(Submission.form)
+
+    # get checklist and survey forms based on the available submissions
+    non_incident_forms = participant_submissions.with_entities(
+        Form).distinct(Form.id)
+    checklist_forms = non_incident_forms.filter(Form.form_type == 'CHECKLIST')
+    survey_forms = non_incident_forms.filter(Form.form_type == 'SURVEY')
+
+    # get form serial numbers
+    form_ids_with_serials = participant_submissions.filter(
+        Form.form_type == 'SURVEY'
+    ).with_entities(
+        Form.id, Submission.serial_no
+    ).distinct(
+        Form.id, Submission.serial_no
+    ).order_by(Form.id, Submission.serial_no)
+
+    all_forms = checklist_forms.all() + incident_forms.all() + \
+        survey_forms.all()
+
+    serials = {
+        form_id: sorted(group[1] for group in groups)
+        for form_id, groups in groupby(
+            form_ids_with_serials, key=itemgetter(0))
+    }
+
+    return all_forms, serials
+
+
+@csrf.exempt
+@jwt_required()
+def get_forms():
+    participant_uuid = get_jwt_identity()
+
+    try:
+        participant = Participant.query.filter_by(uuid=participant_uuid).one()
+    except NoResultFound:
+        response = {
+            'message': gettext('Invalid participant'),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
+
+    forms, serials = _get_form_data(participant)
+
+    form_data = FormSchema(many=True).dump(forms)
+
+    result = {
+        'data': {
+            'forms': form_data,
+            'serials': serials,
+        },
+        'message': gettext('ok'),
+        'status': 'ok'
+    }
+
+    return jsonify(result)
