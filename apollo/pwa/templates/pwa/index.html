@@ -97,7 +97,7 @@
             </div>
             <div class="row mb-3">
               <div class="col">
-                <div class="form-check form-switch">
+                <div class="form-check">
                   <input type="checkbox" id="location-access-toggle" class="form-check-input" :checked="participant.allowLocationAccess" @change="toggleLocationAccess">
                   <label for="location-access-toggle" class="form-check-label">{{ _('Allow app to access my location when needed') }}</label>
                 </div>
@@ -135,12 +135,10 @@
                   <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)">{{ _('Add new') }}</button>
                 </div>
               </div>
-              <div class="row">
+              <checklist-completion :completions="getCompletion(form)" :form="form" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
+              <div class="row" v-if="form.form_type !== 'CHECKLIST'">
                 <div class="col mb-2">
-                  <div v-if="form.form_type === 'CHECKLIST'">
-                    <completion-icon :completion="getCompletion(form)"></completion-icon>
-                  </div>
-                  <div class="card mt-2" v-else>
+                  <div class="card mt-2">
                     <h5 class="card-header"><a class="text-dark" :href="`#sub-list-${form.id}`" data-bs-toggle="collapse" role="button">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</a></h5>
                     <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
                       <div class="list-group-item"  v-for="(submission, index) in submissionGroups[form.id]">
@@ -180,12 +178,12 @@
               </fieldset>
               <fieldset v-for="(group, index) in form.data.groups">
                 <div class="card mb-2">
-                  <h6 class="card-header" v-bind:class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
+                  <h6 class="card-header" :class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
                   <div class="card-body collapse" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
-                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="updateField(field.tag)">
+                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="updateField(field.tag)">
                         <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
@@ -222,7 +220,6 @@
           </div>
           <div class="card-footer">
             <button class="btn btn-outline-dark" @click="stopEditing" :disabled="locked">{{ _('Save and close') }}</button>
-            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Close without saving') }}</button>
           </div>
         </div>
       </div>
@@ -250,6 +247,16 @@
       [[ title ]]
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
     </span>
+  </template>
+  <template id="group-completion">
+    <span class="badge mx-1" :class="getCompletionClass()">[[ index + 1 ]]</span>
+  </template>
+  <template id="checklist-completion">
+    <div class="row">
+      <div class="col">
+        <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index"></group-completion>
+      </div>
+    </div>
   </template>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
@@ -330,6 +337,10 @@
       return completion;
     };
 
+    const formCompletion = (form, submission, images) => {
+      return form.data.groups.map((group, index) => computeGroupCompletion(form, submission, images, index));
+    }
+
     // API setup
     const endpoints = {
       list: "{{ url_for('participants.get_forms') }}",
@@ -409,6 +420,48 @@
       template: '#completion-icon'
     });
 
+    // group completion component
+    Vue.component('group-completion', {
+      data() {
+        return {};
+      },
+      methods: {
+        getCompletionClass() {
+          let appliedClasses = null;
+          if (this.index === 0) {
+            if (this.completions[this.index].filled === 0)
+              appliedClasses = ['bg-secondary'];
+            else if (this.completions[this.index].filled < this.completions[this.index].total)
+              appliedClasses = ['bg-warning', 'text-black'];
+            else
+              appliedClasses = ['bg-primary'];
+          } else {
+            if (this.completions[this.index - 1].filled === 0 && this.completions[this.index].filled !== 0)
+              appliedClasses = ['bg-danger'];
+            else if (this.completions[this.index].filled === 0 )
+              appliedClasses = ['bg-secondary'];
+            else if (this.completions[this.index].filled < this.completions[this.index].total)
+              appliedClasses = ['bg-warning', 'text-black'];
+            else
+              appliedClasses = ['bg-primary'];
+          }
+
+          return appliedClasses;
+        }
+      },
+      props: ['completions', 'group', 'index'],
+      template: '#group-completion'
+    })
+
+    // checklist completion component
+    Vue.component('checklist-completion', {
+      data() {
+        return {};
+      },
+      props: ['completions', 'form'],
+      template: '#checklist-completion'
+    })
+
     // image field component
     Vue.component('image-field', {
       data() {
@@ -422,11 +475,11 @@
           let tag = this.field.tag;
           if (this.submission.posted !== null) {
             if (this.submission.modified[tag] && this.submission.modified > this.submission.posted) {
-              return 'text-warning';
+              return ['text-warning'];
             }
           } else {
             if (this.submission.modified[tag])
-              return 'text-warning';
+              return ['text-warning'];
           }
 
           return '';
@@ -568,6 +621,8 @@
               return [];
           }
 
+          if (form.form_type === 'CHECKLIST')
+            return formCompletion(form, sub, sub.images);
           return computeCompletion(form, sub, sub.images);
         },
         newSubmission(form) {
