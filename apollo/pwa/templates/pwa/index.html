@@ -332,7 +332,7 @@
 
     // API setup
     const endpoints = {
-      list: "{{ url_for('forms.api_form_list') }}",
+      list: "{{ url_for('participants.get_forms') }}",
       login: "{{ url_for('participants.login') }}",
       logout: "{{ url_for('participants.logout') }}",
       submit: "{{ url_for('submissions.submission') }}",
@@ -346,6 +346,9 @@
       forms: 'id, participant_id',
       participants: 'participant_id, lastLogin',
       submissions: '++id, form, participant_id, posted, [id+participant_id]'
+    });
+    db.version(2).stores({
+      serials: 'form, participant_id, serial, [form+participant_id]'
     });
     db.open().catch(() => {
       Notiflix.Report.Failure(
@@ -809,7 +812,8 @@
             result = await client.getForms(instance.participant.events);
             if (result.status === 200) {
               result.result.then(data => {
-                instance.formsLoaded(data.objects);
+                instance.formsLoaded(data.data.forms);
+                instance.serialsLoaded(data.data.serials);
               });
             } else {
               instance.$emit('unauthorized');
@@ -853,6 +857,10 @@
           this.forms = formsWithParticipantIds;
           this.saveFormstoDatabase(this.forms);
         },
+        serialsLoaded(serials) {
+          let serialsWithParticipantIds = serials.map(serial => Object.assign({participant_id: this.participant.participant_id}, serial));
+          this.saveSerialsToDatabase(serialsWithParticipantIds);
+        },
         saveFormstoDatabase(forms) {
           db.transaction('rw', db.forms, () => {
             db.forms.bulkPut(forms);
@@ -861,6 +869,11 @@
             '{{ _("Could not save data to the database") }}',
             '{{ _("OK") }}',
           ));
+        },
+        saveSerialsToDatabase(serials) {
+          db.transaction('rw', db.serials, () => {
+            db.serials.bulkPut(serials)
+          });
         },
         clearDatabase() {
           db.transaction('rw', [db.forms, db.participants, db.submissions], () => {
