@@ -708,7 +708,7 @@
           let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
 
           if (completion.filled === 0)
-            return {'bg-danger': true, 'bg-gradient': true};
+            return {'bg-secondary': true, 'bg-gradient': true};
           else if (completion.filled < completion.total)
             return {'bg-warning': true, 'bg-gradient': true};
           else
