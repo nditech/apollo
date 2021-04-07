@@ -435,7 +435,7 @@ linecache2==1.0.0 \
 loginpass==0.3 \
     --hash=sha256:2e6c51e89950b51386dd9d6e8b6b777b2d9595543c173ef20d56819644eff8a5 \
     --hash=sha256:be04ce2a9b06a1e260e2c6a9b5cdfaa23e94eaf45c9df1b591b10e9104519b9d
-    # via -r requirements/prod.in
+    # via -r prod.in
 lxml==4.6.3 \
     --hash=sha256:079f3ae844f38982d156efce585bc540c16a926d4436712cf4baee0cce487a3d \
     --hash=sha256:0fbcf5565ac01dff87cbfc0ff323515c823081c5777a9fc7703ff58388c258c3 \
@@ -473,7 +473,7 @@ lxml==4.6.3 \
     --hash=sha256:f2380a6376dfa090227b663f9678150ef27543483055cc327555fb592c5967e2 \
     --hash=sha256:f8380c03e45cf09f8557bdaa41e1fa7c81f3ae22828e1db470ab2a6c96d8bc23 \
     --hash=sha256:f90ba11136bfdd25cae3951af8da2e95121c9b9b93727b1b896e3fa105b2f586
-    # via -r requirements/prod.in
+    # via -r prod.in
 mako==1.0.7 \
     --hash=sha256:4e02fde57bd4abb5ec400181e4c314f56ac3e49ba4fb8b0d50bba18cb27d25ae
     # via
@@ -928,10 +928,10 @@ vine==1.3.0 \
     --hash=sha256:133ee6d7a9016f177ddeaf191c1f58421a1dcc6ee9a42c58b34bed40e1d2cd87 \
     --hash=sha256:ea4947cc56d1fd6f2095c8d543ee25dad966f78692528e68b4fada11ba3f98af
     # via amqp
-webargs==5.3.2 \
-    --hash=sha256:6b81ce44572d4f345104aa41c734fdc01165f054a061a8ebb1b46e89851e1170 \
-    --hash=sha256:713bd63440ee078ce48ca953d254d51e5f1a6fa0c76fb521fc596306c78d95a5 \
-    --hash=sha256:e2394ea7e422c1e795681cee5e8b1c6083bab7db6d7a380841130cbbae173d29
+webargs==5.5.3 \
+    --hash=sha256:4f04918864c7602886335d8099f9b8960ee698b6b914f022736ed50be6b71235 \
+    --hash=sha256:871642a2e0c62f21d5b78f357750ac7a87e6bc734c972f633aa5fb6204fbf29a \
+    --hash=sha256:fc81c9f9d391acfbce406a319217319fd8b2fd862f7fdb5319ad06944f36ed25
     # via flask-apispec
 webassets==0.12.1 \
     --hash=sha256:e7d9c8887343123fd5b32309b33167428cb1318cdda97ece12d0907fd69d38db
