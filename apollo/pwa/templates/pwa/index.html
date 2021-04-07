@@ -696,6 +696,22 @@
         clearForm() {
           this.$emit('clear-form');
         },
+        validate() {
+          if (this.form.form_type === 'SURVEY') {
+            // ensure serial field is filled out
+            if (!this.submission.serial) {
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Please fill out the serial") }}',
+                '{{ _("OK") }}'
+              );
+
+              return false;
+            }
+          }
+
+          return true;
+        },
         async search(serial) {
           let re = new RegExp(serial);
           let entries = await db.serials.where({form: this.form.id, participant_id: this.participant_id}).toArray();
@@ -790,6 +806,9 @@
         },
         saveSubmission(reset = false, silent = false) {
           let instance = this;
+          if (!instance.validate())
+            return;
+
           this.updateSubmission(() => {
             instance.lastSave = new Date();
             instance.submission.updated = instance.lastSave;
@@ -801,6 +820,9 @@
         },
         postSubmission() {
           let instance = this;
+          if (!instance.validate())
+            return;
+
           this.updateSubmission(() => {
             instance.$emit('post-submission', instance.submission);
           });
