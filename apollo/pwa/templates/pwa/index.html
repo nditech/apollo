@@ -142,7 +142,7 @@
                   <div class="card mt-2">
                     <h5 class="card-header"><a class="text-dark" :href="`#sub-list-${form.id}`" data-bs-toggle="collapse" role="button">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</a></h5>
                     <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
-                      <div class="list-group-item"  v-for="(submission, index) in submissionGroups[form.id]">
+                      <div class="list-group-item" v-for="(submission, index) in submissionGroups[form.id]">
                         <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
                         <span class="badge bg-warning text-dark" v-if="isPending(submission)">PENDING</span>
                         <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
