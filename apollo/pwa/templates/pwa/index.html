@@ -183,7 +183,7 @@
               <fieldset v-for="(group, index) in form.data.groups">
                 <div class="card mb-2">
                   <h6 class="card-header" :class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
-                  <div class="card-body collapse" :id="`group-${index}`">
+                  <div class="card-body" :class="getAltCompletionClass(index)" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
@@ -713,6 +713,14 @@
             return {'bg-warning': true, 'bg-gradient': true};
           else
             return {'bg-primary': true, 'bg-gradient': true};
+        },
+        getAltCompletionClass(index) {
+          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+
+          if (completion.filled === completion.total)
+            return ['collapse'];
+          else
+            return ['collapse', 'show'];
         },
         fieldLabelClass(tag) {
           if (this.submission.posted !== null) {
