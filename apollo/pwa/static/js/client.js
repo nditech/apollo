@@ -35,9 +35,8 @@ class APIClient {
     }).then(this._getResult);
   };
 
-  getForms = function (events) {
-    const endpoint = (events === [] || events === undefined || events === null) ? this.endpoints.list : `${this.endpoints.list}?events=${events.join(',')}`;
-    return fetch(endpoint, {
+  getForms = function () {
+    return fetch(this.endpoints.list, {
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
