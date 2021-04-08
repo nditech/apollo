@@ -240,7 +240,7 @@ def _get_form_data(participant):
         survey_forms.all()
 
     serials = [
-        {'form_id': pair[0], 'serial': pair[1]}
+        {'form': pair[0], 'serial': pair[1]}
         for pair in form_ids_with_serials]
 
     return all_forms, serials
