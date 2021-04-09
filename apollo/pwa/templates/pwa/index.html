@@ -223,7 +223,7 @@
             </form>
           </div>
           <div class="card-footer">
-            <button class="btn btn-outline-dark" @click="stopEditing" :disabled="locked">{{ _('Save and close') }}</button>
+            <button class="btn btn-outline-dark" @click="stopEditing">[[ actionText ]]</button>
           </div>
         </div>
       </div>
@@ -680,6 +680,12 @@
         },
         locked() {
           return (this.submission.posted !== null && this.form.form_type === 'INCIDENT');
+        },
+        actionText() {
+          if (this.locked)
+            return '{{ _("Close") }}';
+          else
+            return '{{ _("Save and close") }}';
         }
       },
       data() {
@@ -816,7 +822,10 @@
           }, silent);
         },
         stopEditing() {
-          this.saveSubmission(true);
+          if (this.locked)
+            this.clearForm();
+          else
+            this.saveSubmission(true);
         },
         postSubmission() {
           let instance = this;
