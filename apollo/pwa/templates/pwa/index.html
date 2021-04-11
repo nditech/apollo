@@ -170,7 +170,7 @@
         <div class="card shadown-sm mt-3">
           <h5 class="card-header">[[ form.name ]]</h5>
           <div class="card-body">
-            <form>
+            <form ref="form">
               <fieldset v-if="form.form_type === 'SURVEY'">
                 <div class="mb-3">
                   <label for="serial" class="form-label">{{ _('Serial number') }}</label>
@@ -183,7 +183,7 @@
               <fieldset v-for="(group, index) in form.data.groups">
                 <div class="card mb-2">
                   <h6 class="card-header" :class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
-                  <div class="card-body collapse show" :id="`group-${index}`">
+                  <div class="card-body" :class="getSectionInitialClass(index)" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
@@ -265,6 +265,7 @@
   <script src="{{ url_for('pwa.static', filename='vendor/autocomplete/autocomplete.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/fast-copy/fast-copy.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/luxon/luxon.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
@@ -272,8 +273,8 @@
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='js/diff.js') }}"></script>
   <script>
+    const copyFunc = window['fast-copy'];
     const promptToUpdate = () => {
       Notiflix.Confirm.Show(
         '{{ _("Update available") }}',
@@ -692,10 +693,11 @@
         return {
           autocomplete: null,
           canRetrieveLocation: 'geolocation' in navigator,
-          location: null,
           images: {},
+          initialData: copyFunc(this.submission),
           intervalHandle: null,
-          lastSave: new Date(0)
+          lastSave: new Date(0),
+          location: null
         };
       },
       methods: {
@@ -736,8 +738,8 @@
           else
             return {'bg-primary': true, 'bg-gradient': true};
         },
-        getAltCompletionClass(index) {
-          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+        getSectionInitialClass(index) {
+          let completion = computeGroupCompletion(this.form, this.initialData, this.initialData.images, index);
 
           if (completion.filled === completion.total)
             return ['collapse'];
@@ -919,6 +921,7 @@
         clearCurrentForm() {
           this.currentForm = null;
           this.currentSubmission = null;
+          this.reloadFormsAndSubmissions();
         },
         async refreshForms(quiet = true) {
           let instance = this;
@@ -1170,14 +1173,18 @@
           instance.submissions
             .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
             .forEach(submission => instance.postSubmission(submission, false));
+        },
+        reloadFormsAndSubmissions() {
+          this.loadFormsFromDatabase();
+          this.loadSubmissionsFromDatabase();
         }
       },
       mounted() {
-        this.loadParticipantFromDatabase(() => {
-          if (this.participant !== null) {
-            this.participant.allowLocationAccess = this.participant.allowLocationAccess || false;
-            this.loadFormsFromDatabase();
-            this.loadSubmissionsFromDatabase();
+        let instance = this;
+        instance.loadParticipantFromDatabase(() => {
+          if (instance.participant !== null) {
+            instance.participant.allowLocationAccess = instance.participant.allowLocationAccess || false;
+            instance.reloadFormsAndSubmissions();
           }
         });
 

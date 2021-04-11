@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apollo-cache-static-v4';
+const CACHE_NAME = 'apollo-cache-static-v5';
 
 const CACHED_URLS = [
     '/pwa/',
@@ -9,7 +9,6 @@ const CACHED_URLS = [
     '/pwa/static/img/icons-192.png',
     '/pwa/static/js/app.js',
     '/pwa/static/js/client.js',
-    '/pwa/static/js/diff.js',
     '/pwa/static/vendor/animate.css/animate.min.css',
     '/pwa/static/vendor/autocomplete/autocomplete.min.js',
     '/pwa/static/vendor/autocomplete/style.css',
@@ -17,6 +16,7 @@ const CACHED_URLS = [
     '/pwa/static/vendor/bootstrap/css/bootstrap.rtl.min.css',
     '/pwa/static/vendor/bootstrap/js/bootstrap.min.js',
     '/pwa/static/vendor/dexie/dexie.min.js',
+    '/pwa/static/vendor/fast-copy/fast-copy.min.js',
     '/pwa/static/vendor/image-blob-reduce/image-blob-reduce.min.js',
     '/pwa/static/vendor/luxon/luxon.min.js',
     '/pwa/static/vendor/notiflix/notiflix-2.7.0.min.css',
