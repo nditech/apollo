@@ -800,6 +800,9 @@
         async updateSubmission(callback, silent) {
           let instance = this;
 
+          // clear out keys that have empty string values
+          Object.keys(instance.submission.data).forEach(k => instance.submission.data[k] === '' && delete instance.submission.data[k]);
+
           if (instance.images !== {})
             instance.submission.images = instance.images;
 
