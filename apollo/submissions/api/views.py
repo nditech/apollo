@@ -173,7 +173,8 @@ def submission():
         response = {
             'message': gettext('Invalid value(s) for: %(fields)s',
                                fields=','.join(sorted(errors.keys()))),
-            'status': 'error'
+            'status': 'error',
+            'errorFields': sorted(errors.keys()),
         }
 
         return jsonify(response), HTTPStatus.BAD_REQUEST
