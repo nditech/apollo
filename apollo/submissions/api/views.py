@@ -170,11 +170,12 @@ def submission():
     schema_class = form.create_schema()
     data, errors = schema_class().load(payload)
     if errors:
+        error_fields = sorted(errors.keys())
         response = {
             'message': gettext('Invalid value(s) for: %(fields)s',
-                               fields=','.join(sorted(errors.keys()))),
+                               fields=','.join(error_fields)),
             'status': 'error',
-            'errorFields': sorted(errors.keys()),
+            'errorFields': error_fields,
         }
 
         return jsonify(response), HTTPStatus.BAD_REQUEST
