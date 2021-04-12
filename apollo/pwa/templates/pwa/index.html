@@ -333,9 +333,9 @@
         if (field.type === 'image')
           acc += (images[field.tag] !== undefined ? 1 : 0);
         else if (field.type === 'multiselect')
-          acc += (submission.data[field.tag] !== undefined && submission.data[field.tag].length > 0 ? 1 : 0);
+          acc += ((submission.data[field.tag] !== undefined && submission.data[field.tag].length) > 0 ? 1 : 0);
         else
-          acc += (submission.data[field.tag] !== undefined ? 1 : 0);
+          acc += ((submission.data[field.tag] !== undefined && submission.data[field.tag] !== '') ? 1 : 0);
         return acc;
       }, 0);
       
