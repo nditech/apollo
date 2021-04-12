@@ -333,7 +333,7 @@
         if (field.type === 'image')
           acc += (images[field.tag] !== undefined ? 1 : 0);
         else if (field.type === 'multiselect')
-          acc += (submission.data[field.tag].length > 0 ? 1 : 0);
+          acc += (submission.data[field.tag] !== undefined && submission.data[field.tag].length > 0 ? 1 : 0);
         else
           acc += (submission.data[field.tag] !== undefined ? 1 : 0);
         return acc;
@@ -700,9 +700,10 @@
           this.$emit('clear-form');
         },
         validate() {
-          if (this.form.form_type === 'SURVEY') {
+          let instance = this;
+          if (instance.form.form_type === 'SURVEY') {
             // ensure serial field is filled out
-            if (!this.submission.serial) {
+            if (!instance.submission.serial) {
               Notiflix.Report.Failure(
                 '{{ _("Error") }}',
                 '{{ _("Please fill out the serial") }}',
@@ -711,6 +712,32 @@
 
               return false;
             }
+          }
+
+          // check that numeric fields don't exceed their bounds
+          let errorFields = [];
+          instance.form.data.groups.forEach(group => {
+            group.fields.forEach(field => {
+              if (field.type !== 'integer')
+                return;
+
+              let fieldData = instance.submission.data[field.tag];
+              if (instance.submission.data[field.tag] !== undefined || instance.submission.data[field.tag] !== null) {
+                if ((fieldData < field.min) || (fieldData > field.max))
+                  errorFields.push(field.tag);
+              }
+            });
+          });
+
+          if (errorFields.length > 0) {
+            let errorMessage = '{{ _("Please check what you entered into the following fields") }}: ' + errorFields.join();
+            Notiflix.Report.Failure(
+              '{{ _("Error") }}',
+              errorMessage,
+              '{{ _("OK") }}'
+            );
+
+            return false;
           }
 
           return true;
@@ -1044,7 +1071,7 @@
 
           let submission = {
             created: new Date(),
-            errorMessage: null,
+            errorFields: new Set(),
             form: form.id,
             images: {},
             posted: null,
@@ -1135,8 +1162,13 @@
                   data.message,
                   '{{ _("OK") }}',
                 );
+              submission.posted = submission.updated = new Date();
+              submission.errorFields = new Set(data.errorFields);
+              this.saveSubmissionToDatabase(submission, single);
             } else {
               submission.posted = submission.updated = new Date();
+              if (submission.errorFields.size > 0)
+                submission.errorFields = new Set();
               this.saveSubmissionToDatabase(submission, single);
               if (single)
                 Notiflix.Report.Success(
