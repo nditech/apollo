@@ -17,7 +17,7 @@ from apollo.api.decorators import protect
 from apollo.core import csrf, red
 from apollo.deployments.models import Event
 from apollo.formsframework.api.schema import FormSchema
-from apollo.formsframework.models import Form, events_forms
+from apollo.formsframework.models import Form
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
     Participant, ParticipantSet, ParticipantFirstNameTranslations,
@@ -211,7 +211,7 @@ def logout():
 
 def _get_form_data(participant):
     # get incident forms
-    incident_forms = Form.query.join(events_forms).filter(
+    incident_forms = Form.query.join(Form.events).filter(
         Event.participant_set_id == participant.participant_set_id,
         Form.form_type == 'INCIDENT'
     ).with_entities(Form).order_by(Form.name, Form.id)
