@@ -869,12 +869,14 @@
         instance.images = instance.submission.images;
         instance.location = instance.submission.data.location;
 
-        instance.autocomplete = new Autocomplete(instance.$refs.autocomplete, {
-          debounceTime: 500,
-          search: instance.search,
-          getResultValue: instance.getResultValue,
-          onSubmit: result => { console.log(result); instance.submission.serial = result.serial; }
-        });
+        if (instance.form.form_type === 'SURVEY') {
+          instance.autocomplete = new Autocomplete(instance.$refs.autocomplete, {
+            debounceTime: 500,
+            search: instance.search,
+            getResultValue: instance.getResultValue,
+            onSubmit: result => { instance.submission.serial = result.serial; }
+          });
+        }
 
         // save every minute
         if (!instance.locked)
