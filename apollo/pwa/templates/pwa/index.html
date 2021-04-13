@@ -131,7 +131,7 @@
                   <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)">{{ _('Add new') }}</button>
                 </div>
               </div>
-              <checklist-completion :completions="getCompletion(form)" :form="form" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
+              <checklist-completion :completions="getCompletion(form)" :form="form" :submission="getSubmission(form)" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
               <div class="row" v-if="form.form_type !== 'CHECKLIST'">
                 <div class="col mb-2">
                   <div class="card mt-2">
@@ -181,30 +181,30 @@
                   <div class="card-body" :class="getSectionInitialClass(index)" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
                         <input type="number" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="updateField(field.tag)">
                         <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
                           <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="updateField(field.tag)">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
                           <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="updateField(field.tag)">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'string'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="updateField(field.tag)">
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'comment'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass(field.tag)">[[ field.tag ]]</span> [[ field.description ]]</label>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="updateField(field.tag)"></textarea>
                       </div>
                       <image-field v-else-if="field.type === 'image'" :field="field" :submission="submission" @update-image="updateImage" @remove-image="removeImage(field.tag)" :disabled="locked"></image-field>
@@ -253,7 +253,7 @@
   <template id="checklist-completion">
     <div class="row">
       <div class="col">
-        <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index"></group-completion>
+        <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index" :submission="submission"></group-completion>
       </div>
     </div>
   </template>
@@ -432,29 +432,34 @@
       },
       methods: {
         getCompletionClass() {
-          let appliedClasses = null;
-          if (this.index === 0) {
-            if (this.completions[this.index].filled === 0)
+          let appliedClasses = ['bg-secondary'];
+
+          if (this.submission.posted !== null) {
+            let errorFields = this.submission.errorFields || new Set();
+            let postedFields = this.submission.postedFields || new Set();
+            let filled = this.completions[this.index].filled;
+            let total = this.completions[this.index].total;
+            let hasErrors = this.group.fields.map(field => errorFields.has(field.tag));
+            let wasPosted = this.group.fields.map(field => postedFields.has(field.tag));
+
+            if (!wasPosted.some(f => f))
               appliedClasses = ['bg-secondary'];
-            else if (this.completions[this.index].filled < this.completions[this.index].total)
-              appliedClasses = ['bg-warning', 'text-black'];
-            else
-              appliedClasses = ['bg-primary'];
-          } else {
-            if (this.completions[this.index - 1].filled === 0 && this.completions[this.index].filled !== 0)
-              appliedClasses = ['bg-danger'];
-            else if (this.completions[this.index].filled === 0 )
-              appliedClasses = ['bg-secondary'];
-            else if (this.completions[this.index].filled < this.completions[this.index].total)
-              appliedClasses = ['bg-warning', 'text-black'];
-            else
-              appliedClasses = ['bg-primary'];
+            else {
+              if (hasErrors.some(f => f))
+                appliedClasses = ['bg-danger'];
+              else {
+                if (filled < total)
+                  appliedClasses = ['bg-warning', 'text-black'];
+                else
+                  appliedClasses = ['bg-primary'];
+              }
+            }
           }
 
           return appliedClasses;
         }
       },
-      props: ['completions', 'group', 'index'],
+      props: ['completions', 'group', 'index', 'submission'],
       template: '#group-completion'
     })
 
@@ -463,7 +468,7 @@
       data() {
         return {};
       },
-      props: ['completions', 'form'],
+      props: ['completions', 'form', 'submission'],
       template: '#checklist-completion'
     })
 
@@ -618,9 +623,7 @@
         getCompletion(form, submission = undefined) {
           let sub = submission;
           if (form.form_type === 'CHECKLIST') {
-            sub = this.submissions.find(submission => submission.form === form.id);
-            if (sub === undefined)
-              sub = {data: {}, images: {}};
+            sub = this.getSubmission(form);
           } else {
             if (sub === null || sub === undefined)
               return [];
@@ -629,6 +632,13 @@
           if (form.form_type === 'CHECKLIST')
             return formCompletion(form, sub, sub.images);
           return computeCompletion(form, sub, sub.images);
+        },
+        getSubmission(form) {
+          let sub = this.submissions.find(submission => submission.form === form.id);
+          if (sub === undefined)
+            sub = {data: {}, errorFields: new Set(), images: {}, modified: [], posted: null};
+          
+          return sub;
         },
         newSubmission(form) {
           this.$emit('edit-submission', form, null);
@@ -751,14 +761,34 @@
           return entry.serial;
         },
         getCompletionClass(index) {
-          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+          let appliedClasses = {'bg-gradient': true};
 
-          if (completion.filled === 0)
-            return {'bg-secondary': true, 'bg-gradient': true};
-          else if (completion.filled < completion.total)
-            return {'bg-warning': true, 'bg-gradient': true};
-          else
-            return {'bg-primary': true, 'bg-gradient': true};
+          if (this.submission.posted === null)
+            appliedClasses['bg-secondary'] = true;
+          else {
+            let submission = this.submission;
+            let errorFields = submission.errorFields || new Set();
+            let postedFields = submission.postedFields || new Set();
+            let completion = computeGroupCompletion(this.form, submission, this.images, index);
+            let group = this.form.data.groups[index];
+            let hasErrors = group.fields.map(field => errorFields.has(field.tag));
+            let wasPosted = group.fields.map(field => postedFields.has(field.tag));
+
+            if (!wasPosted.some(f => f))
+              appliedClasses['bg-secondary'] = true;
+            else {
+              if (hasErrors.some(f => f))
+                appliedClasses['bg-danger'] = true;
+              else {
+                if (completion.filled < completion.total)
+                  appliedClasses['bg-warning'] = true;
+                else
+                  appliedClasses['bg-primary'] = true;
+              }
+            }
+          }
+
+          return appliedClasses;
         },
         getSectionInitialClass(index) {
           let completion = computeGroupCompletion(this.form, this.initialData, this.initialData.images, index);
@@ -767,18 +797,6 @@
             return ['collapse'];
           else
             return ['collapse', 'show'];
-        },
-        fieldLabelClass(tag) {
-          if (this.submission.posted !== null) {
-            if (this.submission.modified[tag] && this.submission.modified > this.submission.posted) {
-              return 'text-warning';
-            }
-          } else {
-            if (this.submission.modified[tag])
-              return 'text-warning';
-          }
-          
-          return '';
         },
         updateField(tag) {
           let modified = this.submission.modified || {};
@@ -1080,6 +1098,7 @@
             form: form.id,
             images: {},
             posted: null,
+            postedFields: new Set(),
             status: 'ok',
             type: form.form_type,
             updated: null,
@@ -1142,11 +1161,14 @@
           if (!this.navigatorOnline)
             return;
           let formData = new FormData();
+          let postedFields = new Set(Object.keys(submission.data));
           for (let key of Object.keys(submission.images || {})) {
+            postedFields.add(key);
             formData.append(key, submission.images[key], submission.images[key].name);
           }
           let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
           formData.append('submission', JSON.stringify(subCopy));
+          submission.postedFields = postedFields;
 
           try {
             let result = await client.submit(formData, Cookie.get('csrf_access_token'));
