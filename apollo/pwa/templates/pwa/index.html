@@ -228,7 +228,7 @@
     <div class="mb-3">
       <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
       <button type="button" class="btn btn-outline-dark m-2" v-if="hasContent" @click="removeImage">{{ _('Remove') }}</button>
-      <label :for="field.tag" class="form-label"><span class="fw-bold" :class="fieldLabelClass">[[ field.tag ]]</span> [[ field.description ]]</label>
+      <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
       <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
   </template>
@@ -481,19 +481,6 @@
         };
       },
       methods: {
-        fieldLabelClass() {
-          let tag = this.field.tag;
-          if (this.submission.posted !== null) {
-            if (this.submission.modified[tag] && this.submission.modified > this.submission.posted) {
-              return ['text-warning'];
-            }
-          } else {
-            if (this.submission.modified[tag])
-              return ['text-warning'];
-          }
-
-          return '';
-        },
         processFile(event) {
           let instance = this;
           instance.hasContent = true;
