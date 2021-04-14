@@ -182,35 +182,36 @@
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
-                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="markUpdated">
-                        <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
+                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (data[field.tag] < field.min || data[field.tag] > field.max)}" v-model.number="data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="markUpdated">
+                        <div class="invalid-feedback" v-if="data[field.tag] < field.min || data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="markUpdated">
+                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked" @change="markUpdated">
+                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'string'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="markUpdated">
+                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="data[field.tag]" :disabled="locked" @input="markUpdated">
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'comment'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked" @input="markUpdated"></textarea>
+                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="data[field.tag]" :disabled="locked" @input="markUpdated"></textarea>
                       </div>
                       <image-field v-else-if="field.type === 'image'" :field="field" :submission="submission" @update-image="updateImage" @remove-image="removeImage(field.tag)" :disabled="locked"></image-field>
                     </div>
                     <div class="mb-3">
                       <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+                      <button class="btn btn-outline-dark" type="button" @click="clearData(group)" >{{ _('Clear section data') }}</button>
                     </div>
                   </div>
                 </div>
@@ -710,6 +711,7 @@
         return {
           autocomplete: null,
           canRetrieveLocation: 'geolocation' in navigator,
+          data: copyFunc(this.submission.data),
           images: {},
           initialData: copyFunc(this.submission),
           intervalHandle: null,
@@ -843,7 +845,8 @@
           let instance = this;
 
           // clear out keys that have empty string values
-          Object.keys(instance.submission.data).forEach(k => instance.submission.data[k] === '' && delete instance.submission.data[k]);
+          Object.keys(instance.data).forEach(k => instance.data[k] === '' && delete instance.data[k]);
+          instance.submission.data = instance.data;
 
           if (instance.images !== {})
             instance.submission.images = instance.images;
@@ -904,6 +907,22 @@
           this.updateSubmission(() => {
             instance.$emit('post-submission', instance.submission);
           });
+        },
+        clearData(group) {
+          let instance = this;
+
+          Notiflix.Confirm.Show(
+            '{{ _("Warning") }}',
+            '{{ _("This will clear all filled out data for this section, except images. Continue?") }}',
+            '{{ _("Yes, clear it") }}',
+            '{{ _("No") }}',
+            () => {
+              let fields = group.fields.filter(f => f.type !== 'image');
+              let newData = copyFunc(instance.data);
+              fields.forEach(f => delete newData[f.tag]);
+              instance.data = newData;
+            }
+          );
         }
       },
       mounted() {
