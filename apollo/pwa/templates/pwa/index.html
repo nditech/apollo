@@ -210,7 +210,7 @@
                       <image-field v-else-if="field.type === 'image'" :field="field" :submission="submission" @update-image="updateImage" @remove-image="removeImage(field.tag)" :disabled="locked"></image-field>
                     </div>
                     <div class="mb-3">
-                      <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+                      <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="locked">{{ _('Submit') }}</button>
                       <button class="btn btn-outline-dark" type="button" @click="clearData(group)" >{{ _('Clear section data') }}</button>
                     </div>
                   </div>
@@ -1220,7 +1220,7 @@
             if (single)
               Notiflix.Report.Warning(
                 '{{ _("Error") }}',
-                '{{ _("You are currently offline. Your data will be automatically posted when you are online again") }}',
+                '{{ _("You are currently offline. Your data will be automatically posted when you are online again.") }}',
                 '{{ _("OK") }}'
               );
             return;
