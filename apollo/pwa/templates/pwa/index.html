@@ -308,7 +308,7 @@
         return a.id - b.id;
     };
 
-    const computeCompletion = (form, submission, images) => {
+    const computeCompletion = (form, data, images) => {
       let completion = {total: 0, filled: 0};
       form.data.groups.forEach(group => {
         group.fields.forEach(field => {
@@ -316,16 +316,16 @@
           if (field.type === 'image')
             completion.filled += (images[field.tag] !== undefined ? 1 : 0);
           else if (field.type === 'multiselect')
-            completion.filled += (submission.data[field.tag].length > 0 ? 1 : 0);
+            completion.filled += (data[field.tag].length > 0 ? 1 : 0);
           else
-            completion.filled += (submission.data[field.tag] !== undefined ? 1 : 0);
+            completion.filled += (data[field.tag] !== undefined ? 1 : 0);
         });
       });
 
       return completion;
     };
 
-    const computeGroupCompletion = (form, submission, images, index) => {
+    const computeGroupCompletion = (form, data, images, index) => {
       let group = form.data.groups[index];
 
       let completion = {total: group.fields.length};
@@ -333,17 +333,17 @@
         if (field.type === 'image')
           acc += (images[field.tag] !== undefined ? 1 : 0);
         else if (field.type === 'multiselect')
-          acc += ((submission.data[field.tag] !== undefined && submission.data[field.tag].length) > 0 ? 1 : 0);
+          acc += ((data[field.tag] !== undefined && data[field.tag].length) > 0 ? 1 : 0);
         else
-          acc += ((submission.data[field.tag] !== undefined && submission.data[field.tag] !== '') ? 1 : 0);
+          acc += ((data[field.tag] !== undefined && data[field.tag] !== '') ? 1 : 0);
         return acc;
       }, 0);
       
       return completion;
     };
 
-    const formCompletion = (form, submission, images) => {
-      return form.data.groups.map((group, index) => computeGroupCompletion(form, submission, images, index));
+    const formCompletion = (form, data, images) => {
+      return form.data.groups.map((group, index) => computeGroupCompletion(form, data, images, index));
     }
 
     // API setup
@@ -434,27 +434,15 @@
         getCompletionClass() {
           let appliedClasses = ['bg-secondary'];
 
-          if (this.submission.posted !== null) {
-            let errorFields = this.submission.errorFields || new Set();
-            let postedFields = this.submission.postedFields || new Set();
-            let filled = this.completions[this.index].filled;
-            let total = this.completions[this.index].total;
-            let hasErrors = this.group.fields.map(field => errorFields.has(field.tag));
-            let wasPosted = this.group.fields.map(field => postedFields.has(field.tag));
+          let filled = this.completions[this.index].filled;
+          let total = this.completions[this.index].total;
 
-            if (!wasPosted.some(f => f))
-              appliedClasses = ['bg-secondary'];
-            else {
-              if (hasErrors.some(f => f))
-                appliedClasses = ['bg-danger'];
-              else {
-                if (filled < total)
-                  appliedClasses = ['bg-warning', 'text-black'];
-                else
-                  appliedClasses = ['bg-primary'];
-              }
-            }
-          }
+          if (filled === 0)
+            appliedClasses = ['bg-secondary'];
+          else if (filled < total)
+            appliedClasses = ['bg-warning', 'text-black'];
+          else
+            appliedClasses = ['bg-primary'];
 
           return appliedClasses;
         }
@@ -475,7 +463,7 @@
     Vue.component('submission-status', {
       computed: {
         status() {
-          if (this.submission.data === {} && this.submission.images === {})
+          if (Object.keys(this.submission.data).length === 0 && Object.keys(this.submission.images).length === 0 && this.submission.posted === null)
             return '';
           else {
             if (this.submission.id === this.syncingSubmission)
@@ -640,8 +628,8 @@
           }
 
           if (form.form_type === 'CHECKLIST')
-            return formCompletion(form, sub, sub.images);
-          return computeCompletion(form, sub, sub.images);
+            return formCompletion(form, sub.data, sub.images);
+          return computeCompletion(form, sub.data, sub.images);
         },
         getSubmission(form) {
           let sub = this.submissions.find(submission => submission.form === form.id);
@@ -790,32 +778,15 @@
           return entry.serial;
         },
         getCompletionClass(index) {
-          let appliedClasses = {'bg-gradient': true};
+          let appliedClasses = [];
 
-          if (this.submission.posted === null)
-            appliedClasses['bg-secondary'] = true;
-          else {
-            let submission = this.submission;
-            let errorFields = submission.errorFields || new Set();
-            let postedFields = submission.postedFields || new Set();
-            let completion = computeGroupCompletion(this.form, submission, this.images, index);
-            let group = this.form.data.groups[index];
-            let hasErrors = group.fields.map(field => errorFields.has(field.tag));
-            let wasPosted = group.fields.map(field => postedFields.has(field.tag));
-
-            if (!wasPosted.some(f => f))
-              appliedClasses['bg-secondary'] = true;
-            else {
-              if (hasErrors.some(f => f))
-                appliedClasses['bg-danger'] = true;
-              else {
-                if (completion.filled < completion.total)
-                  appliedClasses['bg-warning'] = true;
-                else
-                  appliedClasses['bg-primary'] = true;
-              }
-            }
-          }
+          let completion = computeGroupCompletion(this.form, this.data, this.images, index);
+          if (completion.filled === 0)
+            appliedClasses = ['bg-gradient', 'bg-secondary'];
+          else if (completion.filled < completion.total)
+            appliedClasses = ['bg-gradient', 'bg-warning'];
+          else
+            appliedClasses = ['bg-gradient', 'bg-primary'];
 
           return appliedClasses;
         },
@@ -1223,6 +1194,8 @@
                 '{{ _("You are currently offline. Your data will be automatically posted when you are online again.") }}',
                 '{{ _("OK") }}'
               );
+
+            this.saveSubmissionToDatabase(submission, single);
             return;
           }
 
