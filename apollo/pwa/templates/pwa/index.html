@@ -748,8 +748,8 @@
               if (field.type !== 'integer')
                 return;
 
-              let fieldData = instance.submission.data[field.tag];
-              if (instance.submission.data[field.tag] !== undefined || instance.submission.data[field.tag] !== null) {
+              let fieldData = instance.data[field.tag];
+              if (instance.data[field.tag] !== undefined || instance.data[field.tag] !== null) {
                 if ((fieldData < field.min) || (fieldData > field.max))
                   errorFields.push(field.tag);
               }
