@@ -170,7 +170,7 @@
                 <div class="mb-3">
                   <label for="serial" class="form-label">{{ _('Serial number') }}</label>
                   <div id="autocomplete" class="autocomplete" ref="autocomplete">
-                    <input type="text" class="form-control" name="serial" id="serial" v-model="submission.serial" :disabled="submission.id != undefined">
+                    <input type="text" class="form-control" name="serial" id="serial" v-model="submission.serial" :disabled="disableSerialInput">
                     <ul class="autocomplete-result-list"></ul>
                   </div>
                 </div>
@@ -361,7 +361,7 @@
     db.version(1).stores({
       forms: 'id, participant_id',
       participants: 'participant_id, lastLogin',
-      submissions: '++id, form, participant_id, posted, [id+participant_id]'
+      submissions: '++id, form, participant_id, posted, [id+participant_id], [form+participant_id]'
     });
     db.version(2).stores({
       serials: '[form+participant_id+serial], [form+participant_id], form, participant_id, serial'
@@ -693,6 +693,12 @@
             return '{{ _("Close") }}';
           else
             return '{{ _("Save and close") }}';
+        },
+        disableSerialInput() {
+          return this.form.form_type === 'SURVEY' &&
+            this.submission.serial !== '' &&
+            this.submission.serial !== null &&
+            this.submission.serial !== undefined;
         }
       },
       data() {
@@ -726,16 +732,17 @@
             return '{{ _("RECEIVED") }}';
           }
         },
-        validate() {
+        validate(silent = false) {
           let instance = this;
           if (instance.form.form_type === 'SURVEY') {
             // ensure serial field is filled out
             if (!instance.submission.serial) {
-              Notiflix.Report.Failure(
-                '{{ _("Error") }}',
-                '{{ _("Please fill out the serial") }}',
-                '{{ _("OK") }}'
-              );
+              if (!silent)
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  '{{ _("Please fill out the serial") }}',
+                  '{{ _("OK") }}'
+                );
 
               return false;
             }
@@ -857,8 +864,12 @@
         },
         saveSubmission(reset = false, silent = false) {
           let instance = this;
-          if (!instance.validate())
+          if (!instance.validate(silent)) {
+            if (silent) {
+              Notiflix.Notify.Warning('{{ _("Data was not saved") }}');
+            }
             return;
+          }
 
           this.updateSubmission(() => {
             instance.lastSave = new Date();
@@ -916,7 +927,9 @@
         if (!instance.locked)
           instance.intervalHandle = setInterval(() => {
             instance.saveSubmission(false, true);
-            Notiflix.Notify.Success('{{ _("Data saved") }}')
+            if (instance.validate(true)) {
+              Notiflix.Notify.Success('{{ _("Data saved") }}');
+            }
           }, 60 * 1000);
       },
       props: ['isLocationAccessAllowed', 'form', 'navigatorOnline', 'participant_id', 'submission', 'syncingSubmission'],
