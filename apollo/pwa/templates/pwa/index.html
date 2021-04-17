@@ -770,9 +770,11 @@
           return true;
         },
         async search(serial) {
+          let submissions = await db.submissions.where({form: this.form.id, participant_id: this.participant_id}).filter(s => !!s.serial).toArray();
+          let usedSerials = new Set(submissions.map(s => s.serial));
           let re = new RegExp(serial);
           let entries = await db.serials.where({form: this.form.id, participant_id: this.participant_id}).toArray();
-          return entries.filter(entry => entry.serial.match(re)).slice(0, 10);
+          return entries.filter(entry => entry.serial.match(re) && !usedSerials.has(entry.serial)).slice(0, 10);
         },
         getResultValue(entry) {
           return entry.serial;
@@ -1068,14 +1070,15 @@
         },
         saveSerialsToDatabase(serials) {
           db.transaction('rw', db.serials, () => {
-            db.serials.bulkPut(serials)
+            db.serials.bulkPut(serials);
           });
         },
         clearDatabase() {
-          db.transaction('rw', [db.forms, db.participants, db.submissions], () => {
+          db.transaction('rw', [db.forms, db.participants, db.submissions, db.serials], () => {
             db.forms.clear();
             db.participants.clear();
             db.submissions.clear();
+            db.serials.clear();
           });
         },
         loadParticipantFromDatabase(callback) {
