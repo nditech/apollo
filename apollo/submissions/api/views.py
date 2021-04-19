@@ -21,7 +21,8 @@ from apollo.participants.models import Participant
 from apollo.services import messages
 from apollo.submissions.api.schema import SubmissionSchema
 from apollo.submissions.models import (
-    Submission, SubmissionImageAttachment, SubmissionVersion)
+    QUALITY_STATUSES, Submission, SubmissionImageAttachment, SubmissionVersion)
+from apollo.submissions.qa.query_builder import qa_status
 from apollo.utils import current_timestamp
 
 
@@ -293,7 +294,7 @@ def submission():
             update_params = {'data': data, 'unreachable': False}
             if geopoint is not None:
                 update_params['geom'] = geopoint
-            query.update(update_params, synchronize_session=False)
+            query.update(update_params, synchronize_session='fetch')
             db.session.commit()
 
         submission.update_related(data)
@@ -310,12 +311,32 @@ def submission():
     message.submission_id = submission.id
     message.save()
 
+    posted_fields = []
+    for group in form.data.get('groups'):
+        group_fields = []
+        tags = form.get_group_tags(group['name'])
+        for tag in tags:
+            field_data = data.get(tag)
+            field = form.get_field_by_tag(tag)
+            if field['type'] == 'multiselect' and field_data != []:
+                group_fields.append(tag)
+            elif field['type'] != 'multiselect ' and field_data is not None:
+                group_fields.append(tag)
+        posted_fields.append(group_fields)
+
+    submission_qa_status = [
+        qa_status(submission, check) for check in form.quality_checks] \
+        if form.quality_checks else []
+    passed_qa = QUALITY_STATUSES['FLAGGED'] not in submission_qa_status
+
     # return the submission ID so that any updates
     # (for example, sending attachments) can be done
     response = {
         'message': gettext('Data successfully submitted'),
         'status': 'ok',
         'submission': submission.id,
+        'postedFields': posted_fields,
+        'passedQA': passed_qa,
     }
 
     return jsonify(response)
