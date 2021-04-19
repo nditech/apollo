@@ -254,6 +254,7 @@
   </template>
   <template id="submission-status">
     <span>
+      <span v-if="submission.posted && submission.passedQA === false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3,4v12c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4H19c1.103,0,2-0.897,2-2V4c0-1.103-0.897-2-2-2H5C3.897,2,3,2.897,3,4z M11,5 h2v6h-2V5z M11,13h2v2h-2V13z"/></svg></span>
       <span class="badge bg-dark" v-if="submission.data !== {} && submission.images !== {}">[[ status ]]</span>
     </span>
   </template>
@@ -1229,6 +1230,7 @@
 
           try {
             let result = await client.submit(formData, Cookie.get('csrf_access_token'));
+            let data = await result.result;
             if (result.status === 401) {
               if (single) {
                 Notiflix.Report.Warning(
@@ -1239,7 +1241,6 @@
                 this.participant = null;
               }
             } else if (result.status !== 200) {
-              let data = await result.result;
               if (single)
                 Notiflix.Report.Failure(
                   '{{ _("Error") }}',
@@ -1251,6 +1252,7 @@
               this.saveSubmissionToDatabase(submission, single);
             } else {
               submission.posted = submission.updated = new Date();
+              submission.passedQA = data.passedQA;
               if (submission.errorFields.size > 0)
                 submission.errorFields = new Set();
               this.saveSubmissionToDatabase(submission, single);
@@ -1262,6 +1264,7 @@
                 );
             }
           } catch (error) {
+            console.error(error);
             if (single)
               Notiflix.Report.Warning(
                 '{{ _("Error") }}',
