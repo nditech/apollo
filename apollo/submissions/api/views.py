@@ -249,6 +249,7 @@ def submission():
 
     attachments = []
     deleted_attachments = []
+    collected_uploads = set()
     for tag, wrapper in request.files.items():
         if tag not in form.tags:
             continue
@@ -267,6 +268,7 @@ def submission():
 
             if wrapper.filename != '':
                 data[tag] = identifier.hex
+                collected_uploads.add(tag)
                 attachments.append(
                     SubmissionImageAttachment(
                         photo=wrapper, submission=submission,
@@ -316,11 +318,14 @@ def submission():
         group_fields = []
         tags = form.get_group_tags(group['name'])
         for tag in tags:
-            field_data = data.get(tag)
+            field_data = payload2.get(tag)
             field = form.get_field_by_tag(tag)
             if field['type'] == 'multiselect' and field_data != []:
                 group_fields.append(tag)
-            elif field['type'] != 'multiselect ' and field_data is not None:
+            elif field['type'] == 'image':
+                if tag in collected_uploads:
+                    group_fields.append(tag)
+            elif field['type'] != 'multiselect' and field_data is not None:
                 group_fields.append(tag)
         posted_fields.append(group_fields)
 
