@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="{{ page_title }}">
+  <meta name="msapplication-TileImage" content="{{ url_for('pwa.static', filename='img/icons-72.png') }}">
+  <meta name="msapplication-TileColor" content="#000">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/animate.css/animate.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/autocomplete/style.css') }}">
   {% if g.locale.text_direction == 'rtl' %}
@@ -14,6 +19,7 @@
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='css/main.css') }}">
   <link rel="manifest" href="{{ url_for('pwa.static', filename='manifest.json') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('pwa.static', filename='img/icons-72.png') }}">
   <title>{{ page_title }}</title>
 </head>
 <body class="h-100">
