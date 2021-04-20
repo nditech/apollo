@@ -187,7 +187,7 @@
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <div class="form-check" v-for="(value, label) in field.options">
+                        <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
                           <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
@@ -732,6 +732,12 @@
               return '{{ _("UNSENT") }}';
             return '{{ _("RECEIVED") }}';
           }
+        },
+        sortOptions(options) {
+          let opts = Object.entries(options).sort((optA, optB) => (optA[1] - optB[1])).map(pair => {
+            return {value: pair[1], label: pair[0]};
+          });
+          return opts;
         },
         validate(silent = false) {
           let instance = this;
