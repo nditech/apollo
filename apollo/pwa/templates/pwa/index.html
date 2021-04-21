@@ -722,7 +722,6 @@
           images: {},
           initialData: copyFunc(this.submission),
           intervalHandle: null,
-          lastSave: new Date(0),
           location: null
         };
       },
@@ -891,8 +890,6 @@
           }
 
           this.updateSubmission(() => {
-            instance.lastSave = new Date();
-            instance.submission.updated = instance.lastSave;
             instance.$emit('save-submission', instance.submission, reset);
           }, silent);
         },
