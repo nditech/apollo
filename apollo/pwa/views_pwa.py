@@ -28,7 +28,12 @@ def index():
     else:
         commit = 'unknown'
 
-    context = {'commit': commit}
+    trace_errors = settings.TRACK_PWA_ERRORS
+    sentry_dsn = settings.SENTRY_DSN or ''
+
+    context = {'commit': commit, 'trace_errors': trace_errors}
+    if trace_errors:
+        context.update(dsn=sentry_dsn)
     page_title = _('Apollo')
     template_name = 'pwa/index.html'
 

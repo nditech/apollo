@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
@@ -16,8 +17,8 @@ from flask_security.utils import login_user, url_for_security
 from loginpass import create_flask_blueprint, Facebook, Google
 from werkzeug.urls import url_encode
 from whitenoise import WhiteNoise
-from apollo import assets, models, services, utils
 
+from apollo import assets, models, services, settings, utils
 from apollo.frontend import permissions, template_filters
 from apollo.core import (
     admin, csrf, db, docs, gravatar, menu, oauth, security, webpack
@@ -135,11 +136,14 @@ def create_app(settings_override=None, register_security_blueprint=True):
     # content security policy
     @app.after_request
     def content_security_policy(response):
+        sentry_dsn = settings.SENTRY_DSN or ''
+        sentry_host = urlparse(sentry_dsn).netloc.split('@')[-1]
         response.headers['Content-Security-Policy'] = "default-src 'self' blob: " + \
             "*.googlecode.com *.google-analytics.com fonts.gstatic.com fonts.googleapis.com " + \
             "*.googletagmanager.com " + \
             "cdn.heapanalytics.com heapanalytics.com " + \
-            "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:"
+            "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:; " + \
+            f"connect-src 'self' {sentry_host}; "
         return response
 
     # automatic token refresh

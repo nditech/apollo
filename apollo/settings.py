@@ -41,6 +41,8 @@ UPSTREAM_PROXY_COUNT = config('UPSTREAM_PROXY_COUNT', cast=int, default=1)
 
 SENTRY_DSN = config('SENTRY_DSN', default=None)
 SENTRY_USER_ATTRS = ['email']
+TRACK_PWA_ERRORS = config(
+    'TRACK_PWA_ERRORS', cast=config.boolean, default=False)
 
 MAIL_SERVER = config('MAIL_SERVER', default=None)
 MAIL_PORT = config('MAIL_PORT', default=None)
