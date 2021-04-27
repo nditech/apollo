@@ -134,7 +134,6 @@
               <div class="row">
                 <div class="col mb-2">
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
-                  <submission-status v-if="form.form_type === 'CHECKLIST'" :submission="getSubmission(form)" :syncing-submission="syncingSubmission"></submission-status>
                   <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
                 </div>
               </div>
@@ -256,13 +255,11 @@
   </template>
   <template id="group-completion">
     <div class="row">
-      <div class="col-1">
+      <div class="col">
         <span class="badge bg-info">[[ index + 1 ]]</span>
-      </div>
-      <div class="col-5">
         <span class="badge mx-1" :class="getCompletionClass()">[[ group.name.split(' ')[0] ]]</span>
+        <span class="badge mx-1" :class="getReceivedStyle()">[[ getReceivedText() ]]</span>
       </div>
-      <div class="col-5"></div>
     </div>
   </template>
   <template id="checklist-completion">
@@ -474,7 +471,68 @@
             appliedClasses = ['bg-primary'];
 
           return appliedClasses;
-        }
+        },
+        getReceivedText() {
+          let instance = this;
+          let statusText;
+
+          if (instance.submission.postedFields === null || instance.submission.postedFields === undefined || instance.submission.postedFields.size === 0) {
+            statusText = '';
+          } else {
+            if (instance.submission.postedFields instanceof Set) {
+              let postedFields = instance.group.fields.filter(f => instance.submission.postedFields.has(f.tag));
+              if (postedFields.length === 0) {
+                statusText = '';
+              } else if (postedFields.length < instance.group.fields.length) {
+                statusText = '{{ _("RECIEVED") }}';
+              } else {
+                statusText = '{{ _("RECIEVED") }}';
+              }
+            } else {
+              let postedFields = instance.submission.postedFields[instance.index];
+              if (postedFields.length === 0) {
+                statusText = '';
+              } else if (postedFields.length < instance.group.fields.length) {
+                statusText = '{{ _("RECEIVED") }}';
+              } else {
+                statusText = '{{ _("RECEIVED") }}';
+              }
+            }
+          }
+
+          return statusText;
+        },
+        getReceivedStyle() {
+          let instance = this;
+          let appliedClasses;
+
+          if (instance.submission.postedFields === null || instance.submission.postedFields === undefined || instance.submission.postedFields.size === 0) {
+            statusText = '';
+            appliedClasses = ['bg-secondary'];
+          } else {
+            if (instance.submission.postedFields instanceof Set) {
+              let postedFields = instance.group.fields.filter(f => instance.submission.postedFields.has(f.tag));
+              if (postedFields.length === 0) {
+                appliedClasses = ['bg-secondary'];
+              } else if (postedFields.length < instance.group.fields.length) {
+                appliedClasses = ['bg-warning', 'text-black'];
+              } else {
+                appliedClasses = ['bg-primary'];
+              }
+            } else {
+              let postedFields = instance.submission.postedFields[instance.index];
+              if (postedFields.length === 0) {
+                appliedClasses = ['bg-secondary'];
+              } else if (postedFields.length < instance.group.fields.length) {
+                appliedClasses = ['bg-warning', 'text-black'];
+              } else {
+                appliedClasses = ['bg-primary'];
+              }
+            }
+          }
+
+          return appliedClasses;
+        },
       },
       props: ['completions', 'group', 'index', 'submission'],
       template: '#group-completion'
@@ -1175,7 +1233,7 @@
             form: form.id,
             images: {},
             posted: null,
-            postedFields: new Set(),
+            postedFields: null,
             status: 'ok',
             type: form.form_type,
             updated: null,
@@ -1250,14 +1308,11 @@
           this.syncingSubmission = submission.id;
 
           let formData = new FormData();
-          let postedFields = new Set(Object.keys(submission.data));
           for (let key of Object.keys(submission.images || {})) {
-            postedFields.add(key);
             formData.append(key, submission.images[key], submission.images[key].name);
           }
           let subCopy = Object.assign({}, {form: submission.form, data: submission.data, serial: submission.serial});
           formData.append('submission', JSON.stringify(subCopy));
-          submission.postedFields = postedFields;
 
           try {
             let result = await client.submit(formData, Cookie.get('csrf_access_token'));
@@ -1284,6 +1339,7 @@
             } else {
               submission.posted = submission.updated = new Date();
               submission.passedQA = data.passedQA;
+              submission.postedFields = data.postedFields;
               if (submission.errorFields.size > 0)
                 submission.errorFields = new Set();
               this.saveSubmissionToDatabase(submission, single);
