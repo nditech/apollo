@@ -255,7 +255,15 @@
     <span class="badge bg-warning rounded-pill text-dark">[[ title ]]</span>
   </template>
   <template id="group-completion">
-    <span class="badge mx-1" :class="getCompletionClass()">[[ index + 1 ]]</span>
+    <div class="row">
+      <div class="col-1">
+        <span class="badge bg-info">[[ index + 1 ]]</span>
+      </div>
+      <div class="col-5">
+        <span class="badge mx-1" :class="getCompletionClass()">[[ group.name.split(' ')[0] ]]</span>
+      </div>
+      <div class="col-5"></div>
+    </div>
   </template>
   <template id="checklist-completion">
     <div class="row">
