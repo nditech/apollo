@@ -1073,7 +1073,8 @@
         submissions: [],
         submissionSyncIntervalHandle: null,
         syncingSubmission: null,
-        updateNotificationCleared: true
+        updateNotificationCleared: true,
+        syncRunning: false
       },
       el: '#app',
       methods: {
@@ -1293,7 +1294,8 @@
           });
         },
         async postSubmission(submission, single = true) {
-          if (!this.navigatorOnline) {
+          let instance = this;
+          if (!instance.navigatorOnline) {
             if (single)
               Notiflix.Report.Warning(
                 '{{ _("Error") }}',
@@ -1301,11 +1303,11 @@
                 '{{ _("OK") }}'
               );
 
-            this.saveSubmissionToDatabase(submission, single);
+            instance.saveSubmissionToDatabase(submission, single);
             return;
           }
 
-          this.syncingSubmission = submission.id;
+          instance.syncingSubmission = submission.id;
 
           let formData = new FormData();
           for (let key of Object.keys(submission.images || {})) {
@@ -1324,7 +1326,7 @@
                   '{{ _("Please login again to send your data") }}',
                   '{{ _("OK") }}',
                 );
-                this.participant = null;
+                instance.participant = null;
               }
             } else if (result.status !== 200) {
               if (single)
@@ -1335,14 +1337,14 @@
                 );
               submission.posted = submission.updated = new Date();
               submission.errorFields = new Set(data.errorFields);
-              this.saveSubmissionToDatabase(submission, single);
+              instance.saveSubmissionToDatabase(submission, single);
             } else {
               submission.posted = submission.updated = new Date();
               submission.passedQA = data.passedQA;
               submission.postedFields = data.postedFields;
               if (submission.errorFields.size > 0)
                 submission.errorFields = new Set();
-              this.saveSubmissionToDatabase(submission, single);
+              instance.saveSubmissionToDatabase(submission, single);
               if (single)
                 Notiflix.Report.Success(
                   '{{ _("Success") }}',
@@ -1360,7 +1362,7 @@
               );
           }
 
-          this.syncingSubmission = null;
+          instance.syncingSubmission = null;
         },
         showSubmissionList(form) {
           if (form.form_type !== 'CHECKLIST')
