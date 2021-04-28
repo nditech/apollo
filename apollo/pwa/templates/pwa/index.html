@@ -372,6 +372,15 @@
       return form.data.groups.map((group, index) => computeGroupCompletion(form, data, images, index));
     }
 
+    const isComplete = (form, submission) => {
+      let completion = computeCompletion(form, submission.data, submission.images);
+
+      if ((completion.total === completion.filled) && submission.passedQA)
+        return true;
+      
+      return false;
+    };
+
     // API setup
     const endpoints = {
       list: "{{ url_for('participants.get_forms') }}",
@@ -1398,20 +1407,20 @@
         });
 
         let onlineHook = () => {
-          this.navigatorOnline = navigator.onLine;
+          instance.navigatorOnline = navigator.onLine;
         };
         window.addEventListener('offline', onlineHook);
         window.addEventListener('online', onlineHook);
 
         // set up form refresh and submission sync timers
         // forms, every fifteen minutes
-        this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
+        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 15 * 60 * 1000);
 
         // submissions, every fifteen minutes
-        this.submissionSyncIntervalHandle = setInterval(this.syncSubmissions, 15 * 60 * 1000);
+        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 15 * 60 * 1000);
 
         // version checks, every two hours
-        this.commitCheckIntervalHandle = setInterval(this.commitCheck, 2 * 60 * 60 * 1000);
+        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 2 * 60 * 60 * 1000);
       }
     });
   </script>
