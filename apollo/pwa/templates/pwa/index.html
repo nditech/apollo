@@ -151,7 +151,7 @@
                     <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
                       <div class="list-group-item" v-for="(submission, index) in submissionGroups[form.id]">
                         <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
-                        <submission-status :submission="submission" :syncing-submission="syncingSubmission"></submission-status>
+                        <submission-status :form="form" :submission="submission"></submission-status>
                         <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
                         <span>[[ formatLastUpdate(submission) ]]</span>
                         <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
@@ -265,14 +265,15 @@
   <template id="checklist-completion">
     <div class="row">
       <div class="col">
-        <submission-status :submission="submission"></submission-status>
+        <submission-status :form="form" :submission="submission"></submission-status>
         <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index" :submission="submission"></group-completion>
       </div>
     </div>
   </template>
   <template id="submission-status">
     <span>
-      <span v-if="submission.posted && submission.passedQA === false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3,4v12c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4H19c1.103,0,2-0.897,2-2V4c0-1.103-0.897-2-2-2H5C3.897,2,3,2.897,3,4z M11,5 h2v6h-2V5z M11,13h2v2h-2V13z"/></svg></span>
+      <span class="badge bg-dark" v-if="isPending">{{ _('UNSENT') }}</span>
+      <span v-if="showQAStatus"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3,4v12c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4H19c1.103,0,2-0.897,2-2V4c0-1.103-0.897-2-2-2H5C3.897,2,3,2.897,3,4z M11,5 h2v6h-2V5z M11,13h2v2h-2V13z"/></svg></span>
     </span>
   </template>
   {% if trace_errors %}
@@ -499,10 +500,25 @@
     });
 
     Vue.component('submission-status', {
+      computed: {
+        isPending() {
+          if (!this.submission || (!this.submission.updated && Object.keys(this.submission.data).length === 0 && Object.keys(this.submission.images).length === 0))
+            return false;
+          if (this.submission.posted === null && this.submission.updated !== null)
+            return true;
+          else if (Math.abs(this.submission.posted.getTime() - this.submission.updated.getTime()) > 200)
+            return true;
+          
+          return false;
+        },
+        showQAStatus() {
+          return this.form.form_type === 'CHECKLIST' && this.submission.posted && this.submission.passedQA === false;
+        }
+      },
       data() {
         return {};
       },
-      props: ['submission'],
+      props: ['form', 'submission'],
       template: '#submission-status'
     });
 
@@ -670,7 +686,7 @@
         getSubmission(form) {
           let sub = this.submissions.find(submission => submission.form === form.id);
           if (sub === undefined)
-            sub = {data: {}, errorFields: new Set(), images: {}, modified: [], posted: null};
+            sub = {data: {}, errorFields: new Set(), images: {}, posted: null};
           
           return sub;
         },
@@ -687,16 +703,6 @@
         isLocked(submission) {
           if (submission.type === 'INCIDENT' && submission.posted)
             return true;
-          return false;
-        },
-        isPending(submission) {
-          if (!submission)
-            return false;
-          if (submission.posted === null)
-            return true;
-          else if (Math.abs(submission.posted.getTime() - submission.updated.getTime()) > 500)
-            return true;
-          
           return false;
         },
         formatLastUpdate(submission) {
@@ -1197,7 +1203,7 @@
             type: form.form_type,
             updated: null,
             participant_id: instance.participant.participant_id,
-            modified: {}
+            queued_at: null
           };
           submission.data = form.data.groups.reduce((acc, group) => {
             group.fields.forEach(field => {
