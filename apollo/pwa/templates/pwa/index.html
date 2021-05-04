@@ -668,6 +668,7 @@
           this.$emit('edit-submission', form, submission);
         },
         isActionButtonDisabled(form) {
+          if (form.form_type !== 'SURVEY') return false;
           return !(this.serialCounts[form.id] > this.submissionGroups[form.id].length);
         },
         isLocked(submission) {
