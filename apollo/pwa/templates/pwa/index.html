@@ -830,7 +830,7 @@
           return appliedClasses;
         },
         getSectionInitialClass(index) {
-          let completion = computeGroupCompletion(this.form, this.initialData, this.initialData.images, index);
+          let completion = computeGroupCompletion(this.form, this.initialData.data, this.initialData.images, index);
 
           if (completion.filled === completion.total)
             return ['collapse'];
