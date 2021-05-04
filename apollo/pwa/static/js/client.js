@@ -6,7 +6,8 @@ class APIClient {
   _getResult = function (response) {
     let status = response.status;
     return {
-      status: status,
+      ok: response.ok,
+      status: response.status,
       result: response.json()
     };
   };
