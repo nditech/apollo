@@ -133,7 +133,7 @@
               </div>
               <div class="row">
                 <div class="col mb-2">
-                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
+                  <span class="badge" :class="getBadgeClass(form)">[[ form.form_type ]]</span>
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
                   <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
                 </div>
@@ -640,6 +640,19 @@
       methods: {
         editChecklist(form) {
           this.$emit('edit-submission', form, null);
+        },
+        getBadgeClass(form) {
+          if (form.form_type !== 'CHECKLIST')
+            return ['bg-secondary'];
+
+          let submission = this.getSubmission(form);
+          let completion = computeCompletion(form, submission.data, submission.images);
+
+          let isComplete = ((completion.filled === completion.total) &&   // all questions responded to
+                            (submission.posted >= submission.updated) &&  // all data has been submitted
+                            submission.passedQA);                         // no QA issues
+
+          return isComplete ? ['bg-primary'] : ['bg-secondary'];
         },
         getCompletion(form, submission = undefined) {
           let sub = submission;
