@@ -4,7 +4,6 @@ class APIClient {
   }
 
   _getResult = function (response) {
-    let status = response.status;
     return {
       ok: response.ok,
       status: response.status,
