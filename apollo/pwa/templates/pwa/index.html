@@ -133,6 +133,7 @@
               </div>
               <div class="row">
                 <div class="col mb-2">
+                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
                   <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
                   <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
                 </div>
@@ -258,13 +259,13 @@
       <div class="col">
         <span class="badge bg-info">[[ index + 1 ]]</span>
         <span class="badge mx-1" :class="getCompletionClass()">[[ group.name.split(' ')[0] ]]</span>
-        <span class="badge mx-1" :class="getReceivedStyle()">[[ getReceivedText() ]]</span>
       </div>
     </div>
   </template>
   <template id="checklist-completion">
     <div class="row">
       <div class="col">
+        <submission-status :submission="submission"></submission-status>
         <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index" :submission="submission"></group-completion>
       </div>
     </div>
@@ -272,7 +273,6 @@
   <template id="submission-status">
     <span>
       <span v-if="submission.posted && submission.passedQA === false"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3,4v12c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4H19c1.103,0,2-0.897,2-2V4c0-1.103-0.897-2-2-2H5C3.897,2,3,2.897,3,4z M11,5 h2v6h-2V5z M11,13h2v2h-2V13z"/></svg></span>
-      <span class="badge bg-dark" v-if="submission.data !== {} && submission.images !== {}">[[ status ]]</span>
     </span>
   </template>
   {% if trace_errors %}
@@ -480,68 +480,7 @@
             appliedClasses = ['bg-primary'];
 
           return appliedClasses;
-        },
-        getReceivedText() {
-          let instance = this;
-          let statusText;
-
-          if (instance.submission.postedFields === null || instance.submission.postedFields === undefined || instance.submission.postedFields.size === 0) {
-            statusText = '';
-          } else {
-            if (instance.submission.postedFields instanceof Set) {
-              let postedFields = instance.group.fields.filter(f => instance.submission.postedFields.has(f.tag));
-              if (postedFields.length === 0) {
-                statusText = '';
-              } else if (postedFields.length < instance.group.fields.length) {
-                statusText = '{{ _("RECIEVED") }}';
-              } else {
-                statusText = '{{ _("RECIEVED") }}';
-              }
-            } else {
-              let postedFields = instance.submission.postedFields[instance.index];
-              if (postedFields.length === 0) {
-                statusText = '';
-              } else if (postedFields.length < instance.group.fields.length) {
-                statusText = '{{ _("RECEIVED") }}';
-              } else {
-                statusText = '{{ _("RECEIVED") }}';
-              }
-            }
-          }
-
-          return statusText;
-        },
-        getReceivedStyle() {
-          let instance = this;
-          let appliedClasses;
-
-          if (instance.submission.postedFields === null || instance.submission.postedFields === undefined || instance.submission.postedFields.size === 0) {
-            statusText = '';
-            appliedClasses = ['bg-secondary'];
-          } else {
-            if (instance.submission.postedFields instanceof Set) {
-              let postedFields = instance.group.fields.filter(f => instance.submission.postedFields.has(f.tag));
-              if (postedFields.length === 0) {
-                appliedClasses = ['bg-secondary'];
-              } else if (postedFields.length < instance.group.fields.length) {
-                appliedClasses = ['bg-warning', 'text-black'];
-              } else {
-                appliedClasses = ['bg-primary'];
-              }
-            } else {
-              let postedFields = instance.submission.postedFields[instance.index];
-              if (postedFields.length === 0) {
-                appliedClasses = ['bg-secondary'];
-              } else if (postedFields.length < instance.group.fields.length) {
-                appliedClasses = ['bg-warning', 'text-black'];
-              } else {
-                appliedClasses = ['bg-primary'];
-              }
-            }
-          }
-
-          return appliedClasses;
-        },
+        }
       },
       props: ['completions', 'group', 'index', 'submission'],
       template: '#group-completion'
@@ -557,25 +496,10 @@
     });
 
     Vue.component('submission-status', {
-      computed: {
-        status() {
-          if (Object.keys(this.submission.data).length === 0 && Object.keys(this.submission.images).length === 0 && this.submission.posted === null)
-            return '';
-          else {
-            if (this.submission.id === this.syncingSubmission)
-              return '{{ _("PENDING") }}';
-            if (this.submission.posted === null)
-              return '{{ _("UNSENT") }}';
-            if (this.submission.updated > this.submission.posted)
-              return '{{ _("UNSENT") }}';
-            return '{{ _("RECEIVED") }}';
-          }
-        }
-      },
       data() {
         return {};
       },
-      props: ['submission', 'syncingSubmission'],
+      props: ['submission'],
       template: '#submission-status'
     });
 
@@ -814,21 +738,6 @@
       methods: {
         clearForm() {
           this.$emit('clear-form');
-        },
-        groupStatus(group) {
-          if (this.submission.data === {} && this.submission.images === {})
-            return '';
-          else {
-            let fields = group.fields;
-
-            if (this.submission.id === this.syncingSubmission)
-              return '{{ _("PENDING") }}';
-            if (this.submission.posted === null)
-              return '{{ _("UNSENT") }}';
-            if (this.submission.updated > this.submission.posted)
-              return '{{ _("UNSENT") }}';
-            return '{{ _("RECEIVED") }}';
-          }
         },
         sortOptions(options) {
           let opts = Object.entries(options).sort((optA, optB) => (optA[1] - optB[1])).map(pair => {
