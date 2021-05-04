@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from io import BytesIO
+from zipfile import ZipFile, ZIP_DEFLATED
+
+import magic
 from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
@@ -13,15 +17,15 @@ from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
-from io import BytesIO
+from flask_wtf.file import FileField
 from jinja2 import contextfunction
 import pytz
 from slugify import slugify
-from wtforms import PasswordField, SelectField, SelectMultipleField, validators
-from zipfile import ZipFile, ZIP_DEFLATED
+from wtforms import (
+    BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
 
-from apollo.core import admin, db
 from apollo import models, services, settings
+from apollo.core import admin, db
 from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
 from apollo.locations.views_locations import (
@@ -35,6 +39,7 @@ from apollo.formsframework.views_forms import (
     forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
     quality_controls, quality_control_delete, quality_control_edit,
     import_form_schema, survey_init)
+from apollo.utils import Image, resize_image
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -179,7 +184,8 @@ class DeploymentAdminView(BaseAdminView):
                 'name', 'allow_observer_submission_edit',
                 'dashboard_full_locations',
                 'enable_partial_response_for_messages', 'hostnames',
-                'primary_locale', 'other_locales'
+                'primary_locale', 'other_locales', 'brand_image',
+                'remove_brand',
             ),
             _('Deployment')
         )
@@ -205,6 +211,44 @@ class DeploymentAdminView(BaseAdminView):
             model.primary_locale = None
         model.other_locales = [loc for loc in model.other_locales if loc != '']
 
+        if hasattr(form, 'remove_brand') and form.remove_brand.data:
+            model.brand_image = None
+            return
+
+        if not form.brand_image.data:
+            return
+
+        logo_file = form.brand_image.data
+        logo_bytes = logo_file.read()
+        if len(logo_bytes) == 0:
+            deployment = models.Deployment.query.filter(
+                models.Deployment.id == model.id
+            ).first()
+            if deployment is not None:
+                model.brand_image = deployment.brand_image
+        else:
+            mimetype = magic.from_buffer(logo_bytes, mime=True)
+            if not mimetype.startswith('image'):
+                return
+
+            if 'svg' in mimetype:
+                model.brand_image = logo_file
+                model.brand_image_is_svg = True
+                return
+
+            logo_image = Image.open(BytesIO(logo_bytes))
+            resized_logo = resize_image(logo_image, 300)
+            with BytesIO() as buf:
+                resized_logo.save(buf, format='PNG')
+                contents = buf.getvalue()
+                model.brand_image = contents
+
+    def on_form_prefill(self, form, id):
+        deployment = self.get_one(id)
+        if deployment.brand_image is None:
+            form.remove_brand.render_kw = {'disabled': True}
+        return form
+
     def get_query(self):
         return models.Deployment.query.filter_by(
             id=current_user.deployment.id)
@@ -227,6 +271,10 @@ class DeploymentAdminView(BaseAdminView):
             _('Other Languages'), choices=LANGUAGE_CHOICES,
             validators=[validators.optional()],
             description=_('Specifies other languages that will be supported for data uploads.'))  # noqa
+        form_class.brand_image = FileField(
+            _('Logo'),
+            description=_('Will be resized as necessary. SVG not supported.'))
+        form_class.remove_brand = BooleanField(_('Remove logo'))
 
         return form_class
 

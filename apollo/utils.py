@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import codecs
-from datetime import datetime
 import os
-from uuid import UUID, uuid4
 import warnings
+from datetime import datetime
+from uuid import UUID, uuid4
 
+from PIL import Image
 from pytz import utc
 
 
@@ -74,3 +75,21 @@ def strip_bom_header(fileobj):
 def generate_identifier():
     val = int(uuid4()) % 100000000000000
     return hex(val)[2:-1]
+
+
+def resize_image(pil_image: Image, new_size: int) -> Image:
+    background_color = (255, 255, 255, 0)
+    image_mode = 'RGBA'
+
+    width, height = pil_image.size
+    if width == height:
+        return pil_image.resize((new_size, new_size), Image.LANCZOS)
+
+    if width > height:
+        result = Image.new(image_mode, (width, width), background_color)
+        result.paste(pil_image, (0, (width - height) // 2))
+        return result.resize((new_size, new_size), Image.LANCZOS)
+    else:
+        result = Image.new(image_mode, (height, height), background_color)
+        result.paste(pil_image, ((height - width) // 2, 0))
+        return result.resize((new_size, new_size), Image.LANCZOS)

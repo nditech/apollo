@@ -59,8 +59,8 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top mr-n3 ml-n3">
             <a class="navbar-brand mb-0 mt-1 h1" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
-                {%- if g.deployment.logo %}
-                <img src="{{ g.deployment.logo }}" title="Apollo">
+                {%- if g.deployment.brand_image %}
+                <img src="{{ g.deployment.brand_image.thumb_url }}" width="30" height="30" class="d-inline-block align-middle" title="Apollo" alt="{{ _('Logo') }}">
                 {%- else %}
                 <img src="{{ url_for('static', filename='img/brand.png') }}" width="30" height="30" class="d-inline-block align-middle" alt="Apollo"> Apollo
                 {%- endif %}
