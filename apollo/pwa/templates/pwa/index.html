@@ -1042,6 +1042,7 @@
           fetch(endpoints.versionCheck)
             .then(response => response.json())
             .then(payload => {
+              instance.navigatorOnline = true;
               const serverCommit = payload.commit;
               if (serverCommit !== instance.commit) {
                 if (!instance.updateNotificationCleared) {
@@ -1052,7 +1053,9 @@
                 instance.updateNotificationCleared = false;
                 promptToUpdate();
               }
-            }).catch(() => {});
+            }).catch(() => {
+              instance.navigatorOnline = false;
+            });
         },
         authenticationSuccess(participant) {
           this.participant = participant;
