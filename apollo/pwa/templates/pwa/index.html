@@ -401,6 +401,9 @@
     db.version(2).stores({
       serials: '[form+participant_id+serial], [form+participant_id], form, participant_id, serial'
     });
+    db.version(3).stores({
+      submissions: '++id, form, participant_id, posted, queued_at, [id+participant_id], [form+participant_id], [participant_id+queued_at]'
+    });
     db.open().catch(() => {
       Notiflix.Report.Failure(
         '{{ _("Error") }}',
