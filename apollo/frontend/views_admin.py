@@ -19,6 +19,7 @@ from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
+from flask_wtf.file import FileField
 from jinja2 import contextfunction
 from slugify import slugify
 from wtforms import (
@@ -286,9 +287,6 @@ class DeploymentAdminView(BaseAdminView):
             _('Logo'),
             description=_('Will be resized as necessary. SVG not supported.'))
         form_class.remove_brand = BooleanField(_('Remove logo'))
-
-        # logo support
-        form_class.logo = FileField(_('Logo'))
 
         return form_class
 
