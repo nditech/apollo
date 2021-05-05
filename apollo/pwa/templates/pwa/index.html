@@ -506,7 +506,7 @@
             return false;
           if (this.submission.posted === null && this.submission.updated !== null)
             return true;
-          else if (Math.abs(this.submission.posted.getTime() - this.submission.updated.getTime()) > 200)
+          else if (this.submission.updated.getTime() > this.submission.posted.getTime())
             return true;
           
           return false;
@@ -1267,6 +1267,7 @@
                 '{{ _("OK") }}'
               );
 
+            submission.queued_at = new Date();
             instance.saveSubmissionToDatabase(submission, single);
             return;
           }
@@ -1301,11 +1302,13 @@
                 );
               submission.posted = submission.updated = new Date();
               submission.errorFields = new Set(data.errorFields);
+              submission.queued_at = null;
               instance.saveSubmissionToDatabase(submission, single);
             } else {
-              submission.posted = submission.updated = new Date();
+              submission.posted = new Date();
               submission.passedQA = data.passedQA;
               submission.postedFields = data.postedFields;
+              submission.queued_at = null;
               if (submission.errorFields.size > 0)
                 submission.errorFields = new Set();
               instance.saveSubmissionToDatabase(submission, single);
@@ -1317,7 +1320,8 @@
                 );
             }
           } catch (error) {
-            console.error(error);
+            submission.queued_at = new Date();
+            instance.saveSubmissionToDatabase(submission);
             if (single)
               Notiflix.Report.Warning(
                 '{{ _("Error") }}',
@@ -1339,13 +1343,18 @@
           let instance = this;
           if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
             return;
-          instance.submissions
-            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
-            .forEach(submission => {
-              instance.syncingSubmission = submission.id;
-              instance.postSubmission(submission, false);
-            });
-          instance.syncingSubmission = null;
+
+            instance.submissions
+              .filter(sub => sub.queued_at !== null)
+              .forEach(submission => {
+                // don't send the one currently being edited
+                if (instance.currentSubmission && (instance.currentSubmission.id === submission.id))
+                  return;
+
+                instance.syncingSubmission = submission.id;
+                instance.postSubmission(submission, false);
+              });
+            instance.syncingSubmission = null;
         },
         reloadStoredData() {
           this.loadFormsFromDatabase();
