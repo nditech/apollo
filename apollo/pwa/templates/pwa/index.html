@@ -1390,14 +1390,14 @@
         window.addEventListener('online', onlineHook);
 
         // set up form refresh and submission sync timers
-        // forms, every fifteen minutes
-        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 3 * 60 * 1000);
+        // forms, every hour
+        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 60 * 60 * 1000);
 
-        // submissions, every fifteen minutes
-        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 3 * 60 * 1000);
+        // submissions, every minute
+        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 60 * 1000);
 
         // version checks, every two hours
-        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 10 * 60 * 60 * 1000);
+        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 2 * 60 * 60 * 1000);
       }
     });
   </script>
