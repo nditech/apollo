@@ -514,7 +514,7 @@
     Vue.component('submission-status', {
       computed: {
         isPending() {
-          if (!this.submission || (!this.submission.updated && Object.keys(this.submission.data).length === 0 && Object.keys(this.submission.images).length === 0))
+          if (isEmpty(this.submission))
             return false;
           if (this.submission.posted === null && this.submission.updated !== null)
             return true;
