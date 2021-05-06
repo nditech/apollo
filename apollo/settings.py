@@ -248,11 +248,8 @@ JWT_TOKEN_LOCATION = config(
     'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies')
 JWT_SECRET_KEY = config('JWT_SECRET_KEY', default=SECRET_KEY)
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(
-    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
-)
-JWT_REFRESH_TOKEN_EXPIRES = timedelta(
-    seconds=config(
-        "JWT_REFRESH_TOKEN_LIFETIME_SECONDS", cast=int, default=86400)
+    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int,
+                   default=(60 * 60 * 24 * 3))
 )
 JWT_ERROR_MESSAGE_KEY = 'message'
 JWT_COOKIE_SECURE = SESSION_COOKIE_SECURE
