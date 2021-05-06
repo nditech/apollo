@@ -384,6 +384,16 @@
       return false;
     };
 
+    const isEmpty = submission => {
+      if (!submission)
+        return true;
+
+      if (!submission.updated && Object.keys(submission.data).length === 0 && Object.keys(submission.images).length === 0)
+        return true;
+
+      return false;
+    };
+
     // API setup
     const endpoints = {
       list: "{{ url_for('participants.get_forms') }}",
@@ -708,7 +718,7 @@
           return false;
         },
         formatLastUpdate(submission) {
-          if (!submission) return '';
+          if (isEmpty(submission)) return '';
           const prefix = "{{ _('Updated') }}"
           return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
         }
