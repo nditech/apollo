@@ -279,6 +279,7 @@
   {% if trace_errors %}
   <script src="{{ url_for('pwa.static', filename='vendor/sentry/bundle.min.js') }}"></script>
   {% endif %}
+  <script src="{{ url_for('pwa.static', filename='vendor/popper.js/popper.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/autocomplete/autocomplete.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
@@ -287,7 +288,8 @@
   <script src="{{ url_for('pwa.static', filename='vendor/luxon/luxon.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/tippy.js/tippy.umd.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script>
@@ -1379,13 +1381,13 @@
 
         // set up form refresh and submission sync timers
         // forms, every fifteen minutes
-        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 15 * 60 * 1000);
+        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 3 * 60 * 1000);
 
         // submissions, every fifteen minutes
-        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 15 * 60 * 1000);
+        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 3 * 60 * 1000);
 
         // version checks, every two hours
-        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 2 * 60 * 60 * 1000);
+        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 10 * 60 * 60 * 1000);
       }
     });
   </script>
