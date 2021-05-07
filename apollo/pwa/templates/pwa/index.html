@@ -37,7 +37,7 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></user-info>
+                <participant-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
@@ -91,18 +91,18 @@
       </div>
     </div>
   </template>
-  <template id="user-info">
+  <template id="participant-info">
     <div class="row">
       <div class="col">
-        <div class="card shadow-sm mt-3">
+        <div class="card shadow-sm mt-3 border-dark">
           <div class="card-body">
-            <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+            <h5 class="card-title">[[ greeting() ]], [[ participant.participant_id ]]</h5>
             <div class="row mb-3">
-              <div class="col-4"><strong>{{ _('Participant ID') }}</strong></div>
-              <div class="col">[[ participant.participant_id ]]</div>
+              <div class="col-4"><strong>{{ _('Full name') }}:</strong></div>
+              <div class="col">[[ participant.full_name ]]</div>
             </div>
             <div class="row mb-3">
-              <div class="col-4"><strong>{{ _('Location') }}</strong></div>
+              <div class="col-4"><strong>{{ _('Location') }}:</strong></div>
               <div class="col">[[ participant.location ]]</div>
             </div>
             <div class="row mb-3">
@@ -624,8 +624,8 @@
       template: '#login-form'
     });
 
-    // user-info component
-    Vue.component('user-info', {
+    // participant-info component
+    Vue.component('participant-info', {
       computed: {
       },
       data() {
@@ -649,7 +649,7 @@
         }
       },
       props: ['forms', 'participant', 'pendingSubmissions'],
-      template: '#user-info'
+      template: '#participant-info'
     });
 
     // form list component
