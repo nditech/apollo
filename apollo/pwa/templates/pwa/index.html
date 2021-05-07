@@ -124,45 +124,46 @@
   <template id="form-list">
     <div class="row">
       <div class="col">
-        <div class="card shadow-sm mt-3">
-          <h5 class="card-header">{{ _('Forms') }}</h5>
-          <div class="list-group list-group-flush">
-            <div class="list-group-item" v-for="form in forms" :key="form.id">
-              <div class="row">
-                <div class="col mb-2">[[ form.name ]]</div>
+        <div class="card shadow-sm mt-3" v-for="form in forms" :key="form.id">
+          <h5 class="card-header border-top border-bottom-0 border-3 border-secondary">[[ form.name ]]</h5>
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <span class="badge" :class="getBadgeClass(form)">[[ form.form_type ]]</span>
+                <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
+                <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
               </div>
-              <div class="row">
-                <div class="col mb-2">
-                  <span class="badge" :class="getBadgeClass(form)">[[ form.form_type ]]</span>
-                  <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
-                  <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
-                </div>
+            </div>
+            <checklist-completion :completions="getCompletion(form)" :form="form" :submission="getSubmission(form)" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
+            <div class="row" v-if="form.form_type === 'CHECKLIST'">
+              <div class="col">
+                <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="editChecklist(form)">{{ _('Edit') }}</button>
               </div>
-              <div class="row" v-if="form.form_type !== 'CHECKLIST'">
-                <div class="col">
-                  <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)" :disabled="isActionButtonDisabled(form)">{{ _('Add new') }}</button>
-                </div>
+            </div>
+            <div class="row" v-else>
+              <div class="col">
+                <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)" :disabled="isActionButtonDisabled(form)">{{ _('Add new') }}</button>
               </div>
-              <checklist-completion :completions="getCompletion(form)" :form="form" :submission="getSubmission(form)" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
-              <div class="row" v-if="form.form_type !== 'CHECKLIST'">
-                <div class="col mb-2">
-                  <div class="card mt-2">
-                    <h5 class="card-header"><a class="text-dark" :href="`#sub-list-${form.id}`" data-bs-toggle="collapse" role="button">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</a></h5>
-                    <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
-                      <div class="list-group-item" v-for="(submission, index) in submissionGroups[form.id]">
-                        <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
-                        <submission-status :form="form" :submission="submission"></submission-status>
-                        <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
-                        <span>[[ formatLastUpdate(submission) ]]</span>
-                        <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
+            </div>
+            <div class="row" v-if="shouldDisplayAccordion(form)">
+              <div class="col">
+                <div class="accordion mt-3" :id="`accordion-${form.id}`">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" :id="`heading-${form.id}`"><button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="`#collapse-${form.id}`">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</button></h2>
+                    <div class="accordion-collapse collapse" :id="`collapse-${form.id}`">
+                      <div class="accordion-body">
+                        <div class="list-group">
+                          <div class="list-group-item" v-for="(submission, index) in submissionGroups[form.id]">
+                            <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
+                            <submission-status :form="form" :submission="submission"></submission-status>
+                            <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
+                            <span>[[ formatLastUpdate(submission) ]]</span>
+                            <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="row" v-if="form.form_type === 'CHECKLIST'">
-                <div class="col">
-                  <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="editChecklist(form)">{{ _('Edit') }}</button>
                 </div>
               </div>
             </div>
@@ -289,7 +290,7 @@
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tippy.js/tippy.umd.min.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
   <script>
@@ -666,6 +667,9 @@
         return {};
       },
       methods: {
+        shouldDisplayAccordion(form) {
+          return form.form_type !== 'CHECKLIST' && ((this.submissionCount[form.id] || 0) > 0);
+        },
         editChecklist(form) {
           this.$emit('edit-submission', form, null);
         },
