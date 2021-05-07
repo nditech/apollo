@@ -1394,8 +1394,8 @@
         window.addEventListener('online', onlineHook);
 
         // set up form refresh and submission sync timers
-        // forms, every hour
-        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 60 * 60 * 1000);
+        // forms, every quarter hour
+        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 15 * 60 * 1000);
 
         // submissions, every minute
         instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 60 * 1000);
