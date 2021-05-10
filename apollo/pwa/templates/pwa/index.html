@@ -37,7 +37,7 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <participant-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
+                <participant-info :global-status="globalStatus()" :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
@@ -114,6 +114,11 @@
                   <input type="checkbox" id="location-access-toggle" class="form-check-input" :checked="participant.allowLocationAccess" @change="toggleLocationAccess">
                   <label for="location-access-toggle" class="form-check-label">{{ _('Allow app to access my location when needed') }}</label>
                 </div>
+              </div>
+            </div>
+            <div class="row mb-3" v-if="globalStatus > 0">
+              <div class="col">
+                <div class="alert" :class="statusClass" role="alert">[[ statusMessage ]]</div>
               </div>
             </div>
           </div>
@@ -628,6 +633,22 @@
     // participant-info component
     Vue.component('participant-info', {
       computed: {
+        statusMessage() {
+          if (this.globalStatus === 0)
+            return '';
+          else if (this.globalStatus === 1)
+            return '{{ _("You have unsent changes.") }}';
+          else
+            return '{{ _("All data successfully sent.") }}';
+        },
+        statusClass() {
+          if (this.globalStatus === 0)
+            return [];
+          else if (this.globalStatus === 1)
+            return ['alert-warning'];
+          else
+            return ['alert-info'];
+        }
       },
       data() {
         return {};
@@ -649,7 +670,7 @@
           this.$emit('logged-out');
         }
       },
-      props: ['forms', 'participant', 'pendingSubmissions'],
+      props: ['forms', 'globalStatus', 'participant', 'pendingSubmissions'],
       template: '#participant-info'
     });
 
@@ -1004,7 +1025,7 @@
             if (submission.posted === null)
               return true;
             
-            if (Math.abs(submission.updated.getTime() - submission.posted.getTime()) > 500)
+            if (submission.updated.getTime() > submission.posted.getTime())
               return true;
             
             return false;
@@ -1376,6 +1397,19 @@
           this.loadFormsFromDatabase();
           this.loadSubmissionsFromDatabase();
           this.loadSerialCountsFromDatabase();
+        },
+        globalStatus() {
+          if (this.submissions.length === 0)
+            return 0;
+          
+          let unchangedSubmissions = this.submissions.filter(sub => sub.updated === null);
+          if (unchangedSubmissions.length === this.submissions.length)
+            return 0;
+
+          if (this.pendingSubmissions > 0)
+            return 1;
+
+          return 2;
         }
       },
       mounted() {
