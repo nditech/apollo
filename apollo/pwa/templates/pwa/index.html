@@ -200,7 +200,7 @@
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
-                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (data[field.tag] < field.min || data[field.tag] > field.max)}" v-model.number="data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="markUpdated">
+                        <input type="number" pattern="[0-9]*" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (data[field.tag] < field.min || data[field.tag] > field.max)}" v-model.number="data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="markUpdated">
                         <div class="invalid-feedback" v-if="data[field.tag] < field.min || data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
