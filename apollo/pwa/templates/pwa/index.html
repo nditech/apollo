@@ -1322,14 +1322,12 @@
             let result = await client.submit(formData, Cookie.get('csrf_access_token'));
             let data = await result.result;
             if (result.status === 401) {
-              if (single) {
-                Notiflix.Report.Warning(
-                  '{{ _("Session expired") }}',
-                  '{{ _("Please login again to send your data") }}',
-                  '{{ _("OK") }}',
-                );
-                instance.participant = null;
-              }
+              Notiflix.Report.Warning(
+                '{{ _("Session expired") }}',
+                '{{ _("Please login again to send your data") }}',
+                '{{ _("OK") }}',
+              );
+              instance.participant = null;
             } else if (result.status !== 200) {
               if (single)
                 Notiflix.Report.Failure(
