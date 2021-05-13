@@ -342,6 +342,7 @@ def submission():
         'submission': submission.id,
         'postedFields': posted_fields,
         'passedQA': passed_qa,
+        '_id': submission.uuid,
     }
 
     return jsonify(response)
