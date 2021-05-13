@@ -121,6 +121,46 @@ class SubmissionListResource(BaseListResource):
         return query
 
 
+@jwt_required()
+def checklist_qa_status(uuid):
+    participant_uuid = get_jwt_identity()
+
+    try:
+        participant = Participant.query.filter_by(uuid=participant_uuid).one()
+    except NoResultFound:
+        response = {
+            'message': gettext('Invalid participant'),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
+
+    try:
+        submission = Submission.query.filter_by(
+            uuid=uuid, participant_id=participant.id).one()
+    except NoResultFound:
+        response = {
+            'message': gettext('Invalid checklist'),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
+
+    form = submission.form
+    submission_qa_status = [
+        qa_status(submission, check) for check in form.quality_checks] \
+        if form.quality_checks else []
+    passed_qa = QUALITY_STATUSES['FLAGGED'] not in submission_qa_status
+
+    response = {
+        'message': gettext('Ok'),
+        'status': 'ok',
+        'passedQA': passed_qa
+    }
+
+    return jsonify(response)
+
+
 @csrf.exempt
 @jwt_required()
 def submission():
