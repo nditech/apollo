@@ -44,6 +44,13 @@ class APIClient {
     }).then(this._getResult);
   };
 
+  checkQAStatus = function (submissionUUID) {
+    let endpoint = `${this.endpoints.qaStatus}${submissionUUID}`;
+    return fetch(endpoint, {
+      credentials: 'same-origin'
+    }).then(this._getResult);
+  }
+
   logout = function (csrf_token) {
     return fetch(this.endpoints.logout, {
       credentials: 'same-origin',

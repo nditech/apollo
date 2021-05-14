@@ -405,6 +405,7 @@
       list: "{{ url_for('participants.get_forms') }}",
       login: "{{ url_for('participants.login') }}",
       logout: "{{ url_for('participants.logout') }}",
+      qaStatus: "{{ url_for('submissions.checklist_qa_status', uuid='') }}",
       submit: "{{ url_for('submissions.submission') }}",
       versionCheck: "{{ url_for('pwa.version_check') }}",
     };
@@ -1017,6 +1018,8 @@
           clearInterval(this.submissionSyncIntervalHandle);
         if (this.commitCheckIntervalHandle)
           clearInterval(this.commitCheckIntervalHandle);
+        if (this.checkQAStatusIntervalHandle)
+          clearInterval(this.checkQAStatusIntervalHandle);
       },
       computed: {
         pendingSubmissions() {
@@ -1043,6 +1046,7 @@
         }
       },
       data: {
+        checkQAStatusIntervalHandle: null,
         commit: '{{ commit }}',
         commitCheckIntervalHandle: null,
         currentForm: null,
@@ -1234,13 +1238,15 @@
             errorFields: new Set(),
             form: form.id,
             images: {},
+            passedQA: true,
             posted: null,
             postedFields: null,
             status: 'ok',
             type: form.form_type,
             updated: null,
             participant_id: instance.participant.participant_id,
-            queued_at: null
+            queued_at: null,
+            uuid: null
           };
           submission.data = form.data.groups.reduce((acc, group) => {
             group.fields.forEach(field => {
@@ -1344,6 +1350,7 @@
               submission.passedQA = data.passedQA;
               submission.postedFields = data.postedFields;
               submission.queued_at = null;
+              submission.uuid = data._id;
               if (submission.errorFields.size > 0)
                 submission.errorFields = new Set();
               instance.saveSubmissionToDatabase(submission, single);
@@ -1373,6 +1380,28 @@
         },
         submissionsSubset(form) {
           return this.submissions.filter(submission => submission.form === form.id);
+        },
+        updateQAStatuses() {
+          let instance = this;
+          instance.submissions.filter(submission => {
+            if (submission.id === instance.syncingSubmission)
+              return false;
+
+            if (instance.currentSubmission === submission)
+              return false;
+            
+            return !submission.passedQA;
+          })
+          .forEach(submission => {
+            client.checkQAStatus(submission.uuid).then(result => {
+              if (result.ok) {
+                result.result.then(data => {
+                  submission.passedQA = data.passedQA;
+                  instance.saveSubmissionToDatabase(submission);
+                });
+              }
+            });
+          });
         },
         syncSubmissions() {
           let instance = this;
@@ -1434,6 +1463,9 @@
 
         // version checks, every two hours
         instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 2 * 60 * 60 * 1000);
+
+        // QA status checks, every five minutes
+        instance.checkQAStatusIntervalHandle = setInterval(instance.updateQAStatuses, 5 * 60 * 1000);
       }
     });
   </script>
