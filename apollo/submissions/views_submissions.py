@@ -17,6 +17,7 @@ from sqlalchemy import BigInteger, case, desc, func, text, nullslast
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
 from sqlalchemy.sql import false
+from sqlalchemy.orm import joinedload
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
@@ -122,7 +123,7 @@ def submission_list(form_id):
     page = int(data.pop('page', [1])[0])
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=event.location_set_id)
-    query = models.Submission.query
+    query = models.Submission.query.options(joinedload(models.Submission.form))
     _location_query = None
 
     user_locale = get_locale().language
