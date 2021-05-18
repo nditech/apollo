@@ -275,7 +275,8 @@ class Participant(BaseModel):
     partner = db.relationship('ParticipantPartner', backref='participants')
     phone_contacts = db.relationship(
         'PhoneContact',
-        backref=db.backref('participants', cascade='all, delete'))
+        backref=db.backref('participants', cascade='all, delete'),
+        lazy='joined')
     supervisor = db.relationship('Participant', remote_side=id)
     samples = db.relationship(
         "Sample",
@@ -291,50 +292,48 @@ class Participant(BaseModel):
         if not self.id:
             return None
 
-        p_phone = PhoneContact.query.filter_by(
-            participant_id=self.id, verified=True).order_by(
-                PhoneContact.updated.desc()).first()
+        verified_phone_contacts = filter(
+            lambda x: x.verified is True,
+            self.phone_contacts)
+        recent_phone_contacts = sorted(
+            verified_phone_contacts,
+            reverse=True,
+            key=lambda x: x.updated)
 
-        return p_phone.number if p_phone else None
+        return recent_phone_contacts[0].number if recent_phone_contacts else None  # noqa
 
     @property
     def other_phones(self):
         if not self.id:
             return None
 
-        phone_primary = PhoneContact.query.filter_by(
-            participant_id=self.id, verified=True).order_by(
-                PhoneContact.updated.desc()).first()
+        verified_phone_contacts = filter(
+            lambda x: x.verified is True,
+            self.phone_contacts)
+        recent_phone_contacts = sorted(
+            verified_phone_contacts,
+            reverse=True,
+            key=lambda x: x.updated)
 
-        if phone_primary:
-            other_phones = PhoneContact.query.filter(
-                PhoneContact.participant_id==self.id,  # noqa
-                PhoneContact.id!=phone_primary.id,  # noqa
-                PhoneContact.verified==True  # noqa
-            ).order_by(
-                PhoneContact.updated.desc()
-            ).with_entities(
-                PhoneContact.number
-            ).all()
-
-            return list(chain(*other_phones))
-
-        return []
+        return map(
+            lambda x: x.number,
+            recent_phone_contacts[1:]) if len(recent_phone_contacts) > 1 else []  # noqa
 
     @property
     def phones(self):
         if not self.id:
             return None
 
-        if not hasattr(self, '_phones'):
-            phones = PhoneContact.query.filter_by(
-                participant_id=self.id
-            ).order_by(
-                PhoneContact.verified.desc(),
-                PhoneContact.updated.desc()).all()
-            self._phones = phones
+        phone_contacts_by_verification = sorted(
+            self.phone_contacts,
+            reverse=True,
+            key=lambda x: x.verified)
+        phone_contacts_by_last_updated = sorted(
+            phone_contacts_by_verification,
+            reverse=True,
+            key=lambda x: x.updated)
 
-        return self._phones
+        return phone_contacts_by_last_updated
 
     @property
     def gender_display(self):
