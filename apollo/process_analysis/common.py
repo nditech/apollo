@@ -429,15 +429,16 @@ def generate_field_stats(field, dataset, all_tags=None):
             field['tag'], dataset, field.get('expected', 0))
 
 
-def generate_incidents_data(form, queryset, location_root, grouped=True,
+def generate_incidents_data(data_frame, form, location_root, grouped=True,
                             tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
     for groups of regions.
 
     Parameters
+    - data_frame: a dataframe of submission data
+                  (generated from `make_submission_dataframe`)
     - form: a Form instance
-    - queryset: a queryset of submissions
     - location_root: a root location to retrieve statistics for
     - grouped: when retrieving statistics for a location, specify whether or
     not to retrieve statistics on a per-group basis.
@@ -455,12 +456,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             if field['analysis_type'] != 'N/A'
         ]
 
-    try:
-        data_frame = make_submission_dataframe(queryset, form)
-
-        if data_frame.empty:
-            return incidents_summary
-    except Exception:
+    if data_frame.empty:
         return incidents_summary
 
     if grouped:
@@ -544,15 +540,16 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
     return incidents_summary
 
 
-def generate_process_data(form, queryset, location_root, grouped=True,
+def generate_process_data(data_frame, form, location_root, grouped=True,
                           tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
     for groups of regions.
 
     Parameters
+    - data_frame: a dataframe of submission data
+                  (generated from `make_submission_dataframe`)
     - form: a Form instance
-    - queryset: a queryset of submissions
     - location_root: a root location to retrieve statistics for
     - grouped: when retrieving statistics for a location, specify whether or
     not to retrieve statistics on a per-group basis.
@@ -570,12 +567,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
             if field['analysis_type'] != 'N/A'
         ]
 
-    try:
-        data_frame = make_submission_dataframe(queryset, form)
-
-        if data_frame.empty:
-            return process_summary
-    except Exception:
+    if data_frame.empty:
         return process_summary
 
     if grouped:
