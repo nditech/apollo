@@ -12,11 +12,14 @@ from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
+from geoalchemy2.shape import to_shape
+import geojson
 from slugify import slugify
 from sqlalchemy import BigInteger, case, desc, func, text, nullslast
 from sqlalchemy.dialects.postgresql import array
 import sqlalchemy as sa
 from sqlalchemy.sql import false
+from sqlalchemy.orm import joinedload
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
@@ -122,7 +125,7 @@ def submission_list(form_id):
     page = int(data.pop('page', [1])[0])
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=event.location_set_id)
-    query = models.Submission.query
+    query = models.Submission.query.options(joinedload(models.Submission.form))
     _location_query = None
 
     user_locale = get_locale().language
@@ -409,6 +412,28 @@ def submission_list(form_id):
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
+
+    if request.args.get('geojson'):
+        features = []
+        for s in query_filterset.qs.filter(models.Submission.geom!=None):  # noqa
+            features.append(geojson.Feature(
+                geometry=geojson.Point((
+                    to_shape(s.geom).x,
+                    to_shape(s.geom).y)),
+                properties={
+                    'location': s.location.name,
+                    'participant': s.participant.name,
+                    'participant_id': s.participant.participant_id,
+                    'phone': s.participant.primary_phone,
+                    'last_updated': s.participant_updated.strftime('%b %d, %Y %l:%M %p'),  # noqa
+                    'last_updated_timestamp': s.participant_updated.strftime('%s'),  # noqa
+                }))
+        feature_collection = geojson.FeatureCollection(features)
+
+        return Response(
+            geojson.dumps(feature_collection),
+            mimetype="application/geo+json"
+        )
 
     # TODO: rewrite this. verify what select_related does
     if request.form.get('action') == 'send_message':

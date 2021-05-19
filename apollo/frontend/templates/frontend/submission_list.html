@@ -89,7 +89,7 @@ $(function () {
 {%- if form.show_map %}
 
   // initialize the map view
-  var mapView = L.map('mapView').setView([0, 0], 2);
+  var mapView = L.map('mapView', {preferCanvas: true}).setView([0, 0], 2);
   {%- if config.MAPBOX_TOKEN %}
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -112,6 +112,7 @@ $(function () {
   };
   info.update = function (props) {
     if (props) {
+      $(this._div).finish();
       this._div.innerHTML = `
 <div class="card text-white bg-primary border-0" style="min-width: 20vw">
   <h5 class="card-header text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">${props.participant} — ${props.participant_id}</h5>
@@ -131,39 +132,64 @@ ${(props.last_updated ? `
           this.innerText = mm.format('ll LT');
         }
       });
+      $(this._div).fadeIn(200);
     }
+  };
+  info.delete = function () {
+    $(this._div).finish();
+    $(this._div).fadeOut(2000);
   };
   info.addTo(mapView);
   mapView.panTo([0, 0]);
 
-  var markers = L.featureGroup();
-{% for submission in submissions %}
-{%- if submission.geom.desc %}
-  marker = L.marker([{{ submission.geom|latitude }}, {{ submission.geom|longitude }}], {riseOnHover: true});
-  marker.on({mouseover: function () {
-      info.update({location: '{{ submission.location.name|default(_('No Location'), true) }}', participant: '{{ submission.participant.name|default(_('No Name'), true) }}', participant_id: '{{ submission.participant.participant_id|default('00000', true) }}', phone: '{{ submission.participant.primary_phone|default(_('No Phone'), true) }}', last_updated: '{{ submission.participant_updated.strftime("%b %d, %Y %l:%M %p") if submission.participant_updated else "" }}', last_updated_timestamp: '{{ submission.participant_updated|timestamp if submission.participant_updated else "" }}'});
-  }});
-  marker.addTo(markers);
-{% endif %}
-{%- endfor %}
-  markers.addTo(mapView);
+  $.getJSON('{{ url_for('submissions.submission_list', form_id=form.id, geojson='✓', **request.args) | safe }}', function (data) {
+    markers = L.geoJson(data, {
+      pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng);
+      },
+      onEachFeature: function (feature, layer) {
+        if (feature.properties) {
+          layer.on({
+            mouseover: function () {
+              layer.setStyle({color: 'orange'});
+              layer.setRadius(15);
+              info.update({
+                location: feature.properties.location || '{{ _("No Location") }}',
+                participant: feature.properties.participant || '{{ _("No Name") }}',
+                participant_id: feature.properties.participant_id || '00000',
+                phone: feature.properties.phone || '{{ _("No Phone") }}',
+                last_updated: feature.properties.last_updated || '',
+                last_updated_timestamp: feature.properties.last_updated_timestamp || ''
+              });
+            },
+            mouseout: function () {
+              layer.setStyle({color: '#3388ff'});
+              layer.setRadius(10);
+              info.delete();
+            }
+          });
+        }
+      }
+    });
+    markers.addTo(mapView);
 
-  $('a[aria-controls="mapView"]').one('shown.bs.tab', function (e) {
-    mapView.invalidateSize();
+    $('a[aria-controls="mapView"]').one('shown.bs.tab', function (e) {
+      mapView.invalidateSize();
+      if (markers.getBounds().isValid()) {
+        mapView.fitBounds(markers.getBounds());
+      }
+    });
+    $('a[aria-controls="mapView"]').on('shown.bs.tab', function (e) {
+      $('input#v').val('map');
+    });
+    $('a[aria-controls="listView"]').on('shown.bs.tab', function (e) {
+      $('input#v').val('');
+    });
+
     if (markers.getBounds().isValid()) {
       mapView.fitBounds(markers.getBounds());
     }
   });
-  $('a[aria-controls="mapView"]').on('shown.bs.tab', function (e) {
-    $('input#v').val('map');
-  });
-  $('a[aria-controls="listView"]').on('shown.bs.tab', function (e) {
-    $('input#v').val('');
-  });
-
-  if (markers.getBounds().isValid()) {
-    mapView.fitBounds(markers.getBounds());
-  }
 {%- endif %}
 });
 </script>

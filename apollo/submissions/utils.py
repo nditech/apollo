@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+from pandas.io.json import json_normalize
+from sqlalchemy import String, cast, func
 from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
-from apollo.locations.models import Location, LocationPath
+from apollo.locations.models import Location, LocationPath, LocationType
 from apollo.submissions.models import Submission
 
 
@@ -13,13 +15,6 @@ def make_submission_dataframe(query, form, selected_tags=None,
                               excluded_tags=None):
     if not db.session.query(query.exists()).scalar():
         return pd.DataFrame()
-
-    # get column headers by getting all ancestor names
-    # of the submission location's location type
-    sample_submission = query.first()
-    location_type = sample_submission.location.location_type
-    ancestor_names = [a.name for a in location_type.ancestors()] + \
-        [location_type.name]
 
     # excluded tags have higher priority than selected tags
     fields = set(form.tags)
@@ -35,21 +30,38 @@ def make_submission_dataframe(query, form, selected_tags=None,
         ]
 
     # alias just in case the query is already joined to the tables below
-    loc = aliased(Location)
-    loc_path = aliased(LocationPath)
-    own_loc = aliased(Location)
+    ancestor_loc = aliased(Location, name='ancestor')
+    ancestor_loc_type = aliased(LocationType, name='ancestor_type')
+    ancestor_loc_path = aliased(LocationPath, name='ancestor_path')
+    own_loc = aliased(Location, name='own_location')
+
+    sub_query = Submission.query.join(
+        own_loc,
+        Submission.location_id == own_loc.id
+    ).join(
+        ancestor_loc_path,
+        Submission.location_id == ancestor_loc_path.descendant_id
+    ).join(
+        ancestor_loc,
+        ancestor_loc.id == ancestor_loc_path.ancestor_id
+    ).join(
+        ancestor_loc_type,
+        ancestor_loc.location_type_id == ancestor_loc_type.id
+    ).with_entities(
+        cast(ancestor_loc.name, String).label('ancestor_name'),
+        cast(ancestor_loc_type.name, String).label('ancestor_type'),
+        Submission.id.label('submission_id')
+    ).subquery()
 
     # add registered voters and path extraction to the columns
     columns.append(own_loc.registered_voters.label(
         'registered_voters'))
     columns.append(
-        array_agg(aggregate_order_by(loc.name, loc_path.depth.desc())).label(
-            'location_data'))
-
-    query2 = query.join(
-        loc_path, Submission.location_id == loc_path.descendant_id
-    ).join(loc, loc.id == loc_path.ancestor_id).join(
-        own_loc, own_loc.id == Submission.location_id)
+        func.json_object(
+            array_agg(sub_query.c.ancestor_type),
+            array_agg(sub_query.c.ancestor_name),
+        ).label('location_data')
+    )
 
     # type coercion is necessary for numeric columns
     # if we allow Pandas to infer the column type for these,
@@ -61,17 +73,25 @@ def make_submission_dataframe(query, form, selected_tags=None,
         for tag in form.tags
         if form.get_field_by_tag(tag)['type'] == 'integer'}
 
-    dataframe_query = query2.with_entities(*columns).group_by(
-        Submission.id, own_loc.registered_voters)
+    dataframe_query = query.join(
+        sub_query,
+        Submission.id == sub_query.c.submission_id
+    ).group_by(
+        Submission.id,
+        own_loc.registered_voters
+    ).with_entities(*columns)
 
-    df = pd.read_sql(dataframe_query.statement, dataframe_query.session.bind)
-    df = df.astype(type_coercions)
+    df = pd.read_sql(
+        dataframe_query.statement,
+        dataframe_query.session.bind
+    ).astype(type_coercions)
 
-    df_locations = df['location_data'].apply(pd.Series).rename(
-        columns=dict(enumerate(ancestor_names)))
+    df_summary = pd.concat([
+        df.drop('location_data', axis=1),
+        json_normalize(df['location_data'])
+    ], axis=1, join_axes=[df.index])
 
-    return pd.concat(
-        [df, df_locations], axis=1, join_axes=[df.index])
+    return df_summary
 
 
 def update_participant_completion_rating(submission):

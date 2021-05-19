@@ -34,6 +34,7 @@ flask-webpack
 flask-wtf==0.14.2
 flask==1.0
 geoalchemy2==0.6.3
+geojson==2.5.0
 gevent==1.4.0
 gunicorn==19.7.1
 honcho==1.0.1

@@ -112,6 +112,7 @@ class Submission(BaseModel):
                            passive_deletes=True))
     form = db.relationship(
         'Form',
+        lazy='joined',
         backref=db.backref('submissions', cascade='all, delete',
                            passive_deletes=True))
     location = db.relationship(
