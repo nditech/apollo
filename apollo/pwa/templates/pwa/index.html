@@ -413,17 +413,13 @@
 
     // database setup
     const db = new Dexie('apollo');
-    db.version(1).stores({
+    db.version(5).stores({
       forms: 'id, participant_id',
       participants: 'participant_id, lastLogin',
-      submissions: '++id, form, participant_id, posted, [id+participant_id], [form+participant_id]'
+      serials: '[participant_id+form+serial], [participant_id+form], form, participant_id, serial',
+      submissions: '++id, form, participant_id, passedQA, posted, queued_at, uuid, [participant_id+id], [participant_id+form], [participant_id+form+id], [participant_id+queued_at], [participant_id+passedQA]'
     });
-    db.version(2).stores({
-      serials: '[form+participant_id+serial], [form+participant_id], form, participant_id, serial'
-    });
-    db.version(3).stores({
-      submissions: '++id, form, participant_id, posted, queued_at, [id+participant_id], [form+participant_id], [participant_id+queued_at]'
-    });
+
     db.open().catch(() => {
       Notiflix.Report.Failure(
         '{{ _("Error") }}',
