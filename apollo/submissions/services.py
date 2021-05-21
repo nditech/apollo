@@ -68,6 +68,9 @@ class SubmissionService(Service):
             if submission.submission_type == 'O':
                 dataset_headers.append(_('Comment'))
 
+        if form.form_type == 'SURVEY':
+            dataset_headers.insert(1, _('Serial'))
+
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
         writer = csv.writer(output)
@@ -107,6 +110,9 @@ class SubmissionService(Service):
                     export_field_value(form, submission, tag)
                     for tag in tags
                 ]
+
+                if form.form_type == 'SURVEY':
+                    record.insert(1, submission.serial_no)
 
                 record += [
                     submission.updated.strftime('%Y-%m-%d %H:%M:%S')
@@ -151,6 +157,9 @@ class SubmissionService(Service):
                 ] + [
                     export_field_value(form, submission, tag)
                     for tag in tags]
+
+                if form.form_type == 'SURVEY':
+                    record.insert(1, sib.serial_no)
 
                 record += [
                     sib.updated.strftime('%Y-%m-%d %H:%M:%S')
