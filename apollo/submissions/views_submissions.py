@@ -425,8 +425,8 @@ def submission_list(form_id):
                     'participant': s.participant.name,
                     'participant_id': s.participant.participant_id,
                     'phone': s.participant.primary_phone,
-                    'last_updated': s.participant_updated.strftime('%b %d, %Y %l:%M %p') if s.participant_updated else '',  # noqa
-                    'last_updated_timestamp': s.participant_updated.strftime('%s') if s.participant_updated else '',  # noqa
+                    'last_updated': s.participant_updated.strftime('%b %d, %Y %l:%M %p') if s.participant_updated else None,  # noqa
+                    'last_updated_timestamp': s.participant_updated.strftime('%s') if s.participant_updated else None,  # noqa
                 }))
         feature_collection = geojson.FeatureCollection(features)
 
