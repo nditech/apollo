@@ -51,7 +51,12 @@ class SubmissionService(Service):
 
         sample_headers = [s.name for s in samples]
 
-        dataset_headers = [
+        if form.form_type == 'SURVEY':
+            dataset_headers = [_('Serial')]
+        else:
+            dataset_headers = []
+
+        dataset_headers.extend([
             _('Participant ID'), _('Name'), _('DB Phone'), _('Recent Phone')
         ] + [
             loc_type.name for loc_type in location_types
@@ -59,7 +64,7 @@ class SubmissionService(Service):
             _('Location'), _('Location Code'), _('Latitude'), _('Longitude')
         ] + extra_field_headers + [
             _('Registered Voters')
-        ] + tags + [_('Timestamp')]
+        ] + tags + [_('Timestamp')])
 
         if form.form_type == 'INCIDENT':
             dataset_headers.extend([_('Status'), _('Description')])
@@ -67,9 +72,6 @@ class SubmissionService(Service):
             dataset_headers.extend(sample_headers)
             if submission.submission_type == 'O':
                 dataset_headers.append(_('Comment'))
-
-        if form.form_type == 'SURVEY':
-            dataset_headers.insert(1, _('Serial'))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -88,14 +90,16 @@ class SubmissionService(Service):
                 else:
                     extra_data_columns = [''] * len(extra_fields)
 
-                record = [
+                record = [submission.serial_no] if form.form_type == 'SURVEY' else []   # noqa
+
+                record.extend([
                     submission.participant.participant_id
                     if submission.participant else '',
                     submission.participant.name
                     if submission.participant else '',
                     submission.participant.primary_phone
                     if submission.participant else '',
-                    submission.last_phone_number if submission.last_phone_number else '',
+                    submission.last_phone_number if submission.last_phone_number else '',   # noqa
                 ] + [
                     submission.location.make_path().get(loc_type.name, '')
                     for loc_type in location_types
@@ -109,10 +113,7 @@ class SubmissionService(Service):
                 ] + [
                     export_field_value(form, submission, tag)
                     for tag in tags
-                ]
-
-                if form.form_type == 'SURVEY':
-                    record.insert(1, submission.serial_no)
+                ])
 
                 record += [
                     submission.updated.strftime('%Y-%m-%d %H:%M:%S')
@@ -136,7 +137,10 @@ class SubmissionService(Service):
                     ]
                 else:
                     extra_data_columns = [''] * len(extra_fields)
-                record = [
+
+                record = [sib.serial_no] if form.form_type == 'SURVEY' else []
+
+                record.extend([
                     sib.participant.participant_id
                     if sib.participant else '',
                     sib.participant.name
@@ -156,10 +160,7 @@ class SubmissionService(Service):
                     sib.location.registered_voters
                 ] + [
                     export_field_value(form, submission, tag)
-                    for tag in tags]
-
-                if form.form_type == 'SURVEY':
-                    record.insert(1, sib.serial_no)
+                    for tag in tags])
 
                 record += [
                     sib.updated.strftime('%Y-%m-%d %H:%M:%S')
