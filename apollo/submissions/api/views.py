@@ -21,7 +21,8 @@ from apollo.participants.models import Participant
 from apollo.services import messages
 from apollo.submissions.api.schema import SubmissionSchema
 from apollo.submissions.models import (
-    Submission, SubmissionImageAttachment, SubmissionVersion)
+    QUALITY_STATUSES, Submission, SubmissionImageAttachment, SubmissionVersion)
+from apollo.submissions.qa.query_builder import qa_status
 from apollo.utils import current_timestamp
 
 
@@ -120,6 +121,46 @@ class SubmissionListResource(BaseListResource):
         return query
 
 
+@jwt_required()
+def checklist_qa_status(uuid):
+    participant_uuid = get_jwt_identity()
+
+    try:
+        participant = Participant.query.filter_by(uuid=participant_uuid).one()
+    except NoResultFound:
+        response = {
+            'message': gettext('Invalid participant'),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
+
+    try:
+        submission = Submission.query.filter_by(
+            uuid=uuid, participant_id=participant.id).one()
+    except NoResultFound:
+        response = {
+            'message': gettext('Invalid checklist'),
+            'status': 'error'
+        }
+
+        return jsonify(response), HTTPStatus.BAD_REQUEST
+
+    form = submission.form
+    submission_qa_status = [
+        qa_status(submission, check) for check in form.quality_checks] \
+        if form.quality_checks else []
+    passed_qa = QUALITY_STATUSES['FLAGGED'] not in submission_qa_status
+
+    response = {
+        'message': gettext('Ok'),
+        'status': 'ok',
+        'passedQA': passed_qa
+    }
+
+    return jsonify(response)
+
+
 @csrf.exempt
 @jwt_required()
 def submission():
@@ -170,10 +211,12 @@ def submission():
     schema_class = form.create_schema()
     data, errors = schema_class().load(payload)
     if errors:
+        error_fields = sorted(errors.keys())
         response = {
             'message': gettext('Invalid value(s) for: %(fields)s',
-                               fields=','.join(sorted(errors.keys()))),
-            'status': 'error'
+                               fields=','.join(error_fields)),
+            'status': 'error',
+            'errorFields': error_fields,
         }
 
         return jsonify(response), HTTPStatus.BAD_REQUEST
@@ -246,6 +289,7 @@ def submission():
 
     attachments = []
     deleted_attachments = []
+    collected_uploads = set()
     for tag, wrapper in request.files.items():
         if tag not in form.tags:
             continue
@@ -264,6 +308,7 @@ def submission():
 
             if wrapper.filename != '':
                 data[tag] = identifier.hex
+                collected_uploads.add(tag)
                 attachments.append(
                     SubmissionImageAttachment(
                         photo=wrapper, submission=submission,
@@ -291,7 +336,7 @@ def submission():
             update_params = {'data': data, 'unreachable': False}
             if geopoint is not None:
                 update_params['geom'] = geopoint
-            query.update(update_params, synchronize_session=False)
+            query.update(update_params, synchronize_session='fetch')
             db.session.commit()
 
         submission.update_related(data)
@@ -308,12 +353,36 @@ def submission():
     message.submission_id = submission.id
     message.save()
 
+    posted_fields = []
+    for group in form.data.get('groups'):
+        group_fields = []
+        tags = form.get_group_tags(group['name'])
+        for tag in tags:
+            field_data = payload2.get(tag)
+            field = form.get_field_by_tag(tag)
+            if field['type'] == 'multiselect' and field_data != []:
+                group_fields.append(tag)
+            elif field['type'] == 'image':
+                if tag in collected_uploads:
+                    group_fields.append(tag)
+            elif field['type'] != 'multiselect' and field_data is not None:
+                group_fields.append(tag)
+        posted_fields.append(group_fields)
+
+    submission_qa_status = [
+        qa_status(submission, check) for check in form.quality_checks] \
+        if form.quality_checks else []
+    passed_qa = QUALITY_STATUSES['FLAGGED'] not in submission_qa_status
+
     # return the submission ID so that any updates
     # (for example, sending attachments) can be done
     response = {
         'message': gettext('Data successfully submitted'),
         'status': 'ok',
         'submission': submission.id,
+        'postedFields': posted_fields,
+        'passedQA': passed_qa,
+        '_id': submission.uuid,
     }
 
     return jsonify(response)

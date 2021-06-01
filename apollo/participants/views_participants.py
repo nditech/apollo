@@ -45,6 +45,10 @@ bp.add_url_rule(
     methods=['DELETE']
 )
 bp.add_url_rule(
+    '/api/participants/forms',
+    view_func=api_views.get_forms,
+)
+bp.add_url_rule(
     '/api/participants/<int:participant_id>',
     view_func=api_views.ParticipantItemResource.as_view(
         'api_participant_item'))

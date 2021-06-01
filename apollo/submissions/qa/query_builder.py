@@ -10,6 +10,7 @@ from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
 from apollo.models import Location, Participant, Submission
+from apollo.submissions.models import QUALITY_STATUSES
 
 # NOTE: Arpeggio has 3 ways to represent a grammar:
 #   - a Python syntax (the canonical)
@@ -390,3 +391,16 @@ def build_expression(logical_check):
         control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)  # noqa
 
     return control_expression.strip()
+
+
+def qa_status(submission, check):
+    result, tags = get_inline_qa_status(submission, check)
+    verified_fields = submission.verified_fields or set()
+    if result is True and not tags.issubset(verified_fields):
+        return QUALITY_STATUSES['FLAGGED']
+    elif result is True and tags.issubset(verified_fields):
+        return QUALITY_STATUSES['VERIFIED']
+    elif result is False:
+        return QUALITY_STATUSES['OK']
+    else:
+        return None

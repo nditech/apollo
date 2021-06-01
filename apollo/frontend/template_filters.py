@@ -10,8 +10,7 @@ from geoalchemy2.shape import to_shape
 import pandas as pd
 
 from apollo.process_analysis.common import generate_field_stats
-from apollo.submissions.models import QUALITY_STATUSES
-from apollo.submissions.qa.query_builder import get_inline_qa_status
+from apollo.submissions.qa.query_builder import qa_status as _qa_status
 
 
 def _clean(fieldname):
@@ -105,16 +104,7 @@ def reverse_dict(d):
 
 
 def qa_status(submission, check):
-    result, tags = get_inline_qa_status(submission, check)
-    verified_fields = submission.verified_fields or set()
-    if result is True and not tags.issubset(verified_fields):
-        return QUALITY_STATUSES['FLAGGED']
-    elif result is True and tags.issubset(verified_fields):
-        return QUALITY_STATUSES['VERIFIED']
-    elif result is False:
-        return QUALITY_STATUSES['OK']
-    else:
-        return None
+    return _qa_status(submission, check)
 
 
 def longitude(geom):

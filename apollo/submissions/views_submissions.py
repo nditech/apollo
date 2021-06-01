@@ -57,6 +57,11 @@ bp.add_url_rule(
     methods=['POST', 'PUT']
 )
 bp.add_url_rule(
+    '/api/qastatus/<uuid>',
+    view_func=api_views.checklist_qa_status,
+    methods=['GET']
+)
+bp.add_url_rule(
     '/api/submissions/<int:submission_id>',
     view_func=api_views.SubmissionItemResource.as_view('api_submission_item'),
     methods=['GET']

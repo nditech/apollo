@@ -4,6 +4,8 @@
     "start_url": "/pwa/",
     "scope": "/pwa/",
     "display": "fullscreen",
+    "background_color": "#fff",
+    "theme_color": "#000",
     "icons": [
         {
             "src": "/pwa/static/img/icons-48.png",

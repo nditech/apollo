@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="{{ page_title }}">
+  <meta name="msapplication-TileImage" content="{{ url_for('pwa.static', filename='img/icons-72.png') }}">
+  <meta name="msapplication-TileColor" content="#000">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/animate.css/animate.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/autocomplete/style.css') }}">
   {% if g.locale.text_direction == 'rtl' %}
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/bootstrap/css/bootstrap.rtl.min.css') }}">
   {% else %}
@@ -13,6 +19,7 @@
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('pwa.static', filename='css/main.css') }}">
   <link rel="manifest" href="{{ url_for('pwa.static', filename='manifest.json') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('pwa.static', filename='img/icons-72.png') }}">
   <title>{{ page_title }}</title>
 </head>
 <body class="h-100">
@@ -30,13 +37,12 @@
             <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
             <div v-else>
               <div class="mb-3">
-                <user-info :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut"></user-info>
+                <participant-info :global-status="globalStatus()" :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
               </div>
               <div class="mb-3">
                 <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :submission-groups="groupedSubmissions" :submissions="submissions" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @show-submission-list="showSubmissionList"></form-list>
-                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :submission="currentSubmission" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
-                  <submission-list v-else-if="currentForm !== null && currentForm.form_type !== 'CHECKLIST' && currentSubmission === null" :form="currentForm" :submissions="submissionsSubset(currentForm)" @edit-submission="editSubmission" @clear-form="clearCurrentForm"></submission-list>
+                  <form-list v-if="currentForm === null && currentSubmission === null" :forms="forms" :navigator-online="navigatorOnline" :serial-counts="serialCounts" :submission-groups="groupedSubmissions" :submissions="submissions" :syncing-submission="syncingSubmission" @load-forms="refreshForms" @unauthorized="loggedOut" @edit-submission="editSubmission" @reload-data="reloadStoredData"></form-list>
+                  <submission-editor v-else-if="currentForm !== null && currentSubmission !== null" :form="currentForm" :navigator-online="navigatorOnline" :participant_id="participant.participant_id" :submission="currentSubmission" :is-location-access-allowed="participant.allowLocationAccess" @save-submission="saveSubmissionToDatabase" @post-submission="postSubmission" @clear-form="clearCurrentForm"></submission-editor>
                 </transition>
               </div>
             </div>
@@ -47,8 +53,8 @@
   </div>
   <template id="connectivity-indicator">
     <div class="d-flex text-light">
-      <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="isOnline"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.636 5.636a1 1 0 00-1.414-1.414c-4.296 4.296-4.296 11.26 0 15.556a1 1 0 001.414-1.414 9 9 0 010-12.728zm14.142-1.414a1 1 0 10-1.414 1.414 9 9 0 010 12.728 1 1 0 101.414 1.414c4.296-4.296 4.296-11.26 0-15.556zM8.464 8.464A1 1 0 007.05 7.05a7 7 0 000 9.9 1 1 0 101.414-1.414 5 5 0 010-7.072zM16.95 7.05a1 1 0 10-1.414 1.414 5 5 0 010 7.072 1 1 0 001.414 1.414 7 7 0 000-9.9zM9 12a3 3 0 116 0 3 3 0 01-6 0z" fill="currentColor"/></svg>
-      <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" v-else><path fill-rule="evenodd" clip-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414L15.535 16.95l2.829 2.828 1.929 1.93a1 1 0 001.414-1.415l-1.253-1.254c3.607-4.321 3.382-10.76-.676-14.817a1 1 0 10-1.414 1.414 9.001 9.001 0 01.668 11.982l-1.425-1.425a7.002 7.002 0 00-.657-9.143 1 1 0 10-1.414 1.414 5.002 5.002 0 01.636 6.294l-1.465-1.465a3 3 0 00-4-4l-7-7zM3.75 8.4a1 1 0 00-1.834-.8C.161 11.624.928 16.485 4.222 19.778a1 1 0 001.414-1.414A9.004 9.004 0 013.749 8.4zm3.32 2.766a1 1 0 00-1.972-.332A6.992 6.992 0 007.05 16.95a1 1 0 101.414-1.414 4.993 4.993 0 01-1.394-4.37z" fill="currentColor"/></svg>
+      <span v-if="isOnline">{{ _('Online') }} <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.636 5.636a1 1 0 00-1.414-1.414c-4.296 4.296-4.296 11.26 0 15.556a1 1 0 001.414-1.414 9 9 0 010-12.728zm14.142-1.414a1 1 0 10-1.414 1.414 9 9 0 010 12.728 1 1 0 101.414 1.414c4.296-4.296 4.296-11.26 0-15.556zM8.464 8.464A1 1 0 007.05 7.05a7 7 0 000 9.9 1 1 0 101.414-1.414 5 5 0 010-7.072zM16.95 7.05a1 1 0 10-1.414 1.414 5 5 0 010 7.072 1 1 0 001.414 1.414 7 7 0 000-9.9zM9 12a3 3 0 116 0 3 3 0 01-6 0z" fill="currentColor"/></svg></span>
+      <span v-else>{{ _('Offline') }} <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414L15.535 16.95l2.829 2.828 1.929 1.93a1 1 0 001.414-1.415l-1.253-1.254c3.607-4.321 3.382-10.76-.676-14.817a1 1 0 10-1.414 1.414 9.001 9.001 0 01.668 11.982l-1.425-1.425a7.002 7.002 0 00-.657-9.143 1 1 0 10-1.414 1.414 5.002 5.002 0 01.636 6.294l-1.465-1.465a3 3 0 00-4-4l-7-7zM3.75 8.4a1 1 0 00-1.834-.8C.161 11.624.928 16.485 4.222 19.778a1 1 0 001.414-1.414A9.004 9.004 0 013.749 8.4zm3.32 2.766a1 1 0 00-1.972-.332A6.992 6.992 0 007.05 16.95a1 1 0 101.414-1.414 4.993 4.993 0 01-1.394-4.37z" fill="currentColor"/></svg></span>
     </div>
   </template>
   <template id="login-form">
@@ -61,11 +67,17 @@
               <div class="card-body">
                 <div class="mb-3">
                   <label for="participant_id" class="visually-hidden">{{ _('Participant ID') }}</label>
-                  <input type="text" class="form-control bg-light" id="participant_id" placeholder="{{ _('Participant ID') }}" v-model="participant_id">
+                  <div class="input-group">
+                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                    <input type="text" class="form-control bg-light" id="participant_id" placeholder="{{ _('Participant ID') }}" v-model="participant_id">
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label for="password" class="visually-hidden">{{ _('Password') }}</label>
-                  <input type="password" class="form-control bg-light" id="password" placeholder="{{ _('Password') }}" v-model="password">
+                  <div class="input-group">
+                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+                    <input type="password" class="form-control bg-light" id="password" placeholder="{{ _('Password') }}" v-model="password">
+                  </div>
                 </div>
                 <div class="mb-3">
                   <div class="d-grid gap-2">
@@ -79,26 +91,34 @@
       </div>
     </div>
   </template>
-  <template id="user-info">
+  <template id="participant-info">
     <div class="row">
       <div class="col">
-        <div class="card shadow-sm mt-3">
+        <div class="card shadow-sm mt-3 border-dark">
           <div class="card-body">
-            <h5 class="card-title">[[ greeting() ]], [[ participant.full_name ]]</h5>
+            <h5 class="card-title">[[ greeting() ]], [[ participant.participant_id ]]</h5>
             <div class="row mb-3">
-              <div class="col-4"><strong>{{ _('Participant ID') }}</strong></div>
-              <div class="col">[[ participant.participant_id ]]</div>
+              <div class="col-4"><strong>{{ _('Full name') }}:</strong></div>
+              <div class="col">[[ participant.full_name ]]</div>
             </div>
             <div class="row mb-3">
-              <div class="col-4"><strong>{{ _('Location') }}</strong></div>
+              <div class="col-4"><strong>{{ _('Location') }}:</strong></div>
               <div class="col">[[ participant.location ]]</div>
             </div>
             <div class="row mb-3">
-              <div class="col">{{ _('If this is not you, please') }} <button @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</button></div>
+              <div class="col">{{ _('If this is not correct, please') }} <button @click="logout" class="btn btn-outline-dark">{{ _('click here') }}</button></div>
             </div>
-            <div class="row" v-if="pendingSubmissions > 0">
+            <div class="row mb-3">
               <div class="col">
-                <div class="alert alert-info">{{ _('Pending submissions:') }} <strong>[[ pendingSubmissions ]]</strong></div>
+                <div class="form-check">
+                  <input type="checkbox" id="location-access-toggle" class="form-check-input" :checked="participant.allowLocationAccess" @change="toggleLocationAccess">
+                  <label for="location-access-toggle" class="form-check-label">{{ _('Allow app to access my location when needed') }}</label>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3" v-if="globalStatus > 0">
+              <div class="col">
+                <div class="alert" :class="statusClass" role="alert">[[ statusMessage ]]</div>
               </div>
             </div>
           </div>
@@ -109,48 +129,46 @@
   <template id="form-list">
     <div class="row">
       <div class="col">
-        <div class="card shadow-sm mt-3">
-          <h5 class="card-header">{{ _('Forms') }}</h5>
-          <div class="list-group list-group-flush">
-            <div class="list-group-item" v-for="form in forms" :key="form.id">
-              <div class="row">
-                <div class="col mb-2">[[ form.name ]]</div>
+        <div class="card shadow-sm mt-3" v-for="form in forms" :key="form.id">
+          <h5 class="card-header border-top border-bottom-0 border-3 border-secondary">[[ form.name ]]</h5>
+          <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <span class="badge" :class="getBadgeClass(form)">[[ form.form_type ]]</span>
+                <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
+                <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
               </div>
-              <div class="row">
-                <div class="col mb-2">
-                  <span class="badge bg-secondary">[[ form.form_type ]]</span>
-                  <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
-                  <span class="badge bg-warning text-dark" v-if="form.form_type === 'CHECKLIST' && isPending(submissionGroups[form.id][0])">PENDING</span>
-                  <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
-                </div>
+            </div>
+            <checklist-completion :completions="getCompletion(form)" :form="form" :submission="getSubmission(form)" v-if="form.form_type === 'CHECKLIST'"></checklist-completion>
+            <div class="row" v-if="form.form_type === 'CHECKLIST'">
+              <div class="col">
+                <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="editChecklist(form)">{{ _('Edit') }}</button>
               </div>
-              <div class="row" v-if="form.form_type !== 'CHECKLIST'">
-                <div class="col">
-                  <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)">{{ _('Add new') }}</button>
-                </div>
+            </div>
+            <div class="row" v-else>
+              <div class="col">
+                <button class="btn btn-outline-dark float-end" v-if="form.form_type !== 'CHECKLIST'" @click="newSubmission(form)" :disabled="isActionButtonDisabled(form)">{{ _('Add new') }}</button>
               </div>
-              <div class="row">
-                <div class="col mb-2">
-                  <div v-if="form.form_type === 'CHECKLIST'">
-                    <completion-icon :completion="getCompletion(form)"></completion-icon>
-                  </div>
-                  <div class="card mt-2" v-else>
-                    <h5 class="card-header"><a class="text-dark" :href="`#sub-list-${form.id}`" data-bs-toggle="collapse" role="button">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</a></h5>
-                    <div class="list-group list-group-flush collapse" :id="`sub-list-${form.id}`">
-                      <div class="list-group-item"  v-for="(submission, index) in submissionGroups[form.id]">
-                        <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
-                        <span class="badge bg-warning text-dark" v-if="isPending(submission)">PENDING</span>
-                        <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
-                        <span>[[ formatLastUpdate(submission) ]]</span>
-                        <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
+            </div>
+            <div class="row" v-if="shouldDisplayAccordion(form)">
+              <div class="col">
+                <div class="accordion mt-3" :id="`accordion-${form.id}`">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" :id="`heading-${form.id}`"><button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" :data-bs-target="`#collapse-${form.id}`">[[ form.form_type === 'INCIDENT' ? '{{ _('Incidents')}}' : '{{ _('Surveys') }}' ]]</button></h2>
+                    <div class="accordion-collapse collapse" :id="`collapse-${form.id}`">
+                      <div class="accordion-body">
+                        <div class="list-group">
+                          <div class="list-group-item" v-for="(submission, index) in submissionGroups[form.id]">
+                            <strong>[[ form.form_type === 'INCIDENT' ? index + 1 : submission.serial ]]</strong>
+                            <submission-status :form="form" :submission="submission"></submission-status>
+                            <completion-icon :completion="getCompletion(form, submission)"></completion-icon>
+                            <span>[[ formatLastUpdate(submission) ]]</span>
+                            <button class="btn btn-outline-dark" @click="editSubmission(form, submission)">[[ isLocked(submission) ? '{{ _('View') }}' : '{{ _('Edit') }}' ]]</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="row" v-if="form.form_type === 'CHECKLIST'">
-                <div class="col">
-                  <button class="btn btn-outline-dark float-end me-2" v-if="form.form_type === 'CHECKLIST'" @click="formAction(form)">{{ _('Edit') }}</button>
                 </div>
               </div>
             </div>
@@ -164,50 +182,53 @@
       <div class="col">
         <div class="card shadown-sm mt-3">
           <h5 class="card-header">[[ form.name ]]</h5>
-          <div class="card-body">
-            <form>
+          <div class="card-body overflow-scroll" style="height: 400px;">
+            <form ref="form">
               <fieldset v-if="form.form_type === 'SURVEY'">
                 <div class="mb-3">
                   <label for="serial" class="form-label">{{ _('Serial number') }}</label>
-                  <input class="form-control" name="serial" id="serial" v-model="submission.serial">
+                  <div id="autocomplete" class="autocomplete" ref="autocomplete">
+                    <input type="text" class="form-control" name="serial" id="serial" v-model="submission.serial" :disabled="disableSerialInput">
+                    <ul class="autocomplete-result-list"></ul>
+                  </div>
                 </div>
               </fieldset>
               <fieldset v-for="(group, index) in form.data.groups">
                 <div class="card mb-2">
-                  <h6 class="card-header" v-bind:class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
-                  <div class="card-body collapse" :id="`group-${index}`">
+                  <h6 class="card-header" :class="getCompletionClass(index)"><a class="text-white" :href="`#group-${index}`" data-bs-toggle="collapse" role="button">[[ group.name ]]</a></h6>
+                  <div class="card-body" :class="getSectionInitialClass(index)" :id="`group-${index}`">
                     <div v-for="field in group.fields">
                       <div class="mb-3" v-if="field.type === 'integer'">
-                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <input type="number" :name="field.tag" :id="field.tag" class="form-control" v-bind:class="{'is-invalid': (submission.data[field.tag] < field.min || submission.data[field.tag] > field.max)}" v-model.number="submission.data[field.tag]" :max="field.max" :min="field.min" :disabled="locked">
-                        <div class="invalid-feedback" v-if="submission.data[field.tag] < field.min || submission.data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
+                        <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]] ([[ field.min]] - [[ field.max ]])</label>
+                        <input type="number" pattern="[0-9]*" :name="field.tag" :id="field.tag" class="form-control" :class="{'is-invalid': (data[field.tag] < field.min || data[field.tag] > field.max)}" v-model.number="data[field.tag]" :max="field.max" :min="field.min" :disabled="locked" @change="markUpdated">
+                        <div class="invalid-feedback" v-if="data[field.tag] < field.min || data[field.tag] > field.max">[[ field.tag ]] {{ _('is outside expected range') }}</div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'select'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <div class="form-check" v-for="(value, label) in field.options">
+                        <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                          <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="(value, label) in field.options">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
-                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="submission.data[field.tag]" :disabled="locked">
+                          <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'string'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked">
+                        <input type="text" :name="field.tag" :id="field.tag" class="form-control" v-model="data[field.tag]" :disabled="locked" @input="markUpdated">
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'comment'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="submission.data[field.tag]" :disabled="locked"></textarea>
+                        <textarea cols="30" rows="10":name="field.tag" :id="field.tag" class="form-control" v-model="data[field.tag]" :disabled="locked" @input="markUpdated"></textarea>
                       </div>
-                      <image-field v-else-if="field.type === 'image'" :field="field" :initial-data="submission.images[field.tag] || null" @update-image="updateImage" :disabled="locked"></image-field>
+                      <image-field v-else-if="field.type === 'image'" :field="field" :submission="submission" @update-image="updateImage" @remove-image="removeImage(field.tag)" :disabled="locked"></image-field>
                     </div>
                     <div class="mb-3">
-                      <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+                      <button class="btn btn-outline-dark" type="button" @click="clearData(group)" >{{ _('Clear section data') }}</button>
                     </div>
                   </div>
                 </div>
@@ -215,9 +236,8 @@
             </form>
           </div>
           <div class="card-footer">
-            <button class="btn btn-outline-dark" @click="stopEditing" :disabled="locked">{{ _('Back') }}</button>
-            <button class="btn btn-outline-dark" @click="clearForm">{{ _('Cancel') }}</button>
-            <button class="btn btn-outline-dark" @click="postSubmission" :disabled="!navigatorOnline || locked">{{ _('Submit') }}</button>
+            <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="locked">{{ _('Submit') }}</button>
+            <button class="btn btn-outline-dark" @click="stopEditing" v-if="form.form_type !== 'INCIDENT'">[[ actionText ]]</button>
           </div>
         </div>
       </div>
@@ -226,6 +246,7 @@
   <template id="image-field">
     <div class="mb-3">
       <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
+      <button type="button" class="btn btn-outline-dark m-2" v-if="hasContent" @click="removeImage">{{ _('Remove') }}</button>
       <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
       <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
     </div>
@@ -234,25 +255,56 @@
     <component :is="currentComponent" :title="title"></component>
   </template>
   <template id="completion-icon-complete">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#3B82F6" d="M10 15.586L6.707 12.293 5.293 13.707 10 18.414 19.707 8.707 18.293 7.293z"/></svg>
+    <span class="badge bg-primary rounded-pill">[[ title ]]</span>
   </template>
   <template id="completion-icon-partial">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#FCD34D" d="M12.884,2.532c-0.346-0.654-1.422-0.654-1.768,0l-9,17c-0.164,0.31-0.154,0.684,0.027,0.983C2.324,20.816,2.649,21,3,21h18 c0.351,0,0.676-0.184,0.856-0.484c0.182-0.3,0.191-0.674,0.027-0.983L12.884,2.532z M13,18h-2v-2h2V18z M11,14V9h2l0.001,5H11z"/></svg>
+    <span class="badge bg-warning rounded-pill text-dark">[[ title ]]</span>
   </template>
-  <template id="completion-icon-missing">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"> <title>[[ title ]]</title> <path fill="#EF4444" d="M16.192 6.344L11.949 10.586 7.707 6.344 6.293 7.758 10.535 12 6.293 16.242 7.707 17.656 11.949 13.414 16.192 17.656 17.606 16.242 13.364 12 17.606 7.758z"/></svg>
+  <template id="group-completion">
+    <div class="row">
+      <div class="col">
+        <span class="badge bg-secondary">[[ index + 1 ]]</span>
+        <span class="badge mx-1" :class="getCompletionClass()">[[ group.name.split(' ')[0] ]]</span>
+      </div>
+    </div>
   </template>
+  <template id="checklist-completion">
+    <div class="row">
+      <div class="col">
+        <submission-status :form="form" :submission="submission"></submission-status>
+        <group-completion v-for="(group, index) in form.data.groups" :completions="completions" :group="group" :index="index" :key="index" :submission="submission"></group-completion>
+      </div>
+    </div>
+  </template>
+  <template id="submission-status">
+    <span>
+      <span class="badge bg-dark" v-if="isPending">{{ _('UNSENT') }}</span>
+      <span v-if="showQAStatus"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3,4v12c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4H19c1.103,0,2-0.897,2-2V4c0-1.103-0.897-2-2-2H5C3.897,2,3,2.897,3,4z M11,5 h2v6h-2V5z M11,13h2v2h-2V13z"/></svg></span>
+    </span>
+  </template>
+  {% if trace_errors %}
+  <script src="{{ url_for('pwa.static', filename='vendor/sentry/bundle.min.js') }}"></script>
+  {% endif %}
+  <script src="{{ url_for('pwa.static', filename='vendor/popper.js/popper.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/autocomplete/autocomplete.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/fast-copy/fast-copy.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/luxon/luxon.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/tippy.js/tippy.umd.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/client.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='js/diff.js') }}"></script>
   <script>
+    {% if trace_errors %}
+    Sentry.init({
+      dsn: '{{ dsn }}'
+    });
+    {% endif %}
+    const copyFunc = window['fast-copy'];
     const promptToUpdate = () => {
       Notiflix.Confirm.Show(
         '{{ _("Update available") }}',
@@ -265,9 +317,13 @@
       );
     };
 
-    window['isUpdateAvailable'].then(isAvailable => {
-      if (isAvailable)
-        promptToUpdate();
+    document.addEventListener('DOMContentLoaded', () => {
+      if ('isUpdateAvailable' in window) {
+        window.isUpdateAvailable.then(isAvailable => {
+          if (isAvailable)
+            promptToUpdate();
+        });
+      }
     });
 
     const formSorter = (a, b) => {
@@ -287,41 +343,69 @@
         return a.id - b.id;
     };
 
-    const computeCompletion = (form, submission, images) => {
+    const computeCompletion = (form, data, images) => {
       let completion = {total: 0, filled: 0};
       form.data.groups.forEach(group => {
         group.fields.forEach(field => {
           completion.total += 1;
           if (field.type === 'image')
             completion.filled += (images[field.tag] !== undefined ? 1 : 0);
+          else if (field.type === 'multiselect')
+            completion.filled += (data[field.tag].length > 0 ? 1 : 0);
           else
-            completion.filled += (submission.data[field.tag] !== undefined ? 1 : 0);
+            completion.filled += (data[field.tag] !== undefined ? 1 : 0);
         });
       });
 
       return completion;
     };
 
-    const computeGroupCompletion = (form, submission, images, index) => {
+    const computeGroupCompletion = (form, data, images, index) => {
       let group = form.data.groups[index];
 
       let completion = {total: group.fields.length};
       completion.filled = group.fields.reduce((acc, field) => {
         if (field.type === 'image')
           acc += (images[field.tag] !== undefined ? 1 : 0);
+        else if (field.type === 'multiselect')
+          acc += ((data[field.tag] !== undefined && data[field.tag].length) > 0 ? 1 : 0);
         else
-          acc += (submission.data[field.tag] !== undefined ? 1 : 0);
+          acc += ((data[field.tag] !== undefined && data[field.tag] !== '') ? 1 : 0);
         return acc;
       }, 0);
       
       return completion;
     };
 
+    const formCompletion = (form, data, images) => {
+      return form.data.groups.map((group, index) => computeGroupCompletion(form, data, images, index));
+    }
+
+    const isComplete = (form, submission) => {
+      let completion = computeCompletion(form, submission.data, submission.images);
+
+      if ((completion.total === completion.filled) && submission.passedQA)
+        return true;
+      
+      return false;
+    };
+
+    const isEmpty = submission => {
+      if (!submission)
+        return true;
+
+      if (!submission.updated && Object.keys(submission.data).length === 0 && Object.keys(submission.images).length === 0)
+        return true;
+
+      return false;
+    };
+
     // API setup
     const endpoints = {
-      list: "{{ url_for('forms.api_form_list') }}",
+      list: "{{ url_for('participants.get_forms') }}",
       login: "{{ url_for('participants.login') }}",
       logout: "{{ url_for('participants.logout') }}",
+      qaStatus: "{{ url_for('submissions.checklist_qa_status', uuid='') }}",
       submit: "{{ url_for('submissions.submission') }}",
       versionCheck: "{{ url_for('pwa.version_check') }}",
     };
@@ -329,11 +413,13 @@
 
     // database setup
     const db = new Dexie('apollo');
-    db.version(1).stores({
+    db.version(5).stores({
       forms: 'id, participant_id',
       participants: 'participant_id, lastLogin',
-      submissions: '++id, form, participant_id, posted, [id+participant_id]'
+      serials: '[participant_id+form+serial], [participant_id+form], form, participant_id, serial',
+      submissions: '++id, form, participant_id, passedQA, posted, queued_at, uuid, [participant_id+id], [participant_id+form], [participant_id+form+id], [participant_id+queued_at], [participant_id+passedQA]'
     });
+
     db.open().catch(() => {
       Notiflix.Report.Failure(
         '{{ _("Error") }}',
@@ -366,16 +452,12 @@
       props: ['title'],
       template: '#completion-icon-partial'
     });
-    Vue.component('completion-icon-missing', {
-      props: ['title'],
-      template: '#completion-icon-missing'
-    });
 
     Vue.component('completion-icon', {
       computed: {
         currentComponent() {
           if (this.completion.filled === 0)
-            return 'completion-icon-missing';
+            return null;
           else if (this.completion.filled < this.completion.total)
             return 'completion-icon-partial';
           else
@@ -384,7 +466,7 @@
         title() {
           let status;
           if (this.completion.filled === 0)
-            status = '{{ _("Missing") }}';
+            status = null;
           else if (this.completion.filled < this.completion.total)
             status = '{{ _("Partial") }}';
           else
@@ -397,14 +479,76 @@
       template: '#completion-icon'
     });
 
-    // image field component
-    Vue.component('image-field', {
+    // group completion component
+    Vue.component('group-completion', {
       data() {
         return {};
       },
       methods: {
+        getCompletionClass() {
+          let appliedClasses = ['bg-secondary'];
+
+          let filled = this.completions[this.index].filled;
+          let total = this.completions[this.index].total;
+
+          if (filled === 0)
+            appliedClasses = ['bg-secondary'];
+          else if (filled < total)
+            appliedClasses = ['bg-warning', 'text-black'];
+          else
+            appliedClasses = ['bg-primary'];
+
+          return appliedClasses;
+        }
+      },
+      props: ['completions', 'group', 'index', 'submission'],
+      template: '#group-completion'
+    });
+
+    // checklist completion component
+    Vue.component('checklist-completion', {
+      data() {
+        return {};
+      },
+      props: ['completions', 'form', 'submission'],
+      template: '#checklist-completion'
+    });
+
+    Vue.component('submission-status', {
+      computed: {
+        isPending() {
+          if (isEmpty(this.submission))
+            return false;
+          if (this.submission.posted === null && this.submission.updated !== null)
+            return true;
+          else if (this.submission.updated.getTime() > this.submission.posted.getTime())
+            return true;
+          
+          return false;
+        },
+        showQAStatus() {
+          return this.form.form_type === 'CHECKLIST' && this.submission.posted && this.submission.passedQA === false;
+        }
+      },
+      data() {
+        return {};
+      },
+      props: ['form', 'submission'],
+      template: '#submission-status'
+    });
+
+    // image field component
+    Vue.component('image-field', {
+      data() {
+        return {
+          hasContent: false,
+          updated: false
+        };
+      },
+      methods: {
         processFile(event) {
           let instance = this;
+          instance.hasContent = true;
           let imageFile = event.target.files[0];
           imageResizer.toBlob(imageFile, {max: 320})
             .then(previewBlob => {
@@ -415,12 +559,18 @@
                 });
               });
         },
+        removeImage() {
+          this.hasContent = false;
+          this.$refs.viewer.src = '';
+          this.$emit('remove-image', this.field.tag);
+        }
       },
       mounted() {
         let instance = this;
-        let imageFile = instance.initialData;
+        let imageFile = instance.submission.images[instance.field.tag] || null;
         if (imageFile === null || imageFile === undefined)
           return;
+        instance.hasContent = true;
         imageResizer.toBlob(imageFile, {max: 320})
           .then(previewBlob => {
             convertBlobToBase64(previewBlob)
@@ -429,7 +579,7 @@
               });
           });
       },
-      props: ['disabled', 'field', 'initialData'],
+      props: ['disabled', 'field', 'submission'],
       template: '#image-field'
     });
 
@@ -477,14 +627,33 @@
       template: '#login-form'
     });
 
-    // user-info component
-    Vue.component('user-info', {
+    // participant-info component
+    Vue.component('participant-info', {
       computed: {
+        statusMessage() {
+          if (this.globalStatus === 0)
+            return '';
+          else if (this.globalStatus === 1)
+            return '{{ _("You have unsent changes.") }}';
+          else
+            return '{{ _("All data successfully sent.") }}';
+        },
+        statusClass() {
+          if (this.globalStatus === 0)
+            return [];
+          else if (this.globalStatus === 1)
+            return ['alert-warning'];
+          else
+            return ['alert-info'];
+        }
       },
       data() {
         return {};
       },
       methods: {
+        toggleLocationAccess(event) {
+          this.$emit('toggle-location-access', event.target.checked);
+        },
         greeting() {
           let dt = new Date();
           if (dt.getHours() < 12)
@@ -498,8 +667,8 @@
           this.$emit('logged-out');
         }
       },
-      props: ['forms', 'participant', 'pendingSubmissions'],
-      template: '#user-info'
+      props: ['forms', 'globalStatus', 'participant', 'pendingSubmissions'],
+      template: '#participant-info'
     });
 
     // form list component
@@ -516,24 +685,44 @@
         return {};
       },
       methods: {
-        formAction(form) {
-          if (form.form_type === 'CHECKLIST')
-            this.$emit('edit-submission', form, null);
-          else
-            this.$emit('show-submission-list', form);
+        shouldDisplayAccordion(form) {
+          return form.form_type !== 'CHECKLIST' && ((this.submissionCount[form.id] || 0) > 0);
+        },
+        editChecklist(form) {
+          this.$emit('edit-submission', form, null);
+        },
+        getBadgeClass(form) {
+          if (form.form_type !== 'CHECKLIST')
+            return ['bg-secondary'];
+
+          let submission = this.getSubmission(form);
+          let completion = computeCompletion(form, submission.data, submission.images);
+
+          let isComplete = ((completion.filled === completion.total) &&   // all questions responded to
+                            (submission.posted >= submission.updated) &&  // all data has been submitted
+                            submission.passedQA);                         // no QA issues
+
+          return isComplete ? ['bg-primary'] : ['bg-secondary'];
         },
         getCompletion(form, submission = undefined) {
           let sub = submission;
           if (form.form_type === 'CHECKLIST') {
-            sub = this.submissions.find(submission => submission.form === form.id);
-            if (sub === undefined)
-              sub = {data: {}, images: {}};
+            sub = this.getSubmission(form);
           } else {
             if (sub === null || sub === undefined)
               return [];
           }
 
-          return computeCompletion(form, sub, sub.images);
+          if (form.form_type === 'CHECKLIST')
+            return formCompletion(form, sub.data, sub.images);
+          return computeCompletion(form, sub.data, sub.images);
+        },
+        getSubmission(form) {
+          let sub = this.submissions.find(submission => submission.form === form.id);
+          if (sub === undefined)
+            sub = {data: {}, errorFields: new Set(), images: {}, posted: null};
+          
+          return sub;
         },
         newSubmission(form) {
           this.$emit('edit-submission', form, null);
@@ -541,28 +730,25 @@
         editSubmission(form, submission) {
           this.$emit('edit-submission', form, submission);
         },
+        isActionButtonDisabled(form) {
+          if (form.form_type !== 'SURVEY') return false;
+          return !(this.serialCounts[form.id] > this.submissionGroups[form.id].length);
+        },
         isLocked(submission) {
           if (submission.type === 'INCIDENT' && submission.posted)
             return true;
           return false;
         },
-        isPending(submission) {
-          if (!submission)
-            return false;
-          if (submission.posted === null)
-            return true;
-          else if (submission.posted < submission.updated)
-            return true;
-          
-          return false;
-        },
         formatLastUpdate(submission) {
-          if (!submission) return '';
+          if (isEmpty(submission)) return '';
           const prefix = "{{ _('Updated') }}"
           return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
         }
       },
-      props: ['forms', 'submissionGroups', 'submissions'],
+      mounted() {
+        this.$emit('reload-data');
+      },
+      props: ['forms', 'serialCounts', 'submissionGroups', 'submissions', 'syncingSubmission'],
       template: '#form-list'
     });
 
@@ -581,73 +767,166 @@
         },
         locked() {
           return (this.submission.posted !== null && this.form.form_type === 'INCIDENT');
+        },
+        actionText() {
+          if (this.locked)
+            return '{{ _("Close") }}';
+          else
+            return '{{ _("Save and close") }}';
+        },
+        disableSerialInput() {
+          return this.form.form_type === 'SURVEY' &&
+            this.submission.serial !== '' &&
+            this.submission.serial !== null &&
+            this.submission.serial !== undefined;
         }
       },
       data() {
         return {
+          autocomplete: null,
           canRetrieveLocation: 'geolocation' in navigator,
-          location: null,
+          data: copyFunc(this.submission.data),
           images: {},
+          initialData: copyFunc(this.submission),
           intervalHandle: null,
-          lastSave: new Date(0)
+          location: null
         };
       },
       methods: {
         clearForm() {
           this.$emit('clear-form');
         },
-        getCompletionClass(index) {
-          let completion = computeGroupCompletion(this.form, this.submission, this.images, index);
+        sortOptions(options) {
+          let opts = Object.entries(options).sort((optA, optB) => (optA[1] - optB[1])).map(pair => {
+            return {value: pair[1], label: pair[0]};
+          });
+          return opts;
+        },
+        validate(silent = false) {
+          let instance = this;
+          if (instance.form.form_type === 'SURVEY') {
+            // ensure serial field is filled out
+            if (!instance.submission.serial) {
+              if (!silent)
+                Notiflix.Report.Failure(
+                  '{{ _("Error") }}',
+                  '{{ _("Please fill out the serial") }}',
+                  '{{ _("OK") }}'
+                );
 
+              return false;
+            }
+          }
+
+          // check that numeric fields don't exceed their bounds
+          let errorFields = [];
+          instance.form.data.groups.forEach(group => {
+            group.fields.forEach(field => {
+              if (field.type !== 'integer')
+                return;
+
+              let fieldData = instance.data[field.tag];
+              if (instance.data[field.tag] !== undefined || instance.data[field.tag] !== null) {
+                if ((fieldData < field.min) || (fieldData > field.max))
+                  errorFields.push(field.tag);
+              }
+            });
+          });
+
+          if (errorFields.length > 0) {
+            let errorMessage = '{{ _("Please check what you entered into the following fields") }}: ' + errorFields.join();
+            Notiflix.Report.Failure(
+              '{{ _("Error") }}',
+              errorMessage,
+              '{{ _("OK") }}'
+            );
+
+            return false;
+          }
+
+          return true;
+        },
+        async search(serial) {
+          let submissions = await db.submissions.where({form: this.form.id, participant_id: this.participant_id}).filter(s => !!s.serial).toArray();
+          let usedSerials = new Set(submissions.map(s => s.serial));
+          let re = new RegExp(serial);
+          let entries = await db.serials.where({form: this.form.id, participant_id: this.participant_id}).toArray();
+          return entries.filter(entry => entry.serial.match(re) && !usedSerials.has(entry.serial)).slice(0, 10);
+        },
+        getResultValue(entry) {
+          return entry.serial;
+        },
+        getCompletionClass(index) {
+          let appliedClasses = [];
+
+          let completion = computeGroupCompletion(this.form, this.data, this.images, index);
           if (completion.filled === 0)
-            return {'bg-danger': true, 'bg-gradient': true};
+            appliedClasses = ['bg-gradient', 'bg-secondary'];
           else if (completion.filled < completion.total)
-            return {'bg-warning': true, 'bg-gradient': true};
+            appliedClasses = ['bg-gradient', 'bg-warning'];
           else
-            return {'bg-primary': true, 'bg-gradient': true};
+            appliedClasses = ['bg-gradient', 'bg-primary'];
+
+          return appliedClasses;
+        },
+        getSectionInitialClass(index) {
+          let completion = computeGroupCompletion(this.form, this.initialData.data, this.initialData.images, index);
+
+          if (completion.filled === completion.total)
+            return ['collapse'];
+          else
+            return ['collapse', 'show'];
+        },
+        markUpdated() {
+          let timestamp = new Date();
+          this.submission.updated = timestamp;
+        },
+        removeImage(tag) {
+          let instance = this;
+          delete instance.images[tag];
+          instance.markUpdated();
         },
         updateImage(imageData, field) {
           let instance = this;
           instance.images[field.tag] = imageData;
+          instance.markUpdated();
         },
         async updateSubmission(callback, silent) {
           let instance = this;
 
+          // clear out keys that have empty string values
+          Object.keys(instance.data).forEach(k => instance.data[k] === '' && delete instance.data[k]);
+          instance.submission.data = instance.data;
+
           if (instance.images !== {})
             instance.submission.images = instance.images;
 
-          if ('geolocation' in navigator) {
+          if (instance.canRetrieveLocation && instance.isLocationAccessAllowed) {
             // geolocation is supported
-            let permission = await navigator.permissions.query({name: 'geolocation'});
-            if (permission.state === 'denied') {
-              callback();
-            }
-            else {
-              navigator.geolocation.getCurrentPosition(
-                // success callback
-                position => {
-                  let location = [position.coords.longitude, position.coords.latitude];
-                  instance.submission.data.location = location;
-                  instance.location = location;
+            navigator.geolocation.getCurrentPosition(
+              // success callback
+              position => {
+                let location = [position.coords.longitude, position.coords.latitude];
+                instance.submission.data.location = location;
+                instance.location = location;
 
-                  callback();
-                },
+                callback();
+              },
 
-                // error callback
-                () => {
-                  if (!silent)
-                    Notiflix.Notify.Failure('{{ _("There was an error retreiving your location") }}', 2000);
-                  callback();
-                },
+              // error callback
+              () => {
+                if (instance.isLocationAccessAllowed && !silent)
+                  Notiflix.Notify.Warning('{{ _("Could not retrieve your location") }}', 2000);
+                callback();
+              },
 
-                // options
-                {
-                  enableHighAccuracy: true,
-                  timeout: 60000,
-                  maximumAge: 0
-                }
-              );
-            }
+              // options
+              {
+                enableHighAccuracy: true,
+                timeout: 60000,
+                maximumAge: 0
+              }
+            );
           } else {
             // geolocation isn't supported. just call the callback
             callback();
@@ -655,19 +934,47 @@
         },
         saveSubmission(reset = false, silent = false) {
           let instance = this;
+          if (!instance.validate(silent)) {
+            if (silent) {
+              Notiflix.Notify.Warning('{{ _("Data was not saved") }}');
+            }
+            return;
+          }
+
           this.updateSubmission(() => {
-            instance.lastSave = new Date();
             instance.$emit('save-submission', instance.submission, reset);
           }, silent);
         },
         stopEditing() {
-          this.saveSubmission(true);
+          if (this.locked)
+            this.clearForm();
+          else
+            this.saveSubmission(true);
         },
         postSubmission() {
           let instance = this;
+          if (!instance.validate())
+            return;
+
           this.updateSubmission(() => {
             instance.$emit('post-submission', instance.submission);
           });
+        },
+        clearData(group) {
+          let instance = this;
+
+          Notiflix.Confirm.Show(
+            '{{ _("Warning") }}',
+            '{{ _("This will clear all filled out data for this section, except images. Continue?") }}',
+            '{{ _("Yes, clear it") }}',
+            '{{ _("No") }}',
+            () => {
+              let fields = group.fields.filter(f => f.type !== 'image');
+              let newData = copyFunc(instance.data);
+              fields.forEach(f => delete newData[f.tag]);
+              instance.data = newData;
+            }
+          );
         }
       },
       mounted() {
@@ -675,14 +982,25 @@
         instance.images = instance.submission.images;
         instance.location = instance.submission.data.location;
 
+        if (instance.form.form_type === 'SURVEY') {
+          instance.autocomplete = new Autocomplete(instance.$refs.autocomplete, {
+            debounceTime: 500,
+            search: instance.search,
+            getResultValue: instance.getResultValue,
+            onSubmit: result => { instance.submission.serial = result.serial; }
+          });
+        }
+
         // save every minute
         if (!instance.locked)
           instance.intervalHandle = setInterval(() => {
             instance.saveSubmission(false, true);
-            Notiflix.Notify.Success('{{ _("Data saved") }}')
+            if (instance.validate(true)) {
+              Notiflix.Notify.Success('{{ _("Data saved") }}');
+            }
           }, 60 * 1000);
       },
-      props: ['form', 'navigatorOnline', 'submission'],
+      props: ['isLocationAccessAllowed', 'form', 'navigatorOnline', 'participant_id', 'submission', 'syncingSubmission'],
       template: '#submission-editor',
     });
 
@@ -696,6 +1014,8 @@
           clearInterval(this.submissionSyncIntervalHandle);
         if (this.commitCheckIntervalHandle)
           clearInterval(this.commitCheckIntervalHandle);
+        if (this.checkQAStatusIntervalHandle)
+          clearInterval(this.checkQAStatusIntervalHandle);
       },
       computed: {
         pendingSubmissions() {
@@ -704,7 +1024,7 @@
             if (submission.posted === null)
               return true;
             
-            if (submission.updated > submission.posted)
+            if (submission.updated.getTime() > submission.posted.getTime())
               return true;
             
             return false;
@@ -722,6 +1042,7 @@
         }
       },
       data: {
+        checkQAStatusIntervalHandle: null,
         commit: '{{ commit }}',
         commitCheckIntervalHandle: null,
         currentForm: null,
@@ -730,15 +1051,25 @@
         formSyncIntervalHandle: null,
         navigatorOnline: navigator.onLine,
         participant: null,
+        serialCounts: null,
         submissions: [],
         submissionSyncIntervalHandle: null,
-        updateNotificationCleared: true
+        syncingSubmission: null,
+        updateNotificationCleared: true,
+        syncRunning: false
       },
       el: '#app',
       methods: {
+        locationAccessToggled(isAllowed) {
+          let instance = this;
+          instance.participant.allowLocationAccess = isAllowed;
+
+          instance.saveParticipantToDatabase(instance.participant);
+        },
         clearCurrentForm() {
           this.currentForm = null;
           this.currentSubmission = null;
+          this.reloadStoredData();
         },
         async refreshForms(quiet = true) {
           let instance = this;
@@ -748,17 +1079,18 @@
 
           let result;
           try {
-            result = await client.getForms(instance.participant.events);
+            result = await client.getForms();
             if (result.status === 200) {
               result.result.then(data => {
-                instance.formsLoaded(data.objects);
+                instance.formsLoaded(data.data.forms);
+                instance.serialsLoaded(data.data.serials);
               });
             } else {
               instance.$emit('unauthorized');
             }
           } catch (error) {
             if (!quiet)
-              Notiflix.Report.Failure(
+              Notiflix.Report.Warning(
                 '{{ _("Error") }}',
                 '{{ _("Could not load forms. Might you be offline?") }}',
                 '{{ _("OK") }}',
@@ -770,6 +1102,7 @@
           fetch(endpoints.versionCheck)
             .then(response => response.json())
             .then(payload => {
+              instance.navigatorOnline = true;
               const serverCommit = payload.commit;
               if (serverCommit !== instance.commit) {
                 if (!instance.updateNotificationCleared) {
@@ -780,10 +1113,13 @@
                 instance.updateNotificationCleared = false;
                 promptToUpdate();
               }
-            }).catch(() => {});
+            }).catch(() => {
+              instance.navigatorOnline = false;
+            });
         },
         authenticationSuccess(participant) {
           this.participant = participant;
+          this.participant.allowLocationAccess = this.allowLocationAccess;
           this.saveParticipantToDatabase(participant);
           this.refreshForms(false);
           this.loadSubmissionsFromDatabase();
@@ -794,20 +1130,50 @@
           this.forms = formsWithParticipantIds;
           this.saveFormstoDatabase(this.forms);
         },
+        serialsLoaded(serials) {
+          let serialsWithParticipantIds = serials.map(serial => Object.assign({participant_id: this.participant.participant_id}, serial));
+          this.saveSerialsToDatabase(serialsWithParticipantIds);
+          this.serialCounts = serials.reduce((acc, serial) => {
+            let form = serial.form;
+            acc[form] = (acc[form] || 0) + 1;
+
+            return acc;
+          }, {});
+        },
         saveFormstoDatabase(forms) {
-          db.transaction('rw', db.forms, () => {
-            db.forms.bulkPut(forms);
+          let instance = this;
+          let unusedFormIds;
+          db.transaction('rw', db.forms, db.submissions, () => {
+            let formIds = new Set(forms.map(form => form.id));
+            instance._loadCollectionFromDatabase(db.forms, dbForms => {
+              unusedFormIds = dbForms.filter(form => !formIds.has(form.id)).map(form => form.id);
+              
+              db.forms.bulkPut(forms);
+              db.forms.bulkDelete(unusedFormIds);
+
+              instance._loadCollectionFromDatabase(db.submissions, subs => {
+                let subIdsToDelete = subs.filter(s => unusedFormIds.includes(s.form)).map(s => s.id);
+
+                db.submissions.bulkDelete(subIdsToDelete);
+              });
+            });
           }).catch(() => Notiflix.Report.Failure(
             '{{ _("Error") }}',
             '{{ _("Could not save data to the database") }}',
             '{{ _("OK") }}',
           ));
         },
+        saveSerialsToDatabase(serials) {
+          db.transaction('rw', db.serials, () => {
+            db.serials.bulkPut(serials);
+          });
+        },
         clearDatabase() {
-          db.transaction('rw', [db.forms, db.participants, db.submissions], () => {
+          db.transaction('rw', [db.forms, db.participants, db.submissions, db.serials], () => {
             db.forms.clear();
             db.participants.clear();
             db.submissions.clear();
+            db.serials.clear();
           });
         },
         loadParticipantFromDatabase(callback) {
@@ -827,6 +1193,16 @@
                 '{{ _("OK") }}',
               )
             );
+        },
+        loadSerialCountsFromDatabase() {
+          this._loadCollectionFromDatabase(db.serials, serials => {
+            this.serialCounts = serials.reduce((acc, serial) => {
+              let form = serial.form;
+              acc[form] = (acc[form] || 0) + 1;
+
+              return acc;
+            }, {});
+          });
         },
         saveParticipantToDatabase(participant) {
           db.transaction('rw', db.participants, () => {
@@ -855,14 +1231,18 @@
 
           let submission = {
             created: new Date(),
-            errorMessage: null,
+            errorFields: new Set(),
             form: form.id,
             images: {},
+            passedQA: true,
             posted: null,
+            postedFields: null,
             status: 'ok',
             type: form.form_type,
             updated: null,
-            participant_id: instance.participant.participant_id
+            participant_id: instance.participant.participant_id,
+            queued_at: null,
+            uuid: null
           };
           submission.data = form.data.groups.reduce((acc, group) => {
             group.fields.forEach(field => {
@@ -872,7 +1252,6 @@
             return acc;
           }, {});
 
-          instance.submissions.push(submission);
           return submission;
         },
         editSubmission(form, sub) {
@@ -887,30 +1266,6 @@
         },
         async saveSubmissionToDatabase(submission, reset) {
           let instance = this;
-          let shouldUpdate = false;
-
-          if (submission.id !== undefined) {
-            try {
-              let savedSubmission = await db.submissions.get({id: submission.id, participant_id: instance.participant.participant_id});
-              if (savedSubmission !== undefined) {
-                let diffs = diff(submission, savedSubmission);
-                if (diffs !== {})
-                  shouldUpdate = true;
-              } else {
-                // at this point, we might be invoking a disaster
-                console.error('Fatal');
-                return;
-              }
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-          } else {
-            shouldUpdate = true;
-          }
-
-          if (shouldUpdate)
-            submission.updated = new Date();
 
           db.transaction('rw', db.submissions, () => {
             db.submissions.put(submission);
@@ -942,8 +1297,22 @@
           });
         },
         async postSubmission(submission, single = true) {
-          if (!this.navigatorOnline)
+          let instance = this;
+          if (!instance.navigatorOnline) {
+            if (single)
+              Notiflix.Report.Warning(
+                '{{ _("Error") }}',
+                '{{ _("You are currently offline. Your data will be automatically posted when you are online again.") }}',
+                '{{ _("OK") }}'
+              );
+
+            submission.queued_at = new Date();
+            instance.saveSubmissionToDatabase(submission, single);
             return;
+          }
+
+          instance.syncingSubmission = submission.id;
+
           let formData = new FormData();
           for (let key of Object.keys(submission.images || {})) {
             formData.append(key, submission.images[key], submission.images[key].name);
@@ -953,26 +1322,34 @@
 
           try {
             let result = await client.submit(formData, Cookie.get('csrf_access_token'));
+            let data = await result.result;
             if (result.status === 401) {
-              if (single) {
-                Notiflix.Report.Warning(
-                  '{{ _("Session expired") }}',
-                  '{{ _("Please login again to send your data") }}',
-                  '{{ _("OK") }}',
-                );
-                this.participant = null;
-              }
+              Notiflix.Report.Warning(
+                '{{ _("Session expired") }}',
+                '{{ _("Please login again to send your data") }}',
+                '{{ _("OK") }}',
+              );
+              instance.participant = null;
             } else if (result.status !== 200) {
-              let data = await result.result;
               if (single)
                 Notiflix.Report.Failure(
                   '{{ _("Error") }}',
                   data.message,
                   '{{ _("OK") }}',
                 );
+              submission.posted = submission.updated = new Date();
+              submission.errorFields = new Set(data.errorFields);
+              submission.queued_at = null;
+              instance.saveSubmissionToDatabase(submission, single);
             } else {
               submission.posted = new Date();
-              this.saveSubmissionToDatabase(submission, single);
+              submission.passedQA = data.passedQA;
+              submission.postedFields = data.postedFields;
+              submission.queued_at = null;
+              submission.uuid = data._id;
+              if (submission.errorFields.size > 0)
+                submission.errorFields = new Set();
+              instance.saveSubmissionToDatabase(submission, single);
               if (single)
                 Notiflix.Report.Success(
                   '{{ _("Success") }}',
@@ -981,13 +1358,17 @@
                 );
             }
           } catch (error) {
+            submission.queued_at = new Date();
+            instance.saveSubmissionToDatabase(submission);
             if (single)
-              Notiflix.Report.Failure(
+              Notiflix.Report.Warning(
                 '{{ _("Error") }}',
-                '{{ _("Error posting data. Might you be offline?") }}',
+                '{{ _("You are currently offline. Your data will be automatically posted when you are online again.") }}',
                 '{{ _("OK") }}',
               );
           }
+
+          instance.syncingSubmission = null;
         },
         showSubmissionList(form) {
           if (form.form_type !== 'CHECKLIST')
@@ -996,38 +1377,91 @@
         submissionsSubset(form) {
           return this.submissions.filter(submission => submission.form === form.id);
         },
+        updateQAStatuses() {
+          let instance = this;
+          instance.submissions.filter(submission => {
+            if (submission.id === instance.syncingSubmission)
+              return false;
+
+            if (instance.currentSubmission === submission)
+              return false;
+            
+            return !submission.passedQA;
+          })
+          .forEach(submission => {
+            client.checkQAStatus(submission.uuid).then(result => {
+              if (result.ok) {
+                result.result.then(data => {
+                  submission.passedQA = data.passedQA;
+                  instance.saveSubmissionToDatabase(submission);
+                });
+              }
+            });
+          });
+        },
         syncSubmissions() {
           let instance = this;
           if (instance.participant === null || instance.participant === undefined || !instance.navigatorOnline)
             return;
-          instance.submissions
-            .filter(submission => submission.type !== 'INCIDENT' && (submission.posted === null || submission.updated > submission.posted) && submission !== instance.currentSubmission)
-            .forEach(submission => instance.postSubmission(submission, false));
+
+            instance.submissions
+              .filter(sub => sub.queued_at !== null)
+              .forEach(submission => {
+                // don't send the one currently being edited
+                if (instance.currentSubmission && (instance.currentSubmission.id === submission.id))
+                  return;
+
+                instance.syncingSubmission = submission.id;
+                instance.postSubmission(submission, false);
+              });
+            instance.syncingSubmission = null;
+        },
+        reloadStoredData() {
+          this.loadFormsFromDatabase();
+          this.loadSubmissionsFromDatabase();
+          this.loadSerialCountsFromDatabase();
+        },
+        globalStatus() {
+          if (this.submissions.length === 0)
+            return 0;
+          
+          let unchangedSubmissions = this.submissions.filter(sub => sub.updated === null);
+          if (unchangedSubmissions.length === this.submissions.length)
+            return 0;
+
+          if (this.pendingSubmissions > 0)
+            return 1;
+
+          return 2;
         }
       },
       mounted() {
-        this.loadParticipantFromDatabase(() => {
-          if (this.participant !== null) {
-            this.loadFormsFromDatabase();
-            this.loadSubmissionsFromDatabase();
+        let instance = this;
+        instance.loadParticipantFromDatabase(() => {
+          if (instance.participant !== null) {
+            instance.participant.allowLocationAccess = instance.participant.allowLocationAccess || false;
+            instance.reloadStoredData();
           }
         });
 
         let onlineHook = () => {
-          this.navigatorOnline = navigator.onLine;
+          instance.navigatorOnline = navigator.onLine;
         };
         window.addEventListener('offline', onlineHook);
         window.addEventListener('online', onlineHook);
 
         // set up form refresh and submission sync timers
-        // forms, every fifteen minutes
-        this.formSyncIntervalHandle = setInterval(this.refreshForms, 15 * 60 * 1000);
+        // forms, every quarter hour
+        instance.formSyncIntervalHandle = setInterval(instance.refreshForms, 15 * 60 * 1000);
 
-        // submissions, every fifteen minutes
-        this.submissionSyncIntervalHandle = setInterval(this.syncSubmissions, 15 * 60 * 1000);
+        // submissions, every minute
+        instance.submissionSyncIntervalHandle = setInterval(instance.syncSubmissions, 60 * 1000);
 
         // version checks, every two hours
-        this.commitCheckIntervalHandle = setInterval(this.commitCheck, 2 * 60 * 60 * 1000);
+        instance.commitCheckIntervalHandle = setInterval(instance.commitCheck, 2 * 60 * 60 * 1000);
+
+        // QA status checks, every five minutes
+        instance.checkQAStatusIntervalHandle = setInterval(instance.updateQAStatuses, 5 * 60 * 1000);
       }
     });
   </script>

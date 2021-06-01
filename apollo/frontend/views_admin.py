@@ -4,6 +4,8 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import magic
+import pytz
+from PIL import Image
 from flask import flash, g, send_file, redirect, request, session
 from flask_admin import (
     form, BaseView, expose)
@@ -19,7 +21,6 @@ from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
 from flask_wtf.file import FileField
 from jinja2 import contextfunction
-import pytz
 from slugify import slugify
 from wtforms import (
     BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
@@ -48,6 +49,22 @@ utc_time_zone = pytz.utc
 excluded_perm_actions = ['view_forms', 'access_event']
 
 DATETIME_FORMAT_SPEC = '%Y-%m-%d %H:%M:%S %Z'
+
+
+def resize_logo(pil_image: Image):
+    background_color = (255, 255, 255, 0)
+
+    width, height = pil_image.size
+    if width == height:
+        return pil_image
+    elif width > height:
+        result = Image.new('RGBA', (width, width), background_color)
+        result.paste(pil_image, (0, (width - height) // 2))
+        return result
+    else:
+        result = Image.new('RBBA', (height, height), background_color)
+        result.paste(pil_image, ((height - width) // 2, 0))
+        return result
 
 
 class MultipleSelect2Field(fields.Select2Field):
@@ -229,11 +246,6 @@ class DeploymentAdminView(BaseAdminView):
         else:
             mimetype = magic.from_buffer(logo_bytes, mime=True)
             if not mimetype.startswith('image'):
-                return
-
-            if 'svg' in mimetype:
-                model.brand_image = logo_file
-                model.brand_image_is_svg = True
                 return
 
             logo_image = Image.open(BytesIO(logo_bytes))

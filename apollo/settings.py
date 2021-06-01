@@ -41,6 +41,8 @@ UPSTREAM_PROXY_COUNT = config('UPSTREAM_PROXY_COUNT', cast=int, default=1)
 
 SENTRY_DSN = config('SENTRY_DSN', default=None)
 SENTRY_USER_ATTRS = ['email']
+TRACK_PWA_ERRORS = config(
+    'TRACK_PWA_ERRORS', cast=config.boolean, default=False)
 
 MAIL_SERVER = config('MAIL_SERVER', default=None)
 MAIL_PORT = config('MAIL_PORT', default=None)
@@ -246,11 +248,8 @@ JWT_TOKEN_LOCATION = config(
     'JWT_TOKEN_LOCATION', cast=config.tuple, default='cookies')
 JWT_SECRET_KEY = config('JWT_SECRET_KEY', default=SECRET_KEY)
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(
-    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int, default=3600)
-)
-JWT_REFRESH_TOKEN_EXPIRES = timedelta(
-    seconds=config(
-        "JWT_REFRESH_TOKEN_LIFETIME_SECONDS", cast=int, default=86400)
+    seconds=config("JWT_ACCESS_TOKEN_LIFETIME_SECONDS", cast=int,
+                   default=(60 * 60 * 24 * 3))
 )
 JWT_ERROR_MESSAGE_KEY = 'message'
 JWT_COOKIE_SECURE = SESSION_COOKIE_SECURE

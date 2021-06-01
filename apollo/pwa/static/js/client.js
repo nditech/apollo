@@ -3,15 +3,15 @@ class APIClient {
     this.endpoints = endpoints;
   }
 
-  _getResult = (response) => {
-    let status = response.status;
+  _getResult = function (response) {
     return {
-      status: status,
+      ok: response.ok,
+      status: response.status,
       result: response.json()
     };
   };
 
-  authenticate = (participant_id, password) => {
+  authenticate = function (participant_id, password) {
     return fetch(this.endpoints.login, {
       body: JSON.stringify({
         participant_id: participant_id,
@@ -24,7 +24,7 @@ class APIClient {
       }).then(this._getResult);
   };
 
-  submit = (formData, csrf_token) => {
+  submit = function (formData, csrf_token) {
     return fetch(this.endpoints.submit, {
       body: formData,
       credentials: 'same-origin',
@@ -35,9 +35,8 @@ class APIClient {
     }).then(this._getResult);
   };
 
-  getForms = (events) => {
-    const endpoint = (events === [] || events === undefined || events === null) ? this.endpoints.list : `${this.endpoints.list}?events=${events.join(',')}`;
-    return fetch(endpoint, {
+  getForms = function () {
+    return fetch(this.endpoints.list, {
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
@@ -45,7 +44,14 @@ class APIClient {
     }).then(this._getResult);
   };
 
-  logout = (csrf_token) => {
+  checkQAStatus = function (submissionUUID) {
+    let endpoint = `${this.endpoints.qaStatus}${submissionUUID}`;
+    return fetch(endpoint, {
+      credentials: 'same-origin'
+    }).then(this._getResult);
+  }
+
+  logout = function (csrf_token) {
     return fetch(this.endpoints.logout, {
       credentials: 'same-origin',
       headers: {
