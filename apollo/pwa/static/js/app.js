@@ -2,8 +2,6 @@ window.isUpdateAvailable = new Promise((resolve, reject) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/pwa/serviceworker.js', {scope: '/pwa/'})
       .then(registration => {
-        console.log('service worker registered successfully with scope:', registration.scope);
-
         registration.onupdatefound = () => {
           const installingWorker = registration.installing;
           installingWorker.onstatechange = () => {
