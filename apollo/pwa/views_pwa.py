@@ -28,7 +28,7 @@ def index():
     else:
         commit = 'unknown'
 
-    trace_errors = settings.TRACK_PWA_ERRORS
+    trace_errors = settings.DEBUG
     sentry_dsn = settings.SENTRY_DSN or ''
 
     context = {'commit': commit, 'trace_errors': trace_errors}
