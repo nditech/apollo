@@ -13,7 +13,8 @@ from slugify import slugify
 
 from apollo import core, models
 from apollo.core import uploads
-from apollo.formsframework.forms import FormForm, FormImportForm
+from apollo.formsframework.forms import (
+    FormForm, FormImportForm, FormDeleteForm)
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
@@ -21,6 +22,7 @@ from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
 from apollo.submissions.qa.query_builder import GRAMMAR
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
+from apollo.tasks import delete_form as delete_form_task
 from apollo.users.models import UserUpload
 from apollo.utils import generate_identifier, strip_bom_header
 
@@ -194,6 +196,7 @@ def forms_list(view):
 
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
+    form_delete_form = FormDeleteForm()
 
     context = {
         'forms': models.Form.query.order_by('name').all(),
@@ -207,6 +210,7 @@ def forms_list(view):
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
+        'form_delete_form': form_delete_form,
     }
 
     return view.render(template_name, **context)
@@ -428,5 +432,13 @@ def import_form_schema():
             deployment_id=g.event.deployment_id).all()
         form.roles = roles
         form.save()
+
+    return redirect(url_for('formsview.index'))
+
+
+def delete_form():
+    form_delete_form = FormDeleteForm()
+    if form_delete_form.validate_on_submit():
+        delete_form_task.delay(form_id=form_delete_form.data['form_id'])
 
     return redirect(url_for('formsview.index'))

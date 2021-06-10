@@ -392,3 +392,15 @@ class FormForm(SecureForm):
 
 class FormImportForm(SecureForm):
     import_file = FileField(_('Import file'))
+
+
+class FormDeleteForm(SecureForm):
+    form_id = wtforms.StringField(
+        _('Form ID'), validators=[wtforms.validators.InputRequired()],
+        widget=wtforms.widgets.HiddenInput())
+
+    def validate_form_id(form, field):
+        query = Form.query.filter_by(id=field.data)
+        if not db.session.query(query.exists()).scalar():
+            raise wtforms.ValidationError(
+                _('Form with specified ID does not exist'))

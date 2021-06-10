@@ -39,8 +39,7 @@ from apollo.participants.views_participants import (
 from apollo.formsframework.views_forms import (
     forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
     quality_controls, quality_control_delete, quality_control_edit,
-    import_form_schema, survey_init)
-from apollo.utils import Image, resize_image
+    import_form_schema, survey_init, delete_form)
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -706,6 +705,10 @@ class FormsView(BaseView):
     @expose('/qa/<int:form_id>/new', methods=['GET', 'POST'])
     def quality_control_add(self, form_id):
         return quality_control_edit(self, form_id)
+
+    @expose('/delete', methods=['POST'])
+    def delete_form(self):
+        return delete_form()
 
 
 class TaskView(BaseView):
