@@ -73,7 +73,9 @@ def make_submission_dataframe(query, form, selected_tags=None,
         for tag in form.tags
         if form.get_field_by_tag(tag)['type'] == 'integer'}
 
-    dataframe_query = query.join(
+    dataframe_query = query.filter(
+        Submission.location_id == own_loc.id
+    ).join(
         sub_query,
         Submission.id == sub_query.c.submission_id
     ).group_by(
