@@ -8,6 +8,7 @@ from slugify import slugify
 from xlwt import Workbook
 
 from apollo.formsframework.models import Form
+from apollo.submissions.qa.query_builder import build_expression
 from apollo.utils import generate_identifier
 
 gt_constraint_regex = re.compile(r'(?:.*\.\s*\>={0,1}\s*)(\d+)')
@@ -182,6 +183,10 @@ def _process_qa_worksheet(qa_data):
         if 'name' in qa_dict:
             if current_name != qa_dict['name']:
                 if current_check is not None:
+                    if 'expression' not in current_check:
+                        current_check.update(
+                            expression=build_expression(current_check))
+                        current_check.pop('criteria', None)
                     quality_checks.append(current_check)
                 current_name = qa_dict['name']
                 current_check = {
@@ -210,9 +215,15 @@ def _process_qa_worksheet(qa_data):
                     'comparator': qa_dict['relation'],
                     'rvalue': qa_dict['right']
                 }
+                qa_check.update(expression=build_expression(qa_check))
+                qa_check.pop('comparator')
+                qa_check.pop('lvalue')
+                qa_check.pop('rvalue')
                 quality_checks.append(qa_check)
 
     if current_check is not None:
+        current_check.update(expression=build_expression(current_check))
+        current_check.pop('criteria', None)
         quality_checks.append(current_check)
 
     return quality_checks
@@ -280,8 +291,7 @@ def export_form(form):
                        'accredited_voters_tag', 'invalid_votes_tag',
                        'registered_voters_tag', 'blank_votes_tag',
                        'quality_checks_enabled', 'vote_shares']
-    qa_header = ['name', 'description', 'left', 'relation', 'right',
-                 'conjunction']
+    qa_header = ['name', 'description', 'expression']
 
     # output headers
     for col, value in enumerate(survey_header):
@@ -415,22 +425,10 @@ def export_form(form):
     if quality_checks and qa_sheet:
         row = 1
         for check in quality_checks:
-            if 'criteria' in check:
-                for term in check['criteria']:
-                    qa_sheet.write(row, 0, check['name'])
-                    qa_sheet.write(row, 1, check['description'])
-                    qa_sheet.write(row, 2, term['lvalue'])
-                    qa_sheet.write(row, 3, term['comparator'])
-                    qa_sheet.write(row, 4, term['rvalue'])
-                    qa_sheet.write(row, 5, term['conjunction'])
-                    row += 1
-            else:
+            if 'expression' in check:
                 qa_sheet.write(row, 0, check['name'])
                 qa_sheet.write(row, 1, check['description'])
-                qa_sheet.write(row, 2, check['lvalue'])
-                qa_sheet.write(row, 3, check['comparator'])
-                qa_sheet.write(row, 4, check['rvalue'])
-                qa_sheet.write(row, 5, '&&')
+                qa_sheet.write(row, 2, check['expression'])
                 row += 1
 
     return book
