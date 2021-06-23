@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from pandas.io.json import json_normalize
 from sqlalchemy import String, cast, func
-from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
+from sqlalchemy.dialects.postgresql import array_agg
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
@@ -57,7 +57,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
     columns.append(own_loc.registered_voters.label(
         'registered_voters'))
     columns.append(
-        func.json_object(
+        func.jsonb_object(
             array_agg(sub_query.c.ancestor_type),
             array_agg(sub_query.c.ancestor_name),
         ).label('location_data')
@@ -88,9 +88,14 @@ def make_submission_dataframe(query, form, selected_tags=None,
         dataframe_query.session.bind
     ).astype(type_coercions)
 
+    loc_data_df = json_normalize(
+        df['location_data']
+    ).replace('(^"|"$)', '', regex=True)
+    loc_data_df.columns = loc_data_df.columns.str.strip('"')
+
     df_summary = pd.concat([
         df.drop('location_data', axis=1),
-        json_normalize(df['location_data'])
+        loc_data_df
     ], axis=1, join_axes=[df.index])
 
     return df_summary
