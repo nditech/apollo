@@ -57,7 +57,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
     columns.append(own_loc.registered_voters.label(
         'registered_voters'))
     columns.append(
-        func.json_object(
+        func.jsonb_object(
             array_agg(sub_query.c.ancestor_type),
             array_agg(sub_query.c.ancestor_name),
         ).label('location_data')
