@@ -15,15 +15,18 @@ from apollo import helpers, services
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.messaging.tasks import send_email
-from apollo.participants.models import (
-    Participant, PhoneContact, Sample)
+from apollo.participants.models import Participant, Sample
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
 celery = create_celery_app()
 logger = logging.getLogger(__name__)
 
 email_template = '''
-Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
+Of {{ count }} records:
+- {{ successful_imports }} were successfully imported,
+- {{ suspect_imports }} raised warnings,
+- and {{ unsuccessful_imports }} could not be imported.
+
 {% if errors %}
 The following records could not be imported:
 -------------------------
@@ -362,8 +365,7 @@ def update_participants(dataframe, header_map, participant_set, task):
             # If this is an update for the participant, we should clear
             # the current list of phone numbers and then recreate them
             if participant.id:
-                PhoneContact.query.filter_by(
-                    participant_id=participant.id).delete()
+                participant.phone_contacts = []
                 db.session.commit()
 
             # check if the phone number is on record

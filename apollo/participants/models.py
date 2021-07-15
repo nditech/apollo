@@ -275,8 +275,10 @@ class Participant(BaseModel):
     partner = db.relationship('ParticipantPartner', backref='participants')
     phone_contacts = db.relationship(
         'PhoneContact',
-        backref=db.backref('participants', cascade='all, delete'),
-        lazy='joined')
+        back_populates='participant',
+        cascade='all, delete, delete-orphan',
+        lazy='joined',
+        single_parent=True)
     supervisor = db.relationship('Participant', remote_side=id)
     samples = db.relationship(
         "Sample",
@@ -390,7 +392,7 @@ class PhoneContact(BaseModel):
         onupdate=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=False)
 
-    participant = db.relationship('Participant')
+    participant = db.relationship('Participant', back_populates='phone_contacts')
 
     def touch(self):
         self.updated = utils.current_timestamp()
