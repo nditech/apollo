@@ -2,6 +2,7 @@
 import codecs
 from datetime import datetime
 from functools import partial
+from uuid import uuid4
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
@@ -197,7 +198,7 @@ def submission_list(form_id):
 
             # only change the submission type if we are aggregating data
             # and are not tracking conflicts
-            if mode == 'aggregated' and form.untrack_data_conflicts == True:
+            if mode == 'aggregated' and form.untrack_data_conflicts == True:    # noqa
                 submission_type = 'O'
 
             queryset = query.filter(
@@ -739,11 +740,41 @@ def submission_edit(submission_id):
                 data = submission.data.copy()
                 update_params = {}
                 changed = False
+                attachments = []
+                deleted_attachments = []
 
                 for form_field in data_fields:
                     field_value = submission_form.data.get(form_field)
 
-                    if submission.data.get(form_field) != field_value:
+                    questionnaire_field = \
+                        questionnaire_form.get_field_by_tag(form_field)
+
+                    if questionnaire_field['type'] == 'image':
+                        web_form_field = getattr(submission_form, form_field)
+                        file_wrapper = request.files.get(web_form_field.name)
+                        identifier = uuid4()
+                        original_field_data = submission.data.get(form_field)
+                        if file_wrapper is None:
+                            continue
+
+                        if file_wrapper.mimetype.startswith('image/'):
+                            if original_field_data is not None:
+                                changed = True
+                                original_attachment = models.SubmissionImageAttachment.query.filter_by( # noqa
+                                    uuid=original_field_data
+                                ).first()
+
+                                if original_attachment:
+                                    deleted_attachments.append(
+                                        original_attachment)
+
+                            if file_wrapper.filename != '':
+                                data[form_field] = identifier.hex
+                                attachments.append(models.SubmissionImageAttachment(    # noqa
+                                    photo=file_wrapper, submission=submission,
+                                    uuid=identifier
+                                ))
+                    elif submission.data.get(form_field) != field_value:
                         if field_value is None:
                             data.pop(form_field, None)
                         else:
@@ -776,6 +807,11 @@ def submission_edit(submission_id):
                 update_params['data'] = data
 
                 if changed:
+                    db.session.add_all(attachments)
+
+                    for attachment in deleted_attachments:
+                        db.session.delete(attachment)
+
                     services.submissions.find(id=submission_id).update(
                         update_params, synchronize_session=False)
                     db.session.commit()
@@ -948,6 +984,8 @@ def submission_edit(submission_id):
                     form_fields = set(
                         submission_form.data.keys()).intersection(
                             questionnaire_form.tags)
+                    attachments = []
+                    deleted_attachments = []
 
                     new_verification_status = submission_form.data.get(
                         'verification_status')
@@ -993,6 +1031,43 @@ def submission_edit(submission_id):
                     changed_fields = []
 
                     for form_field in form_fields:
+                        questionnaire_field = \
+                            questionnaire_form.get_field_by_tag(form_field)
+
+                        # process attachments
+                        if questionnaire_field['type'] == 'image':
+                            web_form_field = getattr(submission_form, form_field)   # noqa
+                            file_wrapper = request.files.get(web_form_field.name)   # noqa
+                            identifier = uuid4()
+                            original_field_data = submission.data.get(
+                                form_field)
+                            if file_wrapper is None:
+                                continue
+
+                            # only process image uploads
+                            if file_wrapper.mimetype.startswith('image/'):
+                                changed = True
+                                changed_fields.append(form_field)
+
+                                # mark any existing data for deletion
+                                if original_field_data is not None:
+                                    original_attachment = models.SubmissionImageAttachment.query.filter_by( # noqa
+                                        uuid=original_field_data
+                                    ).first()
+                                    if original_attachment:
+                                        deleted_attachments.append(
+                                            original_attachment)
+
+                                if file_wrapper.filename != '':
+                                    data[form_field] = identifier.hex
+                                    attachments.append(
+                                        models.SubmissionImageAttachment(
+                                            photo=file_wrapper,
+                                            submission=submission,
+                                            uuid=identifier
+                                        )
+                                    )
+
                         if data.get(form_field) != \
                                 submission_form.data.get(form_field):
                             if (
@@ -1017,6 +1092,10 @@ def submission_edit(submission_id):
                         submission.update_related(data)
 
                         submission.update_master_offline_status()
+
+                        db.session.add_all(attachments)
+                        for attachment in deleted_attachments:
+                            db.session.delete(attachment)
 
                         db.session.commit()
                         update_submission_version(submission)
