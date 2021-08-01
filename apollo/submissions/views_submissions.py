@@ -532,6 +532,7 @@ def submission_create(form_id):
         data_fields = set(submission_form.data.keys()).intersection(
             questionnaire_form.tags)
 
+        attachments = []
         data = {
             k: submission_form.data.get(k)
             for k in data_fields
@@ -543,14 +544,42 @@ def submission_create(form_id):
             form_id=form_id,
             submission_type='O',
             created=utils.current_timestamp(),
-            data=data,
             participant=submission_form.participant.data,
             location=submission_form.location.data or submission_form.participant.data.location,  # noqa
             incident_description=submission_form.description.data,
             incident_status=submission_form.status.data
         )
 
-        submission.save()
+        image_data = {}
+
+        for form_field in data_fields:
+            questionnaire_field = questionnaire_form.get_field_by_tag(
+                form_field)
+            if questionnaire_field['type'] == 'image':
+                web_form_field = getattr(submission_form, form_field)
+                file_wrapper = request.files.get(web_form_field.name)
+
+                if file_wrapper is None:
+                    continue
+
+                identifier = uuid4().hex
+                if file_wrapper.mimetype.startswith('image/'):
+                    if file_wrapper.filename != '':
+                        image_data[form_field] = identifier
+                        attachments.append(
+                            models.SubmissionImageAttachment(
+                                photo=file_wrapper,
+                                submission=submission,
+                                uuid=identifier,
+                            )
+                        )
+
+        data.update(image_data)
+        submission.data = data
+        db.session.add_all(attachments)
+        db.session.add(submission)
+
+        db.session.commit()
 
         return redirect(
             url_for('submissions.submission_list', form_id=form_id))
@@ -758,8 +787,8 @@ def submission_edit(submission_id):
                             continue
 
                         if file_wrapper.mimetype.startswith('image/'):
+                            changed = True
                             if original_field_data is not None:
-                                changed = True
                                 original_attachment = models.SubmissionImageAttachment.query.filter_by( # noqa
                                     uuid=original_field_data
                                 ).first()

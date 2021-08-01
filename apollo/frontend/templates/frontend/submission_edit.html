@@ -584,7 +584,7 @@
       <div class="card-body py-0 px-0">
         <table class="table table-borderless mb-0 table-responsive">
           <tbody>
-          {% for field in group.fields if field['type'] != 'image' %}
+          {% for field in group.fields %}
             <tr>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">{{ field.description }}</td>
@@ -704,7 +704,6 @@
       var fileInput = button.parentElement.children[0];
       fileInput.addEventListener('change', fileChangeHandler);
       fileInput.click();
-      // fileInput.removeEventListener('input', fileChangeHandler);
     });
 
     $('.tonow').each(function (index) {
