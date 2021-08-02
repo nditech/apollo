@@ -219,6 +219,48 @@ def locations_headers(view, location_set_id, upload_id):
                                     location_set_id=location_set_id))
 
 
+def _save_location_graph(location_set):
+    location_set_id = location_set.id
+    divisions_graph = json.loads(request.form.get('divisions_graph'))
+    nodes = divisions_graph.get('nodes')
+
+    # find any divisions that were not included in the saved graph
+    # and delete them if there are no linked locations
+    saved_node_ids = [node.get('id') for node in nodes
+                        if str(node.get('id')).isdigit()]
+    unused_location_types = LocationType.query.filter(
+        LocationType.location_set_id == location_set_id,
+        not_(LocationType.id.in_(saved_node_ids))
+    ).all()
+
+    for unused_lt in unused_location_types:
+        query = Location.query.filter(Location.location_type == unused_lt)
+        if db.session.query(query.exists()).scalar():
+            flash(
+                str(
+                    _('Administrative level %(name)s has locations '
+                        'assigned and cannot be deleted.',
+                        name=unused_lt.name)),
+                category='danger')
+            break
+
+        # explicitly doing this because we didn't add a cascade
+        # to the backref
+        LocationTypePath.query.filter(or_(
+            LocationTypePath.ancestor_id == unused_lt.id,
+            LocationTypePath.descendant_id == unused_lt.id
+        )).delete()
+        unused_lt.delete()
+    else:
+        # only import the graph if the loop succeeds
+        import_graph(divisions_graph, location_set)
+
+        flash(
+            _('Your changes have been saved.'),
+            category='info'
+        )
+
+
 def locations_builder(view, location_set_id):
     location_set = LocationSet.query.get_or_404(location_set_id)
 
@@ -232,44 +274,7 @@ def locations_builder(view, location_set_id):
     form = forms.AdminDivisionImportForm()
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
-        divisions_graph = json.loads(request.form.get('divisions_graph'))
-        nodes = divisions_graph.get('nodes')
-
-        # find any divisions that were not included in the saved graph
-        # and delete them if there are no linked locations
-        saved_node_ids = [node.get('id') for node in nodes
-                          if str(node.get('id')).isdigit()]
-        unused_location_types = LocationType.query.filter(
-            LocationType.location_set_id == location_set_id,
-            not_(LocationType.id.in_(saved_node_ids))
-        ).all()
-
-        for unused_lt in unused_location_types:
-            query = Location.query.filter(Location.location_type == unused_lt)
-            if db.session.query(query.exists()).scalar():
-                flash(
-                    str(
-                        _('Administrative level %(name)s has locations '
-                          'assigned and cannot be deleted.',
-                          name=unused_lt.name)),
-                    category='danger')
-                break
-
-            # explicitly doing this because we didn't add a cascade
-            # to the backref
-            LocationTypePath.query.filter(or_(
-                LocationTypePath.ancestor_id == unused_lt.id,
-                LocationTypePath.descendant_id == unused_lt.id
-            )).delete()
-            unused_lt.delete()
-        else:
-            # only import the graph if the loop succeeds
-            import_graph(divisions_graph, location_set)
-
-            flash(
-                _('Your changes have been saved.'),
-                category='info'
-            )
+        _save_location_graph(location_set)
 
     return view.render(
         template_name, breadcrumbs=breadcrumbs, location_set=location_set,
@@ -277,6 +282,8 @@ def locations_builder(view, location_set_id):
 
 
 def finalize_location_set(location_set_id):
+    location_set = LocationSet.query.get_or_404(location_set_id)
+    _save_location_graph(location_set)
     LocationSet.query.filter(LocationSet.id == location_set_id).update({
         'is_finalized': True})
     db.session.commit()

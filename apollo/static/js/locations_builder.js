@@ -137,7 +137,7 @@
       });
     };
 
-    this.saveGraph = function(ev) {
+    this.storeGraphData = function() {
       var serializableGraph = {edges: [], nodes: []};
       var graph = appRef.paper.model;
       _.each(graph.getElements(), function(cell) {
@@ -146,8 +146,13 @@
       _.each(graph.getLinks(), function(link) {
         serializableGraph.edges.push([link.attributes.source.id, link.attributes.target.id]);
       });
-
+  
       $('#divisions_graph').val(JSON.stringify(serializableGraph));
+      $('#divisions_graph_finalize').val(JSON.stringify(serializableGraph));
+    };
+
+    this.saveGraph = function(ev) {
+      appRef.storeGraphData();
 
       window.onbeforeunload = null;
 
@@ -220,6 +225,8 @@
         appRef.layout();
       }
 
+      appRef.storeGraphData();
+
       window.onbeforeunload = function () { return true; };
 
       $('#addDivision').modal('hide');
@@ -249,6 +256,8 @@
         graph.addCells(new_links);
         appRef.layout();
       }
+
+      appRef.storeGraphData();
 
       window.onbeforeunload = function () { return true; };
 
@@ -290,6 +299,7 @@
         appRef.layout();
       }
 
+      appRef.storeGraphData();
       window.onbeforeunload = function () { return true; };
 
       $('#updateDivision').modal('hide');
