@@ -380,6 +380,17 @@ class EventAdminView(BaseAdminView):
         model.end = app_time_zone.localize(
             model.end).astimezone(utc_time_zone)
 
+    def delete_model(self, model):
+        event_count = models.Event.query.filter_by(
+            deployment=current_user.deployment).count()
+
+        if event_count > 1:
+            return super().delete_model(model)
+        else:
+            message = str(_("There must be at least one event"))
+            flash(message, 'danger')
+            return False
+
 
 class UserAdminView(BaseAdminView):
     '''Thanks to mrjoes and this Flask-Admin issue:
