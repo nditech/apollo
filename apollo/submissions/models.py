@@ -125,6 +125,7 @@ class Submission(BaseModel):
                            passive_deletes=True))
     conflicts = db.Column(JSONB)
     unreachable = db.Column(db.Boolean, default=False, nullable=False)
+    not_opened = db.Column(db.Boolean, default=False, nullable=False)
     geom = db.Column(Geometry('POINT', srid=4326))
     verified_fields = db.Column(JSONB, default=[])
 
