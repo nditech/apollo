@@ -336,6 +336,28 @@ class Submission(BaseModel):
         if master_offline_status != self.master.unreachable:
             db.session.add(self.master)
 
+    def update_master_opened_status(self):
+        if self.master is None:
+            return
+
+        siblings = self.siblings
+        master_opened_status = self.master.not_opened
+
+        if siblings:
+            if (
+                all([s.not_opened for s in self.siblings]) and
+                self.not_opened
+            ):
+                self.master.not_opened = True
+            else:
+                self.master.not_opened = False
+        else:
+            self.master.not_opened = self.not_opened
+
+        # if the offline status changed in any way
+        if master_opened_status != self.master.not_opened:
+            db.session.add(self.master)
+
     def compute_conflict_tags(self, tags=None):
         # don't compute if the 'track conflicts' flag is not set
         # on the form

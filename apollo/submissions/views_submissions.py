@@ -1123,6 +1123,7 @@ def submission_edit(submission_id):
                         submission.update_related(data)
 
                         submission.update_master_offline_status()
+                        submission.update_master_opened_status()
 
                         db.session.add_all(attachments)
                         for attachment in deleted_attachments:
