@@ -203,6 +203,7 @@ def make_submission_edit_form_class(event, form):
         form_fields['validate'] = validate_location
 
     form_fields['unreachable'] = fields.BooleanField()
+    form_fields['not_opened'] = fields.BooleanField()
 
     return type(
         'SubmissionEditForm',

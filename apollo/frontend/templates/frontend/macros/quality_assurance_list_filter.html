@@ -44,6 +44,9 @@
                 <div class="col-md-6 col-lg-2 mb-2">
                     <label for="{{ filter_form.participant_role.id }}" class="sr-only">{{ filter_form.participant_role.label.text }}</label>
                     {{ filter_form.participant_role(class_='form-control custom-select') }}
+                <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.station_status.id }}" class="sr-only">{{ filter_form.station_status.label.text }}</label>
+                    {{ filter_form.station_status(class_='form-control custom-select') }}
                 </div>
                 {%- if form.show_moment %}
                 <div class="col-md-6 col-lg-2 mb-2">
