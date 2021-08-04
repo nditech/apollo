@@ -92,6 +92,7 @@ LANGUAGES = {
     'en': 'English',
     'es': 'Español',
     'fr': 'Français',
+    'ka': 'ქართული',
     'ro': 'Română',
     'ru': 'Русский',
     'si': "සිංහල",
