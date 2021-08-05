@@ -4,7 +4,7 @@ from io import StringIO
 import re
 
 from flask_babelex import gettext as _
-from sqlalchemy import and_, case, exists, select
+from sqlalchemy import and_, case, exists, false, select, true
 
 from apollo import constants
 from apollo.dal.service import Service
@@ -57,8 +57,8 @@ class ParticipantService(Service):
                 samples_participants.c.sample_id == sample.id
             )))
             sample_subqueries.append(case([
-                (condition == True, 1),     # noqa
-                (condition == False, 0),    # noqa
+                (condition == true(), 1),
+                (condition == false(), 0),
             ]))
 
         columns = [Participant] + sample_subqueries
