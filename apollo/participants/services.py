@@ -7,12 +7,11 @@ from flask_babelex import gettext as _
 from sqlalchemy import and_, exists, select
 
 from apollo import constants
-from apollo.core import db
 from apollo.dal.service import Service
 from apollo.participants.models import (
     ParticipantSet,
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantRole, PhoneContact, samples_participants)
+    ParticipantRole, PhoneContact, Sample, samples_participants)
 
 number_regex = re.compile('[^0-9]')
 
@@ -46,8 +45,22 @@ class ParticipantService(Service):
             _('Phone #1'), _('Phone #2'), _('Phone #3')
         ])
 
-        samples = participant_set.samples
+        samples = participant_set.samples.order_by(Sample.name)
         headers.extend(s.name for s in samples)
+
+        sample_subqueries = [
+            exists(select(
+                [samples_participants.c.sample_id]
+            ).where(and_(
+                samples_participants.c.participant_id == Participant.id,
+                samples_participants.c.sample_id == sample.id
+            ))).label(sample.name)
+            for sample in samples
+        ]
+
+        columns = [Participant] + sample_subqueries
+        query2 = query.with_entities(*columns)
+        sample_indices = range(1, samples.count() + 1)
 
         # TODO: extra fields missing
         output_buffer = StringIO()
@@ -58,7 +71,8 @@ class ParticipantService(Service):
         yield output_buffer.getvalue()
         output_buffer.close()
 
-        for participant in query:
+        for row in query2:
+            participant = row[0]
             phones = participant.phones
             if phones:
                 phone_numbers = [p.number for p in phones[:3]]
@@ -91,15 +105,8 @@ class ParticipantService(Service):
 
             record.extend(phone_numbers)
 
-            for sample in samples:
-                subquery = exists(select(
-                    [samples_participants.c.sample_id]
-                ).where(and_(
-                    samples_participants.c.participant_id == participant.id,
-                    samples_participants.c.sample_id == sample.id
-                )))
-                record.append(
-                    int(db.session.query(subquery).scalar()))
+            for index in sample_indices:
+                record.append(row[index])
 
             # TODO: process extra fields here
             output_buffer = StringIO()
