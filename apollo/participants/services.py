@@ -4,7 +4,7 @@ from io import StringIO
 import re
 
 from flask_babelex import gettext as _
-from sqlalchemy import and_, exists, select
+from sqlalchemy import and_, case, exists, select
 
 from apollo import constants
 from apollo.dal.service import Service
@@ -48,15 +48,18 @@ class ParticipantService(Service):
         samples = participant_set.samples.order_by(Sample.name)
         headers.extend(s.name for s in samples)
 
-        sample_subqueries = [
-            exists(select(
+        sample_subqueries = []
+        for sample in samples:
+            condition = exists(select(
                 [samples_participants.c.sample_id]
             ).where(and_(
                 samples_participants.c.participant_id == Participant.id,
                 samples_participants.c.sample_id == sample.id
-            ))).label(sample.name)
-            for sample in samples
-        ]
+            )))
+            sample_subqueries.append(case([
+                (condition == True, 1),     # noqa
+                (condition == False, 0),    # noqa
+            ]))
 
         columns = [Participant] + sample_subqueries
         query2 = query.with_entities(*columns)
