@@ -676,19 +676,14 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  var fileChangeHandler;
-  fileChangeHandler = function (changeEventObj) {
+  var fileChangeHandler = function (changeEventObj) {
     var fileInput = changeEventObj.target;
-    var container = fileInput.parentElement;
-    var selectButton = container.children[1];
+    var label = fileInput.parentElement;
     
     if (fileInput.files.length) {
-      selectButton.classList.remove('btn-secondary');
-      selectButton.classList.add('btn-primary');
+      label.classList.remove('btn-secondary');
+      label.classList.add('btn-primary');
     }
-
-    // detach event listener
-    fileInput.removeEventListener('change', fileChangeHandler);
   };
 
   $(function () {
@@ -700,12 +695,7 @@
         slidesToScroll: 5
     });
 
-    $('[data-context="select_button"').click(function (eventObj) {
-      var button = eventObj.target;
-      var fileInput = button.parentElement.children[0];
-      fileInput.addEventListener('change', fileChangeHandler);
-      fileInput.click();
-    });
+    $('[data-context="hidden_file"]').on('change', fileChangeHandler);
 
     $('.tonow').each(function (index) {
       var timestamp = moment.unix(Number($(this).data('timestamp')));

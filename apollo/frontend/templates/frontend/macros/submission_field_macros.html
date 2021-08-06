@@ -11,7 +11,7 @@
 {% elif field_type == 'image' %}
 <div>
 {{ form_field(class_=klass_, disabled=disabled, hidden=true, accepts="image/jpeg, image/png") }}
-<input type="button" class="btn btn-secondary" data-context="select_button" value="{% trans %}Choose File{% endtrans %}">
+<label class="btn btn-secondary w-100" data-context="select_button">{% trans %}Choose File{% endtrans %}<input type="file" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden /></label>
 </div>
 {% else %}
 {{ form_field(class_=klass_, disabled=disabled) }}
