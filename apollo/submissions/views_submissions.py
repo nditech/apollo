@@ -804,7 +804,7 @@ def submission_edit(submission_id):
                                     uuid=identifier
                                 ))
                     elif submission.data.get(form_field) != field_value:
-                        if field_value is None:
+                        if field_value is None and questionnaire_field['type'] != 'image':
                             data.pop(form_field, None)
                         else:
                             data[form_field] = field_value
@@ -1100,7 +1100,9 @@ def submission_edit(submission_id):
                         if data.get(form_field) != \
                                 submission_form.data.get(form_field):
                             if (
-                                submission_form.data.get(form_field) is None
+                                (submission_form.data.get(form_field) is None)
+                                and
+                                questionnaire_field['type'] != 'image'
                             ):
                                 data.pop(form_field, None)
                                 changed_fields.append(form_field)
