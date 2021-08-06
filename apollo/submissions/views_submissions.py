@@ -198,7 +198,7 @@ def submission_list(form_id):
 
             # only change the submission type if we are aggregating data
             # and are not tracking conflicts
-            if mode == 'aggregated' and form.untrack_data_conflicts == True:    # noqa
+            if mode == 'aggregated' and form.untrack_data_conflicts == True:  # noqa
                 submission_type = 'O'
 
             queryset = query.filter(
