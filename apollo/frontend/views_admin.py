@@ -387,7 +387,7 @@ class EventAdminView(BaseAdminView):
         if event_count > 1:
             return super().delete_model(model)
         else:
-            message = str(_("There must be at least one event"))
+            message = str(_("You cannot delete the last remaining event"))
             flash(message, 'danger')
             return False
 
