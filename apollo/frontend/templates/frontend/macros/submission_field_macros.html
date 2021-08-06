@@ -10,8 +10,10 @@
 {{ form_field(class_="custom-select " + klass_, disabled=disabled) }}
 {% elif field_type == 'image' %}
 <div>
-{{ form_field(class_=klass_, disabled=disabled, hidden=true, accepts="image/jpeg, image/png") }}
-<label class="btn btn-secondary w-100" data-context="select_button">{% trans %}Choose File{% endtrans %}<input type="file" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden /></label>
+<label class="btn btn-secondary w-100" data-context="select_button">
+<span role="button" tabindex="0">{% trans %}Choose File{% endtrans %}</span>
+<input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
+</label>
 </div>
 {% else %}
 {{ form_field(class_=klass_, disabled=disabled) }}

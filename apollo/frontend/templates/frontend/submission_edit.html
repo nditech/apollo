@@ -696,6 +696,15 @@
     });
 
     $('[data-context="hidden_file"]').on('change', fileChangeHandler);
+    $('label > span[role="button"').bind('keypress keyup', function (evt) {
+      if (evt.which === 32 || evt.which === 13) {
+        evt.preventDefault();
+        var spanButton = this;
+        var fileInput = spanButton.parentElement.children[1];
+        console.log(fileInput);
+        fileInput.click();
+      }
+    });
 
     $('.tonow').each(function (index) {
       var timestamp = moment.unix(Number($(this).data('timestamp')));
