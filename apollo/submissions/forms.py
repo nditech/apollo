@@ -154,7 +154,7 @@ def make_submission_edit_form_class(event, form):
                         validators=[
                             FileAllowed(
                                 ['jpg', 'png'],
-                                _('Only JPG/PNG images supported')
+                                _('Please select a JPG or PNG image to upload'),
                             )
                         ]
                     )
