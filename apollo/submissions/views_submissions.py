@@ -732,11 +732,6 @@ def submission_edit(submission_id):
         else:
             master_form = None
 
-        if master_form is None:
-            num_forms = len(sibling_forms) + 1
-        else:
-            num_forms = len(sibling_forms) + 2
-
         return render_template(
             template_name,
             breadcrumbs=breadcrumbs,
@@ -744,7 +739,6 @@ def submission_edit(submission_id):
             submission_form=submission_form,
             sibling_forms=sibling_forms,
             master_form=master_form,
-            num_forms=num_forms,
             readonly=readonly,
             location_types=location_types,
             comments=comments,
@@ -804,7 +798,10 @@ def submission_edit(submission_id):
                                     uuid=identifier
                                 ))
                     elif submission.data.get(form_field) != field_value:
-                        if field_value is None and questionnaire_field['type'] != 'image':
+                        if (
+                            field_value is None and
+                            questionnaire_field['type'] != 'image'
+                        ):
                             data.pop(form_field, None)
                         else:
                             data[form_field] = field_value
@@ -1146,10 +1143,6 @@ def submission_edit(submission_id):
                         form_id=str(questionnaire_form.id)
                     ))
             else:
-                if master_form is None:
-                    num_forms = len(sibling_forms) + 1
-                else:
-                    num_forms = len(sibling_forms) + 2
                 return render_template(
                     template_name,
                     breadcrumbs=breadcrumbs,
@@ -1157,7 +1150,6 @@ def submission_edit(submission_id):
                     submission_form=submission_form,
                     master_form=master_form,
                     sibling_forms=sibling_forms,
-                    num_forms=num_forms,
                     readonly=readonly,
                     location_types=location_types,
                     comments=comments,
@@ -1687,7 +1679,7 @@ def update_submission_version(submission):
 @auth.login_required
 def submission_export(form_id):
     form = services.forms.get_or_404(id=form_id)
-    if form.untrack_data_conflicts == True:
+    if form.untrack_data_conflicts == True:  # noqa
         submission_type = 'O'
     else:
         submission_type = 'M'

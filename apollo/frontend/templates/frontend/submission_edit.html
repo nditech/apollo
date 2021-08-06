@@ -171,6 +171,7 @@
 {%- endif %}
 
 {%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
+{%- set num_forms = ((sibling_forms|count) + (2 if master_form else 1)) -%}
 {%- if master_form.errors or submission_form.errors %}
 <div class="alert alert-danger alert-dismissible fade show mt-4 mb-0" role="alert">
   <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>
