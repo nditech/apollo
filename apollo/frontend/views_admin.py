@@ -40,7 +40,7 @@ from apollo.formsframework.views_forms import (
     forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
     quality_controls, quality_control_delete, quality_control_edit,
     import_form_schema, survey_init)
-from apollo.utils import Image, resize_image
+from apollo.utils import resize_image
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -379,6 +379,17 @@ class EventAdminView(BaseAdminView):
             model.start).astimezone(utc_time_zone)
         model.end = app_time_zone.localize(
             model.end).astimezone(utc_time_zone)
+
+    def delete_model(self, model):
+        event_count = models.Event.query.filter_by(
+            deployment=current_user.deployment).count()
+
+        if event_count > 1:
+            return super().delete_model(model)
+        else:
+            message = str(_("You cannot delete the last remaining event"))
+            flash(message, 'danger')
+            return False
 
 
 class UserAdminView(BaseAdminView):
@@ -719,15 +730,15 @@ class TaskView(BaseView):
         return self.render(template_name, **context)
 
 
-admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(
     EventAdminView(models.Event, db.session, _('Events')))
-admin.add_view(UserAdminView(models.User, db.session, _('Users')))
-admin.add_view(RoleAdminView(models.Role, db.session, _('Roles')))
 admin.add_view(
     LocationSetAdminView(models.LocationSet, db.session, _('Location Sets')))
 admin.add_view(
     ParticipantSetAdminView(
         models.ParticipantSet, db.session, _('Participant Sets')))
 admin.add_view(FormsView(name=_("Forms")))
+admin.add_view(UserAdminView(models.User, db.session, _('Users')))
+admin.add_view(RoleAdminView(models.Role, db.session, _('Roles')))
+admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(TaskView(name=_('Tasks')))

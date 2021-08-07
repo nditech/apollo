@@ -112,7 +112,7 @@
                                 <div class="dropdown-divider"></div>
                                 {%- endif %}
                                 {%- if current_user.is_admin() %}
-                                <a class="dropdown-item" href="{{ url_for('deployment.index_view') }}">{{ _('Admin') }}</a>
+                                <a class="dropdown-item" href="{{ url_for('event.index_view') }}">{{ _('Admin') }}</a>
                                 <div class="dropdown-divider"></div>
                                 {%- endif %}
                                 {%- if not current_user.has_role('field-coordinator') %}<a class="dropdown-item" href="{{ url_for('users.user_profile') }}">{{ _('User Settings') }}</a>
