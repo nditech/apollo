@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from wtforms import fields, validators, widgets
 from wtforms_alchemy.fields import QuerySelectField
 
@@ -146,6 +147,17 @@ def make_submission_edit_form_class(event, form):
                             filters=[lambda data: data if data else None],
                             validators=[validators.Optional()]
                         )
+                elif field_type == 'image':
+                    form_fields[field['tag']] = FileField(
+                        field['tag'],
+                        description=field['description'],
+                        validators=[
+                            FileAllowed(
+                                ['jpg', 'png'],
+                                _('Please select a JPG or PNG image to upload'),
+                            )
+                        ]
+                    )
                 else:
                     if field_type in ('category', 'integer'):
                         form_fields[field['tag']] = fields.IntegerField(
