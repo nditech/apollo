@@ -6,8 +6,6 @@ from operator import itemgetter
 import numpy as np
 import pandas as pd
 
-from apollo.submissions.utils import make_submission_dataframe
-
 
 def _default_zero():
     return 0
