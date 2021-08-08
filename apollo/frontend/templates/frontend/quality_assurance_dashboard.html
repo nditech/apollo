@@ -61,13 +61,14 @@
   $(function () {
       $('.chart').each(function(idx, el) {
         var json = JSON.parse(el.dataset.chart);
-        var dataMap = d3.map()
+        var dataMap = new Map()
           .set('Flagged', json.Flagged || 0)
           .set('Verified', json.Verified || 0)
           .set('OK', json.OK || 0)
           .set('Missing', json.Missing || 0);
+        console.log(dataMap);
         var labels = ['Flagged', 'Verified', 'OK', 'Missing'];
-        var labelsMap = d3.map()
+        var labelsMap = new Map()
           .set('Flagged', "{{ _('Flagged') }}")
           .set('Verified', "{{ _('Verified') }}")
           .set('OK', "{{ _('OK') }}")
