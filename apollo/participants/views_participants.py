@@ -483,6 +483,7 @@ def participant_edit(id, participant_set_id=0, view=None):
                 # (primary is the most recently updated and
                 # verified phone number)
                 phone.verified = True
+                phone.updated = utils.current_timestamp()
             phone.save()
 
             participant.password = form.password.data
