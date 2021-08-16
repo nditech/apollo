@@ -44,20 +44,30 @@ def checklist_init():
     form = make_checklist_init_form(g.event)
 
     if form.validate_on_submit():
-        flash_category = 'info'
-        flash_message = _('Checklists are being created for the Event, Form, '
-                          'Role and Location Type you selected')
+        questionnaire = models.Form.query.filter_by(
+            id=form.data.get('form')).one()
 
-        channel = session.get('_id')
-        task_kwargs = {
-            'event_id': form.data['event'],
-            'form_id': form.data['form'],
-            'role_id': form.data['role'],
-            'location_type_id': form.data['location_type'],
-            'channel': channel
-        }
+        if len(questionnaire.tags) == 0:
+            flash_category = 'danger'
+            flash_message = _(
+                'Checklists were not created, as the selected Form '
+                'has no question codes')
+        else:
+            flash_category = 'info'
+            flash_message = _(
+                'Checklists are being created for the Event, Form, '
+                'Role and Location Type you selected')
 
-        init_submissions.apply_async(kwargs=task_kwargs)
+            channel = session.get('_id')
+            task_kwargs = {
+                'event_id': form.data['event'],
+                'form_id': form.data['form'],
+                'role_id': form.data['role'],
+                'location_type_id': form.data['location_type'],
+                'channel': channel
+            }
+
+            init_submissions.apply_async(kwargs=task_kwargs)
     else:
         flash_category = 'danger'
         flash_message = _('Checklists were not created')
@@ -72,25 +82,34 @@ def survey_init():
     form = make_survey_init_form(g.event)
 
     if form.validate_on_submit():
-        flash_category = 'info'
-        flash_message = _('Surveys are being created for the Event, Form '
-                          'and Participants you selected')
+        questionnaire = models.Form.query.filter_by(
+            id=form.data.get('form')).one()
 
-        user = current_user._get_current_object()
-        upload_file = strip_bom_header(request.files['import_file'])
-        filename = uploads.save(upload_file)
-        upload = UserUpload(
-            deployment_id=g.deployment.id, upload_filename=filename,
-            user_id=user.id)
-        upload.save()
+        if len(questionnaire.tags) == 0:
+            flash_category = 'danger'
+            flash_message = _(
+                'Surveys were not created as the selected Form '
+                'has no question codes')
+        else:
+            flash_category = 'info'
+            flash_message = _('Surveys are being created for the Event, Form '
+                            'and Participants you selected')
 
-        task_kwargs = {
-            'event_id': form.data['event'],
-            'form_id': form.data['form'],
-            'upload_id': upload.id
-        }
+            user = current_user._get_current_object()
+            upload_file = strip_bom_header(request.files['import_file'])
+            filename = uploads.save(upload_file)
+            upload = UserUpload(
+                deployment_id=g.deployment.id, upload_filename=filename,
+                user_id=user.id)
+            upload.save()
 
-        init_survey_submissions.apply_async(kwargs=task_kwargs)
+            task_kwargs = {
+                'event_id': form.data['event'],
+                'form_id': form.data['form'],
+                'upload_id': upload.id
+            }
+
+            init_survey_submissions.apply_async(kwargs=task_kwargs)
     else:
         flash_category = 'danger'
         flash_message = _('Surveys were not created')
