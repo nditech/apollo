@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from io import BytesIO
 
-from arpeggio.cleanpeg import ParserPEG
 from flask import (
     abort, Blueprint, flash, g, jsonify, redirect, request, send_file, session,
     url_for)
@@ -19,7 +18,6 @@ from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
-from apollo.submissions.qa.query_builder import GRAMMAR
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
 from apollo.users.models import UserUpload
 from apollo.utils import generate_identifier, strip_bom_header
@@ -92,8 +90,9 @@ def survey_init():
                 'has no question codes')
         else:
             flash_category = 'info'
-            flash_message = _('Surveys are being created for the Event, Form '
-                            'and Participants you selected')
+            flash_message = _(
+                'Surveys are being created for the Event, Form '
+                'and Participants you selected')
 
             user = current_user._get_current_object()
             upload_file = strip_bom_header(request.files['import_file'])
@@ -306,10 +305,6 @@ def quality_control_edit(view, form_id, qc=None):
 
             quality_control['description'] = postdata['description']
             quality_control['criteria'] = []
-            parser = ParserPEG(GRAMMAR, 'qa')
-            errors = set()
-            invalid_tags = []
-            multiselect_tags = []
 
             for condition in postdata['criteria']:
                 quality_control['criteria'].append({
