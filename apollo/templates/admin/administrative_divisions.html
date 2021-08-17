@@ -205,13 +205,14 @@
       </div>
       <div class="modal-body">
         {{ form.hidden_tag() }}
+        <input type="hidden" name="divisions_graph" id="divisions_graph_finalize">
         <span class="text-danger font-weight-bolder">{{ _("Are you sure you want to finalize the current set of administrative divisions?") }}</span>
         <br>
         <span class="text-muted small">{{ _(" After confirmation, you wouldn't be able to make any further changes to the structure.") }}</span>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Cancel') }}</button>
-        <button type="submit" class="btn btn-danger">{{ _('Finalize') }}</button>
+        <button type="submit" class="btn btn-danger" onclick="window.onbeforeunload = null;">{{ _('Finalize') }}</button>
       </div>
     </div>
   </div>
