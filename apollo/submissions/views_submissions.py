@@ -468,12 +468,9 @@ def submission_list(form_id):
         form_fields = []
         breadcrumbs = [_("Surveys"), form.name]
     else:
-        if form.data and 'groups' in form.data:
-            form_fields = [
-                field for group in form.data['groups']
-                for field in group['fields'] if not field.get('is_comment')]
-        else:
-            form_fields = []
+        # show only the first question in the incident form
+        tags = form.tags
+        form_fields = [form.get_field_by_tag(tags[0])] if tags else []
         breadcrumbs = [_("Critical Incidents"), form.name]
 
     return render_template(
