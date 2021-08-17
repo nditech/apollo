@@ -108,7 +108,7 @@ def get_checklist_form_dashboard_menu(**kwargs):
     :param form_type: The form type for the forms to be retrieved
     """
     event = g.event
-    return [{'url': url_for('dashboard.checklists',
+    return [{'url': url_for('dashboard.response_rate',
              form_id=form.id),
              'text': form.name,
              'visible': True}

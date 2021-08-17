@@ -45,7 +45,7 @@ def main_dashboard(form_id=None):
     daily_stratified_progress = []
 
     template_name = 'frontend/dashboard.html'
-    breadcrumbs = [_('Dashboard')]
+    breadcrumbs = [_('Response Rate Dashboard')]
 
     event = get_event()
     if not form_id:
@@ -233,21 +233,16 @@ def index():
 
 @route(bp, '/dashboard/<form_id>')
 @register_menu(
-    bp, 'main.dashboard.checklists', _('Checklists'),
+    bp, 'main.dashboard.response_rate', _('Response Rate'),
     order=0,
     visible_when=lambda: len(
-        get_checklist_form_dashboard_menu(form_type='CHECKLIST')) > 0,
-    dynamic_list_constructor=partial(
-        get_checklist_form_dashboard_menu, form_type='CHECKLIST'))
-@register_menu(
-    bp, 'main.dashboard.surveys', _('Surveys'),
-    order=1,
-    visible_when=lambda: len(
+        get_checklist_form_dashboard_menu(form_type='CHECKLIST') +
         get_checklist_form_dashboard_menu(form_type='SURVEY')) > 0,
-    dynamic_list_constructor=partial(
-        get_checklist_form_dashboard_menu, form_type='SURVEY'))
+    dynamic_list_constructor=lambda:
+        get_checklist_form_dashboard_menu(form_type='CHECKLIST') +
+        get_checklist_form_dashboard_menu(form_type='SURVEY'))
 @login_required
-def checklists(form_id=None):
+def response_rate(form_id=None):
     return main_dashboard(form_id)
 
 
