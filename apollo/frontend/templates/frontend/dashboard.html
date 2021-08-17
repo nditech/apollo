@@ -42,9 +42,9 @@
 {% for row in data %}
   <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-2 mt-4 p-0">
   {%- if group -%}
-    <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location_=row.get('id', ''), **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if next_location %}</a>{% endif %}</h5>
+    <h5 class="text-center">{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.response_rate', form_id=form_id, group=group.slug, locationtype=locationtype, location_=row.get('id', ''), **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if next_location %}</a>{% endif %}</h5>
   {%- else -%}
-    <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if not location %}</a>{% endif %}</h5>
+    <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.response_rate', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{% if row.name|count > 19 %}<abbr title="{{ row.name }}">{{ row.name|truncate(14, True) }}</abbr>{% else %}{{ row.name }}{% endif %}{% if not location %}</a>{% endif %}</h5>
   {% endif %}
     <div class="chart text-center" data-chart='{{ row|tojson }}'></div>
   </div>
@@ -58,11 +58,11 @@ Id,Link,Name,Complete,Offline,Partial,Missing
 {{ row.id }},
 {%- if group %}
 {%- if next_location -%}
-{{ url_for('dashboard.checklists', form_id=form_id, group=group.slug, locationtype=locationtype, location_=row.get('id', ''), **args) }}
+{{ url_for('dashboard.response_rate', form_id=form_id, group=group.slug, locationtype=locationtype, location_=row.get('id', ''), **args) }}
 {%- endif %}
 {%- else %}
 {%- if not location and not request.args.location -%}
-{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}
+{{ url_for('dashboard.response_rate', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}
 {%- endif %}
 {%- endif -%}
 ,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Missing }}
@@ -95,7 +95,7 @@ Id,Link,Name,Complete,Offline,Partial,Missing
         <tbody>
           {%- for item in daily_stratified_progress %}
           <tr>
-            <td>{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</td>
+            <td>{% if next_location %}<a class="text-decoration-none" href="{{ url_for('dashboard.response_rate', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ item.name }}{% if next_location %}</a>{% endif %}</td>
             {% for day in event_days -%}
             <td class="text-center text-monospace" title="{% trans index=loop.index %}Day {{ index }}{% endtrans %}">{{ item.data[day] or 0 }}</td>
             {% endfor %}
@@ -108,7 +108,7 @@ Id,Link,Name,Complete,Offline,Partial,Missing
   </div>
   {%- else %}
   <div class="col-12 mb-2 mt-4 p-0">
-    <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.checklists', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ _('Daily Progress Report') }}{% if not location and not request.args.location %}</a>{% endif %}</h5>
+    <h5 class="text-center">{% if not location and not request.args.location %}<a class="text-decoration-none" href="{{ url_for('dashboard.response_rate', form_id=form_id, progress='✔', locationtype=locationtype, **args) }}">{% endif %}{{ _('Daily Progress Report') }}{% if not location and not request.args.location %}</a>{% endif %}</h5>
     <div class="table-responsive mb-n3 mt-4">
       <table id="progress" class="table" style="width:100%">
         <thead class="thead-light">
