@@ -2,6 +2,7 @@
 {%- from 'frontend/macros/quality_assurance_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/quality_assurance_list_macros.html' import submission_header, submission_items -%}
+{%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
@@ -49,13 +50,19 @@ $(function () {
   $('select.select2-locations').select2(LocationOptions);
 });
 </script>
+{% if perms.send_messages.can() %}
+{{ send_message_modal(pager.total) }}
+{% endif %}
 {% endblock %}
 
 {% block toolbar %}
 <div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if perms.export_submissions.can() %}
-<a class="btn btn-secondary" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
+<a class="btn btn-secondary mr-2" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
+{%- if perms.send_messages.can() -%}
+<button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
+{%- endif -%}
 </div>
 {% endblock %}
 

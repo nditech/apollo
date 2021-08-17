@@ -1344,7 +1344,7 @@ def quality_assurance_dashboard(form_id):
     return render_template(template_name, **context)
 
 
-@route(bp, '/submissions/qa/<form_id>')
+@route(bp, '/submissions/qa/<form_id>', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),
@@ -1611,6 +1611,25 @@ def quality_assurance_list(form_id):
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
     VERIFICATION_OPTIONS = services.submissions.__model__.VERIFICATION_OPTIONS
+
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [
+            x for x in [
+                res[0].participant.primary_phone
+                if res[0].participant and
+                res[0].participant.primary_phone
+                else ''
+                for res in query_filterset.qs
+            ] if x != ''
+        ]
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
+
+        if message and recipients and permissions.send_messages.can():
+            send_messages.delay(g.event.id, message, recipients)
+            return 'OK'
+        else:
+            abort(400)
 
     context = {
         'form': form,
