@@ -12,6 +12,7 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify
 from sqlalchemy import BigInteger, case, desc, func
+from sqlalchemy.orm import joinedload
 
 from apollo import models, services, utils
 from apollo.core import docs, sentry, uploads, db
@@ -126,11 +127,9 @@ def participant_list(participant_set_id=0, view=None):
         Participant.last_name_translations.op('->>')(deployment_locale)
     ).label('last_name')
 
-    queryset = Participant.query.select_from(
-        Participant,
-    ).filter(
-        Participant.participant_set == participant_set
-    )
+    queryset = Participant.query.options(
+        joinedload(Participant.samples)).select_from(Participant,).filter(
+            Participant.participant_set == participant_set)
 
     # load the location set linked to the participant set
     location_set_id = participant_set.location_set_id

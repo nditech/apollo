@@ -46,7 +46,7 @@ class ParticipantService(Service):
             _('Phone #1'), _('Phone #2'), _('Phone #3')
         ])
 
-        samples = participant_set.samples
+        samples = [sample for sample in participant_set.samples]
         headers.extend(s.name for s in samples)
 
         # TODO: extra fields missing
@@ -92,14 +92,7 @@ class ParticipantService(Service):
             record.extend(phone_numbers)
 
             for sample in samples:
-                subquery = exists(select(
-                    [samples_participants.c.sample_id]
-                ).where(and_(
-                    samples_participants.c.participant_id == participant.id,
-                    samples_participants.c.sample_id == sample.id
-                )))
-                record.append(
-                    int(db.session.query(subquery).scalar()))
+                record.append(1 if sample in participant.samples else 0)
 
             # TODO: process extra fields here
             output_buffer = StringIO()
