@@ -113,6 +113,30 @@ def make_submission_sample_filter(
     return SubmissionSampleFilter
 
 
+def make_participant_role_filter(participant_set_id):
+    class ParticipantRoleFilter(ChoiceFilter):
+        def __init__(self, *args, **kwargs):
+            role_choices = models.ParticipantRole.query.filter_by(
+                participant_set_id=participant_set_id
+            ).order_by(
+                models.ParticipantRole.name
+            ).with_entities(
+                models.ParticipantRole.id, models.ParticipantRole.name).all()
+            self.participant_set_id = participant_set_id
+
+            kwargs['choices'] = _make_choices(
+                role_choices, _('Participant Role'))
+            super().__init__(*args, **kwargs)
+
+        def queryset_(self, query, value, **kwargs):
+            if value:
+                return query.filter_by(role_id=value)
+
+            return query
+
+    return ParticipantRoleFilter
+
+
 def make_base_submission_filter(event, filter_on_locations=False):
     class BaseSubmissionFilterSet(FilterSet):
         sample = make_submission_sample_filter(
@@ -681,6 +705,8 @@ def make_submission_list_filter(event, form, filter_on_locations=False):
     )
     attributes['date'] = DateFilter()
     attributes['fsn'] = FormSerialNumberFilter()
+    attributes['participant_role'] = make_participant_role_filter(
+        event.participant_set_id)()
 
     return type(
         'SubmissionFilterSet',
@@ -737,6 +763,8 @@ def generate_quality_assurance_filter(event, form):
     attributes['location'] = AJAXLocationFilter()
     attributes['date'] = SubmissionDateFilter()
     attributes['fsn'] = FormSerialNumberFilter()
+    attributes['participant_role'] = make_participant_role_filter(
+        event.participant_set_id)()
 
     return type(
         'QualityAssuranceFilterSet',

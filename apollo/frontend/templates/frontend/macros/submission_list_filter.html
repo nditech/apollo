@@ -23,9 +23,9 @@
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>
             {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
-                <div class="col-md-2 mb-2 d-flex">
+                <div class="col col-lg-1 mb-2 d-flex">
                     <label for="{{ filter_form.conjunction.id }}" class="sr-only">{{ filter_form.conjunction.label.text }}</label>
-                    {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
+                    {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-width': '100', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
                 </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
@@ -61,6 +61,10 @@
                 <div class="col-md-2 mb-2">
                     <label for="{{ filter_form.online_status.id }}" class="sr-only">{{ filter_form.online_status.label.text }}</label>
                     {{ filter_form.online_status(class_='form-control custom-select') }}
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.participant_role.id }}" class="sr-only">{{ filter_form.participant_role.label.text }}</label>
+                    {{ filter_form.participant_role(class_='form-control custom-select') }}
                 </div>
                 {%- if form.show_moment %}
                 <div class="col-md-2 mb-2">
