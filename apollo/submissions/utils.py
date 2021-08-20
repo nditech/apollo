@@ -26,7 +26,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
     # the 'updated' field is required for results analysis
     columns = [
         Submission.data[tag].label(tag) for tag in fields] + [
-            Submission.updated
+            Submission.not_opened, Submission.updated
         ]
 
     # alias just in case the query is already joined to the tables below
