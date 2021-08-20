@@ -9,6 +9,7 @@ blinker==1.4
 boto3==1.16.8
 cachetools==1.1.5
 celery==4.1.1
+email-validator==1.1.3
 filedepot==0.8.0
 flask-admin==1.5.3
 flask-apispec==0.8.1
@@ -31,7 +32,7 @@ flask-sqlalchemy~=2.4.0
 flask-sslify==0.1.4
 flask-uploads==0.2.1
 flask-webpack
-flask-wtf==0.14.2
+flask-wtf==0.15.1
 flask==1.0
 geoalchemy2==0.6.3
 geojson==2.5.0
@@ -80,6 +81,6 @@ werkzeug==0.15.3
 whitenoise==3.3.1
 wrapt==1.12.1
 wtforms-alchemy==0.16.6
-wtforms==2.1
+wtforms==2.3.3
 xlrd==1.1.0
 xlwt==1.3.0

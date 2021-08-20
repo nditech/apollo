@@ -15,3 +15,8 @@ $enable-validation-icons:       false;
 .DTFC_RightBodyLiner {
     overflow-x: hidden;
 }
+
+.required::after {
+  color: red;
+  content: ' *';
+}
