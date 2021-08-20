@@ -8,7 +8,8 @@ from apollo import constants, models, services
 
 
 class UserDetailsForm(FlaskForm):
-    username = fields.StringField(_('Username'))
+    username = fields.StringField(_('Username'), validators=[
+        validators.DataRequired()])
     email = fields.StringField(_('Email'), validators=[
         validators.DataRequired(), validators.Email()])
     password = fields.StringField(

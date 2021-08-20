@@ -28,7 +28,7 @@
         {%- for field in form -%}
         {%- if field.type != 'CSRFTokenField' -%}
         <div class="form-group row align-items-center">
-          {{ field.label(class_='col-4 control-label text-right mb-0') }}
+          {{ field.label(class_='col-4 control-label text-right mb-0 required' if field.flags.required else 'col-4 control-label text-right mb-0') }}
           <div class="col-8">
             {{ field(class_='form-control is-invalid' if field.errors else 'form-control') }}
             {% if field.errors %}

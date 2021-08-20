@@ -182,7 +182,7 @@
     <div>
       {{ init_form.hidden_tag() }}
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="event">{{ init_form.event.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="event">{{ init_form.event.label.text }}</label>
         <div class="col-sm-8">
           <select id="event" class="form-control custom-select" name="event" v-model="event">
             <option value="">{{ _('Choose Event') }}</option>
@@ -191,7 +191,7 @@
         </div>
       </div>
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="form">{{ init_form.form.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="form">{{ init_form.form.label.text }}</label>
         <div class="col-sm-8">
           <select id="form" class="form-control custom-select" name="form">
             <option value="">{{ _('Choose Form') }}</option>
@@ -200,7 +200,7 @@
         </div>
       </div>
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="role">{{ init_form.role.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="role">{{ init_form.role.label.text }}</label>
         <div class="col-sm-8">
           <select id="role" class="form-control custom-select" name="role">
             <option value="">{{ _('Choose Role') }}</option>
@@ -209,7 +209,7 @@
         </div>
       </div>
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="location_type">{{ init_form.location_type.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="location_type">{{ init_form.location_type.label.text }}</label>
         <div class="col-sm-8">
           <select id="location_type" class="form-control custom-select" name="location_type">
             <option value="">{{ _('Choose Location Type') }}</option>
@@ -251,7 +251,7 @@
     <div>
       {{ init_form.hidden_tag() }}
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="event">{{ init_form.event.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="event">{{ init_form.event.label.text }}</label>
         <div class="col-sm-8">
           <select id="event" class="form-control custom-select" name="event" v-model="event">
             <option value="">{{ _('Choose Event') }}</option>
@@ -260,7 +260,7 @@
         </div>
       </div>
       <div class="form-group row align-items-center">
-        <label class="col-sm-4 control-label text-right mb-0" for="form">{{ init_form.form.label.text }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 required" for="form">{{ init_form.form.label.text }}</label>
         <div class="col-sm-8">
           <select id="form" class="form-control custom-select" name="form">
             <option value="">{{ _('Choose Form') }}</option>
@@ -269,7 +269,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 control-label text-right mb-0 mt-2" for="form">{{ _('Participants') }}</label>
+        <label class="col-sm-4 control-label text-right mb-0 mt-2 required" for="form">{{ _('Participants') }}</label>
         <div class="col-sm-8">
           <div class="custom-file">
             <input type="file" class="custom-file-input upload" id="import_file" name="import_file">

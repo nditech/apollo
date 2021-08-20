@@ -45,11 +45,11 @@
         popoverTemplate:
         `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">
@@ -104,11 +104,11 @@
         popoverTemplate:
         `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">
@@ -151,11 +151,11 @@
         popoverTemplate:
           `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">
@@ -200,11 +200,11 @@
         popoverTemplate:
         `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">
@@ -240,11 +240,11 @@
         popoverTemplate:
         `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">
@@ -280,11 +280,11 @@
         popoverTemplate:
         `<form>
           <div class="form-group mb-2">
-            <label class="control-label">{{nameLabel}}</label>
+            <label class="control-label required">{{nameLabel}}</label>
             <input type="text" ng-model="label" class="form-control"/>
           </div>
           <div class="form-group mb-2">
-            <label class="control-label">{{descriptionLabel}}</label>
+            <label class="control-label required">{{descriptionLabel}}</label>
             <input type="text" ng-model="description" class="form-control"/>
           </div>
           <div class="form-group mb-2">

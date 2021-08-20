@@ -33,7 +33,7 @@
               <div class="col-8">
                 <div class="custom-control custom-checkbox">
                   {{ field(class_='custom-control-input is-invalid' if field.errors else 'custom-control-input', **{'aria-describedby': '{}_help'.format(field.id)}) }}
-                  {{ field.label(class_='custom-control-label') }}
+                  {{ field.label(class_='custom-control-label required' if field.flags.required else 'custom-control-label') }}
                   {% if field.errors %}
                   {% for e in field.errors %}
                   <span class="invalid-feedback">{{ e }}</span>
@@ -46,7 +46,7 @@
                 </div>
               </div>
             {% else %}
-              {{ field.label(class_='col-4 control-label text-right mb-0') }}
+              {{ field.label(class_='col-4 control-label text-right mb-0 required' if field.flags.required else 'col-4 control-label text-right mb-0') }}
               <div class="col-8">
                   {%- if field.name in ['form_type', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_voters_tag'] %}
                   {{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select', **{'aria-describedby': '{}_help'.format(field.id)}) }}
