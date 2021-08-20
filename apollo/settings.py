@@ -96,6 +96,7 @@ LANGUAGES = {
     'ro': 'Română',
     'ru': 'Русский',
     'si': "සිංහල",
+    'sr': "srpski jezik",
     'ta': 'தமிழ்',
 }
 BABEL_DEFAULT_LOCALE = config('BABEL_DEFAULT_LOCALE', default='en')
