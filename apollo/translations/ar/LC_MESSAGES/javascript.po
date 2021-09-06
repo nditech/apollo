@@ -1,138 +1,141 @@
-# Arabic translations for PROJECT.
-# Copyright (C) 2019 ORGANIZATION
+# Translations template for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
-#
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# 
+# Translators:
+# NDItech, 2021
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-25 22:55+0000\n"
-"PO-Revision-Date: 2019-08-16 16:47+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ar\n"
-"Language-Team: ar <LL@li.org>\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
-"n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
+"POT-Creation-Date: 2021-09-04 12:44+0000\n"
+"PO-Revision-Date: 2020-10-28 20:14+0000\n"
+"Last-Translator: NDItech, 2021\n"
+"Language-Team: Arabic (https://www.transifex.com/nditech/teams/114236/ar/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
-msgstr ""
+msgstr "القسم"
 
 #: apollo/static/js/angular-form-builder-components.js:30
 msgid "Numeric Question"
-msgstr ""
+msgstr "سؤال عددي"
 
 #: apollo/static/js/angular-form-builder-components.js:89
 msgid "Single Choice Question"
-msgstr ""
+msgstr "سؤال ذو اختيار واحد"
 
 #: apollo/static/js/angular-form-builder-components.js:92
 #: apollo/static/js/angular-form-builder-components.js:187
 msgid "Option 1"
-msgstr ""
+msgstr "الخيار ١"
 
 #: apollo/static/js/angular-form-builder-components.js:92
 #: apollo/static/js/angular-form-builder-components.js:187
 msgid "Option 2"
-msgstr ""
+msgstr "خيار رقم 2"
 
 #: apollo/static/js/angular-form-builder-components.js:136
 msgid "Yes/No Question"
-msgstr ""
+msgstr "سؤال إجابته نعم/لا"
 
 #: apollo/static/js/angular-form-builder-components.js:139
 msgid "Yes"
-msgstr ""
+msgstr "نعم"
 
 #: apollo/static/js/angular-form-builder-components.js:139
 msgid "No"
-msgstr ""
+msgstr "لا"
 
 #: apollo/static/js/angular-form-builder-components.js:184
-msgid "Multiple Choices Question"
-msgstr ""
+msgid "Multiple Choice Question"
+msgstr "سؤال متعدد الخيارات"
 
 #: apollo/static/js/angular-form-builder-components.js:229
 msgid "Comment Question"
-msgstr ""
+msgstr "سؤال حول تعليق"
+
+#: apollo/static/js/angular-form-builder-components.js:269
+msgid "Image Attachment"
+msgstr "صورة مرفقة"
 
 #: apollo/static/js/angular-form-builder.js:24
 #: apollo/static/js/angular-form-builder.js:28
 #: apollo/static/js/angular-form-builder.js:35
 msgid "No Analysis"
-msgstr ""
+msgstr "لا يوجد تحليل"
 
 #: apollo/static/js/angular-form-builder.js:25
 #: apollo/static/js/angular-form-builder.js:31
-msgid "Histogram"
-msgstr ""
+msgid "Frequency Table"
+msgstr "جدول التردد"
 
 #: apollo/static/js/angular-form-builder.js:29
-msgid "Categorical"
-msgstr ""
+msgid "Target"
+msgstr "الهدف"
 
 #: apollo/static/js/angular-form-builder.js:30
 #: apollo/static/js/angular-form-builder.js:36
 msgid "Count"
-msgstr ""
+msgstr "عد"
 
 #: apollo/static/js/angular-form-builder.js:32
 msgid "Mean"
-msgstr ""
+msgstr "متوسط"
 
 #: apollo/static/js/angular-form-builder.js:51
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: apollo/static/js/angular-form-builder.js:52
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: apollo/static/js/angular-form-builder.js:53
 msgid "Save"
-msgstr ""
+msgstr "حفظ"
 
 #: apollo/static/js/angular-form-builder.js:54
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: apollo/static/js/angular-form-builder.js:55
 msgid "Description"
-msgstr ""
+msgstr "الوصف"
 
 #: apollo/static/js/angular-form-builder.js:56
 msgid "Options"
-msgstr ""
+msgstr "الخيارات"
 
 #: apollo/static/js/angular-form-builder.js:57
 msgid "Analysis"
-msgstr ""
+msgstr "التحليلات"
 
 #: apollo/static/js/angular-form-builder.js:58
 msgid "Minimum"
-msgstr ""
+msgstr "الحد الأدنى"
 
 #: apollo/static/js/angular-form-builder.js:59
 msgid "Maximum"
-msgstr ""
+msgstr "الحد الأقصى"
 
 #: apollo/static/js/angular-form-builder.js:60
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #: apollo/static/js/angular-form-builder.js:61
 msgid "Expected Value (Optional)"
-msgstr ""
+msgstr "القيمة المتوقعة (اختياري)"
 
 #: apollo/static/js/angular-form-builder.js:62
 msgid "Validation"
-msgstr ""
-
-#~ msgid "Expected Value"
-#~ msgstr ""
-
+msgstr "التحقق"
