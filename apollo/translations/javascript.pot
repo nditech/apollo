@@ -135,3 +135,15 @@ msgstr ""
 msgid "Validation"
 msgstr ""
 
+#: apollo/static/js/formbuilder-duplicates.js:33
+msgid "The question code <strong>%2</strong> has been used more than once"
+msgid_plural "The question codes <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+msgstr[1] ""
+
+#: apollo/static/js/formbuilder-duplicates.js:46
+msgid "The section <strong>%2</strong> has been used more than once"
+msgid_plural "The sections <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+msgstr[1] ""
+
