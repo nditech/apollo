@@ -496,7 +496,7 @@ class QualityAssuranceFilter(ChoiceFilter):
                             # have all fields verified, and none are missing
                             term1 = (single_qa_query == True)   # noqa
                             if tags:
-                                term2 = models.Submission.verified_fields.has_all(
+                                term2 = models.Submission.verified_fields.has_all(      # noqa
                                     array(tags))
                             else:
                                 term2 = false()
@@ -510,14 +510,14 @@ class QualityAssuranceFilter(ChoiceFilter):
                             # verified, and none of them are missing
                             term1 = (single_qa_query == True)   # noqa
                             if tags:
-                                term2 = ~models.Submission.verified_fields.has_all(
+                                term2 = ~models.Submission.verified_fields.has_all(     # noqa
                                     array(tags))
                             else:
                                 term2 = true()
 
                             filter_query = and_(term1, term2, null_query == False)  # noqa
                         elif condition == FLAG_CHOICES[2][0]:
-                            # ok: checklist passes QA and none of the fields are
+                            # ok: checklist passes QA and none of the fields are    # noqa
                             # missing
                             filter_query = and_(
                                 single_qa_query == False, null_query == False)  # noqa
