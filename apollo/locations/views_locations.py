@@ -283,10 +283,11 @@ def locations_builder(view, location_set_id):
 
 def finalize_location_set(location_set_id):
     location_set = LocationSet.query.get_or_404(location_set_id)
-    _save_location_graph(location_set)
-    LocationSet.query.filter(LocationSet.id == location_set_id).update({
-        'is_finalized': True})
-    db.session.commit()
+    if request.form.get('divisions_graph'):
+        _save_location_graph(location_set)
+        LocationSet.query.filter(LocationSet.id == location_set_id).update({
+            'is_finalized': True})
+        db.session.commit()
     return redirect(url_for('locationset.builder',
                     location_set_id=location_set_id))
 
