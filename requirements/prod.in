@@ -37,6 +37,7 @@ flask==1.0
 geoalchemy2==0.6.3
 geojson==2.5.0
 gevent==1.4.0
+GitPython==3.1.8
 gunicorn==19.7.1
 honcho==1.0.1
 itsdangerous==0.24
