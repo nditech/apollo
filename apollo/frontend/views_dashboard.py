@@ -66,7 +66,10 @@ def main_dashboard(form_id=None):
     filter_on_locations = not form.untrack_data_conflicts if form else False
     filter_class = make_dashboard_filter(event, filter_on_locations)
     if form is not None:
-        breadcrumbs.append(form.name)
+        if group_slug:
+            breadcrumbs.append({'text': form.name, 'url': url_for('dashboard.response_rate', form_id=form.id)})  # noqa
+        else:
+            breadcrumbs.append({'text': form.name})
 
     query_args = [
         Submission.event_id == event.id,
@@ -161,7 +164,16 @@ def main_dashboard(form_id=None):
              if grp['slug'] == group_slug), None)
         if group is None:
             abort(404)
-        breadcrumbs.append(group['name'])
+
+        if location:
+            breadcrumbs.append({
+                'text': group['name'],
+                'url': url_for(
+                    'dashboard.response_rate',
+                    form_id=form.id,
+                    group=group_slug)})
+        else:
+            breadcrumbs.append({'text': group['name']})
 
         admin_location_types = LocationType.query.filter(
             LocationType.is_administrative == True,  # noqa
@@ -171,6 +183,28 @@ def main_dashboard(form_id=None):
         ).group_by(
             LocationType.id, models.LocationTypePath.depth
         ).order_by(models.LocationTypePath.depth).all()
+
+        if location:
+            for ancestor in location.ancestors():
+                if ancestor.location_type in admin_location_types:
+                    idx, lt = next(
+                        (pair for pair in enumerate(admin_location_types)
+                         if pair[1].id == ancestor.location_type.id),
+                        (None, None))
+                    try:
+                        breadcrumbs.append({
+                            'text': ancestor.name,
+                            'url': url_for(
+                                'dashboard.response_rate', form_id=form.id,
+                                group=group_slug,
+                                locationtype=admin_location_types[idx + 1].id,
+                                location_=ancestor.id)
+                        })
+                    except IndexError:
+                        pass
+            breadcrumbs.append({
+                'text': location.name,
+            })
 
         location_type = None
         if location_type_id:
