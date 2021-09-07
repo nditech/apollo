@@ -5,7 +5,8 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import Integer, String, and_, case, false, func, null, or_
+from sqlalchemy import (
+    BigInteger, Integer, String, and_, case, false, func, null, or_)
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
@@ -57,10 +58,22 @@ OPERATIONS = {
 }
 
 FIELD_TYPE_CASTS = {
-    'integer': Integer,
     'select': Integer,
     'string': String,
 }
+
+
+def _get_cast_type(field):
+    if field['type'] in FIELD_TYPE_CASTS:
+        return FIELD_TYPE_CASTS.get(field['type'])
+
+    if field['type'] == 'integer':
+        if len(str(field['max'])) > 9 or len(str(field['min'])) > 9:
+            return BigInteger
+
+        return Integer
+
+    return null()
 
 
 class BaseVisitor(PTNodeVisitor):
@@ -229,7 +242,9 @@ class QATreeVisitor(BaseVisitor):
             self.lock_null = True
             return null()
 
-        cast_type = FIELD_TYPE_CASTS.get(field['type'])
+        cast_type = _get_cast_type(field)
+        if cast_type not in (BigInteger, Integer, String):
+            self.lock_null = True
 
         # there are side effects when attempting to make comparisons
         # between attributes of different types. Naturally, you wouldn't
@@ -269,33 +284,34 @@ def generate_qa_query(expression, form):
 def generate_qa_queries(form):
     subqueries = []
     tag_groups = []
-    for check in form.quality_checks:
-        expression = build_expression(check)
-        uses_null = 'null' in expression.lower()
+    if form.quality_checks:
+        for check in form.quality_checks:
+            expression = build_expression(check)
+            uses_null = 'null' in expression.lower()
 
-        # evaluate every expression, including empty ones
-        subquery, used_tags = generate_qa_query(expression, form)
+            # evaluate every expression, including empty ones
+            subquery, used_tags = generate_qa_query(expression, form)
 
-        tags = array(used_tags)
+            tags = array(used_tags)
 
-        if used_tags:
-            null_query = or_(*[
-                Submission.data[tag] == None for tag in used_tags   # noqa
-            ]) if not uses_null else false()
-            case_query = case([
-                (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
-                (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
-                (and_(null_query == False, subquery == False), 'OK'), # noqa
-                (or_(null_query == True, subquery == None), 'Missing')   # noqa
-            ]).label(check['name'])
-        else:
-            case_query = case([
-                (subquery == True, 'Flagged'),   # noqa
-                (subquery == False, 'OK')   # noqa
-            ]).label(check['name'])
+            if used_tags:
+                null_query = or_(*[
+                    Submission.data[tag] == None for tag in used_tags   # noqa
+                ]) if not uses_null else false()
+                case_query = case([
+                    (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
+                    (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
+                    (and_(null_query == False, subquery == False), 'OK'), # noqa
+                    (or_(null_query == True, subquery == None), 'Missing')   # noqa
+                ]).label(check['name'])
+            else:
+                case_query = case([
+                    (subquery == True, 'Flagged'),   # noqa
+                    (subquery == False, 'OK')   # noqa
+                ]).label(check['name'])
 
-        subqueries.append(case_query)
-        tag_groups.append(sorted(used_tags))
+            subqueries.append(case_query)
+            tag_groups.append(sorted(used_tags))
 
     return subqueries, tag_groups
 
