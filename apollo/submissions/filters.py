@@ -526,6 +526,8 @@ class QualityAssuranceFilter(ChoiceFilter):
                             return query.filter(false())
 
                         qa_subqueries.append(filter_query)
+                else:
+                    return query.filter(false())
 
                 return query.filter(or_(*qa_subqueries))
 
