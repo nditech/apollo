@@ -21,10 +21,10 @@ class ApolloRavenClient(Client):
                     event = None
 
                 extra.update({
-                    'deployment': getattr(deployment, 'name', 'Unspecified'),
-                    'event': getattr(event, 'name', 'Unspecified'),
-                    'apollo_version': getattr(settings, 'APOLLO_VERSION',
-                                              'Unspecified'),
+                    'deployment': getattr(deployment, 'name', 'Not Available'),
+                    'event': getattr(event, 'name', 'Not Available'),
+                    'version': getattr(settings, 'VERSION'),
+                    'commit': getattr(settings, 'COMMIT'),
                 })
 
         return super(ApolloRavenClient, self).capture(
