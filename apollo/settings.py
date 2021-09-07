@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
+import git
 import os
 from pathlib import Path
 import string
@@ -8,7 +9,11 @@ import numpy
 from prettyconf import config
 
 VERSION = config('VERSION', default='v3.1.1')
-COMMIT = config('COMMIT', default='')
+try:
+    repo = git.Repo(search_parent_directories=True)
+    COMMIT = repo.head.object.hexsha[:8]
+except git.exc.InvalidGitRepositoryError:
+    COMMIT = config('COMMIT', default='')
 
 postgres_password = Path('/run/secrets/postgres_password')
 test_postgres_password = Path('/run/secrets/postgres_password')

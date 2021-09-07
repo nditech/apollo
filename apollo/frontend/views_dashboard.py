@@ -38,9 +38,13 @@ def main_dashboard(form_id=None):
     location_type_id = args.pop('locationtype', None)
     next_location_type = None
     chart_type = args.pop('chart', None)
+    data_view = args.pop('view', None)
     if chart_type:
         session['dashboard_chart_type'] = chart_type if chart_type in [
             'pie', 'bar'] else 'pie'
+    if data_view:
+        session['dashboard_data_view'] = data_view if data_view in [
+            'divisions', 'locations'] else 'divisions'
     daily_progress = {}
     daily_stratified_progress = []
 
@@ -111,13 +115,28 @@ def main_dashboard(form_id=None):
             query = query.filter(
                 models.Submission.location_id.in_(_location_query))
 
-    query_filterset = filter_class(query, request.args)
-
     location = None
     if args.get('location_'):
         location = Location.query.filter(
             Location.id == args.get('location_'),
             Location.location_set_id == event.location_set_id).first_or_404()
+
+    if (
+        group_slug and
+        location and
+        session.get('dashboard_data_view') == 'locations'
+    ):
+        _location_query = models.Location.query.with_entities(
+            models.Location.id
+        ).join(
+            models.LocationPath,
+            models.Location.id == models.LocationPath.descendant_id
+        ).filter(models.LocationPath.ancestor_id == location.id)
+
+        query = query.filter(
+            models.Submission.location_id.in_(_location_query))
+
+    query_filterset = filter_class(query, request.args)
 
     if not group_slug:
         data = get_coverage(query_filterset.qs, form)
