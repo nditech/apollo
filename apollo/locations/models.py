@@ -191,6 +191,9 @@ class LocationType(BaseModel):
         return cls.query.filter(
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
+    def __repr__(self):
+        return self.name
+
 
 class LocationTypePath(db.Model):
     __tablename__ = 'location_type_path'
