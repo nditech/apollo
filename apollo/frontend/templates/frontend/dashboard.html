@@ -22,6 +22,11 @@
 
 {%- block toolbar %}
 <div class="btn-toolbar mt-md-0 mt-1" role="toolbar">
+  <div class="btn-group mr-1" role="group" aria-label="{{ _('Data View Selection') }}">
+    <a class="btn btn-primary{{ ' active' if session['dashboard_data_view'] != 'locations' else  '' }}" href="{{ modify_query(view='divisions') }}" title="{{ _('Administrative Divisions') }}" aria-label="{{ _('Administrative Divisions') }}"><i class="fa fa-sitemap"></i></a>
+    <a class="btn btn-primary{{ ' active' if session['dashboard_data_view'] == 'locations' else  '' }}" href="{{ modify_query(view='locations') }}" title="{{ _('Locations') }}" aria-label="{{ _('Locations') }}"><i class="fa fa-map-marked-alt"></i></a>
+  </div>
+
   <div class="btn-group" role="group" aria-label="{{ _('Chart Selection') }}">
     <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] != 'bar' else  '' }}" href="{{ modify_query(chart='pie') }}" title="{{ _('Pie Chart') }}" aria-label="{{ _('Pie Chart') }}"><i class="fa fa-chart-pie"></i></a>
     <a class="btn btn-primary{{ ' active' if session['dashboard_chart_type'] == 'bar' else  '' }}" href="{{ modify_query(chart='bar') }}" title="{{ _('Bar Chart') }}" aria-label="{{ _('Bar Chart') }}"><i class="fa fa-chart-bar"></i></a>
