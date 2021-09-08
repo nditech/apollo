@@ -1,14 +1,14 @@
 [main]
 host = https://www.transifex.com
 
-[apollo.apollo3-messages-pot]
+[apollo3.apollo-translations-messages-pot--develop]
 file_filter = apollo/translations/<lang>/LC_MESSAGES/messages.po
 minimum_perc = 0
 source_file = apollo/translations/messages.pot
 source_lang = en
 type = PO
 
-[apollo.apollo3-javascript-pot]
+[apollo3.apollo-translations-javascript-pot--develop]
 file_filter = apollo/translations/<lang>/LC_MESSAGES/javascript.po
 minimum_perc = 0
 source_file = apollo/translations/javascript.pot

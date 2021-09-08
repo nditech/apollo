@@ -1,26 +1,27 @@
-# Translations template for PROJECT.
+# Serbian translations for PROJECT.
 # Copyright (C) 2020 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
-# 
+#
 # Translators:
 # NDItech, 2021
-# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-01 15:34+0000\n"
+"POT-Creation-Date: 2021-09-08 05:19+0000\n"
 "PO-Revision-Date: 2020-10-28 20:14+0000\n"
 "Last-Translator: NDItech, 2021\n"
-"Language-Team: Serbian (https://www.transifex.com/nditech/teams/114236/sr/)\n"
+"Language: sr\n"
+"Language-Team: Serbian "
+"(https://www.transifex.com/nditech/teams/114236/sr/)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
-"Language: sr\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
@@ -63,6 +64,10 @@ msgstr "Pitanja sa više tačnih odgovora"
 #: apollo/static/js/angular-form-builder-components.js:229
 msgid "Comment Question"
 msgstr "Pitanje sa odgovorom u vidu komentara"
+
+#: apollo/static/js/angular-form-builder-components.js:269
+msgid "Image Attachment"
+msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:24
 #: apollo/static/js/angular-form-builder.js:28
@@ -135,3 +140,18 @@ msgstr "Očekivana vrednost (opciono)"
 #: apollo/static/js/angular-form-builder.js:62
 msgid "Validation"
 msgstr "Provera valjanosti"
+
+#: apollo/static/js/formbuilder-duplicates.js:33
+msgid "The question code <strong>%2</strong> has been used more than once"
+msgid_plural "The question codes <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apollo/static/js/formbuilder-duplicates.js:46
+msgid "The section <strong>%2</strong> has been used more than once"
+msgid_plural "The sections <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
