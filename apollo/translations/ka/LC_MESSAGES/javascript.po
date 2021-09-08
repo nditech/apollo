@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-01 15:34+0000\n"
+"POT-Creation-Date: 2021-09-08 05:19+0000\n"
 "PO-Revision-Date: 2021-08-04 03:45+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ka\n"
@@ -30,11 +30,13 @@ msgstr "რიცხვითი კითხვა"
 msgid "Single Choice Question"
 msgstr "ერთჯერადი არჩევანის კითხვა"
 
-#: apollo%2Fstatic%2Fjs%2Fangular-form-builder-components.js%3A92+apollo%2Fstatic%2Fjs%2Fangular-form-builder-components.js%3A187
+#: apollo/static/js/angular-form-builder-components.js:92
+#: apollo/static/js/angular-form-builder-components.js:187
 msgid "Option 1"
 msgstr "ვარიანტი 1"
 
-#: apollo%2Fstatic%2Fjs%2Fangular-form-builder-components.js%3A92+apollo%2Fstatic%2Fjs%2Fangular-form-builder-components.js%3A187
+#: apollo/static/js/angular-form-builder-components.js:92
+#: apollo/static/js/angular-form-builder-components.js:187
 msgid "Option 2"
 msgstr "ვარიანტი 2"
 
@@ -51,26 +53,34 @@ msgid "No"
 msgstr "არა"
 
 #: apollo/static/js/angular-form-builder-components.js:184
-msgid "Multiple Choices Question"
-msgstr "მრავალჯერადი არჩევანი კითხვა"
+msgid "Multiple Choice Question"
+msgstr ""
 
 #: apollo/static/js/angular-form-builder-components.js:229
 msgid "Comment Question"
 msgstr "კომენტარი კითხვა"
 
-#: apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A24+apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A28+apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A35
+#: apollo/static/js/angular-form-builder-components.js:269
+msgid "Image Attachment"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:24
+#: apollo/static/js/angular-form-builder.js:28
+#: apollo/static/js/angular-form-builder.js:35
 msgid "No Analysis"
 msgstr "არარის ანალიზი"
 
-#: apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A25+apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A31
-msgid "Histogram"
-msgstr "ჰისტოგრამა"
+#: apollo/static/js/angular-form-builder.js:25
+#: apollo/static/js/angular-form-builder.js:31
+msgid "Frequency Table"
+msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:29
-msgid "Categorical"
-msgstr "კატეგორიული"
+msgid "Target"
+msgstr ""
 
-#: apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A30+apollo%2Fstatic%2Fjs%2Fangular-form-builder.js%3A36
+#: apollo/static/js/angular-form-builder.js:30
+#: apollo/static/js/angular-form-builder.js:36
 msgid "Count"
 msgstr "ჯამში"
 
@@ -126,5 +136,25 @@ msgstr "მოსალოდნელი ღირებულების (ს
 msgid "Validation"
 msgstr "ვალიდაცია"
 
-msgid "Expected Value"
-msgstr "მოსალოდნელი ღირებულების"
+#: apollo/static/js/formbuilder-duplicates.js:33
+msgid "The question code <strong>%2</strong> has been used more than once"
+msgid_plural "The question codes <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+
+#: apollo/static/js/formbuilder-duplicates.js:46
+msgid "The section <strong>%2</strong> has been used more than once"
+msgid_plural "The sections <strong>%2</strong> have been used more than once"
+msgstr[0] ""
+
+#~ msgid "Multiple Choices Question"
+#~ msgstr "მრავალჯერადი არჩევანი კითხვა"
+
+#~ msgid "Histogram"
+#~ msgstr "ჰისტოგრამა"
+
+#~ msgid "Categorical"
+#~ msgstr "კატეგორიული"
+
+#~ msgid "Expected Value"
+#~ msgstr "მოსალოდნელი ღირებულების"
+
