@@ -125,6 +125,7 @@
       $('#updateModalDeleteButton').click(this.deleteDivision);
       $('#updateModalSaveButton').click(this.updateDivision);
       $('#saveBtn').click(this.saveGraph);
+      $('#finalizeConfirmButton').click(this.finalizeGraph);
 
       // set up new division modal
       $('#addDivision').on('shown.bs.modal', function () {
@@ -157,6 +158,14 @@
       window.onbeforeunload = null;
 
       $('#save-form').submit();
+    };
+
+    this.finalizeGraph = function(ev) {
+      appRef.storeGraphData();
+
+      window.onbeforeunload = null;
+
+      ev.target.form.submit();
     };
 
     this.launchUpdateModal = function(cellView) {
