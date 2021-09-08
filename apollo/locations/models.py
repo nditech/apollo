@@ -95,6 +95,9 @@ class LocationSet(BaseModel):
 
             lt_data['{}_code'.format(lt.id)] = _('%(location_type)s Code',
                                                  location_type=lt.name)
+            lt_data['{}_group'.format(lt.id)] = _('%(location_type)s Group',
+                                                  location_type=lt.name)
+
             if lt.has_coordinates:
                 lt_data['{}_lat'.format(lt.id)] = _(
                     '%(location_type)s Latitude', location_type=lt.name)
@@ -122,6 +125,40 @@ class LocationSet(BaseModel):
             for participant_set in self.participant_sets
             for event in participant_set.events
         }
+
+
+locations_groups = db.Table(
+    'locations_groups',
+    db.Column(
+        'location_id',
+        db.Integer,
+        db.ForeignKey('location.id', ondelete='CASCADE'),
+        nullable=False,
+        primary_key=True),
+    db.Column(
+        'location_group_id',
+        db.Integer,
+        db.ForeignKey('location_group.id', ondelete='CASCADE'),
+        nullable=False,
+        primary_key=True),
+)
+
+
+class LocationGroup(BaseModel):
+    __tablename__ = 'location_group'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    location_set_id = db.Column(
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
+
+    location_set = db.relationship(
+        'LocationSet',
+        backref=db.backref('location_groups', cascade='all, delete'))
+
+    def __str__(self):
+        return self.name or ''
 
 
 class LocationType(BaseModel):
@@ -231,6 +268,11 @@ class Location(BaseModel):
         'location_type.id', ondelete='CASCADE'), nullable=False)
     geom = db.Column(Geometry('POINT', srid=4326))
     extra_data = db.Column(JSONB)
+    groups = db.relationship(
+        'LocationGroup',
+        backref='locations',
+        secondary=locations_groups,
+    )
 
     name = translation_hybrid(name_translations)
 

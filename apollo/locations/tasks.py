@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import cachetools
-from hashlib import sha256
 import logging
 import numbers
 import os
+from hashlib import sha256
+from itertools import chain
 
 from flask import render_template_string
 from flask_babelex import gettext
 from flask_babelex import lazy_gettext as _
-from pandas import isnull
+from pandas import isnull, to_numeric
 from slugify import slugify
 from sqlalchemy import and_, exists, func
 from sqlalchemy.sql import select
@@ -18,8 +19,9 @@ from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.messaging.tasks import send_email
 
-from .models import LocationSet
-from .models import Location, LocationPath, LocationType, LocationTypePath
+from .models import (
+    Location, LocationGroup, LocationPath, LocationSet, LocationType,
+    LocationTypePath, locations_groups)
 from ..users.models import UserUpload
 
 celery = create_celery_app()
@@ -99,6 +101,28 @@ def update_locations(
     mapped_location_type_ids = [
         int(k[:-5]) for k in header_mapping.keys() if k.endswith('_code')]
 
+    group_mappings = header_mapping.pop('groups', {})
+    new_groups_map = {}
+    group_columns = list(chain.from_iterable(group_mappings.values()))
+    if group_columns:
+        LocationGroup.query.filter_by(location_set=location_set).delete()
+
+        for loc_type_id, group_names in group_mappings.items():
+            insert_statements = [LocationGroup.__table__.insert().values(
+                location_set_id=location_set.id, name=name
+            ) for name in group_names]
+
+            with connection.begin():
+                insert_results = [
+                    connection.execute(stmt) for stmt in insert_statements
+                ]
+            new_groups_map[int(loc_type_id)] = {
+                name: result.inserted_primary_key[0]
+                for name, result in zip(group_names, insert_results)
+            }
+
+        db.session.commit()
+
     location_types = LocationType.query.filter(
         LocationType.location_set == location_set,
         LocationType.id.in_(mapped_location_type_ids)
@@ -148,7 +172,7 @@ def update_locations(
                 error_log.append({
                     'label': 'WARNING',
                     'message': gettext(
-                        'No code or name present for row %(row)d for %(level)s',
+                        'No code or name present for row %(row)d for %(level)s',  # noqa
                         row=(idx + 1), level=loc_type.name)
                 })
                 warning_this_row = True
@@ -225,7 +249,7 @@ def update_locations(
                     warning_records += (0 if warning_this_row else 1)
                     error_log.append({
                         'label': 'WARNING',
-                        'message': gettext('Invalid coordinate data for row %(row)d. Data will not be used.', row=(idx + 1))
+                        'message': gettext('Invalid coordinate data for row %(row)d. Data will not be used.', row=(idx + 1))  # noqa
                     })
                     location_lat = location_lon = None
                     warning_this_row = True
@@ -239,7 +263,7 @@ def update_locations(
                     warning_records += (0 if warning_this_row else 1)
                     error_log.append({
                         'label': 'WARNING',
-                        'message': gettext('Invalid number of registered voters for row %(row)d. Data will not be used.', row=(idx + 1))
+                        'message': gettext('Invalid number of registered voters for row %(row)d. Data will not be used.', row=(idx + 1))  # noqa
                     })
                     location_rv = None
                     warning_this_row = True
@@ -339,6 +363,32 @@ def update_locations(
 
             # update location path info for this row
             location_path_helper_map[loc_type.id] = location_id
+
+            # update group info
+            if loc_type.id not in new_groups_map:
+                continue
+
+            for group_col in group_columns:
+                group_flag = to_numeric(
+                    current_row[group_col], errors='coerce')
+                if not isnull(group_flag) and group_flag:
+                    group_id = new_groups_map[loc_type.id][group_col]
+                    result = None
+
+                    with connection.begin():
+                        stmt = exists().where(and_(
+                            locations_groups.c.location_id == location_id,
+                            locations_groups.c.location_group_id == group_id
+                        )).select()
+                        result = connection.execute(stmt).scalar()
+
+                    if not result:
+                        stmt = locations_groups.insert().values(
+                            location_id=location_id, location_group_id=group_id
+                        )
+                        with connection.begin():
+                            result = connection.execute(stmt)
+                            result.close()
 
         for ans_type_id, des_type_id, depth in all_loc_type_paths:
             ancestor_id = location_path_helper_map.get(ans_type_id)

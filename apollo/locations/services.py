@@ -8,7 +8,8 @@ import sqlalchemy as sa
 from apollo import constants
 from apollo.dal.service import Service
 from apollo.locations.models import (
-    Location, LocationPath, LocationSet, LocationType, LocationTypePath)
+    Location, LocationPath, LocationSet, LocationType, LocationTypePath,
+    locations_groups)
 
 
 class LocationSetService(Service):
@@ -39,6 +40,24 @@ class LocationService(Service):
         ).all()
 
         locales = location_set.deployment.locale_codes
+        groups = sorted(location_set.location_groups, key=lambda g: g.name)
+        group_subqueries = []
+        for group in groups:
+            condition = sa.exists(sa.select(
+                [locations_groups.c.location_group_id]
+            ).where(sa.and_(
+                locations_groups.c.location_id == Location.id,
+                locations_groups.c.location_group_id == group.id,
+            )))
+
+            group_subqueries.append(sa.case([
+                (condition == sa.true(), 1),
+                (condition == sa.false(), 0),
+            ]))
+
+        columns = [Location] + group_subqueries
+        query2 = query.order_by(Location.code).with_entities(*columns)
+        group_indices = range(1, len(groups) + 1)
 
         for location_type in location_types:
             location_type_name = location_type.name.upper()
@@ -54,6 +73,8 @@ class LocationService(Service):
                 headers.append('{} LAT'.format(location_type_name))
                 headers.append('{} LON'.format(location_type_name))
 
+        headers.extend(group.name for group in groups)
+
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
         writer = csv.writer(output)
@@ -61,8 +82,8 @@ class LocationService(Service):
         yield output.getvalue()
         output.close()
 
-        locations = query.order_by('code')
-        for location in locations:
+        for row in query2:
+            location = row[0]
             record = []
             ancestors = LocationPath.query.filter(
                 LocationPath.depth > 0,
@@ -103,6 +124,13 @@ class LocationService(Service):
                     location.geom, 'desc') else None
                 record.append(lat)
                 record.append(lon)
+
+            # add a buffer if needed so all records have the same length
+            record.extend([''] * (len(headers) - len(record) - len(
+                group_indices)))
+
+            for index in group_indices:
+                record.append(row[index])
 
             output = StringIO()
             writer = csv.writer(output)

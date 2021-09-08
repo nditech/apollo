@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .models import LocationType, Location
+from .models import Location, LocationGroup, LocationType
 from flask_babelex import lazy_gettext as _
 
 from sqlalchemy import text
@@ -33,9 +33,36 @@ class LocationTypeFilter(ChoiceFilter):
         return queryset
 
 
+class LocationGroupFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        location_set_id = kwargs.pop('location_set_id')
+
+        group_choices = LocationGroup.query.filter_by(
+            location_set_id=location_set_id
+        ).order_by(
+            LocationGroup.name
+        ).with_entities(
+            LocationGroup.id, LocationGroup.name
+        ).all()
+        self.location_set_id = location_set_id
+
+        kwargs['choices'] = _make_choices(group_choices, _('Group'))
+        super().__init__(*args, **kwargs)
+
+    def queryset_(self, queryset, value, **kwargs):
+        if value:
+            return queryset.join(Location.groups).filter(
+                Location.location_set_id == self.location_set_id,
+                LocationGroup.id == value
+            )
+
+        return queryset
+
+
 def location_filterset(location_set_id):
     class LocationFilterSet(FilterSet):
         name = LocationNameFilter()
         location_type = LocationTypeFilter(location_set_id=location_set_id)
+        location_group = LocationGroupFilter(location_set_id=location_set_id)
 
     return LocationFilterSet

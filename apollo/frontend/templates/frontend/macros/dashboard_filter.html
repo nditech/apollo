@@ -7,6 +7,10 @@
                     <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
                     {{ filter_form.sample(class_='form-control custom-select') }}
                 </div>
+                <div class="col-md-2 mb-2">
+                    <label for="{{ filter_form.location_group.id }}" class="sr-only">{{ filter_form.location_group.label.text }}</label>
+                    {{ filter_form.location_group(class_='form-control custom-select') }}
+                </div>
                 <div class="col-md-6 mb-2">
                     <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}

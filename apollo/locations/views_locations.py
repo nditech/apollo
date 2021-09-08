@@ -201,10 +201,18 @@ def locations_headers(view, location_set_id, upload_id):
         else:
             if 'X-Validate' not in request.headers:
                 # get header mappings
-                data = {
-                    field.data: field.label.text
-                    for field in form if field.data
-                }
+                data = {'groups': {}}
+                for field in form:
+                    if not field.data:
+                        continue
+                    if field.data.endswith('_group'):
+                        location_type_id = int(
+                            field.data.replace('_group', ''))
+                        group_spec = data['groups'].get(location_type_id, [])
+                        group_spec.append(field.label.text)
+                        data['groups'][location_type_id] = group_spec
+                    else:
+                        data.update({field.data: field.label.text})
 
                 # invoke task asynchronously
                 kwargs = {
