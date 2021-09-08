@@ -91,7 +91,7 @@
                     {%- endif %}
                   </section>
                 </div>
-                <div class="card-footer text-muted text-right"><small>Apollo {% if config.VERSION != "undefined" %}{{ config.VERSION }}{% else %}<em>{{ config.COMMIT }}</em>{% endif %}</small></div>
+                <div class="card-footer text-muted text-right"><small>Apollo {% if config.VERSION %}{{ config.VERSION }}{% else %}<em>{{ config.COMMIT }}</em>{% endif %}</small></div>
               </div>
             </div>
           </div>
