@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from itertools import chain
+
 from flask_babelex import gettext, lazy_gettext as _
 from geoalchemy2 import Geometry
 import networkx as nx
@@ -29,15 +31,22 @@ class LocationSet(BaseModel):
         return self.name or ''
 
     def make_admin_divisions_graph(self):
+        nodes = list(chain.from_iterable(
+            LocationType.query.filter(
+                LocationType.location_set_id == self.id
+            ).with_entities(LocationType.id).all()
+        ))
         edges = LocationTypePath.query.filter(
             LocationTypePath.location_set_id == self.id,
-            LocationTypePath.depth == 1
+            LocationTypePath.depth != 0,
+            LocationTypePath.ancestor_id != LocationTypePath.descendant_id,
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
         ).all()
 
         di_graph = nx.DiGraph()
+        di_graph.add_nodes_from(nodes)
         di_graph.add_edges_from(edges)
         sorted_nodes = list(nx.topological_sort(di_graph))
         sorted_edges = list(di_graph.edges(sorted_nodes))
