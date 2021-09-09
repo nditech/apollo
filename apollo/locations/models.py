@@ -38,12 +38,15 @@ class LocationSet(BaseModel):
         ))
         edges = LocationTypePath.query.filter(
             LocationTypePath.location_set_id == self.id,
-            LocationTypePath.depth != 0,
-            LocationTypePath.ancestor_id != LocationTypePath.descendant_id,
+            LocationTypePath.depth == 1
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
-        ).all()
+        ).order_by(
+            LocationTypePath.ancestor_id,
+            LocationTypePath.descendant_id,
+            LocationTypePath.depth,
+        )
 
         di_graph = nx.DiGraph()
         di_graph.add_nodes_from(nodes)
