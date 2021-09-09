@@ -83,7 +83,7 @@ class LocationService(Service):
         output.close()
 
         for row in query2:
-            location = row[0]
+            location = row[0] if groups else row
             record = []
             ancestors = LocationPath.query.filter(
                 LocationPath.depth > 0,
