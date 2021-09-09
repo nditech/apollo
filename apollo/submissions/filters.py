@@ -126,6 +126,7 @@ def make_participant_role_filter(participant_set_id):
 
             kwargs['choices'] = _make_choices(
                 role_choices, _('Participant Role'))
+
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value, **kwargs):
@@ -137,11 +138,46 @@ def make_participant_role_filter(participant_set_id):
     return ParticipantRoleFilter
 
 
+def make_submission_location_group_filter(location_set_id):
+    class SubmissionLocationGroupFilter(ChoiceFilter):
+        def __init__(self, *args, **kwargs):
+            group_choices = models.LocationGroup.query.filter_by(
+                location_set_id=location_set_id
+            ).order_by(
+                models.LocationGroup.name
+            ).with_entities(
+                models.LocationGroup.id, models.LocationGroup.name
+            ).all()
+            self.location_set_id = location_set_id
+
+            kwargs['choices'] = _make_choices(group_choices, _('Group'))
+            super().__init__(*args, **kwargs)
+
+        def queryset_(self, query, value, **kwargs):
+            if value:
+                location_ids = models.Location.query.join(
+                    models.Location.groups
+                ).filter(
+                    models.Location.location_set_id == self.location_set_id,
+                    models.LocationGroup.id == value,
+                ).with_entities(models.Location.id)
+
+                return query.filter(
+                    models.Submission.location_id.in_(location_ids))
+
+            return query
+
+    return SubmissionLocationGroupFilter
+
+
 def make_base_submission_filter(event, filter_on_locations=False):
     class BaseSubmissionFilterSet(FilterSet):
         sample = make_submission_sample_filter(
             event.participant_set_id,
             filter_on_locations=filter_on_locations
+        )()
+        location_group = make_submission_location_group_filter(
+            event.location_set_id
         )()
 
     return BaseSubmissionFilterSet
@@ -638,6 +674,8 @@ def make_dashboard_filter(event, filter_on_locations=False):
             event.location_set_id)()
     attributes['sample'] = make_submission_sample_filter(
         event.participant_set_id, filter_on_locations=filter_on_locations)()
+    attributes['location_group'] = make_submission_location_group_filter(
+        event.location_set_id)()
 
     return type(
         'SubmissionFilterSet',
