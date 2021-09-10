@@ -8,9 +8,8 @@ from apollo.locations.models import (  # noqa
 from apollo.messaging.models import Message  # noqa
 from apollo.participants.models import (  # noqa
     ParticipantSet, ParticipantDataField,
-    Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantRole, PhoneContact, ContactHistory, Sample,
-    samples_participants)
+    Participant, ParticipantPartner, ParticipantRole, PhoneContact,
+    ContactHistory, Sample, samples_participants)
 from apollo.submissions.models import (  # noqa
     Submission, SubmissionComment, SubmissionImageAttachment,
     SubmissionVersion)

@@ -5,9 +5,7 @@ from apollo.locations.services import (
     LocationService, LocationSetService, LocationTypeService)
 from apollo.messaging.services import MessageService
 from apollo.participants.services import (
-    ParticipantSetService,
-    ParticipantGroupService, ParticipantGroupTypeService,
-    ParticipantPartnerService, ParticipantRoleService,
+    ParticipantSetService, ParticipantPartnerService, ParticipantRoleService,
     ParticipantService, PhoneContactService)
 from apollo.submissions.services import (
     SubmissionService, SubmissionCommentService, SubmissionVersionService)
@@ -23,8 +21,6 @@ participants = ParticipantService()
 participant_partners = ParticipantPartnerService()
 participant_roles = ParticipantRoleService()
 participant_sets = ParticipantSetService()
-participant_groups = ParticipantGroupService()
-participant_group_types = ParticipantGroupTypeService()
 phone_contacts = PhoneContactService()
 submissions = SubmissionService()
 submission_comments = SubmissionCommentService()

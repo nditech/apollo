@@ -4,15 +4,12 @@ from io import StringIO
 import re
 
 from flask_babelex import gettext as _
-from sqlalchemy import and_, exists, select
 
 from apollo import constants
-from apollo.core import db
 from apollo.dal.service import Service
 from apollo.participants.models import (
-    ParticipantSet,
-    Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantRole, PhoneContact, samples_participants)
+    ParticipantSet, Participant, ParticipantPartner, ParticipantRole,
+    PhoneContact)
 
 number_regex = re.compile('[^0-9]')
 
@@ -100,14 +97,6 @@ class ParticipantService(Service):
             writer.writerow(record)
             yield output_buffer.getvalue()
             output_buffer.close()
-
-
-class ParticipantGroupService(Service):
-    __model__ = ParticipantGroup
-
-
-class ParticipantGroupTypeService(Service):
-    __model__ = ParticipantGroupType
 
 
 class ParticipantPartnerService(Service):
