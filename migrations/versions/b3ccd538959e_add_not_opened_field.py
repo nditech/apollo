@@ -1,7 +1,7 @@
 """add not_opened field
 
 Revision ID: b3ccd538959e
-Revises: 5c885dc2badc
+Revises: c4166678fb79
 Create Date: 2021-08-03 09:41:18.244493
 
 """
@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'b3ccd538959e'
-down_revision = '5c885dc2badc'
+down_revision = 'c4166678fb79'
 branch_labels = None
 depends_on = None
 
