@@ -29,23 +29,32 @@ class LocationSet(BaseModel):
         return self.name or ''
 
     def make_admin_divisions_graph(self):
+        location_type_map = {
+            lt.id: lt
+            for lt in LocationType.query.filter(
+                LocationType.location_set_id == self.id
+            )
+        }
+        nodes = location_type_map.keys()
         edges = LocationTypePath.query.filter(
             LocationTypePath.location_set_id == self.id,
             LocationTypePath.depth == 1
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
+        ).order_by(
+            LocationTypePath.ancestor_id,
+            LocationTypePath.descendant_id,
+            LocationTypePath.depth,
         ).all()
 
         di_graph = nx.DiGraph()
+        di_graph.add_nodes_from(nodes)
         di_graph.add_edges_from(edges)
         sorted_nodes = list(nx.topological_sort(di_graph))
         sorted_edges = list(di_graph.edges(sorted_nodes))
 
-        location_types = [LocationType.query.filter(
-            LocationType.location_set_id == self.id,
-            LocationType.id == _id).one() for _id in sorted_nodes]
-
+        subset = [location_type_map.get(node) for node in sorted_nodes]
         nodes = [{
             'id': lt.id,
             'name': lt.name,
@@ -57,7 +66,7 @@ class LocationSet(BaseModel):
             'has_coordinates': lt.has_coordinates,
             'is_administrative': lt.is_administrative,
             'is_political': lt.is_political,
-        } for lt in location_types]
+        } for lt in subset]
 
         graph = {
             'nodes': nodes,
