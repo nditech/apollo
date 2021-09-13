@@ -7,9 +7,8 @@ from apollo.core import db
 from apollo.dal.serializers import ArchiveSerializer
 from apollo.locations.models import Location, LocationSet
 from apollo.participants.models import (
-    Participant, ParticipantDataField, ParticipantGroup, ParticipantGroupType,
-    ParticipantPartner, ParticipantRole, ParticipantSet,
-    PhoneContact, groups_participants)
+    Participant, ParticipantDataField, ParticipantPartner, ParticipantRole,
+    ParticipantSet, PhoneContact)
 
 
 class ParticipantSerializer(object):
@@ -133,63 +132,6 @@ class ParticipantDataFieldSerializer(object):
         }
 
 
-class ParticipantGroupTypeSerializer(object):
-    __model__ = ParticipantGroupType
-
-    def deserialize_one(self, data):
-        participant_set_id = ParticipantSet.query.filter_by(
-            uuid=data['participant_set']
-        ).with_entities(ParticipantSet.id).scalar()
-
-        kwargs = data.copy()
-        kwargs.pop('participant_set')
-        kwargs['participant_set_id'] = participant_set_id
-
-        return self.__model__(**kwargs)
-
-    def serialize_one(self, obj):
-        if not isinstance(obj, self.__model__):
-            raise TypeError('Object is not instance of ParticipantGroupType')
-
-        return {
-            'uuid': obj.uuid.hex,
-            'name': obj.name,
-            'participant_set': obj.participant_set.uuid.hex
-        }
-
-
-class ParticipantGroupSerializer(object):
-    __model__ = ParticipantGroup
-
-    def deserialize_one(self, data):
-        participant_set_id = ParticipantSet.query.filter_by(
-            uuid=data['participant_set']
-        ).with_entities(ParticipantSet.id).scalar()
-
-        group_type_id = ParticipantGroupType.query.filter_by(
-            uuid=data['group_type']
-        ).with_entitites(ParticipantGroupType.id).scalar()
-
-        kwargs = data.copy()
-        kwargs.pop('participant_set')
-        kwargs.pop('group_type')
-        kwargs['group_type_id'] = group_type_id
-        kwargs['participant_set_id'] = participant_set_id
-
-        return self.__model__(**kwargs)
-
-    def serialize_one(self, obj):
-        if not isinstance(obj, self.__model__):
-            raise TypeError('Object is not instance of ParticipantGroup')
-
-        return {
-            'uuid': obj.uuid.hex,
-            'name': obj.name,
-            'participant_set': obj.participant_set.uuid.hex,
-            'group_type': obj.group_type.uuid.hex
-        }
-
-
 class ParticipantPartnerSerializer(object):
     __model__ = ParticipantPartner
 
@@ -253,11 +195,7 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
             self.serialize_partners(participant_set.participant_partners,
                                     zip_file)
             self.serialize_roles(participant_set.participant_roles, zip_file)
-            self.serialize_group_types(participant_set.participant_group_types,
-                                       zip_file)
-            self.serialize_groups(participant_set.participant_groups, zip_file)
             self.serialize_participants(participant_set.participants, zip_file)
-            self.serialize_participant_groups(participant_set, zip_file)
             self.serialize_participant_phones(participant_set, zip_file)
 
     def serialize_participant_set(self, obj, zip_file):
@@ -301,35 +239,6 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
             for participant in participants:
                 data = serializer.serialize_one(participant)
                 line = f'{json.dumps(data)}\n'
-                f.write(line.encode('utf-8'))
-
-    def serialize_group_types(self, group_types, zip_file):
-        serializer = ParticipantGroupTypeSerializer()
-
-        with zip_file.open('group_types.ndjson', 'w') as f:
-            for group_type in group_types:
-                data = serializer.serialize_one(group_type)
-                line = f'{json.dumps(data)}\n'
-                f.write(line.encode('utf-8'))
-
-    def serialize_groups(self, groups, zip_file):
-        serializer = ParticipantGroupSerializer()
-
-        with zip_file.open('groups.ndjson', 'w') as f:
-            for group in groups:
-                data = serializer.serialize_one(group)
-                line = f'{json.dumps(data)}\n'
-                f.write(line.encode('utf-8'))
-
-    def serialize_participant_groups(self, participant_set, zip_file):
-        query = db.session.query(groups_participants).join(
-            Participant).join(ParticipantGroup).with_entities(
-                cast(Participant.uuid, String),
-                cast(ParticipantGroup.uuid, String))
-
-        with zip_file.open('participant-groups.ndjson', 'w') as f:
-            for pair in query:
-                line = f'{json.dumps(pair)}\n'
                 f.write(line.encode('utf-8'))
 
     def serialize_participant_phones(self, participant_set, zip_file):

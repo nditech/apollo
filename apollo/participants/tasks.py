@@ -55,17 +55,6 @@ def create_partner(name, participant_set):
         name=name, participant_set_id=participant_set.id)
 
 
-def create_group_type(name, participant_set):
-    return services.participant_group_types.create(
-        name=name, participant_set_id=participant_set.id)
-
-
-def create_group(name, group_type, participant_set):
-    return services.participant_groups.create(
-        name=name, group_type_id=group_type.id,
-        participant_set_id=participant_set.id)
-
-
 def create_role(name, participant_set):
     return services.participant_roles.create(
         name=name,  participant_set_id=participant_set.id)
@@ -97,8 +86,6 @@ def update_participants(dataframe, header_map, participant_set, task):
         password - the participant's password.
         phone - a prefix for columns starting with this string that contain
                 numbers
-        group - a prefix for columns starting with this string that contain
-                participant group names
     """
     index = dataframe.index
 
@@ -141,7 +128,6 @@ def update_participants(dataframe, header_map, participant_set, task):
     EMAIL_COL = header_map.get('email')
     PASSWORD_COL = header_map.get('password')
     phone_columns = header_map.get('phone', [])
-    group_columns = header_map.get('group', [])
     sample_columns = header_map.get('sample', [])
     full_name_columns = [
         header_map.get(col) for col in full_name_column_keys]
@@ -385,36 +371,6 @@ def update_participants(dataframe, header_map, participant_set, task):
                         number=mobile_num, participant_id=participant.id,
                         verified=True)
 
-        groups = []
-        # fix up groups
-        if group_columns:
-            for column in group_columns:
-                if not _is_valid(record[column]):
-                    continue
-
-                group_type = services.participant_group_types.find(
-                    name=column,
-                    participant_set=participant_set
-                ).first()
-
-                if not group_type:
-                    group_type = create_group_type(
-                        column, participant_set)
-
-                group = services.participant_groups.find(
-                    name=record[column],
-                    group_type=group_type,
-                    participant_set=participant_set).first()
-
-                if not group:
-                    group = create_group(
-                        record[column], group_type, participant_set)
-
-                groups.append(group)
-
-            # if group_columns:
-            #     participant.groups.extend(groups)
-
         if sample_columns:
             for column in sample_columns:
                 if not _is_valid(record[column]):
@@ -451,13 +407,6 @@ def update_participants(dataframe, header_map, participant_set, task):
         if extra_data:
             services.participants.find(id=participant.id).update(
                 {'extra_data': extra_data}, synchronize_session=False)
-
-        if groups:
-            if participant.groups:
-                participant.groups.extend(groups)
-            else:
-                participant.groups = groups
-            participant.save()
 
         task.update_task_info(
             total_records=total_records,

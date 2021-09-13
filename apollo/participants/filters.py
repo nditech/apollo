@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from cgi import escape
-from collections import OrderedDict
 
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import func, or_, text, true
@@ -13,10 +12,8 @@ from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.locations.models import Location, LocationPath
-from apollo.wtforms_ext import ExtendedMultipleSelectField
 
 from .models import Participant, ParticipantRole, ParticipantPartner
-from .models import ParticipantGroup, ParticipantGroupType, groups_participants
 from .models import PhoneContact, Sample
 
 
@@ -118,44 +115,6 @@ def make_participant_partner_filter(participant_set_id):
     return ParticipantPartnerFilter
 
 
-def make_participant_group_filter(participant_set_id):
-    class ParticipantGroupFilter(ChoiceFilter):
-        field_class = ExtendedMultipleSelectField
-
-        def __init__(self, *args, **kwargs):
-            choices = OrderedDict()
-            for group_type in services.participant_group_types.find(
-                    participant_set_id=participant_set_id
-                ).order_by(
-                    ParticipantGroupType.name):
-                for group in services.participant_groups.find(
-                    group_type=group_type
-                ).order_by(ParticipantGroup.name):
-                    choices.setdefault(group_type.name, []).append(
-                        (group.id, group.name)
-                    )
-
-            kwargs['choices'] = [(k, choices[k]) for k in choices]
-            kwargs['coerce'] = int
-            super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
-
-        def queryset_(self, query, values):
-            if values:
-                query2 = query.join(groups_participants).join(
-                    ParticipantGroup)
-                return query2.filter(
-                    Participant.id ==
-                        models.groups_participants.c.participant_id,    # noqa
-                    ParticipantGroup.id ==
-                        groups_participants.c.group_id,
-                    ParticipantGroup.id.in_(values)
-                )
-
-            return query
-
-    return ParticipantGroupFilter
-
-
 class ParticipantPhoneFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
@@ -242,7 +201,6 @@ def participant_filterset(participant_set_id, location_set_id=None):
         'name': ParticipantNameFilter(),
         'phone': ParticipantPhoneFilter(),
         'role': make_participant_role_filter(participant_set_id)(),
-        'group': make_participant_group_filter(participant_set_id)(),
         'partner': make_participant_partner_filter(participant_set_id)()
     }
 
