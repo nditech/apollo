@@ -153,7 +153,7 @@
   </li>
 </ul>
 
-  {%- if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
+  {%- if failed_checks and submission.form.quality_checks_enabled and perms.view_quality_assurance.can() %}
 <div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
   <h5 class="alert-heading">{{ _('Quality Assurance Warnings') }}</h5>
   <p>{{ _('The following quality assurance conditions were flagged while validating this submission. Please confirm with the participant that the submitted data is correct. If you find the data to be as reported by the participant, mark the data point as confirmed.') }}

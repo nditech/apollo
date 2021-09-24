@@ -133,11 +133,6 @@ class ParticipantDataField(Resource):
             'extra_fields', cascade='all, delete-orphan',
             passive_deletes=True))
 
-    def __str__(self):
-        return str(
-            _('ParticipantDataField - %(name)s in %(participant_set)s',
-              name=self.name, participant_set=self.participant_set.name))
-
 
 class ParticipantRole(BaseModel):
     __tablename__ = 'participant_role'
