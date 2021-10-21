@@ -4,7 +4,7 @@ anyjson==0.3.3
 arpeggio==1.7.1
 authlib
 awesome-slugify==1.6.5
-babel==2.5.3
+babel==2.9.1
 blinker==1.4
 boto3==1.16.8
 cachetools==1.1.5
