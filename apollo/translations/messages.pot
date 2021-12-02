@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2021-12-02 06:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgstr ""
 #: apollo/frontend/views_admin.py:125 apollo/frontend/views_admin.py:187
 #: apollo/frontend/views_admin.py:299 apollo/frontend/views_admin.py:484
 #: apollo/frontend/views_admin.py:532 apollo/frontend/views_admin.py:592
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:40
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:44
 #: apollo/submissions/services.py:60
 #: apollo/templates/admin/administrative_divisions.html:25
 #: apollo/templates/admin/administrative_divisions.html:99
@@ -257,8 +257,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_list.html:25
 #: apollo/frontend/templates/frontend/submission_list.html:203
 #: apollo/frontend/templates/frontend/submission_list.html:236
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:32
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:44
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:36
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:48
 #: apollo/pwa/templates/pwa/index.html:105 apollo/submissions/forms.py:98
 #: apollo/submissions/forms.py:100 apollo/submissions/services.py:64
 #: apollo/templates/admin/participant_list.html:91
@@ -344,7 +344,7 @@ msgstr ""
 msgid "Add Quality Assurance"
 msgstr ""
 
-#: apollo/frontend/filters.py:123 apollo/participants/filters.py:177
+#: apollo/frontend/filters.py:123 apollo/participants/filters.py:136
 #: apollo/participants/models.py:48 apollo/submissions/filters.py:62
 msgid "Sample"
 msgstr ""
@@ -361,7 +361,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:92
 #: apollo/frontend/templates/frontend/submission_edit.html:431
 #: apollo/frontend/templates/frontend/submission_edit.html:618
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:45
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:49
 #: apollo/submissions/models.py:36 apollo/submissions/services.py:70
 msgid "Status"
 msgstr ""
@@ -369,7 +369,7 @@ msgstr ""
 #: apollo/frontend/filters.py:284 apollo/frontend/forms.py:170
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:166
 #: apollo/frontend/templates/frontend/submission_edit.html:455
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:62
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:66
 #: apollo/submissions/forms.py:84 apollo/submissions/models.py:57
 #: apollo/submissions/models.py:407
 msgid "Unmarked"
@@ -380,7 +380,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:160
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:175
 #: apollo/frontend/templates/frontend/submission_edit.html:449
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:58
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:62
 #: apollo/submissions/forms.py:85 apollo/submissions/models.py:59
 #: apollo/submissions/models.py:65
 msgid "Confirmed"
@@ -389,7 +389,7 @@ msgstr ""
 #: apollo/frontend/filters.py:285 apollo/frontend/forms.py:172
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:162
 #: apollo/frontend/templates/frontend/submission_edit.html:451
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:60
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:64
 #: apollo/submissions/forms.py:86 apollo/submissions/models.py:19
 #: apollo/submissions/models.py:60
 msgid "Rejected"
@@ -410,22 +410,22 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-#: apollo/frontend/forms.py:55 apollo/participants/models.py:60
+#: apollo/frontend/forms.py:55 apollo/participants/models.py:59
 #, python-format
 msgid "Full Name (%(language)s)"
 msgstr ""
 
-#: apollo/frontend/forms.py:60 apollo/participants/models.py:63
+#: apollo/frontend/forms.py:60 apollo/participants/models.py:62
 #, python-format
 msgid "First Name (%(language)s)"
 msgstr ""
 
-#: apollo/frontend/forms.py:65 apollo/participants/models.py:66
+#: apollo/frontend/forms.py:65 apollo/participants/models.py:65
 #, python-format
 msgid "Other Names (%(language)s)"
 msgstr ""
 
-#: apollo/frontend/forms.py:70 apollo/participants/models.py:69
+#: apollo/frontend/forms.py:70 apollo/participants/models.py:68
 #, python-format
 msgid "Last Name (%(language)s)"
 msgstr ""
@@ -434,7 +434,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/participant_list.html:126
 #: apollo/frontend/templates/frontend/participant_list.html:128
 #: apollo/frontend/templates/frontend/participant_list.html:131
-#: apollo/participants/models.py:55 apollo/participants/services.py:45
+#: apollo/participants/models.py:54 apollo/participants/services.py:42
 #: apollo/templates/admin/participant_list.html:121
 #: apollo/templates/admin/participant_list.html:123
 #: apollo/templates/admin/participant_list.html:126
@@ -446,7 +446,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/participant_list.html:140
 #: apollo/frontend/templates/frontend/participant_list.html:143
 #: apollo/frontend/templates/frontend/submission_edit.html:72
-#: apollo/participants/models.py:47 apollo/participants/services.py:40
+#: apollo/participants/models.py:47 apollo/participants/services.py:37
 #: apollo/templates/admin/participant_list.html:133
 #: apollo/templates/admin/participant_list.html:135
 #: apollo/templates/admin/participant_list.html:138
@@ -474,7 +474,7 @@ msgid "Participant"
 msgstr ""
 
 #: apollo/frontend/forms.py:90 apollo/participants/models.py:52
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Partner"
 msgstr ""
 
@@ -501,7 +501,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/login_user.html:70
 #: apollo/frontend/templates/frontend/reset_password.html:66
 #: apollo/frontend/templates/frontend/reset_password.html:68
-#: apollo/participants/models.py:57 apollo/participants/services.py:45
+#: apollo/participants/models.py:56 apollo/participants/services.py:42
 #: apollo/pwa/templates/pwa/index.html:76
 #: apollo/pwa/templates/pwa/index.html:79 apollo/users/forms.py:16
 msgid "Password"
@@ -751,7 +751,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:481
 #: apollo/frontend/templates/frontend/submission_edit.html:611
 #: apollo/frontend/views_admin.py:484
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:46
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:50
 #: apollo/submissions/services.py:70
 #: apollo/templates/admin/quality_assurance.html:31
 #: apollo/templates/admin/quality_assurance_edit.html:214
@@ -773,7 +773,7 @@ msgid ""
 msgstr ""
 
 #: apollo/frontend/templates/frontend/dashboard.html:26
-#: apollo/frontend/views_admin.py:533 apollo/locations/views_locations.py:273
+#: apollo/frontend/views_admin.py:533 apollo/locations/views_locations.py:281
 msgid "Administrative Divisions"
 msgstr ""
 
@@ -820,7 +820,7 @@ msgstr ""
 
 #: apollo/frontend/views_admin.py:736 apollo/locations/views_locations.py:73
 #: apollo/locations/views_locations.py:114
-#: apollo/locations/views_locations.py:272
+#: apollo/locations/views_locations.py:280
 msgid "Location Sets"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:466
 #: apollo/frontend/templates/frontend/submission_edit.html:498
 #: apollo/frontend/templates/frontend/submission_edit.html:528
-#: apollo/result_analysis/templates/result_analysis/results.html:338
+#: apollo/result_analysis/templates/result_analysis/results.html:342
 #: apollo/templates/admin/locations_list.html:83
 #: apollo/templates/admin/participant_list.html:198
 #: apollo/templates/admin/quality_assurance.html:48
@@ -975,11 +975,11 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:106
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:137
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:74
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:52
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:53
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:71
-#: apollo/result_analysis/templates/result_analysis/results.html:204
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:56
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:57
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:75
+#: apollo/result_analysis/templates/result_analysis/results.html:208
 msgid "Missing"
 msgstr ""
 
@@ -1000,7 +1000,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:119
 #: apollo/frontend/templates/frontend/submission_edit.html:232
 #: apollo/frontend/templates/frontend/submission_edit.html:234
-#: apollo/submissions/filters.py:706 apollo/submissions/filters.py:760
+#: apollo/submissions/filters.py:744 apollo/submissions/filters.py:798
 msgid "No Signal"
 msgstr ""
 
@@ -1021,7 +1021,7 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/forgot_password.html:63
 #: apollo/frontend/templates/frontend/forgot_password.html:65
-#: apollo/participants/models.py:56 apollo/participants/services.py:45
+#: apollo/participants/models.py:55 apollo/participants/services.py:42
 #: apollo/users/forms.py:13
 msgid "Email"
 msgstr ""
@@ -1186,8 +1186,8 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:48
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:73
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:52
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:77
 #: apollo/frontend/templates/frontend/message_list.html:30
 #: apollo/frontend/templates/frontend/message_list.html:64
 #: apollo/frontend/templates/frontend/submission_edit.html:366
@@ -1201,13 +1201,13 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:17
+#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:21
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:39
-#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:17
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:58
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:83
+#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:21
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:62
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:87
 #: apollo/frontend/templates/frontend/message_list.html:39
-#: apollo/templates/admin/locations_list_filter.html:15
+#: apollo/templates/admin/locations_list_filter.html:18
 msgid "Clear"
 msgstr ""
 
@@ -1216,7 +1216,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:433
 #: apollo/frontend/templates/frontend/submission_edit.html:480
 #: apollo/frontend/templates/frontend/submission_edit.html:512
-#: apollo/result_analysis/templates/result_analysis/results.html:506
+#: apollo/result_analysis/templates/result_analysis/results.html:510
 msgid "Time"
 msgstr ""
 
@@ -1297,7 +1297,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/participant_list.html:71
 #: apollo/frontend/templates/frontend/participant_list.html:73
 #: apollo/frontend/templates/frontend/participant_list.html:75
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:39
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:43
 msgid "PID"
 msgstr ""
 
@@ -1515,13 +1515,13 @@ msgstr ""
 #: apollo/frontend/templates/frontend/submission_edit.html:228
 #: apollo/frontend/templates/frontend/submission_edit.html:232
 #: apollo/frontend/templates/frontend/submission_edit.html:234
-#: apollo/submissions/filters.py:705 apollo/submissions/filters.py:759
+#: apollo/submissions/filters.py:743 apollo/submissions/filters.py:797
 msgid "Signal"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:95
 #: apollo/frontend/templates/frontend/submission_edit.html:248
-#: apollo/submissions/filters.py:683 apollo/submissions/filters.py:750
+#: apollo/submissions/filters.py:721 apollo/submissions/filters.py:788
 msgid "Quarantine Status"
 msgstr ""
 
@@ -1654,17 +1654,17 @@ msgstr ""
 msgid "Map View"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:16
+#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:20
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:38
-#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:16
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:57
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:82
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:10
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:9
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:13
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:13
-#: apollo/result_analysis/templates/result_analysis/results.html:10
-#: apollo/templates/admin/locations_list_filter.html:14
+#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:20
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:61
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:86
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:14
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:13
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:17
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:17
+#: apollo/result_analysis/templates/result_analysis/results.html:14
+#: apollo/templates/admin/locations_list_filter.html:17
 msgid "Filter"
 msgstr ""
 
@@ -1687,7 +1687,7 @@ msgstr ""
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:5
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:7
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:10
-#: apollo/participants/models.py:49 apollo/participants/services.py:39
+#: apollo/participants/models.py:49 apollo/participants/services.py:36
 #: apollo/pwa/templates/pwa/index.html:69
 #: apollo/pwa/templates/pwa/index.html:72 apollo/submissions/services.py:60
 msgid "Participant ID"
@@ -1714,13 +1714,13 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:70
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:94
-#: apollo/submissions/filters.py:691
+#: apollo/submissions/filters.py:729
 msgid "Phone Confirmation"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:71
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:37
-#: apollo/submissions/filters.py:704 apollo/submissions/filters.py:758
+#: apollo/submissions/filters.py:742 apollo/submissions/filters.py:796
 msgid "Signal Status"
 msgstr ""
 
@@ -1792,19 +1792,19 @@ msgstr ""
 msgid "Please try sending again"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:32
 #: apollo/templates/admin/quality_assurance.html:42
 #: apollo/templates/admin/quality_assurance_edit.html:223
 msgid "OR"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:32
 #: apollo/templates/admin/quality_assurance.html:42
 #: apollo/templates/admin/quality_assurance_edit.html:222
 msgid "AND"
 msgstr ""
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:54
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:58
 msgid "All Statuses"
 msgstr ""
 
@@ -1836,6 +1836,10 @@ msgstr ""
 msgid "All Types"
 msgstr ""
 
+#: apollo/locations/filters.py:49 apollo/submissions/filters.py:153
+msgid "Group"
+msgstr ""
+
 #: apollo/locations/forms.py:14 apollo/participants/forms.py:12
 msgid "Import File"
 msgstr ""
@@ -1845,69 +1849,74 @@ msgstr ""
 msgid "Properties for %(loc_type_name)s were mapped, but no code was specified"
 msgstr ""
 
-#: apollo/locations/models.py:92
+#: apollo/locations/models.py:101
 #, python-format
 msgid "%(location_type)s Name (%(language)s)"
 msgstr ""
 
-#: apollo/locations/models.py:96
+#: apollo/locations/models.py:105
 #, python-format
 msgid "%(location_type)s Code"
 msgstr ""
 
-#: apollo/locations/models.py:99
+#: apollo/locations/models.py:107
+#, python-format
+msgid "%(location_type)s Group"
+msgstr ""
+
+#: apollo/locations/models.py:111
 #, python-format
 msgid "%(location_type)s Latitude"
 msgstr ""
 
-#: apollo/locations/models.py:101
+#: apollo/locations/models.py:113
 #, python-format
 msgid "%(location_type)s Longitude"
 msgstr ""
 
-#: apollo/locations/models.py:105
+#: apollo/locations/models.py:117
 #, python-format
 msgid "%(location_type)s %(field_label)s"
 msgstr ""
 
-#: apollo/locations/models.py:112
+#: apollo/locations/models.py:124
 #, python-format
 msgid "%(location_type)s registered voters"
 msgstr ""
 
-#: apollo/locations/models.py:348
+#: apollo/locations/models.py:399
 #, python-format
 msgid "LocationDataField - %(name)s in %(location_set)s"
 msgstr ""
 
-#: apollo/locations/tasks.py:152
+#: apollo/locations/tasks.py:176
 #, python-format
 msgid "No code or name present for row %(row)d for %(level)s"
 msgstr ""
 
-#: apollo/locations/tasks.py:187
+#: apollo/locations/tasks.py:211
 #, python-format
 msgid "Invalid (non-numeric) location code (%(loc_code)s)"
 msgstr ""
 
-#: apollo/locations/tasks.py:204
+#: apollo/locations/tasks.py:228
 #, python-format
 msgid "Missing name or code for row %(row)d"
 msgstr ""
 
-#: apollo/locations/tasks.py:228
+#: apollo/locations/tasks.py:252
 #, python-format
 msgid "Invalid coordinate data for row %(row)d. Data will not be used."
 msgstr ""
 
-#: apollo/locations/tasks.py:242
+#: apollo/locations/tasks.py:266
 #, python-format
 msgid ""
 "Invalid number of registered voters for row %(row)d. Data will not be "
 "used."
 msgstr ""
 
-#: apollo/locations/tasks.py:415
+#: apollo/locations/tasks.py:465
 msgid "Locations Import Report"
 msgstr ""
 
@@ -1916,15 +1925,15 @@ msgstr ""
 msgid "Edit Location"
 msgstr ""
 
-#: apollo/locations/views_locations.py:241
+#: apollo/locations/views_locations.py:249
 #, python-format
 msgid ""
 "Administrative level %(name)s has locations assigned and cannot be "
 "deleted."
 msgstr ""
 
-#: apollo/locations/views_locations.py:259
-#: apollo/locations/views_locations.py:324
+#: apollo/locations/views_locations.py:267
+#: apollo/locations/views_locations.py:332
 msgid "Your changes have been saved."
 msgstr ""
 
@@ -1932,7 +1941,7 @@ msgstr ""
 msgid "Invalid Form"
 msgstr ""
 
-#: apollo/messaging/helpers.py:39
+#: apollo/messaging/helpers.py:39 apollo/messaging/helpers.py:110
 #, python-format
 msgid "Invalid message: %(text)s. Please check and resend!"
 msgstr ""
@@ -1944,30 +1953,31 @@ msgid ""
 "%(text)s"
 msgstr ""
 
-#: apollo/messaging/helpers.py:63
-msgid "Thank you! Your report was received! You sent: {text}"
+#: apollo/messaging/helpers.py:64
+#, python-format
+msgid "Thank you! Your report was received! You sent: %(text)s"
 msgstr ""
 
-#: apollo/messaging/helpers.py:73
-msgid "Unknown question codes: \"{questions}\". You sent: {text}"
+#: apollo/messaging/helpers.py:75
+#, python-format
+msgid "Unknown question codes: \"%(questions)s\". You sent: %(text)s"
 msgstr ""
 
-#: apollo/messaging/helpers.py:82
-msgid "Invalid text sent: \"{extra}\". You sent: {text}"
+#: apollo/messaging/helpers.py:83
+#, python-format
+msgid "Invalid text sent: \"%(extra)s\". You sent: %(text)s"
 msgstr ""
 
-#: apollo/messaging/helpers.py:90
+#: apollo/messaging/helpers.py:91
+#, python-format
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
-"{text}"
+"%(text)s"
 msgstr ""
 
-#: apollo/messaging/helpers.py:100
-msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
-msgstr ""
-
-#: apollo/messaging/helpers.py:110
-msgid "Invalid message: \"{text}\". Please check and resend!"
+#: apollo/messaging/helpers.py:103
+#, python-format
+msgid "Invalid response(s) for question(s): \"%(questions)s\". You sent: %(text)s"
 msgstr ""
 
 #: apollo/messaging/models.py:14
@@ -2016,11 +2026,11 @@ msgid ""
 "Please download a new copy and resend. Thank you."
 msgstr ""
 
-#: apollo/participants/filters.py:86
+#: apollo/participants/filters.py:83
 msgid "All Roles"
 msgstr ""
 
-#: apollo/participants/filters.py:109
+#: apollo/participants/filters.py:106
 msgid "All Organizations"
 msgstr ""
 
@@ -2028,7 +2038,7 @@ msgstr ""
 msgid "Participant ID was not mapped"
 msgstr ""
 
-#: apollo/participants/models.py:50 apollo/participants/services.py:45
+#: apollo/participants/models.py:50 apollo/participants/services.py:42
 msgid "Supervisor ID"
 msgstr ""
 
@@ -2036,104 +2046,95 @@ msgstr ""
 msgid "Location code"
 msgstr ""
 
-#: apollo/participants/models.py:54
-msgid "Group"
-msgstr ""
-
-#: apollo/participants/models.py:139
-#, python-format
-msgid "ParticipantDataField - %(name)s in %(participant_set)s"
-msgstr ""
-
-#: apollo/participants/models.py:229
+#: apollo/participants/models.py:174
 msgid "Unspecified"
 msgstr ""
 
-#: apollo/participants/models.py:230
+#: apollo/participants/models.py:175
 msgid "Female"
 msgstr ""
 
-#: apollo/participants/models.py:231
+#: apollo/participants/models.py:176
 msgid "Male"
 msgstr ""
 
-#: apollo/participants/services.py:39
+#: apollo/participants/services.py:36
 msgid "Full Name"
 msgstr ""
 
-#: apollo/participants/services.py:39
+#: apollo/participants/services.py:36
 msgid "First Name"
 msgstr ""
 
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Other Names"
 msgstr ""
 
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Last Name"
 msgstr ""
 
-#: apollo/participants/services.py:41 apollo/submissions/services.py:64
+#: apollo/participants/services.py:38 apollo/submissions/services.py:64
 msgid "Location Code"
 msgstr ""
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #1"
 msgstr ""
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #2"
 msgstr ""
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #3"
 msgstr ""
 
-#: apollo/participants/tasks.py:178
+#: apollo/participants/tasks.py:164
 #, python-format
 msgid "Invalid (non-numeric) participant ID (%(p_id)s)"
 msgstr ""
 
-#: apollo/participants/tasks.py:273
+#: apollo/participants/tasks.py:259
 #, python-format
 msgid "Invalid (non-numeric) location ID (%(loc_id)s)"
 msgstr ""
 
-#: apollo/participants/tasks.py:291
+#: apollo/participants/tasks.py:277
 #, python-format
 msgid "Invalid location id (%(loc_id)s)"
 msgstr ""
 
-#: apollo/participants/tasks.py:299
+#: apollo/participants/tasks.py:285
 #, python-format
 msgid "Location code %(loc_id)s for row %(row)d is not unique"
 msgstr ""
 
-#: apollo/participants/tasks.py:305
+#: apollo/participants/tasks.py:291
 #, python-format
 msgid "Location with id %(loc_id)s not found"
 msgstr ""
 
-#: apollo/participants/tasks.py:314
+#: apollo/participants/tasks.py:300
 #, python-format
 msgid ""
 "Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
 "not found"
 msgstr ""
 
-#: apollo/participants/tasks.py:491
+#: apollo/participants/tasks.py:440
 #, python-format
 msgid "Supervisor with ID %(id)s not found"
 msgstr ""
 
-#: apollo/participants/tasks.py:497
+#: apollo/participants/tasks.py:446
 #, python-format
 msgid ""
 "Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
 "found"
 msgstr ""
 
-#: apollo/participants/tasks.py:571
+#: apollo/participants/tasks.py:520
 msgid "Import report"
 msgstr ""
 
@@ -2171,43 +2172,43 @@ msgstr ""
 msgid "Incidents Data"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:37
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:38
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:83
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:41
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:42
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:87
 msgid "Mean"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:43
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:42
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:86
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:47
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:46
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:90
 #, python-format
 msgid "%(label)s"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:51
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:52
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:70
-#: apollo/result_analysis/templates/result_analysis/results.html:203
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:55
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:56
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:74
+#: apollo/result_analysis/templates/result_analysis/results.html:207
 msgid "Reported"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:87
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:128
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:91
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:132
 msgid "No data available"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:83
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:48
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:87
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:52
 #, python-format
 msgid "%(loc_type)s"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:28
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:32
 msgid "Summary"
 msgstr ""
 
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:69
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:73
 msgid "Detail"
 msgstr ""
 
@@ -2417,126 +2418,126 @@ msgstr ""
 msgid "Results Data"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:20
+#: apollo/result_analysis/templates/result_analysis/results.html:24
 msgid "Convergence"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:23
+#: apollo/result_analysis/templates/result_analysis/results.html:27
 msgid "Scatterplot"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:52
-#: apollo/result_analysis/templates/result_analysis/results.html:73
-#: apollo/result_analysis/templates/result_analysis/results.html:206
+#: apollo/result_analysis/templates/result_analysis/results.html:56
+#: apollo/result_analysis/templates/result_analysis/results.html:77
+#: apollo/result_analysis/templates/result_analysis/results.html:210
 msgid "Turnout"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:53
+#: apollo/result_analysis/templates/result_analysis/results.html:57
 msgid "Total Votes"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:55
-#: apollo/result_analysis/templates/result_analysis/results.html:84
-#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:59
+#: apollo/result_analysis/templates/result_analysis/results.html:88
+#: apollo/result_analysis/templates/result_analysis/results.html:221
 msgid "Rejected Ballots"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:58
-#: apollo/result_analysis/templates/result_analysis/results.html:91
-#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:62
+#: apollo/result_analysis/templates/result_analysis/results.html:95
+#: apollo/result_analysis/templates/result_analysis/results.html:228
 msgid "Blank Ballots"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:60
-#: apollo/result_analysis/templates/result_analysis/results.html:97
-#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:64
+#: apollo/result_analysis/templates/result_analysis/results.html:101
+#: apollo/result_analysis/templates/result_analysis/results.html:234
 msgid "Total Valid"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:72
-#: apollo/result_analysis/templates/result_analysis/results.html:205
+#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:209
 msgid "Total Registered"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:72
-#: apollo/result_analysis/templates/result_analysis/results.html:205
+#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:209
 msgid "TR"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:75
-#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:79
 #: apollo/result_analysis/templates/result_analysis/results.html:80
-#: apollo/result_analysis/templates/result_analysis/results.html:81
-#: apollo/result_analysis/templates/result_analysis/results.html:86
-#: apollo/result_analysis/templates/result_analysis/results.html:87
-#: apollo/result_analysis/templates/result_analysis/results.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:101
-#: apollo/result_analysis/templates/result_analysis/results.html:102
-#: apollo/result_analysis/templates/result_analysis/results.html:208
-#: apollo/result_analysis/templates/result_analysis/results.html:209
+#: apollo/result_analysis/templates/result_analysis/results.html:84
+#: apollo/result_analysis/templates/result_analysis/results.html:85
+#: apollo/result_analysis/templates/result_analysis/results.html:90
+#: apollo/result_analysis/templates/result_analysis/results.html:91
+#: apollo/result_analysis/templates/result_analysis/results.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:105
+#: apollo/result_analysis/templates/result_analysis/results.html:106
+#: apollo/result_analysis/templates/result_analysis/results.html:212
 #: apollo/result_analysis/templates/result_analysis/results.html:213
-#: apollo/result_analysis/templates/result_analysis/results.html:214
-#: apollo/result_analysis/templates/result_analysis/results.html:219
-#: apollo/result_analysis/templates/result_analysis/results.html:220
-#: apollo/result_analysis/templates/result_analysis/results.html:226
-#: apollo/result_analysis/templates/result_analysis/results.html:227
-#: apollo/result_analysis/templates/result_analysis/results.html:234
-#: apollo/result_analysis/templates/result_analysis/results.html:235
+#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:218
+#: apollo/result_analysis/templates/result_analysis/results.html:223
+#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:231
+#: apollo/result_analysis/templates/result_analysis/results.html:238
+#: apollo/result_analysis/templates/result_analysis/results.html:239
 msgid "Margin of Error"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:75
-#: apollo/result_analysis/templates/result_analysis/results.html:80
-#: apollo/result_analysis/templates/result_analysis/results.html:86
-#: apollo/result_analysis/templates/result_analysis/results.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:101
-#: apollo/result_analysis/templates/result_analysis/results.html:208
-#: apollo/result_analysis/templates/result_analysis/results.html:213
-#: apollo/result_analysis/templates/result_analysis/results.html:219
-#: apollo/result_analysis/templates/result_analysis/results.html:226
-#: apollo/result_analysis/templates/result_analysis/results.html:234
+#: apollo/result_analysis/templates/result_analysis/results.html:79
+#: apollo/result_analysis/templates/result_analysis/results.html:84
+#: apollo/result_analysis/templates/result_analysis/results.html:90
+#: apollo/result_analysis/templates/result_analysis/results.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:105
+#: apollo/result_analysis/templates/result_analysis/results.html:212
+#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:223
+#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:238
 #, python-format
 msgid "MoE 95%%"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:76
-#: apollo/result_analysis/templates/result_analysis/results.html:81
-#: apollo/result_analysis/templates/result_analysis/results.html:87
-#: apollo/result_analysis/templates/result_analysis/results.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:102
-#: apollo/result_analysis/templates/result_analysis/results.html:209
-#: apollo/result_analysis/templates/result_analysis/results.html:214
-#: apollo/result_analysis/templates/result_analysis/results.html:220
-#: apollo/result_analysis/templates/result_analysis/results.html:227
-#: apollo/result_analysis/templates/result_analysis/results.html:235
+#: apollo/result_analysis/templates/result_analysis/results.html:80
+#: apollo/result_analysis/templates/result_analysis/results.html:85
+#: apollo/result_analysis/templates/result_analysis/results.html:91
+#: apollo/result_analysis/templates/result_analysis/results.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:106
+#: apollo/result_analysis/templates/result_analysis/results.html:213
+#: apollo/result_analysis/templates/result_analysis/results.html:218
+#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:231
+#: apollo/result_analysis/templates/result_analysis/results.html:239
 #, python-format
 msgid "MoE 99%%"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:78
-#: apollo/result_analysis/templates/result_analysis/results.html:99
-#: apollo/result_analysis/templates/result_analysis/results.html:211
-#: apollo/result_analysis/templates/result_analysis/results.html:232
+#: apollo/result_analysis/templates/result_analysis/results.html:82
+#: apollo/result_analysis/templates/result_analysis/results.html:103
+#: apollo/result_analysis/templates/result_analysis/results.html:215
+#: apollo/result_analysis/templates/result_analysis/results.html:236
 msgid "Votes"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:84
-#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:88
+#: apollo/result_analysis/templates/result_analysis/results.html:221
 msgid "RB"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:91
-#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:95
+#: apollo/result_analysis/templates/result_analysis/results.html:228
 msgid "BB"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:97
-#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:101
+#: apollo/result_analysis/templates/result_analysis/results.html:234
 msgid "TV"
 msgstr ""
 
-#: apollo/result_analysis/templates/result_analysis/results.html:485
+#: apollo/result_analysis/templates/result_analysis/results.html:489
 msgid "Vote Share"
 msgstr ""
 
@@ -2563,88 +2564,88 @@ msgstr ""
 msgid "Participant Role"
 msgstr ""
 
-#: apollo/submissions/filters.py:153
+#: apollo/submissions/filters.py:189
 msgid "All Incidents"
 msgstr ""
 
-#: apollo/submissions/filters.py:154
+#: apollo/submissions/filters.py:190
 msgid "Unmarked Incidents"
 msgstr ""
 
-#: apollo/submissions/filters.py:155
+#: apollo/submissions/filters.py:191
 msgid "Confirmed Incidents"
 msgstr ""
 
-#: apollo/submissions/filters.py:156
+#: apollo/submissions/filters.py:192
 msgid "Rejected Incidents"
 msgstr ""
 
-#: apollo/submissions/filters.py:157
+#: apollo/submissions/filters.py:193
 msgid "Citizen Report Incidents"
 msgstr ""
 
-#: apollo/submissions/filters.py:669
+#: apollo/submissions/filters.py:707
 #, python-format
 msgid "%(group)s Status"
 msgstr ""
 
-#: apollo/submissions/filters.py:670
+#: apollo/submissions/filters.py:708
 #, python-format
 msgid "%(group)s Partial"
 msgstr ""
 
-#: apollo/submissions/filters.py:671
+#: apollo/submissions/filters.py:709
 #, python-format
 msgid "%(group)s Missing"
 msgstr ""
 
-#: apollo/submissions/filters.py:672
+#: apollo/submissions/filters.py:710
 #, python-format
 msgid "%(group)s Complete"
 msgstr ""
 
-#: apollo/submissions/filters.py:673
+#: apollo/submissions/filters.py:711
 #, python-format
 msgid "%(group)s Conflict"
 msgstr ""
 
-#: apollo/submissions/filters.py:684 apollo/submissions/filters.py:752
+#: apollo/submissions/filters.py:722 apollo/submissions/filters.py:790
 msgid "Quarantine All"
 msgstr ""
 
-#: apollo/submissions/filters.py:685 apollo/submissions/filters.py:753
+#: apollo/submissions/filters.py:723 apollo/submissions/filters.py:791
 msgid "Quarantine Results"
 msgstr ""
 
-#: apollo/submissions/filters.py:686
+#: apollo/submissions/filters.py:724
 msgid "Quarantine All + Results"
 msgstr ""
 
-#: apollo/submissions/filters.py:687 apollo/submissions/filters.py:751
+#: apollo/submissions/filters.py:725 apollo/submissions/filters.py:789
 msgid "Quarantine None"
 msgstr ""
 
-#: apollo/submissions/filters.py:692
+#: apollo/submissions/filters.py:730
 msgid "Phone Confirmed"
 msgstr ""
 
-#: apollo/submissions/filters.py:693
+#: apollo/submissions/filters.py:731
 msgid "Phone Unconfirmed"
 msgstr ""
 
-#: apollo/submissions/filters.py:700
+#: apollo/submissions/filters.py:738
 msgid "Optional Inclusion"
 msgstr ""
 
-#: apollo/submissions/filters.py:725
+#: apollo/submissions/filters.py:763
 msgid "Quality Check Criterion"
 msgstr ""
 
-#: apollo/submissions/filters.py:726
+#: apollo/submissions/filters.py:764
 msgid "Any Criterion"
 msgstr ""
 
-#: apollo/submissions/filters.py:735
+#: apollo/submissions/filters.py:773
 msgid "Quality Check Condition"
 msgstr ""
 

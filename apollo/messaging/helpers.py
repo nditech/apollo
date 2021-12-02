@@ -4,7 +4,7 @@ from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import (
     get_unsent_codes, parse_text, parse_responses)
 from flask import g
-from flask_babelex import gettext, lazy_gettext as _
+from flask_babelex import gettext
 from werkzeug.datastructures import MultiDict
 
 
@@ -60,9 +60,8 @@ def parse_message(form):
 
                         return reply, submission, had_errors
                     return (
-                        _('Thank you! Your report was received!'
-                          ' You sent: {text}')
-                        .format(text=message.get('text', '')),
+                        gettext('Thank you! Your report was received!'
+                          ' You sent: %(text)s', text=message.get('text', '')),
                         submission,
                         had_errors
                     )
@@ -70,26 +69,26 @@ def parse_message(form):
                     # TODO: replace .format() calls
                     had_errors = True
                     return (
-                        _('Unknown question codes: "{questions}". '
-                          'You sent: {text}')
-                        .format(questions=', '.join(sorted(diff)),
-                                text=message.get('text', '')),
+                        gettext('Unknown question codes: "%(questions)s". '
+                          'You sent: %(text)s',
+                        questions=', '.join(sorted(diff)),
+                        text=message.get('text', '')),
                         submission,
                         had_errors
                     )
                 elif extra:
                     had_errors = True
-                    return (_('Invalid text sent: "{extra}". '
-                              'You sent: {text}').format(
-                                  extra=extra, text=message.get('text', '')),
+                    return (gettext('Invalid text sent: "%(extra)s". '
+                              'You sent: %(text)s',
+                              extra=extra, text=message.get('text', '')),
                             submission, had_errors)
             else:
                 had_errors = True
                 if 'participant' in questionnaire.errors:
                     return (
-                        _('Observer ID not found. Please resend with valid '
-                          'Observer ID. You sent: {text}').format(
-                              text=message.get('text', '')),
+                        gettext('Observer ID not found. Please resend with valid '
+                          'Observer ID. You sent: %(text)s',
+                          text=message.get('text', '')),
                         submission,
                         had_errors
                     )
@@ -97,17 +96,17 @@ def parse_message(form):
                     # Save any valid data
                     submission = questionnaire.save()
                     return (
-                        _('Invalid response(s) for question(s):'
-                          ' "{questions}". You sent: {text}').format(
-                              questions=', '.join(sorted(
-                                  questionnaire.errors.keys())),
-                              text=message.get('text', '')),
+                        gettext('Invalid response(s) for question(s):'
+                          ' "%(questions)s". You sent: %(text)s',
+                          questions=', '.join(
+                              sorted(questionnaire.errors.keys())),
+                          text=message.get('text', '')),
                         submission,
                         had_errors
                     )
     had_errors = True
     return (
-        _('Invalid message: "{text}". Please check and resend!').format(
+        gettext('Invalid message: %(text)s. Please check and resend!',
             text=message.get('text', '')),
         submission,
         had_errors
