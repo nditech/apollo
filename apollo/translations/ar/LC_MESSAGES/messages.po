@@ -1,27 +1,27 @@
-# Arabic translations for PROJECT.
+# Translations template for PROJECT.
 # Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-#
+# 
 # Translators:
 # NDItech, 2021
+# Tim Akinbo <takinbo@timbaobjects.com>, 2021
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2021-12-02 06:02+0000\n"
 "PO-Revision-Date: 2020-10-28 19:40+0000\n"
-"Last-Translator: NDItech, 2021\n"
-"Language: ar\n"
-"Language-Team: Arabic "
-"(https://www.transifex.com/nditech/teams/114236/ar/)\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
-"n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
+"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2021\n"
+"Language-Team: Arabic (https://www.transifex.com/nditech/teams/114236/ar/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #: apollo/constants.py:12
 msgid "(None)"
@@ -106,7 +106,7 @@ msgstr "اللغة الإنجليزية"
 #: apollo/frontend/views_admin.py:125 apollo/frontend/views_admin.py:187
 #: apollo/frontend/views_admin.py:299 apollo/frontend/views_admin.py:484
 #: apollo/frontend/views_admin.py:532 apollo/frontend/views_admin.py:592
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:40
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:44
 #: apollo/submissions/services.py:60
 #: apollo/templates/admin/administrative_divisions.html:25
 #: apollo/templates/admin/administrative_divisions.html:99
@@ -138,8 +138,8 @@ msgstr "لا تتبع تضارب البيانات"
 
 #: apollo/formsframework/forms.py:364
 msgid ""
-"Whether data conflicts between observers in the same location are tracked"
-" or not."
+"Whether data conflicts between observers in the same location are tracked or"
+" not."
 msgstr "ما إذا كان يتم تتبع تضارب البيانات بين المراقبين في نفس الموقع أم لا."
 
 #: apollo/formsframework/forms.py:366
@@ -172,8 +172,8 @@ msgstr "إظهار عمود الطابع الزمني"
 
 #: apollo/formsframework/forms.py:376
 msgid ""
-"Enabling this option will show the date and time for the submission in "
-"the list view."
+"Enabling this option will show the date and time for the submission in the "
+"list view."
 msgstr "سيؤدي تمكين هذا الخيار إلى إظهار تاريخ ووقت الإرسال في عرض القائمة."
 
 #: apollo/formsframework/forms.py:378
@@ -265,8 +265,8 @@ msgstr "الرقم التسلسلي للنموذج"
 #: apollo/frontend/templates/frontend/submission_list.html:25
 #: apollo/frontend/templates/frontend/submission_list.html:203
 #: apollo/frontend/templates/frontend/submission_list.html:236
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:32
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:44
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:36
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:48
 #: apollo/pwa/templates/pwa/index.html:105 apollo/submissions/forms.py:98
 #: apollo/submissions/forms.py:100 apollo/submissions/services.py:64
 #: apollo/templates/admin/participant_list.html:91
@@ -281,15 +281,16 @@ msgid "SMS 1"
 msgstr "رسالة رقم 1"
 
 #: apollo/formsframework/views_forms.py:50
-msgid "Checklists were not created, as the selected Form has no question codes"
+msgid ""
+"Checklists were not created, as the selected Form has no question codes"
 msgstr ""
-"لم يتم إنشاء قوائم للتحقق، لأن النموذج المحدّد لا يحتوي على الرموز الخاصة"
-" بالأسئلة"
+"لم يتم إنشاء قوائم للتحقق، لأن النموذج المحدّد لا يحتوي على الرموز الخاصة "
+"بالأسئلة"
 
 #: apollo/formsframework/views_forms.py:55
 msgid ""
-"Checklists are being created for the Event, Form, Role and Location Type "
-"you selected"
+"Checklists are being created for the Event, Form, Role and Location Type you"
+" selected"
 msgstr "يتم إنشاء قوائم تحقق للحدث والنموذج والدور ونوع الموقع الذي حددته"
 
 #: apollo/formsframework/views_forms.py:71
@@ -302,8 +303,7 @@ msgstr "لم يتم إنشاء الاستطلاعات لأن النموذج ال
 
 #: apollo/formsframework/views_forms.py:93
 msgid ""
-"Surveys are being created for the Event, Form and Participants you "
-"selected"
+"Surveys are being created for the Event, Form and Participants you selected"
 msgstr "يتم إنشاء استبيانات للحدث والنموذج والمشاركين الذين قمت بتحديدهم"
 
 #: apollo/formsframework/views_forms.py:114
@@ -354,7 +354,7 @@ msgstr "تحرير ضمان الجودة"
 msgid "Add Quality Assurance"
 msgstr "أضف \"ضمان الجودة\""
 
-#: apollo/frontend/filters.py:123 apollo/participants/filters.py:177
+#: apollo/frontend/filters.py:123 apollo/participants/filters.py:136
 #: apollo/participants/models.py:48 apollo/submissions/filters.py:62
 msgid "Sample"
 msgstr "العينة"
@@ -371,7 +371,7 @@ msgstr "غير صالح"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:92
 #: apollo/frontend/templates/frontend/submission_edit.html:431
 #: apollo/frontend/templates/frontend/submission_edit.html:618
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:45
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:49
 #: apollo/submissions/models.py:36 apollo/submissions/services.py:70
 msgid "Status"
 msgstr "الحالة"
@@ -379,7 +379,7 @@ msgstr "الحالة"
 #: apollo/frontend/filters.py:284 apollo/frontend/forms.py:170
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:166
 #: apollo/frontend/templates/frontend/submission_edit.html:455
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:62
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:66
 #: apollo/submissions/forms.py:84 apollo/submissions/models.py:57
 #: apollo/submissions/models.py:407
 msgid "Unmarked"
@@ -390,7 +390,7 @@ msgstr "غير محدد"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:160
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:175
 #: apollo/frontend/templates/frontend/submission_edit.html:449
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:58
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:62
 #: apollo/submissions/forms.py:85 apollo/submissions/models.py:59
 #: apollo/submissions/models.py:65
 msgid "Confirmed"
@@ -399,7 +399,7 @@ msgstr "مؤكد"
 #: apollo/frontend/filters.py:285 apollo/frontend/forms.py:172
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:162
 #: apollo/frontend/templates/frontend/submission_edit.html:451
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:60
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:64
 #: apollo/submissions/forms.py:86 apollo/submissions/models.py:19
 #: apollo/submissions/models.py:60
 msgid "Rejected"
@@ -420,22 +420,22 @@ msgstr "خط العرض"
 msgid "Longitude"
 msgstr "خط الطول"
 
-#: apollo/frontend/forms.py:55 apollo/participants/models.py:60
+#: apollo/frontend/forms.py:55 apollo/participants/models.py:59
 #, python-format
 msgid "Full Name (%(language)s)"
 msgstr "الاسم بالكامل (%(language)s)"
 
-#: apollo/frontend/forms.py:60 apollo/participants/models.py:63
+#: apollo/frontend/forms.py:60 apollo/participants/models.py:62
 #, python-format
 msgid "First Name (%(language)s)"
 msgstr "الاسم الأول (%(language)s) "
 
-#: apollo/frontend/forms.py:65 apollo/participants/models.py:66
+#: apollo/frontend/forms.py:65 apollo/participants/models.py:65
 #, python-format
 msgid "Other Names (%(language)s)"
 msgstr "أسماء أخرى (%(language)s)"
 
-#: apollo/frontend/forms.py:70 apollo/participants/models.py:69
+#: apollo/frontend/forms.py:70 apollo/participants/models.py:68
 #, python-format
 msgid "Last Name (%(language)s)"
 msgstr "اسم العائلة (%(language)s)"
@@ -444,7 +444,7 @@ msgstr "اسم العائلة (%(language)s)"
 #: apollo/frontend/templates/frontend/participant_list.html:126
 #: apollo/frontend/templates/frontend/participant_list.html:128
 #: apollo/frontend/templates/frontend/participant_list.html:131
-#: apollo/participants/models.py:55 apollo/participants/services.py:45
+#: apollo/participants/models.py:54 apollo/participants/services.py:42
 #: apollo/templates/admin/participant_list.html:121
 #: apollo/templates/admin/participant_list.html:123
 #: apollo/templates/admin/participant_list.html:126
@@ -456,7 +456,7 @@ msgstr "الجنس"
 #: apollo/frontend/templates/frontend/participant_list.html:140
 #: apollo/frontend/templates/frontend/participant_list.html:143
 #: apollo/frontend/templates/frontend/submission_edit.html:72
-#: apollo/participants/models.py:47 apollo/participants/services.py:40
+#: apollo/participants/models.py:47 apollo/participants/services.py:37
 #: apollo/templates/admin/participant_list.html:133
 #: apollo/templates/admin/participant_list.html:135
 #: apollo/templates/admin/participant_list.html:138
@@ -484,7 +484,7 @@ msgid "Participant"
 msgstr "المشارك"
 
 #: apollo/frontend/forms.py:90 apollo/participants/models.py:52
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Partner"
 msgstr "الشريك"
 
@@ -511,7 +511,7 @@ msgstr "الهاتف"
 #: apollo/frontend/templates/frontend/login_user.html:70
 #: apollo/frontend/templates/frontend/reset_password.html:66
 #: apollo/frontend/templates/frontend/reset_password.html:68
-#: apollo/participants/models.py:57 apollo/participants/services.py:45
+#: apollo/participants/models.py:56 apollo/participants/services.py:42
 #: apollo/pwa/templates/pwa/index.html:76
 #: apollo/pwa/templates/pwa/index.html:79 apollo/users/forms.py:16
 msgid "Password"
@@ -589,8 +589,10 @@ msgid "The display label to use for this field."
 msgstr "التسمية المعروضة المراد استخدامها لهذا الحقل."
 
 #: apollo/frontend/views_admin.py:131
-msgid "Internal name to use for this attribute. Avoid using spaces in the name."
-msgstr "الاسم الداخلي المراد استخدامه لهذه السمة. تجنب استخدام مسافات في الاسم."
+msgid ""
+"Internal name to use for this attribute. Avoid using spaces in the name."
+msgstr ""
+"الاسم الداخلي المراد استخدامه لهذه السمة. تجنب استخدام مسافات في الاسم."
 
 #: apollo/frontend/views_admin.py:132
 msgid "Specifies whether to display this field on data lists or not."
@@ -618,11 +620,10 @@ msgstr "تحديد السماح أو عدم السماح بتحرير بيانا
 
 #: apollo/frontend/views_admin.py:194
 msgid ""
-"Specifies whether to show all locations at an administrative division on "
-"the dashboard."
+"Specifies whether to show all locations at an administrative division on the"
+" dashboard."
 msgstr ""
-"يحدد ما إذا كان سيتم إظهار كافة المواقع في قسم إداري على لوحة التحكم أم "
-"لا."
+"يحدد ما إذا كان سيتم إظهار كافة المواقع في قسم إداري على لوحة التحكم أم لا."
 
 #: apollo/frontend/views_admin.py:195
 msgid ""
@@ -632,8 +633,8 @@ msgstr "تحدّد ما إذا كان سيتم الرد بخطأ عند تلقي
 
 #: apollo/frontend/views_admin.py:196
 msgid ""
-"An example of a hostname is \"example.com\". Used internally to determine"
-" what deployment to access."
+"An example of a hostname is \"example.com\". Used internally to determine "
+"what deployment to access."
 msgstr ""
 "مثال على اسم المضيف هو \"example.com\". تستخدم داخلياً لتحديد التوزيع "
 "المطلوب الوصول إليه."
@@ -647,7 +648,8 @@ msgid "Primary Language"
 msgstr "لغة أساسية"
 
 #: apollo/frontend/views_admin.py:278
-msgid "Specifies the primary language that will be supported for data uploads."
+msgid ""
+"Specifies the primary language that will be supported for data uploads."
 msgstr "يحدد اللغة الأساسية التي ستُدعم لعمليات رفع البيانات."
 
 #: apollo/frontend/views_admin.py:283
@@ -721,8 +723,8 @@ msgstr "ما هي الأدوار التي تم تعيينها لهذا المس�
 
 #: apollo/frontend/views_admin.py:404
 msgid ""
-"Explicitly specifies which non-role permissions (in addition) to assign "
-"to the user."
+"Explicitly specifies which non-role permissions (in addition) to assign to "
+"the user."
 msgstr ""
 "يحدد بشكل صريح الأذونات التي ليس لها دور (بالإضافة إلى ذلك) لتعيينها "
 "للمستخدم."
@@ -767,7 +769,7 @@ msgstr "تمّ تفعيل المستخدم (المستخدمين) بنجاح"
 #: apollo/frontend/templates/frontend/submission_edit.html:481
 #: apollo/frontend/templates/frontend/submission_edit.html:611
 #: apollo/frontend/views_admin.py:484
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:46
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:50
 #: apollo/submissions/services.py:70
 #: apollo/templates/admin/quality_assurance.html:31
 #: apollo/templates/admin/quality_assurance_edit.html:214
@@ -787,11 +789,10 @@ msgid ""
 "Specifies which resources (e.g. forms) to allow users with this role to "
 "access."
 msgstr ""
-"يحدد الموارد (مثل النماذج) للسماح للمستخدمين الذين لديهم هذا الدور "
-"بالوصول."
+"يحدد الموارد (مثل النماذج) للسماح للمستخدمين الذين لديهم هذا الدور بالوصول."
 
 #: apollo/frontend/templates/frontend/dashboard.html:26
-#: apollo/frontend/views_admin.py:533 apollo/locations/views_locations.py:273
+#: apollo/frontend/views_admin.py:533 apollo/locations/views_locations.py:281
 msgid "Administrative Divisions"
 msgstr "الأقسام الإدارية"
 
@@ -838,7 +839,7 @@ msgstr "الأحداث"
 
 #: apollo/frontend/views_admin.py:736 apollo/locations/views_locations.py:73
 #: apollo/locations/views_locations.py:114
-#: apollo/locations/views_locations.py:272
+#: apollo/locations/views_locations.py:280
 msgid "Location Sets"
 msgstr "مجموعات المواقع"
 
@@ -886,12 +887,12 @@ msgstr "محظور!"
 
 #: apollo/frontend/templates/403.html:37
 msgid ""
-"We understood your request, but we refuse to honor it! You are seeing "
-"this page because you were snooping around! Now paddle along before the "
-"buzzer goes off!"
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
 msgstr ""
-"نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول"
-" الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
+"نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول "
+"الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
 
 #: apollo/frontend/templates/404.html:5
 msgid "Page not found"
@@ -903,16 +904,15 @@ msgstr "تبّاً! يبدو أنك أضعت الطريق!"
 
 #: apollo/frontend/templates/404.html:37
 msgid ""
-"Don't freak out, maybe you entered the wrong address or clicked a bad "
-"link! Who knows, this could even be a fluke! :) I recommend you either "
-"verify the address or click the back arrow (&larr;) at the top left "
-"corner of the page, and cross-check the action you were trying to "
-"perform!"
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page,"
+" and cross-check the action you were trying to perform!"
 msgstr ""
-"لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ "
-"الأمر مجرد خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم"
-" العودة للخلف  (&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق "
-"مجدداً من العمل الذي كنت تحاول تنفيذه!"
+"لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ الأمر "
+"مجرد خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم العودة "
+"للخلف  (&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق مجدداً من "
+"العمل الذي كنت تحاول تنفيذه!"
 
 #: apollo/frontend/templates/500.html:5
 msgid "Server Error"
@@ -924,17 +924,17 @@ msgstr "تبّاً! أفسدنا الأمر:("
 
 #: apollo/frontend/templates/500.html:37
 msgid ""
-"You shouldn't be seeing this page but you are because you're a genius and"
-" have found a rare bug in the software. Rest assured, we now know about "
-"it and will fix it ASAP!"
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
 msgstr ""
-"ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في "
-"العثور على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك "
-"الخلل وسنعمل على تصحيحه بأسرع ما يمكن!"
+"ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في العثور "
+"على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك الخلل وسنعمل"
+" على تصحيحه بأسرع ما يمكن!"
 
 #: apollo/frontend/templates/frontend/dashboard.html:25
 msgid "Data View Selection"
-msgstr ""
+msgstr "تحديد شكل البيانات"
 
 #: apollo/frontend/templates/frontend/dashboard.html:27
 #: apollo/locations/views_locations.py:74
@@ -970,7 +970,7 @@ msgstr "شريط الرسم البياني"
 #: apollo/frontend/templates/frontend/submission_edit.html:466
 #: apollo/frontend/templates/frontend/submission_edit.html:498
 #: apollo/frontend/templates/frontend/submission_edit.html:528
-#: apollo/result_analysis/templates/result_analysis/results.html:338
+#: apollo/result_analysis/templates/result_analysis/results.html:342
 #: apollo/templates/admin/locations_list.html:83
 #: apollo/templates/admin/participant_list.html:198
 #: apollo/templates/admin/quality_assurance.html:48
@@ -1002,11 +1002,11 @@ msgstr "%(index)s يوم"
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:106
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:137
 #: apollo/frontend/templates/frontend/quality_assurance_dashboard.html:74
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:52
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:53
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:71
-#: apollo/result_analysis/templates/result_analysis/results.html:204
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:56
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:57
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:75
+#: apollo/result_analysis/templates/result_analysis/results.html:208
 msgid "Missing"
 msgstr "مفقود"
 
@@ -1027,7 +1027,7 @@ msgstr "مكتمل"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:119
 #: apollo/frontend/templates/frontend/submission_edit.html:232
 #: apollo/frontend/templates/frontend/submission_edit.html:234
-#: apollo/submissions/filters.py:706 apollo/submissions/filters.py:760
+#: apollo/submissions/filters.py:744 apollo/submissions/filters.py:798
 msgid "No Signal"
 msgstr "لا توجد إشارة"
 
@@ -1045,12 +1045,12 @@ msgid ""
 "An error occured while attempting to reset the password for the supplied "
 "account. Please check the email address and try again."
 msgstr ""
-"حدث خطأ أثناء محاولة إعادة تعيين كلمة المرور للحساب المزود. يرجى التحقق "
-"من عنوان البريد الإلكتروني وإعادة المحاولة مرة أخرى."
+"حدث خطأ أثناء محاولة إعادة تعيين كلمة المرور للحساب المزود. يرجى التحقق من "
+"عنوان البريد الإلكتروني وإعادة المحاولة مرة أخرى."
 
 #: apollo/frontend/templates/frontend/forgot_password.html:63
 #: apollo/frontend/templates/frontend/forgot_password.html:65
-#: apollo/participants/models.py:56 apollo/participants/services.py:45
+#: apollo/participants/models.py:55 apollo/participants/services.py:42
 #: apollo/users/forms.py:13
 msgid "Email"
 msgstr "البريد الإلكتروني"
@@ -1095,9 +1095,10 @@ msgstr "حدثت أخطاء أثناء التحقق من صحة البيانات
 #: apollo/frontend/templates/frontend/submission_edit.html:178
 #: apollo/frontend/templates/frontend/submission_edit.html:571
 msgid ""
-"The data you entered are not valid. Please check the affected questions "
-"and correct them."
-msgstr "البيانات التي أدخلتها غير صالحة. يرجى التحقق من الأسئلة المتأثرة وتصحيحها."
+"The data you entered are not valid. Please check the affected questions and "
+"correct them."
+msgstr ""
+"البيانات التي أدخلتها غير صالحة. يرجى التحقق من الأسئلة المتأثرة وتصحيحها."
 
 #: apollo/frontend/templates/frontend/incident_add.html:97
 #: apollo/frontend/templates/frontend/participant_edit.html:65
@@ -1142,13 +1143,12 @@ msgstr "بنيت باستخدام <span class=\"text-danger\"> ♥ </span> من 
 #: apollo/frontend/templates/frontend/layout.html:162
 #: apollo/templates/admin/base.html:102
 msgid ""
-"Please go to <a "
-"href=\"https://feedback.dem.tools\">feedback.dem.tools</a> to submit "
-"feedback or ask for help"
+"Please go to <a href=\"https://feedback.dem.tools\">feedback.dem.tools</a> "
+"to submit feedback or ask for help"
 msgstr ""
 "يرجى الانتقال إلى <a "
-"href=\"https://feedback.dem.tools\">feedback.dem.tools</a> لإرسال "
-"التعليقات أو لطلب المساعدة"
+"href=\"https://feedback.dem.tools\">feedback.dem.tools</a> لإرسال التعليقات "
+"أو لطلب المساعدة"
 
 #: apollo/frontend/templates/frontend/login_user.html:5
 msgid "User Sign In"
@@ -1156,12 +1156,11 @@ msgstr "تسجيل الدخول كمستخدم"
 
 #: apollo/frontend/templates/frontend/login_user.html:64
 msgid ""
-"The username and password you supplied <strong>do not match</strong> any "
-"of the credentials on this system. Please check both and try again."
+"The username and password you supplied <strong>do not match</strong> any of "
+"the credentials on this system. Please check both and try again."
 msgstr ""
-"اسم المستخدم وكلمة المرور اللذين قدمتهما <strong> لا يتطابقان </strong> "
-"مع أي من بيانات الاعتماد على هذا النظام. يُرجى فحص كلاهما والمحاولة مرة "
-"أخرى."
+"اسم المستخدم وكلمة المرور اللذين قدمتهما <strong> لا يتطابقان </strong> مع "
+"أي من بيانات الاعتماد على هذا النظام. يُرجى فحص كلاهما والمحاولة مرة أخرى."
 
 #: apollo/frontend/templates/frontend/login_user.html:67
 #: apollo/frontend/templates/frontend/login_user.html:68
@@ -1221,8 +1220,8 @@ msgstr "النص"
 msgid "Type"
 msgstr "النوع"
 
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:48
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:73
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:52
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:77
 #: apollo/frontend/templates/frontend/message_list.html:30
 #: apollo/frontend/templates/frontend/message_list.html:64
 #: apollo/frontend/templates/frontend/submission_edit.html:366
@@ -1236,13 +1235,13 @@ msgstr "التاريخ"
 msgid "Search"
 msgstr "بحث"
 
-#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:17
+#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:21
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:39
-#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:17
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:58
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:83
+#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:21
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:62
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:87
 #: apollo/frontend/templates/frontend/message_list.html:39
-#: apollo/templates/admin/locations_list_filter.html:15
+#: apollo/templates/admin/locations_list_filter.html:18
 msgid "Clear"
 msgstr "مسح"
 
@@ -1251,7 +1250,7 @@ msgstr "مسح"
 #: apollo/frontend/templates/frontend/submission_edit.html:433
 #: apollo/frontend/templates/frontend/submission_edit.html:480
 #: apollo/frontend/templates/frontend/submission_edit.html:512
-#: apollo/result_analysis/templates/result_analysis/results.html:506
+#: apollo/result_analysis/templates/result_analysis/results.html:510
 msgid "Time"
 msgstr "الوقت"
 
@@ -1313,7 +1312,8 @@ msgstr "رمز الاستجابة السريعة "
 msgid ""
 "There were errors with your submission. Please correct the errors and re-"
 "submit."
-msgstr "كان هناك بعض الأخطاء في ما أرسلته. يُرجى تصحيح الأخطاء وإعادة الإرسال. "
+msgstr ""
+"كان هناك بعض الأخطاء في ما أرسلته. يُرجى تصحيح الأخطاء وإعادة الإرسال. "
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:6
 #: apollo/frontend/templates/frontend/participant_list.html:44
@@ -1332,7 +1332,7 @@ msgstr "إرسال رسالة"
 #: apollo/frontend/templates/frontend/participant_list.html:71
 #: apollo/frontend/templates/frontend/participant_list.html:73
 #: apollo/frontend/templates/frontend/participant_list.html:75
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:39
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:43
 msgid "PID"
 msgstr "PID"
 
@@ -1397,7 +1397,8 @@ msgstr "انقر فوق زر <strong> إرسال </strong> لبدء عملية �
 #: apollo/templates/admin/locations_list.html:120
 #: apollo/templates/admin/participant_list.html:242
 msgid "There was a problem submitting the form. Please try again in a minute."
-msgstr "كانت هناك مشكلة في إرسال النموذج. يرجى إعادة المحاولة مرة أخرى بعد دقيقة."
+msgstr ""
+"كانت هناك مشكلة في إرسال النموذج. يرجى إعادة المحاولة مرة أخرى بعد دقيقة."
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:19
 #: apollo/frontend/templates/frontend/participant_list.html:272
@@ -1464,8 +1465,8 @@ msgid ""
 "An error occured while attempting to reset the password for the supplied "
 "account. Please ensure that both values are the same."
 msgstr ""
-"حدث خطأ أثناء محاولة إعادة تعيين كلمة المرور للحساب المقدم. يُرجى التأكد "
-"من أن كلا القيمتين متطابقتان."
+"حدث خطأ أثناء محاولة إعادة تعيين كلمة المرور للحساب المقدم. يُرجى التأكد من "
+"أن كلا القيمتين متطابقتان."
 
 #: apollo/frontend/templates/frontend/reset_password.html:69
 #: apollo/frontend/templates/frontend/reset_password.html:71
@@ -1546,27 +1547,26 @@ msgstr "تحذيرات لضمان الجودة"
 #: apollo/frontend/templates/frontend/submission_edit.html:159
 msgid ""
 "The following quality assurance conditions were flagged while validating "
-"this submission. Please confirm with the participant that the submitted "
-"data is correct. If you find the data to be as reported by the "
-"participant, mark the data point as confirmed."
+"this submission. Please confirm with the participant that the submitted data"
+" is correct. If you find the data to be as reported by the participant, mark"
+" the data point as confirmed."
 msgstr ""
-"تم وضع علامة على شروط ضمان الجودة التالية أثناء التحقق من صحة هذا "
-"الإرسال. يرجى التأكيد مع المشارك على صحة البيانات المقدمة. إذا وجدت "
-"البيانات كما تم الإبلاغ عنها من قبل المشارك، فقم بتحديد نقطة البيانات على"
-" أنها مؤكدة."
+"تم وضع علامة على شروط ضمان الجودة التالية أثناء التحقق من صحة هذا الإرسال. "
+"يرجى التأكيد مع المشارك على صحة البيانات المقدمة. إذا وجدت البيانات كما تم "
+"الإبلاغ عنها من قبل المشارك، فقم بتحديد نقطة البيانات على أنها مؤكدة."
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:116
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:121
 #: apollo/frontend/templates/frontend/submission_edit.html:228
 #: apollo/frontend/templates/frontend/submission_edit.html:232
 #: apollo/frontend/templates/frontend/submission_edit.html:234
-#: apollo/submissions/filters.py:705 apollo/submissions/filters.py:759
+#: apollo/submissions/filters.py:743 apollo/submissions/filters.py:797
 msgid "Signal"
 msgstr "الإشارة"
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:95
 #: apollo/frontend/templates/frontend/submission_edit.html:248
-#: apollo/submissions/filters.py:683 apollo/submissions/filters.py:750
+#: apollo/submissions/filters.py:721 apollo/submissions/filters.py:788
 msgid "Quarantine Status"
 msgstr "حالة الحجر"
 
@@ -1631,8 +1631,8 @@ msgstr "إضافة سجل المكالمات"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:645
 msgid ""
-"You may (optionally) include details of your call or interaction with the"
-" participant here."
+"You may (optionally) include details of your call or interaction with the "
+"participant here."
 msgstr "يمكنك (اختيارياً) تضمين تفاصيل مكالمتك أو تفاعلك مع المشارك هنا."
 
 #: apollo/frontend/templates/frontend/submission_list.html:157
@@ -1699,17 +1699,17 @@ msgstr "عرض القائمة"
 msgid "Map View"
 msgstr "عرض الخريطة"
 
-#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:16
+#: apollo/frontend/templates/frontend/macros/dashboard_filter.html:20
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:38
-#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:16
-#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:57
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:82
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:10
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:9
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:13
-#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:13
-#: apollo/result_analysis/templates/result_analysis/results.html:10
-#: apollo/templates/admin/locations_list_filter.html:14
+#: apollo/frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:20
+#: apollo/frontend/templates/frontend/macros/quality_assurance_list_filter.html:61
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:86
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:14
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:13
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:17
+#: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:17
+#: apollo/result_analysis/templates/result_analysis/results.html:14
+#: apollo/templates/admin/locations_list_filter.html:17
 msgid "Filter"
 msgstr "فلتر"
 
@@ -1732,7 +1732,7 @@ msgstr "السابق"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:5
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:7
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:10
-#: apollo/participants/models.py:49 apollo/participants/services.py:39
+#: apollo/participants/models.py:49 apollo/participants/services.py:36
 #: apollo/pwa/templates/pwa/index.html:69
 #: apollo/pwa/templates/pwa/index.html:72 apollo/submissions/services.py:60
 msgid "Participant ID"
@@ -1759,13 +1759,13 @@ msgstr "الطابع الزمني"
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:70
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:94
-#: apollo/submissions/filters.py:691
+#: apollo/submissions/filters.py:729
 msgid "Phone Confirmation"
 msgstr "تأكيد رقم الهاتف"
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:71
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:37
-#: apollo/submissions/filters.py:704 apollo/submissions/filters.py:758
+#: apollo/submissions/filters.py:742 apollo/submissions/filters.py:796
 msgid "Signal Status"
 msgstr "حالة الإشارة"
 
@@ -1841,19 +1841,19 @@ msgstr "خطأ"
 msgid "Please try sending again"
 msgstr "يرجى محاولة الإرسال مرة خرى"
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:32
 #: apollo/templates/admin/quality_assurance.html:42
 #: apollo/templates/admin/quality_assurance_edit.html:223
 msgid "OR"
 msgstr "أو"
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:28
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:32
 #: apollo/templates/admin/quality_assurance.html:42
 #: apollo/templates/admin/quality_assurance_edit.html:222
 msgid "AND"
 msgstr "و"
 
-#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:54
+#: apollo/frontend/templates/frontend/macros/submission_list_filter.html:58
 msgid "All Statuses"
 msgstr "كل الحالات"
 
@@ -1885,78 +1885,87 @@ msgstr "لا يوجد GPS"
 msgid "All Types"
 msgstr "كل الأنواع"
 
+#: apollo/locations/filters.py:49 apollo/submissions/filters.py:153
+msgid "Group"
+msgstr "مجموعة"
+
 #: apollo/locations/forms.py:14 apollo/participants/forms.py:12
 msgid "Import File"
 msgstr "استيراد ملف"
 
 #: apollo/locations/forms.py:31
 #, python-format
-msgid "Properties for %(loc_type_name)s were mapped, but no code was specified"
+msgid ""
+"Properties for %(loc_type_name)s were mapped, but no code was specified"
 msgstr "تم تحديد خصائص %(loc_type_name)s، ولكن لم يتم تحديد الرمز"
 
-#: apollo/locations/models.py:92
+#: apollo/locations/models.py:101
 #, python-format
 msgid "%(location_type)s Name (%(language)s)"
 msgstr "اسم %(location_type)s بـ (%(language)s)"
 
-#: apollo/locations/models.py:96
+#: apollo/locations/models.py:105
 #, python-format
 msgid "%(location_type)s Code"
 msgstr "رمز %(location_type)s"
 
-#: apollo/locations/models.py:99
+#: apollo/locations/models.py:107
+#, python-format
+msgid "%(location_type)s Group"
+msgstr "مجمرعة %(location_type)s"
+
+#: apollo/locations/models.py:111
 #, python-format
 msgid "%(location_type)s Latitude"
 msgstr "خط العرض %(location_type)s"
 
-#: apollo/locations/models.py:101
+#: apollo/locations/models.py:113
 #, python-format
 msgid "%(location_type)s Longitude"
 msgstr "خط الطول %(location_type)s "
 
-#: apollo/locations/models.py:105
+#: apollo/locations/models.py:117
 #, python-format
 msgid "%(location_type)s %(field_label)s"
 msgstr "%(location_type)s %(field_label)s"
 
-#: apollo/locations/models.py:112
+#: apollo/locations/models.py:124
 #, python-format
 msgid "%(location_type)s registered voters"
 msgstr "%(location_type)s مصوِّتون مسجَّلون"
 
-#: apollo/locations/models.py:348
+#: apollo/locations/models.py:399
 #, python-format
 msgid "LocationDataField - %(name)s in %(location_set)s"
 msgstr "حقل بيانات الموقع - %(name)s في %(location_set)s "
 
-#: apollo/locations/tasks.py:152
+#: apollo/locations/tasks.py:176
 #, python-format
 msgid "No code or name present for row %(row)d for %(level)s"
 msgstr "لا يوجد رمز أو اسم للصف %(row)d أوللـ %(level)s"
 
-#: apollo/locations/tasks.py:187
+#: apollo/locations/tasks.py:211
 #, python-format
 msgid "Invalid (non-numeric) location code (%(loc_code)s)"
 msgstr "رمز الموقع (غير الرقمي) غير صحيح (%(loc_code)s)"
 
-#: apollo/locations/tasks.py:204
+#: apollo/locations/tasks.py:228
 #, python-format
 msgid "Missing name or code for row %(row)d"
 msgstr "اسم أو رمز مفقود للصف %(row)d"
 
-#: apollo/locations/tasks.py:228
+#: apollo/locations/tasks.py:252
 #, python-format
 msgid "Invalid coordinate data for row %(row)d. Data will not be used."
 msgstr "بيانات الإحداثيات غير صحيحة للصف %(row)d. لن يتم استخدام البيانات."
 
-#: apollo/locations/tasks.py:242
+#: apollo/locations/tasks.py:266
 #, python-format
 msgid ""
-"Invalid number of registered voters for row %(row)d. Data will not be "
-"used."
+"Invalid number of registered voters for row %(row)d. Data will not be used."
 msgstr "عدد غير صحيح للمصوتين المسجلين للصف %(row)d. لن يتم استخدام البيانات."
 
-#: apollo/locations/tasks.py:415
+#: apollo/locations/tasks.py:465
 msgid "Locations Import Report"
 msgstr "تقرير استيراد المواقع"
 
@@ -1965,15 +1974,14 @@ msgstr "تقرير استيراد المواقع"
 msgid "Edit Location"
 msgstr "تحرير الموقع "
 
-#: apollo/locations/views_locations.py:241
+#: apollo/locations/views_locations.py:249
 #, python-format
 msgid ""
-"Administrative level %(name)s has locations assigned and cannot be "
-"deleted."
+"Administrative level %(name)s has locations assigned and cannot be deleted."
 msgstr "لدى المستوى الإداري %(name)s مواقع معينة ولا يمكن حذفها."
 
-#: apollo/locations/views_locations.py:259
-#: apollo/locations/views_locations.py:324
+#: apollo/locations/views_locations.py:267
+#: apollo/locations/views_locations.py:332
 msgid "Your changes have been saved."
 msgstr "لقد تم حفظ التغييرات التي أجريتها."
 
@@ -1981,7 +1989,7 @@ msgstr "لقد تم حفظ التغييرات التي أجريتها."
 msgid "Invalid Form"
 msgstr "نموذج غير صحيح"
 
-#: apollo/messaging/helpers.py:39
+#: apollo/messaging/helpers.py:39 apollo/messaging/helpers.py:110
 #, python-format
 msgid "Invalid message: %(text)s. Please check and resend!"
 msgstr "رسالة غير صالحة: %(text)s. يُرجى التحقق وإعادة الإرسال!"
@@ -1992,38 +2000,39 @@ msgid ""
 "Thank you, but your message may be missing %(unused_codes)s. You sent: "
 "%(text)s"
 msgstr ""
-"شكراً لك، ولكن ربما تكون رسالتك مفقودة %(unused_codes)s. لقد أرسلت: "
-"%(text)s  "
+"شكراً لك، ولكن ربما تكون رسالتك مفقودة %(unused_codes)s. لقد أرسلت: %(text)s"
+"  "
 
-#: apollo/messaging/helpers.py:63
-msgid "Thank you! Your report was received! You sent: {text}"
-msgstr "شكرًا لك! لقد تم استلام تقريرك! لقد أرسلت: {نص}"
+#: apollo/messaging/helpers.py:64
+#, python-format
+msgid "Thank you! Your report was received! You sent: %(text)s"
+msgstr "شكرًا لك! لقد تم استلام تقريرك! لقد أرسلت: %(text)s"
 
-#: apollo/messaging/helpers.py:73
-msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-msgstr "رموز أسئلة غير معروفة: \"}الأسئلة{\" لقد أرسلت: {نص}"
+#: apollo/messaging/helpers.py:75
+#, python-format
+msgid "Unknown question codes: \"%(questions)s\". You sent: %(text)s"
+msgstr "رموز أسئلة غير معروفة: \"%(questions)s\" لقد أرسلت: %(text)s"
 
-#: apollo/messaging/helpers.py:82
-msgid "Invalid text sent: \"{extra}\". You sent: {text}"
-msgstr "تم إرسال نص غير صحيح: \"{extra}\". لقد أرسلت: {text}"
+#: apollo/messaging/helpers.py:83
+#, python-format
+msgid "Invalid text sent: \"%(extra)s\". You sent: %(text)s"
+msgstr "تم إرسال نص غير صحيح: \"%(extra)s\". لقد أرسلت: %(text)s"
 
-#: apollo/messaging/helpers.py:90
+#: apollo/messaging/helpers.py:91
+#, python-format
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
-"{text}"
+"%(text)s"
 msgstr ""
-"هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت:"
-" {نص}"
+"هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت: "
+"%(text)s"
 
-#: apollo/messaging/helpers.py:100
-msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
+#: apollo/messaging/helpers.py:103
+#, python-format
+msgid "Invalid response(s) for question(s): \"%(questions)s\". You sent: %(text)s"
 msgstr ""
-"إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"}الأسئلة{\" لقد أرسلت: "
-"}نص{ "
-
-#: apollo/messaging/helpers.py:110
-msgid "Invalid message: \"{text}\". Please check and resend!"
-msgstr "رسالة غير صحيحة: }نص{. يرجى التحقق وإعادة الإرسال!"
+"إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"%(questions)s\" لقد أرسلت: "
+"%(text)s"
 
 #: apollo/messaging/models.py:14
 msgid "INCOMING"
@@ -2067,17 +2076,17 @@ msgstr "قائمة التحقق غير موجودة"
 
 #: apollo/odk/views_odk.py:288
 msgid ""
-"Your submission was received, but you sent it using an outdated form. "
-"Please download a new copy and resend. Thank you."
+"Your submission was received, but you sent it using an outdated form. Please"
+" download a new copy and resend. Thank you."
 msgstr ""
-"تم استلام ما أرسلته، لكنك أرسلته باستخدام نموذج قديم. يُرجى تنزيل نسخة "
-"جديدة وإعادة الإرسال. شكراً لك."
+"تم استلام ما أرسلته، لكنك أرسلته باستخدام نموذج قديم. يُرجى تنزيل نسخة جديدة"
+" وإعادة الإرسال. شكراً لك."
 
-#: apollo/participants/filters.py:86
+#: apollo/participants/filters.py:83
 msgid "All Roles"
 msgstr "كل الأدوار"
 
-#: apollo/participants/filters.py:109
+#: apollo/participants/filters.py:106
 msgid "All Organizations"
 msgstr "كل المنظمات"
 
@@ -2085,7 +2094,7 @@ msgstr "كل المنظمات"
 msgid "Participant ID was not mapped"
 msgstr "لم يتم تعيين معرف المشارك"
 
-#: apollo/participants/models.py:50 apollo/participants/services.py:45
+#: apollo/participants/models.py:50 apollo/participants/services.py:42
 msgid "Supervisor ID"
 msgstr "معرف المشرف"
 
@@ -2093,106 +2102,97 @@ msgstr "معرف المشرف"
 msgid "Location code"
 msgstr "كود الموقع"
 
-#: apollo/participants/models.py:54
-msgid "Group"
-msgstr "مجموعة"
-
-#: apollo/participants/models.py:139
-#, python-format
-msgid "ParticipantDataField - %(name)s in %(participant_set)s"
-msgstr "حقل بيانات المشارك - %(name)s في %(participant_set)s"
-
-#: apollo/participants/models.py:229
+#: apollo/participants/models.py:174
 msgid "Unspecified"
 msgstr "غير محدد"
 
-#: apollo/participants/models.py:230
+#: apollo/participants/models.py:175
 msgid "Female"
 msgstr "أنثى"
 
-#: apollo/participants/models.py:231
+#: apollo/participants/models.py:176
 msgid "Male"
 msgstr "ذكر"
 
-#: apollo/participants/services.py:39
+#: apollo/participants/services.py:36
 msgid "Full Name"
 msgstr "الاسم بالكامل"
 
-#: apollo/participants/services.py:39
+#: apollo/participants/services.py:36
 msgid "First Name"
 msgstr "الاسم الأول "
 
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Other Names"
 msgstr "أسماء أخرى"
 
-#: apollo/participants/services.py:40
+#: apollo/participants/services.py:37
 msgid "Last Name"
 msgstr "اللقب"
 
-#: apollo/participants/services.py:41 apollo/submissions/services.py:64
+#: apollo/participants/services.py:38 apollo/submissions/services.py:64
 msgid "Location Code"
 msgstr "كود الموقع"
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #1"
 msgstr "الهاتف رقم 1"
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #2"
 msgstr "الهاتف رقم ٢"
 
-#: apollo/participants/services.py:46
+#: apollo/participants/services.py:43
 msgid "Phone #3"
 msgstr "الهاتف رقم 3"
 
-#: apollo/participants/tasks.py:178
+#: apollo/participants/tasks.py:164
 #, python-format
 msgid "Invalid (non-numeric) participant ID (%(p_id)s)"
 msgstr "معرف مشارك (غير رقمي) غير صالح (%(p_id)s)"
 
-#: apollo/participants/tasks.py:273
+#: apollo/participants/tasks.py:259
 #, python-format
 msgid "Invalid (non-numeric) location ID (%(loc_id)s)"
 msgstr "معرِّف موقع (%(loc_id)s) غير صالح (غير عددي )"
 
-#: apollo/participants/tasks.py:291
+#: apollo/participants/tasks.py:277
 #, python-format
 msgid "Invalid location id (%(loc_id)s)"
 msgstr "هوية موقع غير صالحة  (%(loc_id)s) "
 
-#: apollo/participants/tasks.py:299
+#: apollo/participants/tasks.py:285
 #, python-format
 msgid "Location code %(loc_id)s for row %(row)d is not unique"
 msgstr "رمز الموقع %(loc_id)s للصف %(row)d ليس فريداً"
 
-#: apollo/participants/tasks.py:305
+#: apollo/participants/tasks.py:291
 #, python-format
 msgid "Location with id %(loc_id)s not found"
 msgstr "موقع بهوية  %(loc_id)sغير موجودة "
 
-#: apollo/participants/tasks.py:314
+#: apollo/participants/tasks.py:300
 #, python-format
 msgid ""
-"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
-"not found"
-msgstr "رمز الموقع %(loc_id)s للصف %(row)d بمعرف المشارك %(part_id)s غير موجود"
+"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s not"
+" found"
+msgstr ""
+"رمز الموقع %(loc_id)s للصف %(row)d بمعرف المشارك %(part_id)s غير موجود"
 
-#: apollo/participants/tasks.py:491
+#: apollo/participants/tasks.py:440
 #, python-format
 msgid "Supervisor with ID %(id)s not found"
 msgstr "مشرف بهوية%(id)s  غير موجودة "
 
-#: apollo/participants/tasks.py:497
+#: apollo/participants/tasks.py:446
 #, python-format
 msgid ""
-"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
-"found"
+"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not found"
 msgstr ""
 "لم يتم العثور على معرِّف المشرف %(sup_id)s المحدَّد لمعرِّف المشارك "
 "%(part_id)s "
 
-#: apollo/participants/tasks.py:571
+#: apollo/participants/tasks.py:520
 msgid "Import report"
 msgstr "استيراد تقرير"
 
@@ -2230,43 +2230,43 @@ msgstr "ملخص البيانات"
 msgid "Incidents Data"
 msgstr "بيانات الحوادث"
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:37
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:38
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:83
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:41
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:42
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:87
 msgid "Mean"
 msgstr "الوسيلة"
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:43
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:42
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:86
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:47
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:46
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:90
 #, python-format
 msgid "%(label)s"
 msgstr "%(label)s"
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:51
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:52
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:70
-#: apollo/result_analysis/templates/result_analysis/results.html:203
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:55
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:56
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:74
+#: apollo/result_analysis/templates/result_analysis/results.html:207
 msgid "Reported"
 msgstr "مذكور"
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:87
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:128
+#: apollo/process_analysis/templates/process_analysis/checklist_summary.html:91
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:132
 msgid "No data available"
 msgstr "لا توجد بيانات متاحة"
 
-#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:83
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:48
+#: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:87
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:52
 #, python-format
 msgid "%(loc_type)s"
 msgstr "%(loc_type)s"
 
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:28
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:32
 msgid "Summary"
 msgstr "الملخص"
 
-#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:69
+#: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:73
 msgid "Detail"
 msgstr "البيانات"
 
@@ -2421,7 +2421,8 @@ msgstr "تعذر استرداد موقعك"
 msgid "Data was not saved"
 msgstr "لم يتم حفظ البيانات"
 
-#: apollo/pwa/templates/pwa/index.html:967 apollo/templates/admin/tasks.html:66
+#: apollo/pwa/templates/pwa/index.html:967
+#: apollo/templates/admin/tasks.html:66
 msgid "Warning"
 msgstr "تحذير"
 
@@ -2457,11 +2458,11 @@ msgstr "تعذّر تحميل البيانات من قاعدة البيانات"
 #: apollo/pwa/templates/pwa/index.html:1305
 #: apollo/pwa/templates/pwa/index.html:1366
 msgid ""
-"You are currently offline. Your data will be automatically posted when "
-"you are online again."
+"You are currently offline. Your data will be automatically posted when you "
+"are online again."
 msgstr ""
-"أنت حالياً غير متصل بالإنترنت. سيتم نشر بياناتك تلقائياً عندما تكون "
-"متصلاً بالإنترنت مرةً أخرى."
+"أنت حالياً غير متصل بالإنترنت. سيتم نشر بياناتك تلقائياً عندما تكون متصلاً "
+"بالإنترنت مرةً أخرى."
 
 #: apollo/pwa/templates/pwa/index.html:1328
 msgid "Session expired"
@@ -2471,7 +2472,8 @@ msgstr "انتهت الجلسة"
 msgid "Please login again to send your data"
 msgstr "يرجى تسجيل الدخول مرة أخرى لإرسال بياناتك"
 
-#: apollo/pwa/templates/pwa/index.html:1356 apollo/submissions/api/views.py:380
+#: apollo/pwa/templates/pwa/index.html:1356
+#: apollo/submissions/api/views.py:380
 msgid "Data successfully submitted"
 msgstr "تم إرسال البيانات بنجاح"
 
@@ -2480,126 +2482,126 @@ msgstr "تم إرسال البيانات بنجاح"
 msgid "Results Data"
 msgstr "بيانات النتائج"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:20
+#: apollo/result_analysis/templates/result_analysis/results.html:24
 msgid "Convergence"
 msgstr "التقارب"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:23
+#: apollo/result_analysis/templates/result_analysis/results.html:27
 msgid "Scatterplot"
 msgstr "مخطط التشتت"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:52
-#: apollo/result_analysis/templates/result_analysis/results.html:73
-#: apollo/result_analysis/templates/result_analysis/results.html:206
+#: apollo/result_analysis/templates/result_analysis/results.html:56
+#: apollo/result_analysis/templates/result_analysis/results.html:77
+#: apollo/result_analysis/templates/result_analysis/results.html:210
 msgid "Turnout"
 msgstr "الإقبال"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:53
+#: apollo/result_analysis/templates/result_analysis/results.html:57
 msgid "Total Votes"
 msgstr "إجمالي الأصوات "
 
-#: apollo/result_analysis/templates/result_analysis/results.html:55
-#: apollo/result_analysis/templates/result_analysis/results.html:84
-#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:59
+#: apollo/result_analysis/templates/result_analysis/results.html:88
+#: apollo/result_analysis/templates/result_analysis/results.html:221
 msgid "Rejected Ballots"
 msgstr "أوراق الاقتراع المرفوضة"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:58
-#: apollo/result_analysis/templates/result_analysis/results.html:91
-#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:62
+#: apollo/result_analysis/templates/result_analysis/results.html:95
+#: apollo/result_analysis/templates/result_analysis/results.html:228
 msgid "Blank Ballots"
 msgstr "أوراق الاقتراع الفارغة"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:60
-#: apollo/result_analysis/templates/result_analysis/results.html:97
-#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:64
+#: apollo/result_analysis/templates/result_analysis/results.html:101
+#: apollo/result_analysis/templates/result_analysis/results.html:234
 msgid "Total Valid"
 msgstr "الإجمالي الصحيح"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:72
-#: apollo/result_analysis/templates/result_analysis/results.html:205
+#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:209
 msgid "Total Registered"
 msgstr "الإجمالي المسجل"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:72
-#: apollo/result_analysis/templates/result_analysis/results.html:205
+#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:209
 msgid "TR"
 msgstr "الإجمالي المسجل"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:75
-#: apollo/result_analysis/templates/result_analysis/results.html:76
+#: apollo/result_analysis/templates/result_analysis/results.html:79
 #: apollo/result_analysis/templates/result_analysis/results.html:80
-#: apollo/result_analysis/templates/result_analysis/results.html:81
-#: apollo/result_analysis/templates/result_analysis/results.html:86
-#: apollo/result_analysis/templates/result_analysis/results.html:87
-#: apollo/result_analysis/templates/result_analysis/results.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:101
-#: apollo/result_analysis/templates/result_analysis/results.html:102
-#: apollo/result_analysis/templates/result_analysis/results.html:208
-#: apollo/result_analysis/templates/result_analysis/results.html:209
+#: apollo/result_analysis/templates/result_analysis/results.html:84
+#: apollo/result_analysis/templates/result_analysis/results.html:85
+#: apollo/result_analysis/templates/result_analysis/results.html:90
+#: apollo/result_analysis/templates/result_analysis/results.html:91
+#: apollo/result_analysis/templates/result_analysis/results.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:105
+#: apollo/result_analysis/templates/result_analysis/results.html:106
+#: apollo/result_analysis/templates/result_analysis/results.html:212
 #: apollo/result_analysis/templates/result_analysis/results.html:213
-#: apollo/result_analysis/templates/result_analysis/results.html:214
-#: apollo/result_analysis/templates/result_analysis/results.html:219
-#: apollo/result_analysis/templates/result_analysis/results.html:220
-#: apollo/result_analysis/templates/result_analysis/results.html:226
-#: apollo/result_analysis/templates/result_analysis/results.html:227
-#: apollo/result_analysis/templates/result_analysis/results.html:234
-#: apollo/result_analysis/templates/result_analysis/results.html:235
+#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:218
+#: apollo/result_analysis/templates/result_analysis/results.html:223
+#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:231
+#: apollo/result_analysis/templates/result_analysis/results.html:238
+#: apollo/result_analysis/templates/result_analysis/results.html:239
 msgid "Margin of Error"
 msgstr "هامش الخطأ"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:75
-#: apollo/result_analysis/templates/result_analysis/results.html:80
-#: apollo/result_analysis/templates/result_analysis/results.html:86
-#: apollo/result_analysis/templates/result_analysis/results.html:93
-#: apollo/result_analysis/templates/result_analysis/results.html:101
-#: apollo/result_analysis/templates/result_analysis/results.html:208
-#: apollo/result_analysis/templates/result_analysis/results.html:213
-#: apollo/result_analysis/templates/result_analysis/results.html:219
-#: apollo/result_analysis/templates/result_analysis/results.html:226
-#: apollo/result_analysis/templates/result_analysis/results.html:234
+#: apollo/result_analysis/templates/result_analysis/results.html:79
+#: apollo/result_analysis/templates/result_analysis/results.html:84
+#: apollo/result_analysis/templates/result_analysis/results.html:90
+#: apollo/result_analysis/templates/result_analysis/results.html:97
+#: apollo/result_analysis/templates/result_analysis/results.html:105
+#: apollo/result_analysis/templates/result_analysis/results.html:212
+#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:223
+#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:238
 #, python-format
 msgid "MoE 95%%"
 msgstr "هامش الخطأ 95%%"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:76
-#: apollo/result_analysis/templates/result_analysis/results.html:81
-#: apollo/result_analysis/templates/result_analysis/results.html:87
-#: apollo/result_analysis/templates/result_analysis/results.html:94
-#: apollo/result_analysis/templates/result_analysis/results.html:102
-#: apollo/result_analysis/templates/result_analysis/results.html:209
-#: apollo/result_analysis/templates/result_analysis/results.html:214
-#: apollo/result_analysis/templates/result_analysis/results.html:220
-#: apollo/result_analysis/templates/result_analysis/results.html:227
-#: apollo/result_analysis/templates/result_analysis/results.html:235
+#: apollo/result_analysis/templates/result_analysis/results.html:80
+#: apollo/result_analysis/templates/result_analysis/results.html:85
+#: apollo/result_analysis/templates/result_analysis/results.html:91
+#: apollo/result_analysis/templates/result_analysis/results.html:98
+#: apollo/result_analysis/templates/result_analysis/results.html:106
+#: apollo/result_analysis/templates/result_analysis/results.html:213
+#: apollo/result_analysis/templates/result_analysis/results.html:218
+#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:231
+#: apollo/result_analysis/templates/result_analysis/results.html:239
 #, python-format
 msgid "MoE 99%%"
 msgstr "هامش الخطأ 99%%"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:78
-#: apollo/result_analysis/templates/result_analysis/results.html:99
-#: apollo/result_analysis/templates/result_analysis/results.html:211
-#: apollo/result_analysis/templates/result_analysis/results.html:232
+#: apollo/result_analysis/templates/result_analysis/results.html:82
+#: apollo/result_analysis/templates/result_analysis/results.html:103
+#: apollo/result_analysis/templates/result_analysis/results.html:215
+#: apollo/result_analysis/templates/result_analysis/results.html:236
 msgid "Votes"
 msgstr "الأصوات"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:84
-#: apollo/result_analysis/templates/result_analysis/results.html:217
+#: apollo/result_analysis/templates/result_analysis/results.html:88
+#: apollo/result_analysis/templates/result_analysis/results.html:221
 msgid "RB"
 msgstr "أوراق الاقتراع المسجلة "
 
-#: apollo/result_analysis/templates/result_analysis/results.html:91
-#: apollo/result_analysis/templates/result_analysis/results.html:224
+#: apollo/result_analysis/templates/result_analysis/results.html:95
+#: apollo/result_analysis/templates/result_analysis/results.html:228
 msgid "BB"
 msgstr "أوراق الاقتراع الفارغة "
 
-#: apollo/result_analysis/templates/result_analysis/results.html:97
-#: apollo/result_analysis/templates/result_analysis/results.html:230
+#: apollo/result_analysis/templates/result_analysis/results.html:101
+#: apollo/result_analysis/templates/result_analysis/results.html:234
 msgid "TV"
 msgstr "الإجمالي الصحيح"
 
-#: apollo/result_analysis/templates/result_analysis/results.html:485
+#: apollo/result_analysis/templates/result_analysis/results.html:489
 msgid "Vote Share"
 msgstr "مشاركة التصويت"
 
@@ -2626,88 +2628,88 @@ msgstr "(نسبة مئوية) %(tag)s "
 msgid "Participant Role"
 msgstr "دور المشارك"
 
-#: apollo/submissions/filters.py:153
+#: apollo/submissions/filters.py:189
 msgid "All Incidents"
 msgstr "جميع الحوادث"
 
-#: apollo/submissions/filters.py:154
+#: apollo/submissions/filters.py:190
 msgid "Unmarked Incidents"
 msgstr "أحداث غير محددة"
 
-#: apollo/submissions/filters.py:155
+#: apollo/submissions/filters.py:191
 msgid "Confirmed Incidents"
 msgstr "الأحداث المؤكدة"
 
-#: apollo/submissions/filters.py:156
+#: apollo/submissions/filters.py:192
 msgid "Rejected Incidents"
 msgstr "الحوادث المرفوضة"
 
-#: apollo/submissions/filters.py:157
+#: apollo/submissions/filters.py:193
 msgid "Citizen Report Incidents"
 msgstr "تقرير المواطن عن الأحداث"
 
-#: apollo/submissions/filters.py:669
+#: apollo/submissions/filters.py:707
 #, python-format
 msgid "%(group)s Status"
 msgstr "حالة %(group)s "
 
-#: apollo/submissions/filters.py:670
+#: apollo/submissions/filters.py:708
 #, python-format
 msgid "%(group)s Partial"
 msgstr "%(group)s الجزئية"
 
-#: apollo/submissions/filters.py:671
+#: apollo/submissions/filters.py:709
 #, python-format
 msgid "%(group)s Missing"
 msgstr "%(group)s المفقودة"
 
-#: apollo/submissions/filters.py:672
+#: apollo/submissions/filters.py:710
 #, python-format
 msgid "%(group)s Complete"
 msgstr "%(group)s المكتملة"
 
-#: apollo/submissions/filters.py:673
+#: apollo/submissions/filters.py:711
 #, python-format
 msgid "%(group)s Conflict"
 msgstr "تضارب %(group)s  "
 
-#: apollo/submissions/filters.py:684 apollo/submissions/filters.py:752
+#: apollo/submissions/filters.py:722 apollo/submissions/filters.py:790
 msgid "Quarantine All"
 msgstr "حجر الكل"
 
-#: apollo/submissions/filters.py:685 apollo/submissions/filters.py:753
+#: apollo/submissions/filters.py:723 apollo/submissions/filters.py:791
 msgid "Quarantine Results"
 msgstr "نتائج الحجر"
 
-#: apollo/submissions/filters.py:686
+#: apollo/submissions/filters.py:724
 msgid "Quarantine All + Results"
 msgstr "عزل الجميع + النتائج"
 
-#: apollo/submissions/filters.py:687 apollo/submissions/filters.py:751
+#: apollo/submissions/filters.py:725 apollo/submissions/filters.py:789
 msgid "Quarantine None"
 msgstr "حجر لا شيء"
 
-#: apollo/submissions/filters.py:692
+#: apollo/submissions/filters.py:730
 msgid "Phone Confirmed"
 msgstr "تم تأكيد رقم الهاتف"
 
-#: apollo/submissions/filters.py:693
+#: apollo/submissions/filters.py:731
 msgid "Phone Unconfirmed"
 msgstr "لم يتم تأكيد رقم الهاتف"
 
-#: apollo/submissions/filters.py:700
+#: apollo/submissions/filters.py:738
 msgid "Optional Inclusion"
 msgstr "تضمين اختياري"
 
-#: apollo/submissions/filters.py:725
+#: apollo/submissions/filters.py:763
 msgid "Quality Check Criterion"
 msgstr "معيار فحص الجودة"
 
-#: apollo/submissions/filters.py:726
+#: apollo/submissions/filters.py:764
 msgid "Any Criterion"
 msgstr "أي معيار"
 
-#: apollo/submissions/filters.py:735
+#: apollo/submissions/filters.py:773
 msgid "Quality Check Condition"
 msgstr "شرط فحص الجودة"
 
@@ -2907,8 +2909,8 @@ msgstr "عرض على لوحة المعلومات والجداول"
 #: apollo/templates/admin/administrative_divisions.html:43
 #: apollo/templates/admin/administrative_divisions.html:119
 msgid ""
-"Whether to show location data of this division on the dashboard and other"
-" tables."
+"Whether to show location data of this division on the dashboard and other "
+"tables."
 msgstr ""
 "إن كان سيتم إظهار بيانات الموقع الخاصة بهذا القسم على لوحة المعلومات "
 "والجداول الأخرى."
@@ -2920,7 +2922,8 @@ msgstr "استخدم في ملخص البيانات"
 
 #: apollo/templates/admin/administrative_divisions.html:53
 #: apollo/templates/admin/administrative_divisions.html:129
-msgid "Whether to show aggregated data summaries at this administrative level."
+msgid ""
+"Whether to show aggregated data summaries at this administrative level."
 msgstr "ما إذا كان سيتم إظهار ملخصات البيانات المجمعة في هذا المستوى الإداري."
 
 #: apollo/templates/admin/administrative_divisions.html:62
@@ -2934,8 +2937,8 @@ msgid ""
 "Indicates whether your location data will have registered voters at this "
 "administrative level."
 msgstr ""
-"يشير إلى ما إذا كانت بيانات موقعك ستحتوي على ناخبين مسجلين في هذا المستوى"
-" الإداري."
+"يشير إلى ما إذا كانت بيانات موقعك ستحتوي على ناخبين مسجلين في هذا المستوى "
+"الإداري."
 
 #: apollo/templates/admin/administrative_divisions.html:72
 #: apollo/templates/admin/administrative_divisions.html:148
@@ -2990,8 +2993,8 @@ msgstr "هل أنت متأكد من أنك تريد إنهاء المجموعة 
 
 #: apollo/templates/admin/administrative_divisions.html:211
 msgid ""
-" After confirmation, you wouldn't be able to make any further changes to "
-"the structure."
+" After confirmation, you wouldn't be able to make any further changes to the"
+" structure."
 msgstr "بعد التأكيد، لن تتمكن من إجراء أي تغييرات أخرى على الهيكل."
 
 #: apollo/templates/admin/form_list.html:21
@@ -3037,7 +3040,7 @@ msgstr "تنزيّل النموذج"
 #: apollo/templates/admin/formbuilder.html:34
 #: apollo/templates/admin/formbuilder.html:40
 msgid "Dismiss"
-msgstr ""
+msgstr "إلغاء"
 
 #: apollo/templates/admin/layout.html:8 apollo/templates/admin/layout.html:10
 msgid "menu image"
@@ -3045,11 +3048,11 @@ msgstr "صورة القائمة"
 
 #: apollo/templates/admin/location_headers_errors.html:2
 msgid ""
-"<strong>There was a problem</strong> with your submission. Please correct"
-" the errors and re-submit."
+"<strong>There was a problem</strong> with your submission. Please correct "
+"the errors and re-submit."
 msgstr ""
-"<strong> كانت هناك مشكلة </strong> في ما أرسلته. يُرجى تصحيح الأخطاء "
-"وإعادة الإرسال."
+"<strong> كانت هناك مشكلة </strong> في ما أرسلته. يُرجى تصحيح الأخطاء وإعادة "
+"الإرسال."
 
 #: apollo/templates/admin/locations_list.html:54
 msgid "Code"
@@ -3059,7 +3062,8 @@ msgstr "الرمز"
 msgid ""
 "The administrative divisions attached to this location set needs to be "
 "finalized before importing locations."
-msgstr "يجب إنهاء الأقسام الإدارية المرفقة بمجموعة الموقع هذه قبل استيراد المواقع."
+msgstr ""
+"يجب إنهاء الأقسام الإدارية المرفقة بمجموعة الموقع هذه قبل استيراد المواقع."
 
 #: apollo/templates/admin/macros.html:4 apollo/templates/admin/macros.html:11
 #: apollo/templates/admin/macros.html:18 apollo/templates/admin/macros.html:25
@@ -3167,4 +3171,3 @@ msgstr "اسم المستخدم %(username)s غير متوفر"
 #, python-format
 msgid "The email %(email)s is not available"
 msgstr "البريد الإلكتروني %(email)s غير متوفر"
-
