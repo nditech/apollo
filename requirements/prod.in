@@ -4,7 +4,7 @@ anyjson==0.3.3
 arpeggio==1.7.1
 authlib
 awesome-slugify==1.6.5
-babel==2.5.3
+babel==2.9.1
 blinker==1.4
 boto3==1.16.8
 cachetools==1.1.5
@@ -14,7 +14,7 @@ filedepot==0.8.0
 flask-admin==1.5.3
 flask-apispec==0.8.1
 flask-assets==0.12
-flask-babelex==0.9.3
+flask-babelex==0.9.4
 flask-caching==1.3.3
 flask-cors==3.0.10
 flask-gravatar==0.5.0
