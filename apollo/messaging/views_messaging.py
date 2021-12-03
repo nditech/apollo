@@ -2,6 +2,7 @@
 import json
 import re
 
+from bidi.algorithm import get_display
 from flask import Blueprint, make_response, request, g, current_app
 from unidecode import unidecode
 
@@ -96,7 +97,7 @@ def kannel_view():
         if current_app.config.get('TRANSLITERATE_OUTPUT'):
             response = unidecode(response)
 
-        return response
+        return get_display(response)
     return ""
 
 
@@ -138,9 +139,9 @@ def telerivet_view():
 
         if current_app.config.get('TRANSLITERATE_OUTPUT'):
             response_text = unidecode(response_text)
-        response = {'messages': [{'content': response_text}]}
-        http_response = make_response(json.dumps(response))
-        http_response.headers['Content-Type'] = 'application/json'
+        response = {'messages': [{'content': get_display(response_text)}]}
+        http_response = make_response(json.dumps(response, ensure_ascii=False))
+        http_response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
         return http_response
     return ""
