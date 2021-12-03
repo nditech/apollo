@@ -701,10 +701,6 @@ pyjwt==2.0.1 \
     --hash=sha256:a5c70a06e1f33d81ef25eecd50d50bd30e34de1ca8b2b9fa3fe0daaabcf69bf7 \
     --hash=sha256:b70b15f89dc69b993d8a8d32c299032d5355c82f9b5b7e851d1a6d706dffe847
     # via flask-jwt-extended
-python-bidi==0.4.2 \
-    --hash=sha256:50eef6f6a0bbdd685f9e8c207f3c9050f5b578d0a46e37c76a9c4baea2cc2e13 \
-    --hash=sha256:5347f71e82b3e9976dc657f09ded2bfe39ba8d6777ca81a5b2c56c30121c496e
-    # via -r requirements/prod.in
 python-dateutil==2.7.2 \
     --hash=sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df \
     --hash=sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e
@@ -824,7 +820,6 @@ six==1.11.0 \
     #   flask-cors
     #   flask-menu
     #   parsimonious
-    #   python-bidi
     #   python-dateutil
     #   qrcode
     #   sqlalchemy-json
