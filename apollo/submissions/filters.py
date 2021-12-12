@@ -131,7 +131,12 @@ def make_participant_role_filter(participant_set_id):
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                return query.filter_by(role_id=value)
+                subquery = models.Participant.query.filter(
+                    models.Participant.participant_set_id == participant_set_id,  # noqa
+                    models.Participant.role_id == value
+                ).with_entities(models.Participant.id).subquery()
+                return query.filter(
+                    models.Submission.participant_id.in_(subquery))
 
             return query
 
