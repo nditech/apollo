@@ -131,12 +131,22 @@ def make_participant_role_filter(participant_set_id):
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                subquery = models.Participant.query.filter(
-                    models.Participant.participant_set_id == participant_set_id,  # noqa
-                    models.Participant.role_id == value
-                ).with_entities(models.Participant.id).subquery()
-                return query.filter(
-                    models.Submission.participant_id.in_(subquery))
+                joined_classes = [
+                    mapper.class_ for mapper in query._join_entities]
+                if models.Participant in joined_classes:
+                    query1 = query
+                else:
+                    query1 = query.join(models.Submission.participant)
+
+                if models.ParticipantRole in joined_classes:
+                    query2 = query1
+                else:
+                    query2 = query1.join(
+                        models.ParticipantRole,
+                        models.Participant.role_id == models.ParticipantRole.id
+                    )
+
+                return query2.filter(models.ParticipantRole.id == value)
 
             return query
 
