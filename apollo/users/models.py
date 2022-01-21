@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from flask_babelex import gettext
 from flask_security import RoleMixin, UserMixin
+from flask_security.utils import hash_password
+from sqlalchemy import func
 
 from apollo.core import db
 from apollo.dal.models import BaseModel
@@ -101,6 +104,52 @@ class User(BaseModel, UserMixin):
             Role.deployment == self.deployment, Role.name == 'admin',
             Role.users.contains(self)).first()
         return bool(role)
+
+    def set_password(self, new_password):
+        self.password = hash_password(new_password)
+
+    @classmethod
+    def import_user_list(cls, dataset, deployment_id, task=None):
+        total_records = len(dataset)
+        warning_records = 0
+        processed_records = 0
+        error_log = []
+
+        for record in dataset:
+            if not (
+                    record['username'].strip()
+                    and record['email'].strip()
+                    and record['role'].strip()
+                    and record['password'].strip()):
+
+                warning_records += 1
+                error_log.append({
+                    'label': 'WARNING',
+                    'message': gettext(
+                        'Missing required info '
+                        '(username, email, role or password). '
+                        'Record will be skipped.')
+                })
+                continue
+
+            user = cls(
+                username=record['username'].strip(),
+                email=record['email'].strip(),
+                deployment_id=deployment_id,
+            )
+            user.set_password(record['password'].strip())
+            user.roles = Role.query.filter(
+                func.lower(Role.name) == record['role'].strip().lower()).all()
+            user.save()
+            processed_records += 1
+
+        if task is not None:
+            task.update_task_info(
+                total_records=total_records,
+                warning_records=warning_records,
+                processed_records=processed_records,
+                error_log=error_log,
+            )
 
 
 class UserUpload(BaseModel):
