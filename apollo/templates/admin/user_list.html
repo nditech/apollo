@@ -1,0 +1,2 @@
+{% extends "admin/model/list.html" %}
+{% block model_menu_bar_after_filters %}<li class="nav-item"><a href="{{ url_for('user.import_user_list') }}" class="nav-link">{{ _('Bulk import') }}</a></li>{% endblock %}

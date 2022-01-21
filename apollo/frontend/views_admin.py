@@ -416,6 +416,7 @@ class UserAdminView(BaseAdminView):
         rules.FieldSet(('email', 'username', 'password2', 'active', 'roles',
                         'permissions', 'locale'))
     ]
+    list_template = 'admin/user_list.html'
 
     def get_query(self):
         user = current_user._get_current_object()
