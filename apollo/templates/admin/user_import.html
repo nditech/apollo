@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jsuites.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jspreadsheet.css') }}">
+{% endblock head %}
+{% block body %}
+<div class="card">
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="card-header">{{ _('Import users') }}</div>
+    <div class="card-body">
+      <div id="grid" data-roles='{{ roles|tojson|safe }}'></div>
+    </div>
+    <div class="card-footer">
+      <button type="button" class="btn btn-primary" id="importButton">Import</button>
+      <a href="{{ url_for('user.index_view') }}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock body %}
+{% block tail %}
+<script src="{{ url_for('static', filename='js/jsuites.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jspreadsheet-ce.js') }}"></script>
+<script>
+  var loader = function () {
+    var gridData = [];
+    var gridElement = document.getElementById('grid');
+    var importButton = document.getElementById('importButton');
+    var payloadElement = document.getElementById('{{ form.payload.id }}');
+
+    var table = jspreadsheet(gridElement, {
+      data: gridData,
+      columns: [
+        {title: "{{ _('Username') }}", name: 'username', type: 'text', width: 200},
+        {title: "{{ _('Email') }}", name: 'email', type: 'text', width: 200},
+        {title: "{{ _('Role') }}", name: 'role', type: 'dropdown', source: JSON.parse(gridElement.dataset.roles), width: 200},
+        {title: "{{ _('Password') }}", name: 'password', type: 'text', width: 200}
+      ],
+      minDimensions: [4, 10]
+    });
+
+    importButton.addEventListener('click', function () {
+      payloadElement.value = JSON.stringify(table.getJson());
+      payloadElement.form.submit();
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', loader);
+</script>
+{% endblock tail %}

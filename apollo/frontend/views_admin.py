@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 from datetime import datetime
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
@@ -6,7 +7,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import magic
 import pytz
 from PIL import Image
-from flask import flash, g, send_file, redirect, request, session
+from flask import flash, g, send_file, redirect, request, session, url_for
 from flask_admin import (
     form, BaseView, expose)
 from flask_admin.actions import action
@@ -29,6 +30,7 @@ from apollo import models, services, settings
 from apollo.core import admin, db
 from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
+from apollo.forms import UserImportForm
 from apollo.locations.views_locations import (
     locations_builder, import_divisions, export_divisions,
     locations_list, location_edit, locations_import, locations_headers,
@@ -476,6 +478,27 @@ class UserAdminView(BaseAdminView):
             role.active = True
             role.save()
         flash(str(_('User(s) successfully enabled.')), 'success')
+
+    @expose('/import', methods=['GET', 'POST'])
+    def import_user_list(self):
+        form = UserImportForm()
+        if form.validate_on_submit():
+            dataset = json.loads(form.data.get('payload'))
+            models.User.import_user_list(
+                dataset, deployment_id=g.deployment.id)
+
+            return redirect(url_for('user.index_view'))
+
+        context = {
+            'form': form,
+            'roles': [
+                r.name
+                for r in models.Role.query.filter(
+                    models.Role.name != 'field-coordinator')
+            ]
+        }
+        template_name = 'admin/user_import.html'
+        return self.render(template_name, **context)
 
 
 class RoleAdminView(BaseAdminView):
