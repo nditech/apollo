@@ -29,6 +29,7 @@ from apollo import models, services, settings
 from apollo.core import admin, db
 from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
+from apollo.deployments.tasks import delete_event
 from apollo.locations.views_locations import (
     locations_builder, import_divisions, export_divisions,
     locations_list, location_edit, locations_import, locations_headers,
@@ -385,7 +386,17 @@ class EventAdminView(BaseAdminView):
             deployment=current_user.deployment).count()
 
         if event_count > 1:
-            return super().delete_model(model)
+            # don't delete the event the user is using
+            if model == g.event:
+                message = str(_('Cannot delete the current event'))
+                flash(message, 'danger')
+                return False
+
+            # run event deletion task asynchronously
+            delete_event.delay(model.id)
+            message = str(_("Selected event(s) marked for deletion"))
+            flash(message, 'info')
+            return True
         else:
             message = str(_("You cannot delete the last remaining event"))
             flash(message, 'danger')
