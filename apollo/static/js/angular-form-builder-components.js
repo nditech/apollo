@@ -32,6 +32,7 @@
         required: false,
         min: 0,
         max: 9999,
+        null_value: "",
         subtype: 'integer',
         expected: 0,
         template:
@@ -56,9 +57,13 @@
             <label class="control-label">{{minimumLabel}}</label>
             <input type="text" ng-model="min" class="form-control" value="0" />
           </div>
-          <div class="form-group mb-2">
+          <div class="form-group mb-2">amples using assignable expressions include:
             <label class="control-label">{{maximumLabel}}</label>
             <input type="text" ng-model="max" class="form-control" value="9999" />
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">{{nullValueLabel}}</label>
+            <input type="text" ng-model="null_value" class="form-control" value="" />
           </div>
           <div class="form-group mb-2">
             <label class="control-label">{{typeLabel}}</label>

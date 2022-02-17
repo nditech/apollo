@@ -375,6 +375,7 @@ class FormBuilderSerializer(object):
             data['subtype'] = 'integer'
             data['min'] = field.get('min', 0)
             data['max'] = field.get('max', 9999)
+            data['null_value'] = field.get('null_value', None)
         elif field_type in ('select', 'multiselect'):
             sorted_options = sorted(field['options'].items(),
                                     key=itemgetter(1))
@@ -464,6 +465,7 @@ class FormBuilderSerializer(object):
 
                     field['min'] = min_limit
                     field['max'] = max_limit
+                    field['null_value'] = f.get('null_value', None)
 
                     # add target/expected value
                     if f.get('expected'):

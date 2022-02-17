@@ -57,6 +57,7 @@
         $scope.analysisLabel = i18n.gettext('Analysis');
         $scope.minimumLabel = i18n.gettext('Minimum');
         $scope.maximumLabel = i18n.gettext('Maximum');
+        $scope.nullValueLabel = i18n.gettext('Null Value');
         $scope.typeLabel = i18n.gettext('Type');
         $scope.expectedValueLabel = i18n.gettext('Expected Value (Optional)');
         $scope.validationLabel = i18n.gettext('Validation');
@@ -79,7 +80,7 @@
           }
         };
         $scope.optionsText = formObject.options.join('\n');
-        $scope.$watch('[label, description, placeholder, required, min, max, options, validation, analysis, subtype, expected]', function() {
+        $scope.$watch('[label, description, placeholder, required, min, max, null_value, options, validation, analysis, subtype, expected]', function() {
           formObject.label = $scope.label;
           formObject.description = $scope.description;
           formObject.placeholder = $scope.placeholder;
@@ -87,6 +88,7 @@
           formObject.options = $scope.options;
           formObject.min = $scope.min;
           formObject.max = $scope.max;
+          formObject.null_value = $scope.null_value;
           formObject.analysis = $scope.analysis;
           formObject.subtype = $scope.subtype;
           formObject.expected = $scope.expected;
@@ -127,6 +129,7 @@
             validation: $scope.validation,
             min: $scope.min,
             max: $scope.max,
+            null_value: $scope.null_value,
             analysis: $scope.analysis,
             subtype: $scope.subtype,
             expected: $scope.expected
@@ -147,6 +150,7 @@
           $scope.optionsText = this.model.optionsText;
           $scope.min = this.model.min;
           $scope.max = this.model.max;
+          $scope.null_value = this.model.null_value;
           $scope.analysis = this.model.analysis;
           $scope.subtype = this.model.subtype;
           $scope.expected = this.model.expected;
@@ -1071,7 +1075,7 @@
       "default": []
     };
     this.convertComponent = function(name, component) {
-      var result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12, _ref13, _ref14;
+      var result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15;
       result = {
         name: name,
         group: (_ref = component.group) != null ? _ref : 'Default',
@@ -1086,9 +1090,10 @@
         arrayToText: (_ref9 = component.arrayToText) != null ? _ref9 : false,
         min: (_ref10 = component.min) != null ? _ref10 : '',
         max: (_ref11 = component.max) != null ? _ref11 : '',
-        analysis: (_ref12 = component.analysis) != null ? _ref12 : '',
-        subtype: (_ref13 = component.subtype) != null ? _ref13 : '',
-        expected: (_ref14 = component.expected) != null ? _ref14 : '',
+        null_value: (_ref12 = component.null_value) != null ? _ref12 : '',
+        analysis: (_ref13 = component.analysis) != null ? _ref13 : '',
+        subtype: (_ref14 = component.subtype) != null ? _ref14 : '',
+        expected: (_ref15 = component.expected) != null ? _ref15 : '',
         template: component.template,
         templateUrl: component.templateUrl,
         popoverTemplate: component.popoverTemplate,
@@ -1103,7 +1108,7 @@
       return result;
     };
     this.convertFormObject = function(name, formObject) {
-      var component, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12;
+      var component, result, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9, _ref10, _ref11, _ref12, _ref13;
       if (formObject == null) {
         formObject = {};
       }
@@ -1124,9 +1129,10 @@
         validation: (_ref7 = formObject.validation) != null ? _ref7 : component.validation,
         min: (_ref8 = formObject.min) != null ? _ref8 : component.min,
         max: (_ref9 = formObject.max) != null ? _ref9 : component.max,
-        analysis: (_ref10 = formObject.analysis) != null ? _ref10 : component.analysis,
-        subtype: (_ref11 = formObject.subtype) != null ? _ref11 : component.subtype,
-        expected: (_ref12 = formObject.expected) != null ? _ref12 : component.expected
+        null_value: (_ref10 = formObject.null_value) != null ? _ref10 : component.null_value,
+        analysis: (_ref11 = formObject.analysis) != null ? _ref11 : component.analysis,
+        subtype: (_ref12 = formObject.subtype) != null ? _ref12 : component.subtype,
+        expected: (_ref13 = formObject.expected) != null ? _ref13 : component.expected
       };
       return result;
     };
