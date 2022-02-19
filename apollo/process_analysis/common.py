@@ -188,6 +188,7 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None,
             location_stats[group_name]['missing'] = missing
             location_stats[group_name]['reported'] = reported
             location_stats[group_name]['available'] = available
+            location_stats[group_name]['not_available'] = not_available
             location_stats[group_name]['total'] = reported + missing
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
