@@ -104,8 +104,8 @@ def generate_mean_stats(tag, dataset, null_value=None):
         missing = total - reported
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
-        percent_available = percent_of(available, total)
-        percent_not_available = percent_of(not_available, total)
+        percent_available = percent_of(available, reported)
+        percent_not_available = percent_of(not_available, reported)
 
         stats = {
             'reported': reported, 'missing': missing,
