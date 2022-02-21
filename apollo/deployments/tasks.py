@@ -38,18 +38,18 @@ def delete_event(event_pk: int) -> None:
                 with connection.begin():
                     connection.execute(messages_delete_st)
             except Exception:
-                return
+                raise
 
             try:
                 with connection.begin():
                     connection.execute(submissions_delete_st)
             except Exception:
-                return
+                raise
 
             try:
                 with connection.begin():
                     connection.execute(event_delete_st)
             except Exception:
-                return
+                raise
     except Exception:
         return
