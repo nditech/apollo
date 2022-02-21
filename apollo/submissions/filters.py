@@ -133,20 +133,16 @@ def make_participant_role_filter(participant_set_id):
             if value:
                 joined_classes = [
                     mapper.class_ for mapper in query._join_entities]
-                if models.Participant in joined_classes:
-                    query1 = query
-                else:
-                    query1 = query.join(models.Submission.participant)
+                if models.Participant not in joined_classes:
+                    query = query.join(models.Submission.participant)
 
-                if models.ParticipantRole in joined_classes:
-                    query2 = query1
-                else:
-                    query2 = query1.join(
+                if models.ParticipantRole not in joined_classes:
+                    query = query.join(
                         models.ParticipantRole,
                         models.Participant.role_id == models.ParticipantRole.id
                     )
 
-                return query2.filter(models.ParticipantRole.id == value)
+                return query.filter(models.ParticipantRole.id == value)
 
             return query
 
