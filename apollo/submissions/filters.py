@@ -131,17 +131,6 @@ def make_participant_role_filter(participant_set_id):
 
         def queryset_(self, query, value, **kwargs):
             if value:
-                joined_classes = [
-                    mapper.class_ for mapper in query._join_entities]
-                if models.Participant not in joined_classes:
-                    query = query.join(models.Submission.participant)
-
-                if models.ParticipantRole not in joined_classes:
-                    query = query.join(
-                        models.ParticipantRole,
-                        models.Participant.role_id == models.ParticipantRole.id
-                    )
-
                 return query.filter(models.ParticipantRole.id == value)
 
             return query
