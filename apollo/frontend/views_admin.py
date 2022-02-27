@@ -388,13 +388,13 @@ class EventAdminView(BaseAdminView):
         if event_count > 1:
             # don't delete the event the user is using
             if model == g.event:
-                message = str(_('Cannot delete the current event'))
+                message = str(_("You cannot delete the current event"))
                 flash(message, 'danger')
                 return False
 
             # run event deletion task asynchronously
             delete_event.delay(model.id)
-            message = str(_("Selected event(s) marked for deletion"))
+            message = str(_("The selected event(s) are now scheduled for deletion"))
             flash(message, 'info')
             return True
         else:
