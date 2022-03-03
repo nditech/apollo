@@ -66,7 +66,7 @@ def generate_mean_stats(tag, dataset, null_value=None):
             missing = total - reported
             percent_reported = percent_of(reported, total)
             percent_available = percent_of(available, reported)
-            percent_not_available = 1 - percent_available
+            percent_not_available = percent_of(not_available, reported)
             percent_missing = percent_of(missing, total)
 
             location_stats[group_name] = {}
@@ -105,7 +105,7 @@ def generate_mean_stats(tag, dataset, null_value=None):
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
         percent_available = percent_of(available, reported)
-        percent_not_available = 1 - percent_available
+        percent_not_available = percent_of(not_available, reported)
 
         stats = {
             'reported': reported, 'missing': missing,
@@ -181,7 +181,7 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None,
             missing = total - reported
             percent_reported = percent_of(reported, total)
             percent_available = percent_of(available, reported)
-            percent_not_available = 1 - percent_available
+            percent_not_available = percent_of(not_available, reported)
             percent_missing = percent_of(missing, total)
 
             location_stats[group_name] = {}
@@ -228,7 +228,7 @@ def generate_histogram_stats(tag, dataset, options=[], labels=None,
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
         percent_available = percent_of(available, reported)
-        percent_not_available = 1 - percent_available
+        percent_not_available = percent_of(not_available, reported)
 
         value_counts = subset.dropna().astype(
             int).value_counts().to_dict()
@@ -376,7 +376,7 @@ def generate_count_stats(tag, dataset, null_value=None):
             percent_reported = percent_of(reported, total)
             percent_missing = percent_of(missing, total)
             percent_available = percent_of(available, reported)
-            percent_not_available = 1 - percent_available
+            percent_not_available = percent_of(not_available, reported)
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -406,7 +406,7 @@ def generate_count_stats(tag, dataset, null_value=None):
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
         percent_available = percent_of(available, reported)
-        percent_not_available = 1 - percent_available
+        percent_not_available = percent_of(not_available, reported)
 
         stats = {
             'reported': reported,
@@ -451,7 +451,7 @@ def generate_bucket_stats(tag, dataset, target, null_value=None):
             percent_reported = percent_of(reported, total)
             percent_missing = percent_of(missing, total)
             percent_available = percent_of(available, reported)
-            percent_not_available = 1 - percent_available
+            percent_not_available = percent_of(not_available, reported)
             histogram = defaultdict(lambda: (0, 0.0))
             histogram = {
                 opt: (
@@ -493,7 +493,7 @@ def generate_bucket_stats(tag, dataset, target, null_value=None):
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
         percent_available = percent_of(available, reported)
-        percent_not_available = 1 - percent_available
+        percent_not_available = percent_of(not_available, reported)
         histogram = defaultdict(lambda: (0, 0.0))
         histogram = {
             opt: (
@@ -523,7 +523,7 @@ def generate_field_stats(field, dataset):
     summary_type = field.get('analysis_type')
     try:
         null_value = int(field.get('null_value'))
-    except ValueError:
+    except (TypeError, ValueError):
         null_value = None
     if summary_type == 'count':
         return generate_count_stats(field['tag'], dataset, null_value)
