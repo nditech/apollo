@@ -342,6 +342,7 @@ def submission():
         submission.update_related(data)
         if submission.master is not None:
             submission.update_master_offline_status()
+            submission.update_master_opened_status()
         update_submission_version(submission)
 
     message_text = make_message_text(form, participant, data)

@@ -660,6 +660,7 @@ def submission_edit(submission_id):
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
         initial_data.update(unreachable=submission.unreachable)
+        initial_data.update(not_opened=submission.not_opened)
         if submission.quarantine_status:
             initial_data.update(
                 quarantine_status=submission.quarantine_status.code)
@@ -706,6 +707,7 @@ def submission_edit(submission_id):
         for sibling in sibling_submissions:
             initial_data = sibling.data
             initial_data.update(unreachable=sibling.unreachable)
+            initial_data.update(not_opened=sibling.not_opened)
             if sibling.quarantine_status:
                 initial_data.update(
                     quarantine_status=sibling.quarantine_status.code)
@@ -1015,6 +1017,7 @@ def submission_edit(submission_id):
                     new_quarantine_status = submission_form.data.get(
                         'quarantine_status')
                     new_offline_status = submission_form.unreachable.data
+                    new_station_status = submission_form.not_opened.data
 
                     if permissions.edit_submission_verification_status.can():
                         new_verified_fields = \
@@ -1050,6 +1053,9 @@ def submission_edit(submission_id):
                     if new_offline_status != submission.unreachable:
                         changed = True
                         update_params['unreachable'] = new_offline_status
+                    if new_station_status != submission.not_opened:
+                        changed = True
+                        update_params['not_opened'] = new_station_status
 
                     changed_fields = []
 
@@ -1117,6 +1123,7 @@ def submission_edit(submission_id):
                         submission.update_related(data)
 
                         submission.update_master_offline_status()
+                        submission.update_master_opened_status()
 
                         db.session.add_all(attachments)
                         for attachment in deleted_attachments:

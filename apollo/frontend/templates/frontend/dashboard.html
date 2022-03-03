@@ -58,7 +58,7 @@
 </div>
 {%- if session['dashboard_chart_type'] == 'bar' %}
 <pre style="display:none" id="csvdata">
-Id,Link,Name,Complete,Offline,Partial,Missing
+Id,Link,Name,Complete,Offline,Partial,Missing,Closed
 {% for row in data -%}
 {{ row.id }},
 {%- if group %}
@@ -70,7 +70,7 @@ Id,Link,Name,Complete,Offline,Partial,Missing
 {{ url_for('dashboard.response_rate', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}
 {%- endif %}
 {%- endif -%}
-,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Missing }}
+,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Missing }},{{ row.Closed }}
 {% endfor -%}
 </pre>
 <div id="barchart"></div>
@@ -176,15 +176,17 @@ Id,Link,Name,Complete,Offline,Partial,Missing
           .set('Missing', json.Missing + (json.Conflict || 0))
           .set('Partial', json.Partial)
           .set('Complete', json.Complete)
-          .set('No Signal', json.Offline);
-        var labels = ['Missing', 'Partial', 'Complete', 'No Signal'];
+          .set('No Signal', json.Offline)
+          .set('Not Opened', json.Closed);
+        var labels = ['Missing', 'Partial', 'Complete', 'No Signal', 'Not Opened'];
         var labelsMap = new Map()
           .set('Missing', "{{ _('Missing') }}")
           .set('Partial', "{{ _('Partial') }}")
           .set('Complete', "{{ _('Complete') }}")
-          .set('No Signal', "{{ _('No Signal') }}");
-        var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
-        var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
+          .set('No Signal', "{{ _('No Signal') }}")
+          .set('Not Opened', "{{ _('Not Opened') }}");
+        var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa", "#374151"];
+        var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000", "#ffffff"];
         var total_label = "{{ _('Total') }}";
 
         drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
@@ -192,7 +194,7 @@ Id,Link,Name,Complete,Offline,Partial,Missing
       {%- else %}
       let rawData = d3.select('#csvdata').text();
       let csvData = d3.csvParse(rawData);
-      let colors = ["#007bff", "#aaaaaa", "#ffc107", "#dc3545"];
+      let colors = ["#007bff", "#aaaaaa", "#ffc107", "#dc3545", "#374151"];
 
       drawNormalizedBarchart('#barchart', csvData, colors);
       {%- endif %}

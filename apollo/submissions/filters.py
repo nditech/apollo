@@ -376,6 +376,22 @@ class OnlineStatusFilter(ChoiceFilter):
         return (None, None)
 
 
+class StationStatusFilter(ChoiceFilter):
+    def filter(self, query, value, **kwargs):
+        if value and value == '1':
+            return (
+                models.Submission.not_opened == True,  # noqa
+                None
+            )
+        elif value:
+            return (
+                models.Submission.not_opened == False, # noqa
+                None
+            )
+
+        return (None, None)
+
+
 class DateFilter(CharFilter):
     def filter(self, query, value, **kwargs):
         if value:
@@ -744,6 +760,13 @@ def make_submission_list_filter(event, form, filter_on_locations=False):
             ('1', _('No Signal'))
         )
     )
+    attributes['station_status'] = StationStatusFilter(
+        choices=(
+            ('', _('Station Status')),
+            ('0', _('Opened')),
+            ('1', _('Not opened'))
+        )
+    )
     attributes['date'] = DateFilter()
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
@@ -796,6 +819,14 @@ def generate_quality_assurance_filter(event, form):
             ('', _('Signal Status')),
             ('0', _('Signal')),
             ('1', _('No Signal'))
+        )
+    )
+
+    attributes['station_status'] = StationStatusFilter(
+        choices=(
+            ('', _('Station Status')),
+            ('0', _('Open')),
+            ('1', _('Not opened'))
         )
     )
 

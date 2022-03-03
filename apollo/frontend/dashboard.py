@@ -136,6 +136,20 @@ def _get_group_coverage(query, form, group, location_type):
     else:
         offline_query = query.filter(false())
 
+    if group_tags:
+        not_opened_query = query.filter(
+            and_(
+                Submission.not_opened == True,  # noqa
+                not_(
+                    and_(
+                        Submission.data.has_all(array(group_tags)),
+                        Submission.not_opened == True
+                    )
+                )
+            ))
+    else:
+        not_opened_query = query.filter(false())
+
     dataset = defaultdict(dict)
 
     for loc_id, loc_name, count in _get_coverage_results(
@@ -178,6 +192,14 @@ def _get_group_coverage(query, form, group, location_type):
             'name': loc_name
         })
 
+    for loc_id, loc_name, count in _get_coverage_results(
+            not_opened_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Closed': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
     for name in sorted(dataset.keys()):
         loc_data = dataset.get(name)
         loc_data.setdefault('Complete', 0)
@@ -185,6 +207,7 @@ def _get_group_coverage(query, form, group, location_type):
         loc_data.setdefault('Missing', 0)
         loc_data.setdefault('Partial', 0)
         loc_data.setdefault('Offline', 0)
+        loc_data.setdefault('Closed', 0)
 
         coverage_list.append(loc_data)
 
@@ -257,12 +280,27 @@ def _get_global_coverage(query, form):
         else:
             offline_query = query.filter(false())
 
+        if group_tags:
+            not_opened_query = query.filter(
+                and_(
+                    Submission.not_opened == True,  # noqa
+                    not_(
+                        and_(
+                            Submission.data.has_all(array(group_tags)),
+                            Submission.not_opened == True
+                        )
+                    )
+                ))
+        else:
+            not_opened_query = query.filter(false())
+
         data = {
             'Complete': complete_query.count(),
             'Conflict': conflict_query.count(),
             'Missing': missing_query.count(),
             'Partial': partial_query.count(),
             'Offline': offline_query.count(),
+            'Closed': not_opened_query.count(),
             'name': group['name'],
             'slug': group['slug']
         }
