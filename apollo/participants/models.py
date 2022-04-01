@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from itertools import chain
 import re
 
 from sqlalchemy import func
@@ -334,7 +333,8 @@ class PhoneContact(BaseModel):
         onupdate=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=False)
 
-    participant = db.relationship('Participant', back_populates='phone_contacts')
+    participant = db.relationship(
+        'Participant', back_populates='phone_contacts')
 
     def touch(self):
         self.updated = utils.current_timestamp()
