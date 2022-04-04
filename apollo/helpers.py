@@ -42,7 +42,7 @@ def load_source_file(source_file):
     mimetype = magic.from_buffer(source_file.read(), mime=True)
     source_file.seek(0)
 
-    if mimetype.startswith('text'):
+    if 'csv' in mimetype or mimetype.startswith('text/'):
         # likely a CSV file
         df = pd.read_csv(source_file, dtype=str).fillna('')
     elif mimetype.startswith('application'):
