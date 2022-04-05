@@ -6,7 +6,19 @@ import magic
 import pandas as pd
 import pkgutil
 
-from .constants import CSV_MIMETYPES, EXCEL_MIMETYPES
+CSV_MIMETYPES = [
+    "text/csv",
+    "application/csv",
+    "text/x-csv",
+    "application/x-csv",
+    "text/comma-separated-values",
+    "text/x-comma-separated-values",
+]
+
+EXCEL_MIMETYPES = [
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+]
 
 
 def register_blueprints(app, package_name, package_path):
