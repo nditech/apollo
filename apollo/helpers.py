@@ -6,6 +6,8 @@ import magic
 import pandas as pd
 import pkgutil
 
+from .constants import CSV_MIMETYPES, EXCEL_MIMETYPES
+
 
 def register_blueprints(app, package_name, package_path):
     """Register all Blueprint instances on the specified Flask application
@@ -42,10 +44,10 @@ def load_source_file(source_file):
     mimetype = magic.from_buffer(source_file.read(), mime=True)
     source_file.seek(0)
 
-    if 'csv' in mimetype or mimetype.startswith('text/'):
+    if mimetype in CSV_MIMETYPES:
         # likely a CSV file
         df = pd.read_csv(source_file, dtype=str).fillna('')
-    elif mimetype.startswith('application'):
+    elif mimetype in EXCEL_MIMETYPES:
         # likely an Excel spreadsheet, read all data as strings
         xl = pd.ExcelFile(source_file)
         ncols = xl.book.sheet_by_index(0).ncols
