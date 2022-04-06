@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from itertools import chain
 import re
 
 from sqlalchemy import func
@@ -51,6 +50,7 @@ class ParticipantSet(BaseModel):
             'phone': _('Phone'),
             'partner': _('Partner'),
             'location': _('Location code'),
+            'group': _('Group'),
             'gender': _('Gender'),
             'email': _('Email'),
             'password': _('Password')
@@ -91,6 +91,20 @@ samples_participants = db.Table(
         db.ForeignKey("participant.id", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
+    ),
+)
+
+groups_participants = db.Table(
+    'participant_group_participants',
+    db.Column(
+        'group_id', db.Integer,
+        db.ForeignKey('participant_group.id', ondelete='CASCADE'),
+        nullable=False
+    ),
+    db.Column(
+        'participant_id', db.Integer,
+        db.ForeignKey('participant.id', ondelete='CASCADE'),
+        nullable=False
     ),
 )
 
@@ -147,6 +161,55 @@ class ParticipantRole(BaseModel):
         'ParticipantSet',
         backref=db.backref(
             'participant_roles', cascade='all, delete', passive_deletes=True))
+
+    def __str__(self):
+        return self.name or ''
+
+
+class ParticipantGroupType(BaseModel):
+    __tablename__ = 'participant_group_type'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    participant_set_id = db.Column(
+        db.Integer,
+        db.ForeignKey('participant_set.id', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    participant_set = db.relationship(
+        'ParticipantSet', backref=db.backref(
+            'participant_group_types', cascade='all, delete',
+        )
+    )
+
+    def __str__(self):
+        return self.name or ''
+
+
+class ParticipantGroup(BaseModel):
+    __tablename__ = 'participant_group'
+
+    id = db.Column(db.Integer, primary_key=True)
+    group_type_id = db.Column(
+        db.Integer,
+        db.ForeignKey('participant_group_type.id', ondelete='CASCADE'),
+        nullable=False
+    )
+    participant_set_id = db.Column(
+        db.Integer,
+        db.ForeignKey('participant_set.id', ondelete='CASCADE'),
+        nullable=False
+    )
+
+    group_type = db.relationship(
+        'ParticipantGroupType',
+        backref=db.backref('participant_groups', cascade='all, delete'),
+    )
+    participant_set = db.relationship(
+        'ParticipantSet',
+        backref=db.backref('participant_groups', cascade='all, delete'),
+    )
 
     def __str__(self):
         return self.name or ''
@@ -226,6 +289,10 @@ class Participant(BaseModel):
         "Sample",
         backref="participants",
         secondary=samples_participants,
+    )
+    groups = db.relationship(
+        'ParticipantGroup', secondary=groups_participants,
+        backref='participants',
     )
 
     def __str__(self):
@@ -334,7 +401,8 @@ class PhoneContact(BaseModel):
         onupdate=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=False)
 
-    participant = db.relationship('Participant', back_populates='phone_contacts')
+    participant = db.relationship(
+        'Participant', back_populates='phone_contacts')
 
     def touch(self):
         self.updated = utils.current_timestamp()
