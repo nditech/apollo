@@ -32,6 +32,7 @@ def upgrade():
     op.create_table(
         "participant_group",
         sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("name", sa.VARCHAR(), nullable=False),
         sa.Column("group_type_id", sa.Integer(), nullable=False),
         sa.Column("participant_set_id", sa.Integer(), nullable=False),
         sa.Column("uuid", postgresql.UUID(as_uuid=True), nullable=False),

@@ -191,6 +191,7 @@ class ParticipantGroup(BaseModel):
     __tablename__ = 'participant_group'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
     group_type_id = db.Column(
         db.Integer,
         db.ForeignKey('participant_group_type.id', ondelete='CASCADE'),
