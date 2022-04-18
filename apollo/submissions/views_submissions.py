@@ -226,7 +226,7 @@ def submission_list(form_id):
                 queryset = queryset.join(models.Submission.location)
             queryset = queryset.join(
                 models.Participant,
-                models.Submission.participant_id == models.Participant.id
+                models.Submission.participant_id == models.Participant.id,
             ).order_by(models.Location.code, models.Participant.participant_id)
 
         # TODO: fix this. no exports yet. nor aggregation
