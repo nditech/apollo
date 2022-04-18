@@ -26,9 +26,12 @@
 		<div class="tab-content">
 			<div class="tab-pane active" id="table">
 				{% for tag, question, tag_stats in process_summary.top %}
+				{% with field = form.get_field_by_tag(tag) %}
 				<table id="mytable" class="table table-striped table-bordered {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
+					{% with %}
+					{% if field.get('null_value') is none %}{% set buffer = 0 %}{% else %}{% set buffer = 4 %}{% endif %}
 					<tr>
-						<td colspan="{%- if tag_stats.type == 'mean' -%}6{% elif tag_stats.type == 'bucket' %}11{% elif tag_stats.type != 'count' %}{{ (tag_stats.histogram|count * 2) + 5 }}{% else %}5{%- endif -%}" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+						<td colspan="{%- if tag_stats.type == 'mean' -%}{{ 6 + buffer }}{% elif tag_stats.type == 'bucket' %}{{ 11 + buffer }}{% elif tag_stats.type != 'count' %}{{ (tag_stats.histogram|count * 2) + 5 + buffer }}{% else %}{{ 5 + buffer }}{%- endif -%}" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
 							<div class="d-flex justify-content-start align-items-center">
 								<div class="mr-2"><strong>{{ tag }}</strong></div>
 								<div class="mr-2">&middot;</div>
@@ -36,6 +39,7 @@
 							</div>
 						</td>
 					</tr>
+					{% endwith %}
 					<tr>
 						<th></th>
 						{%- if tag_stats.type == 'mean' %}
@@ -52,6 +56,10 @@
 						<th colspan="2">&lt; {{ tag_stats.target }}</th>
 						<th colspan="2">= {{ tag_stats.target }}</th>
 						<th colspan="2">&gt; {{ tag_stats.target }}</th>
+						{% endif %}
+						{% if field.get('null_value') is not none %}
+						<th width="80" colspan="2">{{ _('Available') }}</th>
+						<th width="80" colspan="2">{{ _('Not available') }}</th>
 						{% endif %}
 						<th width="80" colspan="2">{{ _('Reported') }}</th>
 						<th width="80" colspan="2">{{ _('Missing') }}</th>
@@ -70,6 +78,12 @@
 						<td>{{ tag_stats.histogram.get(option)[1]|default(0)|round|int }}%</td>
 						<td>{{ tag_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
+						{% endif %}
+						{% if field.get('null_value') is not none %}
+						<td>{{ tag_stats.percent_available|round|int }}%</td>
+						<td>{{ tag_stats.available }}</td>
+						<td>{{ tag_stats.percent_not_available|round|int }}%</td>
+						<td>{{ tag_stats.not_available }}</td>
 						{% endif %}
 						<td>{{ tag_stats.percent_reported|round|int }}%</td>
 						<td>{{ tag_stats.reported }}</td>
@@ -100,6 +114,12 @@
 						<td>{{ location_stats.histogram.get(option)[0] }}</td>
 						{% endfor %}
 						{% endif %}
+						{% if field.get('null_value') is not none %}
+						<td>{{ location_stats.percent_available|round|int }}%</td>
+						<td>{{ location_stats.available }}</td>
+						<td>{{ location_stats.percent_not_available|round|int }}%</td>
+						<td>{{ location_stats.not_available }}</td>
+						{% endif %}
 						<td>{{ location_stats.percent_reported|round|int }}%</td>
 						<td>{{ location_stats.reported }}</td>
 						<td>{{ location_stats.percent_missing|round|int }}%</td>
@@ -109,6 +129,7 @@
 					{% endfor %}
 					{% endfor %}
 				</table>
+				{% endwith %}
 				{% endfor %}
 			</div>
 		</div>

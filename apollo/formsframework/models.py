@@ -453,6 +453,15 @@ class FormBuilderSerializer(object):
             elif f['component'] == 'textInput':
                 if f['subtype'] == 'integer':
                     field['type'] = 'integer'
+                    null_value = f.get('null_value')
+                    if null_value is not None:
+                        try:
+                            field['null_value'] = int(null_value)
+                        except (TypeError, ValueError):
+                            field['null_value'] = None
+                    else:
+                        field['null_value'] = None
+
                     try:
                         min_limit = int(f.get('min', 0))
                     except ValueError:
@@ -465,7 +474,6 @@ class FormBuilderSerializer(object):
 
                     field['min'] = min_limit
                     field['max'] = max_limit
-                    field['null_value'] = f.get('null_value', None)
 
                     # add target/expected value
                     if f.get('expected'):

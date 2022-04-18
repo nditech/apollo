@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import math
+import re
 from datetime import datetime
 from functools import partial
-import re
 
 from flask import g
 from flask_babelex import lazy_gettext as _
@@ -96,6 +97,54 @@ def find_active_forms():
     query = current_events.join(Event.forms).with_entities(Form)
 
     return query
+
+
+class NullValueValidator:
+    def __init__(self, min=None, max=None, message=None, null_value=None):
+        self.max = max
+        self.min = min
+        self.null_value = null_value
+        self.message = message
+        self.field_flags = {}
+        if self.max is not None:
+            self.field_flags["max"] = self.max
+        if self.min is not None:
+            self.field_flags["min"] = self.min
+        if self.null_value is not None:
+            self.field_flags["null_value"] = self.null_value
+
+    def value_is_null(self, value):
+        return self.null_value is not None and value == self.null_value
+
+    def __call__(self, form, field):
+        data = field.data
+        if (
+            data is not None
+            and not math.isnan(data)
+            and (self.min is None or data >= self.min)
+            and (
+                self.max is None or self.value_is_null(data) or data <= self.max
+            )
+        ):
+            return
+
+        if self.message is not None:
+            message = self.message
+
+        # we use %(min)s interpolation to support floats, None, and
+        # Decimals without throwing a formatting exception.
+        elif self.max is None:
+            message = field.gettext("Number must be at least %(min)s.")
+
+        elif self.min is None:
+            message = field.gettext("Number must be at most %(max)s.")
+
+        else:
+            message = field.gettext(
+                "Number must be between %(min)s and %(max)s.")
+
+        raise wtforms.validators.ValidationError(
+            message % dict(min=self.min, max=self.max))
 
 
 class BaseQuestionnaireForm(wtforms.Form):
@@ -331,9 +380,11 @@ def build_questionnaire(form, data=None):
                 else:
                     field_validators = [
                         wtforms.validators.optional(),
-                        wtforms.validators.NumberRange(
+                        NullValueValidator(
                             min=field.get('min', 0),
-                            max=field.get('max', 9999))
+                            max=field.get('max', 9999),
+                            null_value=field.get('null_value'),
+                        )
                     ]
 
                 fields[field['tag']] = wtforms.IntegerField(

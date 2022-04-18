@@ -92,6 +92,18 @@ def _voting_results(form_id, location_id=None):
     filter_set = filter_class(queryset, request.args)
     dataset = make_submission_dataframe(filter_set.qs, form)
 
+    for result_field in result_fields:
+        null_value_orig = result_field.get('null_value')
+        if null_value_orig is None:
+            continue
+        try:
+            null_value = int(null_value_orig)
+        except (TypeError, ValueError):
+            continue
+
+        dataset[result_field['tag']] = dataset[result_field['tag']].replace(
+            null_value, pd.np.nan)
+
     registered_voters_field = form.registered_voters_tag or 'registered_voters'
     if form.invalid_votes_tag:
         rejected_votes_field = [form.invalid_votes_tag]

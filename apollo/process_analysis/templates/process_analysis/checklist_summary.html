@@ -52,6 +52,10 @@
 							<th>= {{ stats['target'] }}</th>
 							<th>&gt; {{ stats['target'] }}</th>
 							{% endif %}
+							{% if field.get('null_value') not in [None, ""] %}
+							<th bgcolor="#eee">{{ _('Available') }}</th>
+							<th bgcolor="#eee">{{ _('Not Available') }}</th>
+							{% endif %}
 							<th bgcolor="#eee">{{ _('Reported') }}</th>
 							<th bgcolor="#eee">{{ _('Missing') }}</th>
 						</tr>
@@ -70,6 +74,10 @@
 							{% for option in [-1, 0, 1] %}
 							<td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ stats.histogram.get(option)[1]|default(0)|round|int }}%</strong></div><div class="flex-fill text-muted"><strong>{{ stats.histogram.get(option)[0]|default(0) }}</strong></div></div></td>
 							{% endfor %}
+							{% endif %}
+							{% if field.get('null_value') not in [None, ""] %}
+							<td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ stats['percent_available']|round|int }}%</strong></div><div class="flex-fill text-muted"><strong>{{ stats['available'] }}</strong></div></div></td>
+							<td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ stats['percent_not_available']|round|int }}%</strong></div><div class="flex-fill text-muted"><strong>{{ stats['not_available'] }}</strong></div></div></td>
 							{% endif %}
 							<td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ stats['percent_reported']|round|int }}%</strong></div><div class="flex-fill text-muted"><strong>{{ stats['reported'] }}</strong></div></div></td>
 							<td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ stats['percent_missing']|round|int }}%</strong></div><div class="flex-fill text-muted"><strong>{{ stats['missing'] }}</strong></div></div></td>
