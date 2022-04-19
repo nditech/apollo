@@ -78,6 +78,7 @@ class Event(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    is_hidden = db.Column(db.Boolean, default=False)
     start = db.Column(
         db.DateTime(timezone=True), default=_default_event_start,
         nullable=False)
@@ -136,4 +137,7 @@ class Event(Resource):
         cond3 = (cls.id == event.id) if event else (cls.id == None) # noqa
         term = and_(cond1, cond2)
 
-        return cls.query.filter(or_(term, cond3))
+        return cls.query.filter(
+            or_(term, cond3),
+            cls.is_hidden == False,     # noqa
+        )
