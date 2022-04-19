@@ -19,6 +19,7 @@ class ParticipantSet(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    is_hidden = db.Column(db.Boolean, default=False)
     slug = db.Column(db.String)
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),

@@ -3,6 +3,7 @@ import logging
 import re
 
 from pyxform import xls2json
+from pyxform.errors import PyXFormError
 from slugify import slugify
 from xlwt import Workbook
 
@@ -221,7 +222,11 @@ def _process_qa_worksheet(qa_data):
 
 
 def import_form(sourcefile):
-    file_data = xls2json.xls_to_dict(sourcefile)
+    try:
+        file_data = xls2json.xls_to_dict(sourcefile)
+    except PyXFormError:
+        logger.exception('Error parsing Excel schema file')
+        raise
 
     survey_data = file_data.get('survey')
     choices_data = file_data.get('choices')
