@@ -25,6 +25,22 @@ def upgrade():
     op.add_column(
         "participant_set", sa.Column("is_hidden", sa.Boolean(), nullable=True)
     )
+
+    query_event = sa.sql.text("UPDATE event SET is_hidden = 'f';")
+    query_form = sa.sql.text("UPDATE form SET is_hidden = 'f';")
+    query_location_set = sa.sql.text(
+        "UPDATE location_set SET is_hidden = 'f';"
+    )
+    query_participant_set = sa.sql.text(
+        "UPDATE participant_set SET is_hidden = 'f';"
+    )
+
+    connection = op.get_bind()
+
+    connection.execute(query_event)
+    connection.execute(query_form)
+    connection.execute(query_location_set)
+    connection.execute(query_participant_set)
     # ### end Alembic commands ###
 
 
