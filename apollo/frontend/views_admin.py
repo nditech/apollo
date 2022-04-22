@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from io import BytesIO
+from urllib.parse import urlencode
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import magic
@@ -22,6 +23,7 @@ from flask_security.utils import hash_password, url_for_security
 from flask_wtf.file import FileField
 from jinja2 import contextfunction
 from slugify import slugify
+from sqlalchemy import func
 from wtforms import (
     BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
 
@@ -101,6 +103,69 @@ class MultipleSelect2Field(fields.Select2Field):
 
     def pre_validate(self, form):
         pass
+
+
+class HiddenObjectMixin(object):
+    can_delete = False
+    query_param_name = 'show_all'
+
+    @action('hide', _('Hide'), _('Are you sure you want to hide the selected items?'))
+    def action_hide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.id.in_(ids)).update(
+            {'is_hidden': True}, synchronize_session=False)
+        db.session.commit()
+
+    @action('unhide', _('Always Show'), _('Are you sure you want to always show the selected items?'))
+    def action_unhide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.id.in_(ids)).update(
+            {'is_hidden': False}, synchronize_session=False)
+        db.session.commit()
+
+    def get_count_query(self):
+        return self.get_query().with_entities(
+            func.count(self.model.id))
+
+    def get_one(self, id):
+        return self.get_query().filter(self.model.id == id).one()
+
+    def get_query(self):
+        model_class = self.model
+        query_params = request.args.to_dict(flat=False)
+        show_hidden = bool(query_params.get(self.query_param_name))
+        if show_hidden:
+            query = super().get_query()
+        else:
+            query = super().get_query().filter(
+                model_class.is_hidden != True) # noqa
+
+        return query
+
+    def render(self, template, **kwargs):
+        model_class = self.model
+        # get counts
+        hidden_instances_count = model_class.query.filter(
+            model_class.is_hidden == True).count() # noqa
+
+        query_params = request.args.to_dict(flat=False)
+        show_hidden = bool(query_params.get(self.query_param_name))
+        if show_hidden:
+            # remove the 'show all' query parameter
+            query_params.pop(self.query_param_name)
+            kwargs['hidden_toggle_label'] = _('Hide Hidden')
+            kwargs['hidden_toggle_params'] = urlencode(
+                query_params, doseq=True)
+        else:
+            # add the 'show all' query parameter
+            query_params[self.query_param_name] = 1
+            kwargs['hidden_toggle_label'] = _(
+                'Show All (%(count)d Hidden)', count=hidden_instances_count)
+            kwargs['hidden_toggle_params'] = urlencode(
+                query_params, doseq=True)
+        kwargs['hide_toggle_on'] = True
+
+        return super().render(template, **kwargs)
 
 
 class BaseAdminView(ModelView):
@@ -292,7 +357,7 @@ class DeploymentAdminView(BaseAdminView):
         return form_class
 
 
-class EventAdminView(BaseAdminView):
+class EventAdminView(HiddenObjectMixin, BaseAdminView):
     column_filters = ('name', 'start', 'end')
     column_list = ('name', 'start', 'end', 'location_set', 'participant_set',
                    'archive')
@@ -527,7 +592,7 @@ class RoleAdminView(BaseAdminView):
         super().on_model_change(form, model, is_created)
 
 
-class SetViewMixin(object):
+class SetViewMixin(HiddenObjectMixin):
     column_filters = ('name',)
 
     def on_model_change(self, form, model, is_created):
