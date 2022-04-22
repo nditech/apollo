@@ -3,12 +3,10 @@ from flask import g
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
 from flask_wtf import FlaskForm
-from wtforms import SelectField, fields, validators
+from wtforms import SelectField, validators
 
 from apollo import services
 from apollo.deployments.models import Event
-from apollo.locations.models import LocationSet
-from apollo.participants.models import ParticipantSet
 
 
 def generate_event_selection_form(*args, **kwargs):
@@ -26,6 +24,7 @@ def generate_event_selection_form(*args, **kwargs):
                 n.value for n in perm_cache
                 if n.method == 'access_resource' and n.type == 'event']
             query = Event.query.filter(
+                Event.is_hidden == False, # noqa
                 Event.resource_id.in_(allowed_event_ids),
                 Event.deployment_id == user.deployment_id)
 

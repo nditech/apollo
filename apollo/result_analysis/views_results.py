@@ -22,6 +22,7 @@ def get_result_analysis_menu():
             'result_analysis.results_analysis', form_id=form.id),
         'text': form.name,
     } for form in forms.query.filter(
+        Form.is_hidden == False, # noqa
         Form.events.contains(event),
         Form.form_type == 'CHECKLIST',
         Form.vote_shares != None,   # noqa
