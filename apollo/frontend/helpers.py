@@ -92,7 +92,8 @@ def get_form_list_menu(**kwargs):
                          models.Form.query.filter_by(
                              **kwargs
                          ).join(models.Form.events).filter(
-                             models.Form.events.contains(event)
+                             models.Form.events.contains(event),
+                             models.Form.is_hidden == False, # noqa
                          ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
@@ -114,9 +115,10 @@ def get_checklist_form_dashboard_menu(**kwargs):
              'visible': True}
             for form in [f for f in
                          models.Form.query.filter_by(
-                             **kwargs
+                            **kwargs
                          ).join(models.Form.events).filter(
-                             models.Form.events.contains(event)
+                            models.Form.is_hidden == False, # noqa
+                            models.Form.events.contains(event)
                          ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
