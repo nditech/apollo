@@ -17,6 +17,9 @@
   </nav>
   <div class="d-flex justify-content-between align-items-start flex-row mt-1 mb-1">
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      <button class="btn btn-secondary mr-2 invisible" id="hide_button">{{ _('Hide Selected') }}</button>
+      <button class="btn btn-secondary mr-2 invisible" id="show_button">{{ _('Show Selected') }}</button>
+      <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.index') }}{% if add_show_url_param %}?{{ show_hidden_param }}=1{% endif %}">{{ show_toggle_link_label }}</a>
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
       <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Form') }}</a>
       <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Generate Checklists') }}</a>
@@ -60,9 +63,12 @@
 {% endwith %}
 
 <div class="mb-n3">
+  <form method="post" id="toggle_form">
+    {{ show_hide_form.hidden_tag() }}
   <table class="table table-hover">
     <thead>
       <tr>
+        <th scope="col"><input type="checkbox" id="toggle_all"></th>
         <th scope="col">{{ _('Name') }}</th>
         <th scope="col" class="col-2">{{ _('Type') }}</th>
         <th scope="col" class="col-1">{{ _('Form Actions') }}</th>
@@ -71,6 +77,7 @@
     <tbody>
     {% for form in forms %}
       <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+        <td><input type="checkbox" data-show-toggle="switch" name="{{ show_hide_form.forms.name }}" value="{{ form.id }}" {% if form.is_hidden %}checked{% endif %}></td>
         <td>{{ form.name }}</td>
         <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% elif form.form_type == 'SURVEY' %}badge-success{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
         <td class="align-middle">
@@ -92,11 +99,12 @@
       </tr>
     {% else %}
       <tr class="table-warning">
-        <td colspan="3" class="text-center text-muted">{{ _('No Forms Defined') }}</td>
+        <td colspan="4" class="text-center text-muted">{{ _('No Forms Defined') }}</td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+  </form>
 </div>
 
 <div id="app">
@@ -345,6 +353,40 @@
       roles: [{% for role in roles %}{id:{{ role.id }}, name:'{{ role.name }}', events:[{{ role.participant_set.events|join(', ', 'id') }}]},{% endfor %}],
       location_types: [{% for location_type in location_types %}{id:{{ location_type.id }}, name:'{{ location_type.name }}', events:[{{ location_type.location_set.events|join(',', 'id') }}]},{% endfor %}],
     },
+  });
+
+  var toggleForm = document.querySelector('#toggle_form');
+  var toggleAll = document.querySelector('#toggle_all');
+  var showButton = document.querySelector('#show_button');
+  var hideButton = document.querySelector('#hide_button');
+  var modeSelector = document.querySelector('#{{ show_hide_form.mode.id }}');
+
+  toggleForm.addEventListener('click', function (event) {
+    // capture all clicks on this form. if a form checkbox
+    // is checked, make the buttons visible
+    if (event.target.matches('[data-show-toggle]')) {
+      if (event.target.checked) {
+        hideButton.classList.remove('invisible');
+        showButton.classList.remove('invisible');
+      } else {
+        var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+
+        if (numChecked === 0) {
+          hideButton.classList.add('invisible');
+          showButton.classList.add('invisible');
+        }
+      }
+    }
+  });
+
+  showButton.addEventListener('click', function () {
+    modeSelector.value = 'show';
+    toggleForm.submit();
+  });
+
+  hideButton.addEventListener('click', function () {
+    modeSelector.value = 'hide';
+    toggleForm.submit();
   });
 </script>
 {%- endblock %}

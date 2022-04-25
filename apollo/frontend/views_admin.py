@@ -746,7 +746,7 @@ class FormsView(BaseView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for_security('login', next=request.url))
 
-    @expose('/')
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
         return forms_list(self)
 
