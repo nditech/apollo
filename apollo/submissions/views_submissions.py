@@ -1399,6 +1399,7 @@ def submission_version(submission_id, version_id):
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(
         models.Form.id == form_id,
+        models.Form.is_hidden == False, # noqa
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
     filter_class = filters.generate_quality_assurance_filter(g.event, form)
@@ -1461,6 +1462,7 @@ def quality_assurance_list(form_id):
     event = g.event
     form = services.forms.get_or_404(
         models.Form.id == form_id,
+        models.Form.is_hidden == False, # noqa
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = filters.generate_quality_assurance_filter(event, form)
