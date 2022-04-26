@@ -138,7 +138,7 @@ class HiddenObjectMixin(object):
             query = super().get_query()
         else:
             query = super().get_query().filter(
-                model_class.is_hidden != True) # noqa
+                model_class.is_hidden == False) # noqa
 
         return query
 
