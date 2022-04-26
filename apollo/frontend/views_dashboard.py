@@ -57,12 +57,14 @@ def main_dashboard(form_id=None):
             Form.events
         ).filter(
             Form.events.contains(event),
-            Form.form_type.in_(['CHECKLIST', 'SURVEY'])
+            Form.form_type.in_(['CHECKLIST', 'SURVEY']),
+            Form.is_hidden == False, # noqa
         ).order_by('name').first()
     else:
         form = Form.query.join(
             Form.events
         ).filter(
+            Form.is_hidden == False, # noqa
             Form.events.contains(event),
             Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.id == form_id).first_or_404()
