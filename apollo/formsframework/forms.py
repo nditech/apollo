@@ -489,6 +489,7 @@ def make_questionnaire_hidden_toggle_form(deployment):
             query_factory=_get_forms,
             option_widget=wtforms.widgets.CheckboxInput(),
             widget=wtforms.widgets.ListWidget(prefix_label=False),
+            get_pk=lambda f: f.id,
         )
         mode = wtforms.HiddenField(
             validators=[
