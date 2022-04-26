@@ -361,21 +361,50 @@
   var hideButton = document.querySelector('#hide_button');
   var modeSelector = document.querySelector('#{{ show_hide_form.mode.id }}');
 
+  function toggleActionButtons() {
+    var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+    if (numChecked === 0) {
+      hideButton.classList.add('invisible');
+      showButton.classList.add('invisible');
+    } else {
+      hideButton.classList.remove('invisible');
+      showButton.classList.remove('invisible');
+    }
+
+    changeToggleAllState();
+  }
+  
+  function changeToggleAllState() {
+    // change the state of the 'toggle all' checkbox depending on how many checkboxes
+    // are checked
+    var numCheckboxes = document.querySelectorAll('input[data-show-toggle]').length;
+    var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+
+    if (numChecked === 0) {
+      // none are checked, make it unchecked
+      toggleAll.indeterminate = false;
+      toggleAll.checked = false;
+    } else if (numCheckboxes === numChecked) {
+      // all are checked, make it checked
+      toggleAll.indeterminate = false;
+      toggleAll.checked = true;
+    } else {
+      // some are checked, but not all
+      toggleAll.indeterminate = true;
+    }
+  }
+
   toggleForm.addEventListener('click', function (event) {
     // capture all clicks on this form. if a form checkbox
     // is checked, make the buttons visible
     if (event.target.matches('[data-show-toggle]')) {
-      if (event.target.checked) {
-        hideButton.classList.remove('invisible');
-        showButton.classList.remove('invisible');
-      } else {
-        var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+      toggleActionButtons();
+    }
 
-        if (numChecked === 0) {
-          hideButton.classList.add('invisible');
-          showButton.classList.add('invisible');
-        }
-      }
+    if (event.target === toggleAll) {
+      document.querySelectorAll('input[data-show-toggle]').forEach(function (checkbox) {
+        checkbox.checked = toggleAll.checked;
+      });
     }
   });
 
@@ -387,6 +416,10 @@
   hideButton.addEventListener('click', function () {
     modeSelector.value = 'hide';
     toggleForm.submit();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function () {
+    toggleActionButtons();
   });
 </script>
 {%- endblock %}

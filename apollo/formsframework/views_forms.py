@@ -227,25 +227,27 @@ def forms_list(view):
     query_params = request.args.to_dict(flat=False)
     hidden_form_count = models.Form.query.filter(
         models.Form.is_hidden == True).count() # noqa
+    query = models.Form.query.order_by('name')
     show_hidden = bool(query_params.get(show_hidden_param))
+
     if show_hidden:
         show_toggle_link_label = _('Hide Hidden')
         add_show_url_param = False
-        query = models.Form.query.order_by('name')
     else:
         show_toggle_link_label = _(
             'Show All (%(count)d Hidden)', count=hidden_form_count)
         add_show_url_param = True
-        query = models.Form.query.filter(
+        query = query.filter(
             models.Form.is_hidden == False).order_by('name') # noqa
 
     if show_hide_form.validate_on_submit():
         posted_data = show_hide_form.data.copy()
-        if len(posted_data.get('forms')) > 0:
-            hide_forms = True if posted_data.get('mode') == 'hide' else False
-            for questionnaire in posted_data.get('forms'):
-                questionnaire.is_hidden = hide_forms
-            db.session.commit()
+        hide_forms = True if posted_data.get('mode') == 'hide' else False
+        posted_form_ids = [f.id for f in posted_data.get('forms')]
+        models.Form.query.filter(models.Form.id.in_(posted_form_ids)).update(
+            {'is_hidden': hide_forms}, synchronize_session='fetch')
+        db.session.commit()
+        db.session.expire_all()
 
     all_forms = query.all()
     checklist_forms = query.filter(models.Form.form_type == 'CHECKLIST').all()
