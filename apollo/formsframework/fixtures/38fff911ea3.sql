@@ -8,9 +8,9 @@ INSERT INTO public.resource VALUES (6, 'form', 1, 'a0efcdf3-8f09-4d15-8303-6c720
 INSERT INTO public.resource VALUES (7, 'form', 1, '1a8b8e90-ac70-435e-8dfa-0f5ecec33246');
 INSERT INTO public.resource VALUES (8, 'form', 1, '28de096e-3ea9-48f9-8b24-12ba6142c202');
 INSERT INTO public.resource VALUES (9, 'form', 1, '2856962f-d9d0-4ad5-bf99-1a40d86db1fa');
-INSERT INTO public.event VALUES (1, 'Event 1', '2005-12-13 01:00:00+01', '2005-12-14 00:59:59+01', 1, NULL, NULL);
-INSERT INTO public.event VALUES (2, 'Event 2', '2005-12-14 01:00:00+01', '2005-12-15 00:59:59+01', 2, NULL, NULL);
-INSERT INTO public.event VALUES (3, 'Event 3', '2005-12-14 01:00:00+01', '2005-12-16 00:59:59+01', 3, NULL, NULL);
+INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (1, 'Event 1', '2005-12-13 01:00:00+01', '2005-12-14 00:59:59+01', 1, false);
+INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (2, 'Event 2', '2005-12-14 01:00:00+01', '2005-12-15 00:59:59+01', 2, false);
+INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (3, 'Event 3', '2005-12-14 01:00:00+01', '2005-12-16 00:59:59+01', 3, false);
 INSERT INTO public.form VALUES (1, 'CH-1-1', 'XA', 'CHECKLIST', true, true, NULL, '8f389707f29d43af9a423b93a9b1bb7c', 4, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
 INSERT INTO public.form VALUES (2, 'IN-1-1', 'XB', 'INCIDENT', true, true, NULL, '7d9f6f02091e45c5a3567235e940bf20', 5, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
 INSERT INTO public.form VALUES (3, 'IN-2-1', 'ZA', 'INCIDENT', true, true, NULL, '5e50b822cbf94fedb76619f1808716b2', 6, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
