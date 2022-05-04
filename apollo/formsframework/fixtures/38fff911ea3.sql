@@ -11,12 +11,12 @@ INSERT INTO public.resource VALUES (9, 'form', 1, '2856962f-d9d0-4ad5-bf99-1a40d
 INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (1, 'Event 1', '2005-12-13 01:00:00+01', '2005-12-14 00:59:59+01', 1, false);
 INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (2, 'Event 2', '2005-12-14 01:00:00+01', '2005-12-15 00:59:59+01', 2, false);
 INSERT INTO public.event (id, name, start, "end", resource_id, is_hidden) VALUES (3, 'Event 3', '2005-12-14 01:00:00+01', '2005-12-16 00:59:59+01', 3, false);
-INSERT INTO public.form VALUES (1, 'CH-1-1', 'XA', 'CHECKLIST', true, true, NULL, '8f389707f29d43af9a423b93a9b1bb7c', 4, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-INSERT INTO public.form VALUES (2, 'IN-1-1', 'XB', 'INCIDENT', true, true, NULL, '7d9f6f02091e45c5a3567235e940bf20', 5, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-INSERT INTO public.form VALUES (3, 'IN-2-1', 'ZA', 'INCIDENT', true, true, NULL, '5e50b822cbf94fedb76619f1808716b2', 6, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-INSERT INTO public.form VALUES (4, 'CH-3-1', 'WA', 'CHECKLIST', true, true, NULL, 'aac237a0844d414e8635ed054ab27333', 7, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-INSERT INTO public.form VALUES (5, 'CH-3-2', 'WB', 'CHECKLIST', true, true, NULL, '64f973d56a55469da34ea3ec6b7ae2c8', 8, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
-INSERT INTO public.form VALUES (6, 'IN-3-1', 'WC', 'INCIDENT', true, true, NULL, '34d79b36acf74dd99bbf8b68631f587c', 9, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (1, 'CH-1-1', false, 'XA', 'CHECKLIST', true, true, NULL, '8f389707f29d43af9a423b93a9b1bb7c', 4, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (2, 'IN-1-1', false, 'XB', 'INCIDENT', true, true, NULL, '7d9f6f02091e45c5a3567235e940bf20', 5, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (3, 'IN-2-1', false, 'ZA', 'INCIDENT', true, true, NULL, '5e50b822cbf94fedb76619f1808716b2', 6, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (4, 'CH-3-1', false, 'WA', 'CHECKLIST', true, true, NULL, 'aac237a0844d414e8635ed054ab27333', 7, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (5, 'CH-3-2', false, 'WB', 'CHECKLIST', true, true, NULL, '64f973d56a55469da34ea3ec6b7ae2c8', 8, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
+INSERT INTO public.form VALUES (6, 'IN-3-1', false, 'WC', 'INCIDENT', true, true, NULL, '34d79b36acf74dd99bbf8b68631f587c', 9, NULL, NULL, NULL, NULL, false, NULL, NULL, NULL);
 INSERT INTO public.events_forms VALUES (1, 1);
 INSERT INTO public.events_forms VALUES (1, 2);
 INSERT INTO public.events_forms VALUES (2, 3);
