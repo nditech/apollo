@@ -24,6 +24,11 @@ $(function () {
   var map = undefined;
   LocationOptions.placeholder = { id: '-1', text: '{{ _("Location") }}'};
 
+  $('#{{ filter_form.participant_group.id }}').select2({
+    theme: 'bootstrap4',
+    placeholder: "{{ _('All Participant Groups') }}"
+  });
+
   $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
     format: 'DD-MM-YYYY',
     widgetPositioning: {
