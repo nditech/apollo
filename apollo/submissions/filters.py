@@ -718,6 +718,8 @@ def make_dashboard_filter(event, filter_on_locations=False):
         event.participant_set_id, filter_on_locations=filter_on_locations)()
     attributes['location_group'] = make_submission_location_group_filter(
         event.location_set_id)()
+    attributes['participant_group'] = make_participant_group_filter(
+        event.participant_set_id)()
 
     return type(
         'SubmissionFilterSet',

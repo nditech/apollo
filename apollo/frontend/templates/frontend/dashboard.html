@@ -37,7 +37,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-      {{ render_filter_form(filter_form, location)}}
+      {{ render_filter_form(form, filter_form, location)}}
   </div>
 </div>
 {%- if not daily_stratified_progress %}
@@ -149,6 +149,11 @@ Id,Link,Name,Complete,Offline,Partial,Missing
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+
+  $('#{{ filter_form.participant_group.id }}').select2({
+    theme: 'bootstrap4',
+    placeholder: "{{ _('All Participant Groups') }}"
+  });
 
   $('.timestamp-date').each(function (index) {
     var timestamp = moment.unix(Number($(this).data('timestamp')));
