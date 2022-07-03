@@ -852,6 +852,8 @@ def generate_quality_assurance_filter(event, form):
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
         event.participant_set_id)()
+    attributes['participant_group'] = make_participant_group_filter(
+        event.participant_set_id)()
 
     return type(
         'QualityAssuranceFilterSet',

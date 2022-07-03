@@ -41,6 +41,11 @@ $(function () {
     }
   });
 
+  $('#{{ filter_form.participant_group.id }}').select2({
+    theme: 'bootstrap4',
+    placeholder: "{{ _('All Participant Groups') }}"
+  });
+
   $('#filter_reset').on('click', function() {
     var $form = $(this).parents('form').first();
     $form.find(':input').not('button').each(function() { $(this).val(''); })
