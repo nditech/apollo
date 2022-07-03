@@ -2,7 +2,7 @@
 <div class="card border-light bg-light mb-3">
     <div class="card-header">
         <form class="mb-n2 ml-n2 mr-n2">
-            {% if dashboard_form.untrack_data_conflicts %}
+            {% if dashboard_form.untrack_data_conflicts and dashboard_form.form_type == 'CHECKLIST' %}
             <div class="form-row">
                 <div class="col-md-4 mb-2">
                     <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
