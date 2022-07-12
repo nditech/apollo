@@ -150,11 +150,6 @@ Id,Link,Name,Complete,Offline,Partial,Missing
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  $('#{{ filter_form.participant_group.id }}').select2({
-    theme: 'bootstrap4',
-    placeholder: "{{ _('Participant Groups') }}"
-  });
-
   $('.timestamp-date').each(function (index) {
     var timestamp = moment.unix(Number($(this).data('timestamp')));
     this.innerText = timestamp.format('MMM D');
