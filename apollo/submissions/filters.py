@@ -22,7 +22,7 @@ from apollo.submissions.models import FLAG_CHOICES
 from apollo.submissions.qa.query_builder import (
     build_expression, generate_qa_query
 )
-from apollo.wtforms_ext import ExtendedMultipleSelectField
+from apollo.wtforms_ext import ExtendedSelectField
 
 APP_TZ = gettz(TIMEZONE)
 
@@ -152,7 +152,8 @@ def make_submission_location_group_filter(location_set_id):
             ).all()
             self.location_set_id = location_set_id
 
-            kwargs['choices'] = _make_choices(group_choices, _('Group'))
+            kwargs['choices'] = _make_choices(
+                group_choices, _('Location Group'))
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value, **kwargs):
@@ -174,12 +175,13 @@ def make_submission_location_group_filter(location_set_id):
 
 def make_participant_group_filter(participant_set_id):
     class ParticipantGroupFilter(ChoiceFilter):
-        field_class = ExtendedMultipleSelectField
+        field_class = ExtendedSelectField
 
         def __init__(self, *args, **kwargs):
             self.participant_set_id = participant_set_id
 
             choices = OrderedDict()
+            choices[''] = _('Participant Group')
             for group_type in services.participant_group_types.find(
                 participant_set_id=participant_set_id
             ).order_by(models.ParticipantGroupType.name):
@@ -191,16 +193,17 @@ def make_participant_group_filter(participant_set_id):
                     )
 
             kwargs['choices'] = [(k, choices[k]) for k in choices]
+            print(kwargs['choices'])
             kwargs['coerce'] = int
             super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
-        def queryset_(self, queryset, values):
-            if values:
+        def queryset_(self, queryset, value):
+            if value:
                 participant_ids = models.Participant.query.join(
                     models.Participant.groups
                 ).filter(
                     models.Participant.participant_set_id == self.participant_set_id, # noqa
-                    models.ParticipantGroup.id.in_(values)
+                    models.ParticipantGroup.id == value
                 ).with_entities(models.Participant.id)
 
                 return queryset.filter(

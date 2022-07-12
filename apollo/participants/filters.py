@@ -13,7 +13,7 @@ from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.locations.models import Location, LocationPath
-from apollo.wtforms_ext import ExtendedMultipleSelectField
+from apollo.wtforms_ext import ExtendedSelectField
 
 from .models import Participant, ParticipantGroup, ParticipantGroupType
 from .models import ParticipantPartner, ParticipantRole
@@ -99,10 +99,11 @@ def make_participant_role_filter(participant_set_id):
 
 def make_participant_group_filter(participant_set_id):
     class ParticipantGroupFilter(ChoiceFilter):
-        field_class = ExtendedMultipleSelectField
+        field_class = ExtendedSelectField
 
         def __init__(self, *args, **kwargs):
             choices = OrderedDict()
+            choices[''] = _('Group')
             for group_type in services.participant_group_types.find(
                     participant_set_id=participant_set_id
                 ).order_by(
@@ -118,8 +119,8 @@ def make_participant_group_filter(participant_set_id):
             kwargs['coerce'] = int
             super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
-        def queryset_(self, query, values):
-            if values:
+        def queryset_(self, query, value):
+            if value:
                 query2 = query.join(groups_participants).join(
                     ParticipantGroup)
                 return query2.filter(
@@ -127,7 +128,7 @@ def make_participant_group_filter(participant_set_id):
                         models.groups_participants.c.participant_id,    # noqa
                     ParticipantGroup.id ==
                         groups_participants.c.group_id,
-                    ParticipantGroup.id.in_(values)
+                    ParticipantGroup.id == value,
                 )
 
             return query
