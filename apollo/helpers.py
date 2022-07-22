@@ -8,6 +8,7 @@ import pkgutil
 
 CSV_MIMETYPES = [
     "text/csv",
+    "text/plain",
     "application/csv",
     "text/plain",
     "text/x-csv",
