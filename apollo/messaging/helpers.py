@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-from apollo.formsframework.forms import build_questionnaire
-from apollo.messaging.forms import retrieve_form
-from apollo.messaging.utils import (
-    get_unsent_codes, parse_text, parse_responses)
 from flask import g
 from flask_babelex import gettext
 from werkzeug.datastructures import MultiDict
+
+from apollo.core import force_locale
+from apollo.formsframework.forms import build_questionnaire
+from apollo.messaging.forms import retrieve_form
+from apollo.messaging.utils import (
+    get_unsent_codes,
+    parse_text,
+    parse_responses,
+)
 
 
 def parse_message(form):
@@ -14,17 +19,28 @@ def parse_message(form):
     had_errors = False
     response_dict = None
 
-    (prefix, participant_id, exclamation, form_serial, responses, comment) = \
-        parse_text(message['text'])
-    if (prefix and participant_id and responses):
+    (
+        prefix,
+        participant_id,
+        exclamation,
+        form_serial,
+        responses,
+        comment,
+    ) = parse_text(message["text"])
+    if prefix and participant_id and responses:
         form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
             response_dict, extra = parse_responses(responses, form_doc)
         if form_doc and response_dict:
             form_data = MultiDict(
-                {'form': form_doc.id, 'participant': participant_id,
-                 'sender': message['sender'], 'form_serial': form_serial,
-                 'comment': comment})
+                {
+                    "form": form_doc.id,
+                    "participant": participant_id,
+                    "sender": message["sender"],
+                    "form_serial": form_serial,
+                    "comment": comment,
+                }
+            )
             form_data.update(response_dict)
             questionnaire = build_questionnaire(form_doc, form_data)
 
@@ -35,79 +51,116 @@ def parse_message(form):
                 # was not meant to send this text.
                 if submission is None:
                     reply = gettext(
-                        'Invalid message: %(text)s. Please check and resend!',
-                        text=message.get('text', ''))
+                        "Invalid message: %(text)s. Please check and resend!",
+                        text=message.get("text", ""),
+                    )
                     return reply, submission, True
 
-                # check if there were extra fields sent in
-                diff = set(response_dict.keys()).difference(
-                    set(questionnaire.data.keys()))
-                if not diff and not extra:
-                    # check that the data sent was not partial
-                    unused_tags = get_unsent_codes(
-                        form_doc, response_dict.keys())
-                    if (
-                        unused_tags and
-                        getattr(g, 'deployment', False) and
-                        getattr(g.deployment,
-                                'enable_partial_response_for_messages', False)
-                    ):
-                        reply = gettext(
-                            'Thank you, but your message may be missing '
-                            '%(unused_codes)s. You sent: %(text)s',
-                            unused_codes=', '.join(unused_tags),
-                            text=message.get('text', ''))
+                if submission.participant:
+                    locale = submission.participant.locale or ""
+                else:
+                    locale = ""
+                # switch to the participant's locale if valid,
+                # or use the default
+                with force_locale(locale):
+                    # check if there were extra fields sent in
+                    diff = set(response_dict.keys()).difference(
+                        set(questionnaire.data.keys())
+                    )
+                    if not diff and not extra:
+                        # check that the data sent was not partial
+                        unused_tags = get_unsent_codes(
+                            form_doc, response_dict.keys()
+                        )
+                        if (
+                            unused_tags
+                            and getattr(g, "deployment", False)
+                            and getattr(
+                                g.deployment,
+                                "enable_partial_response_for_messages",
+                                False,
+                            )
+                        ):
+                            reply = gettext(
+                                "Thank you, but your message may be missing "
+                                "%(unused_codes)s. You sent: %(text)s",
+                                unused_codes=", ".join(unused_tags),
+                                text=message.get("text", ""),
+                            )
 
-                        return reply, submission, had_errors
-                    return (
-                        gettext('Thank you! Your report was received!'
-                          ' You sent: %(text)s', text=message.get('text', '')),
-                        submission,
-                        had_errors
-                    )
-                elif diff:
-                    # TODO: replace .format() calls
-                    had_errors = True
-                    return (
-                        gettext('Unknown question codes: "%(questions)s". '
-                          'You sent: %(text)s',
-                        questions=', '.join(sorted(diff)),
-                        text=message.get('text', '')),
-                        submission,
-                        had_errors
-                    )
-                elif extra:
-                    had_errors = True
-                    return (gettext('Invalid text sent: "%(extra)s". '
-                              'You sent: %(text)s',
-                              extra=extra, text=message.get('text', '')),
-                            submission, had_errors)
+                            return reply, submission, had_errors
+                        return (
+                            gettext(
+                                "Thank you! Your report was received!"
+                                " You sent: %(text)s",
+                                text=message.get("text", ""),
+                            ),
+                            submission,
+                            had_errors,
+                        )
+                    elif diff:
+                        # TODO: replace .format() calls
+                        had_errors = True
+                        return (
+                            gettext(
+                                'Unknown question codes: "%(questions)s". '
+                                "You sent: %(text)s",
+                                questions=", ".join(sorted(diff)),
+                                text=message.get("text", ""),
+                            ),
+                            submission,
+                            had_errors,
+                        )
+                    elif extra:
+                        had_errors = True
+                        return (
+                            gettext(
+                                'Invalid text sent: "%(extra)s". '
+                                "You sent: %(text)s",
+                                extra=extra,
+                                text=message.get("text", ""),
+                            ),
+                            submission,
+                            had_errors,
+                        )
             else:
                 had_errors = True
-                if 'participant' in questionnaire.errors:
+                if "participant" in questionnaire.errors:
                     return (
-                        gettext('Observer ID not found. Please resend with valid '
-                          'Observer ID. You sent: %(text)s',
-                          text=message.get('text', '')),
+                        gettext(
+                            "Observer ID not found. Please resend with valid "
+                            "Observer ID. You sent: %(text)s",
+                            text=message.get("text", ""),
+                        ),
                         submission,
-                        had_errors
+                        had_errors,
                     )
                 else:
                     # Save any valid data
                     submission = questionnaire.save()
-                    return (
-                        gettext('Invalid response(s) for question(s):'
-                          ' "%(questions)s". You sent: %(text)s',
-                          questions=', '.join(
-                              sorted(questionnaire.errors.keys())),
-                          text=message.get('text', '')),
-                        submission,
-                        had_errors
-                    )
+                    if submission.participant:
+                        locale = submission.participant.locale or ""
+                    else:
+                        locale = ""
+                    with force_locale(locale):
+                        return (
+                            gettext(
+                                "Invalid response(s) for question(s):"
+                                ' "%(questions)s". You sent: %(text)s',
+                                questions=", ".join(
+                                    sorted(questionnaire.errors.keys())
+                                ),
+                                text=message.get("text", ""),
+                            ),
+                            submission,
+                            had_errors,
+                        )
     had_errors = True
     return (
-        gettext('Invalid message: %(text)s. Please check and resend!',
-            text=message.get('text', '')),
+        gettext(
+            "Invalid message: %(text)s. Please check and resend!",
+            text=message.get("text", ""),
+        ),
         submission,
-        had_errors
+        had_errors,
     )
