@@ -52,7 +52,8 @@ class ParticipantSet(BaseModel):
             'location': _('Location code'),
             'gender': _('Gender'),
             'email': _('Email'),
-            'password': _('Password')
+            'password': _('Password'),
+            'locale': _('Language code'),
         }
         for locale, language in self.deployment.languages.items():
             fields[f'full_name_{locale}'] = _(
