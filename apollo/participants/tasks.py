@@ -345,9 +345,9 @@ def update_participants(dataframe, header_map, participant_set, task):
             participant.password = generate_password(6)
 
         if LOCALE_COL:
-            selected_locale = record[LOCALE_COL]
-            if _is_valid(selected_locale) and selected_locale in locales:
-                participant.locale = selected_locale
+            locale = record[LOCALE_COL]
+            if _is_valid(locale) and str(locale).lower() in locales:
+                participant.locale = locale
 
         # save if this is a new participant - we need an id for lookup
         if not participant.id:
