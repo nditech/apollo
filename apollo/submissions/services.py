@@ -81,6 +81,7 @@ class SubmissionService(Service):
         output.close()
 
         for submission in query:
+            location_path = submission.location.make_path()
             if submission.submission_type == 'O':
                 if submission.location.extra_data:
                     extra_data_columns = [
@@ -101,7 +102,7 @@ class SubmissionService(Service):
                     if submission.participant else '',
                     submission.last_phone_number if submission.last_phone_number else '',   # noqa
                 ] + [
-                    submission.location.make_path().get(loc_type.name, '')
+                    location_path.get(loc_type.name, '')
                     for loc_type in location_types
                 ] + [
                     submission.location.name,
@@ -130,9 +131,9 @@ class SubmissionService(Service):
                     if submission.comments else ''])
             else:
                 sib = submission.siblings[0]
-                if sib.location.extra_data:
+                if submission.location.extra_data:
                     extra_data_columns = [
-                        sib.location.extra_data.get(ef.name)
+                        submission.location.extra_data.get(ef.name)
                         for ef in extra_fields
                     ]
                 else:
@@ -149,22 +150,22 @@ class SubmissionService(Service):
                     if sib.participant else '',
                     sib.last_phone_number if sib.last_phone_number else '',
                 ] + [
-                    sib.location.make_path().get(loc_type.name, '')
+                    location_path.get(loc_type.name, '')
                     for loc_type in location_types
                 ] + [
-                    sib.location.name,
-                    sib.location.code,
+                    submission.location.name,
+                    submission.location.code,
                     to_shape(sib.geom).y if hasattr(sib.geom, 'desc') else '', # noqa
                     to_shape(sib.geom).x if hasattr(sib.geom, 'desc') else '', # noqa
                 ] + extra_data_columns + [
-                    sib.location.registered_voters
+                    submission.location.registered_voters
                 ] + [
                     export_field_value(form, submission, tag)
                     for tag in tags])
 
                 record += [
-                    sib.updated.strftime('%Y-%m-%d %H:%M:%S')
-                    if sib.updated else ''] + [
+                    submission.updated.strftime('%Y-%m-%d %H:%M:%S')
+                    if submission.updated else ''] + [
                         1 if sample in sib.participant.samples else 0
                         for sample in samples]
 
