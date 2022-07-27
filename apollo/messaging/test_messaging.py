@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from unittest import TestCase
 
+import flask_babelex as babel
 from flask_testing import TestCase as FlaskTestCase
 from mimesis import Generic, locales
 
+from apollo.core import force_locale
 from apollo.formsframework.models import Form
 from apollo.messaging.utils import (
     get_unsent_codes, parse_responses, parse_text)
-from apollo.testutils.factory import create_test_app
+from apollo.testutils.factory import create_test_app, create_full_test_app
 
 
 class AttributeDict(dict):
@@ -169,3 +172,55 @@ class MessageParsingTest(FlaskTestCase):
                     self.assertFalse(exclamation)
                     self.assertEqual(responses, 'AA1AB2')
                     self.assertEqual(comment, test_comment)
+
+
+class TranslationContextTestCase(FlaskTestCase):
+    def create_app(self):
+        return create_full_test_app()
+
+    def test_context_switching(self):
+        d = datetime(2010, 4, 12, 13, 46)
+
+        MESSAGES_EN = [
+            'INCOMING',
+            'OUTGOING',
+            'Checklist Not Found',
+            'Delivered',
+        ]
+        MESSAGES_FR = [
+            'ENTRANT',
+            'SORTANT',
+            "Formulaire non trouvé",
+            "Envoyé",
+        ]
+        MESSAGES_AR = [
+            "الوارد",
+            "الصادر",
+            "قائمة التحقق غير موجودة",
+            "تم التسليم",
+        ]
+
+        assert babel.format_datetime(d) == 'Apr 12, 2010, 1:46:00 PM'
+        assert babel.format_date(d) == 'Apr 12, 2010'
+        assert babel.format_time(d) == '1:46:00 PM'
+
+        with force_locale('en'):
+            assert babel.format_datetime(d) == 'Apr 12, 2010, 1:46:00 PM'
+            assert babel.format_date(d) == 'Apr 12, 2010'
+            assert babel.format_time(d) == '1:46:00 PM'
+            for idx in range(len(MESSAGES_EN)):
+                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_EN[idx]
+
+        with force_locale('fr'):
+            assert babel.format_datetime(d) == '12 avr. 2010 à 13:46:00'
+            assert babel.format_date(d) == '12 avr. 2010'
+            assert babel.format_time(d) == '13:46:00'
+            for idx in range(len(MESSAGES_EN)):
+                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_FR[idx]
+
+        with force_locale('ar'):
+            assert babel.format_datetime(d) == '12\u200f/04\u200f/2010 1:46:00 م'
+            assert babel.format_date(d) == '12\u200f/04\u200f/2010'
+            assert babel.format_time(d) == '1:46:00 م'
+            for idx in range(len(MESSAGES_EN)):
+                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_AR[idx]
