@@ -208,19 +208,19 @@ class TranslationContextTestCase(FlaskTestCase):
             assert babel.format_datetime(d) == 'Apr 12, 2010, 1:46:00 PM'
             assert babel.format_date(d) == 'Apr 12, 2010'
             assert babel.format_time(d) == '1:46:00 PM'
-            for idx in range(len(MESSAGES_EN)):
-                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_EN[idx]
+            for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_EN):
+                assert babel.gettext(orig_msg) == trans_msg
 
         with force_locale('fr'):
             assert babel.format_datetime(d) == '12 avr. 2010 à 13:46:00'
             assert babel.format_date(d) == '12 avr. 2010'
             assert babel.format_time(d) == '13:46:00'
-            for idx in range(len(MESSAGES_EN)):
-                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_FR[idx]
+            for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_FR):
+                assert babel.gettext(orig_msg) == trans_msg
 
         with force_locale('ar'):
             assert babel.format_datetime(d) == '12\u200f/04\u200f/2010 1:46:00 م'
             assert babel.format_date(d) == '12\u200f/04\u200f/2010'
             assert babel.format_time(d) == '1:46:00 م'
-            for idx in range(len(MESSAGES_EN)):
-                assert babel.gettext(MESSAGES_EN[idx]) == MESSAGES_AR[idx]
+            for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_AR):
+                assert babel.gettext(orig_msg) == trans_msg
