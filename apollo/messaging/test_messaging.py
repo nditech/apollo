@@ -125,8 +125,9 @@ class MessageParsingTest(FlaskTestCase):
 
     def test_parse_invalid_message(self):
         sample_text = '2014'
-        prefix, participant_id, exclamation, form_serial, responses, comment = \
-            parse_text(sample_text)
+        result = parse_text(sample_text)
+        (prefix, participant_id, exclamation, form_serial, responses,
+            comment) = result
 
         self.assertIsNone(prefix)
         self.assertIsNone(participant_id, sample_text)
@@ -137,8 +138,9 @@ class MessageParsingTest(FlaskTestCase):
 
     def test_parse_survey_message(self):
         sample_text = 'TC111111X321AA2'
-        prefix, participant_id, exclamation, form_serial, responses, comment = \
-            parse_text(sample_text)
+        result = parse_text(sample_text)
+        (prefix, participant_id, exclamation, form_serial, responses,
+            comment) = result
 
         self.assertEqual(prefix, 'TC')
         self.assertEqual(participant_id, '111111')
@@ -164,8 +166,8 @@ class MessageParsingTest(FlaskTestCase):
                         test_participant_id, test_comment)
 
                     result = parse_text(sample_text)
-                    (prefix, participant_id, exclamation, form_serial, responses,
-                        comment) = result
+                    (prefix, participant_id, exclamation, form_serial,
+                        responses, comment) = result
 
                     self.assertEqual(prefix, 'XA')
                     self.assertEqual(participant_id, test_participant_id)
@@ -219,7 +221,8 @@ class TranslationContextTestCase(FlaskTestCase):
                 assert babel.gettext(orig_msg) == trans_msg
 
         with force_locale('ar'):
-            assert babel.format_datetime(d) == '12\u200f/04\u200f/2010 1:46:00 م'
+            assert babel.format_datetime(d) == \
+                '12\u200f/04\u200f/2010 1:46:00 م'
             assert babel.format_date(d) == '12\u200f/04\u200f/2010'
             assert babel.format_time(d) == '1:46:00 م'
             for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_AR):
