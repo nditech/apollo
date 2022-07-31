@@ -442,13 +442,15 @@ def _voting_results(form_id, location_id=None):
     else:
         convergence_dataset = pd.DataFrame()
 
-    chart_data = {}
+    convergence_data = {}
+    scatterplot_data = {}
 
     # restrict the convergence dataframe to result fields and compute the
     # cummulative sum
     if not (dataset.empty and convergence_dataset.empty):
         convergence_df = convergence_dataset.sort_values(
             by='updated')[['updated'] + result_field_labels]
+        scatterplot_df = convergence_df.copy(deep=True)
         for field in result_field_labels:
             convergence_df[field] = convergence_df[field].cumsum()
 
@@ -457,11 +459,18 @@ def _voting_results(form_id, location_id=None):
             convergence_df[result_field_labels].div(
                 convergence_df[result_field_labels].sum(axis=1), axis=0
             ).fillna(0)
+        scatterplot_df[result_field_labels] = \
+            scatterplot_df[result_field_labels].div(
+                scatterplot_df[result_field_labels].sum(axis=1), axis=0
+            ).fillna(0)
 
         for component in result_field_labels:
-            chart_data[component] = [
+            convergence_data[component] = [
                 (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
                 for ts_f in convergence_df[['updated', component]].values]
+            scatterplot_data[component] = [
+                (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
+                for ts_f in scatterplot_df[['updated', component]].values]
 
     breadcrumb_data = analysis_breadcrumb_data(
         form, location, analysis_type='results')
@@ -484,8 +493,9 @@ def _voting_results(form_id, location_id=None):
         'result_fields': result_fields,
         'data_analyses': data_analyses,
         'result_descriptions': result_field_descriptions,
-        'chart_data': chart_data,
+        'chart_data': convergence_data,
         'chart_series': result_field_labels,
+        'scatterplot_data': scatterplot_data,
         'location_types': loc_types,
         'location_tree': location_tree
     }

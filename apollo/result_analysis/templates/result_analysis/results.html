@@ -32,7 +32,7 @@
             <div id="convergence-chart" dir="ltr" style="height: 450px" data-chart='{{ chart_data|tojson }}'></div>
         </div>
         <div class="tab-pane fade" id="scatterplot" role="tabpanel" aria-labelledby="scatterplot-tab">
-            <div id="scatterplot-chart" dir="ltr"></div>
+            <div id="scatterplot-chart" dir="ltr" data-chart='{{ scatterplot_data|tojson }}'></div>
         </div>
     </div>
   </div>
@@ -427,8 +427,8 @@
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
 <script>
 var dataset = [];
-var data = $('#convergence-chart').data('chart');
-d3.keys(data).forEach(function (share) {
+var data = $('#scatterplot-chart').data('chart');
+Object.keys(data).forEach(function (share) {
     data[share].forEach(function (datum) {
         dataset.push([datum[0], datum[1] / 100, share]);
     });
@@ -439,7 +439,7 @@ var margin = {top: 20, right: 56, bottom: 60, left: 40},
     height = 450 - margin.top - margin.bottom;
 
 var xValue = function (d) { return d[0]; },
-    xScale = d3.scalePoint().range([0, width]),
+    xScale = d3.scalePoint().range([0, width]).domain(dataset.map(d => d[0])),
     xMap = function (d) { return xScale(xValue(d)); },
     xAxis = d3.axisBottom().scale(xScale).tickFormat(function (d, i, j) {
         if (i == 0 || i == j.length - 1) {
@@ -447,10 +447,10 @@ var xValue = function (d) { return d[0]; },
         } else {
             return d3.timeFormat('%H:%M:%S')(d);
         }
-    });
+    }).tickValues(xScale.domain().filter((d, i) => i % 50 === 0));
 
 var yValue = function (d) { return d[1]; },
-    yScale = d3.scaleLinear().range([height, 0]),
+    yScale = d3.scaleLinear().range([height, 0]).domain([0, 1]),
     yMap = function (d) { return yScale(yValue(d)); },
     yAxis = d3.axisLeft().scale(yScale).tickValues([0, 0.2, 0.4, 0.5, 0.6, 0.8, 1]).tickFormat(d3.format(".0%")),
     gridlines = d3.axisLeft().scale(yScale).ticks(5).tickFormat("").tickSize(-width),
@@ -470,9 +470,6 @@ var tooltip = d3.select("#scatterplot-chart")
                 .append("div")
                 .attr("class", "tooltip")
                 .style("opacity", 0);
-
-xScale.domain(d3.map(dataset, function (d) { return d[0]; }).keys())
-yScale.domain([0, 1]);
 
 // y axis
 svg.append('g')
@@ -519,7 +516,7 @@ svg.selectAll(".dot")
     .attr('cy', yMap)
     .style('fill', function (d) { return color(cValue(d)); })
 
-    .on('mouseover', function (d) {
+    .on('mouseover', function (e, d) {
         tooltip.transition()
             .duration(200)
             .style('opacity', .9);
@@ -530,8 +527,8 @@ svg.selectAll(".dot")
     <p class="card-text mb-n1"><strong>${d[2]}: ${d3.format('.0%')(yValue(d))}</strong></p>
   </div>
 </div>`)
-            .style('left', ((width + margin.left + margin.right - d3.mouse(this)[0] > 175) ? (d3.mouse(this)[0] + margin.left + margin.right / 2) : (d3.mouse(this)[0] + margin.left - 175)) + 'px')
-            .style('top', (d3.mouse(this)[1] + margin.top + margin.bottom / 4) + 'px');
+            .style('left', ((width + margin.left + margin.right - d3.pointer(e)[0] > 175) ? (d3.pointer(e)[0] + margin.left + margin.right / 2) : (d3.pointer(e)[0] + margin.left - 175)) + 'px')
+            .style('top', (d3.pointer(e)[1] + margin.top + margin.bottom / 4) + 'px');
     })
     .on('mouseout', function (d) {
         tooltip.transition()
