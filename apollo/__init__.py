@@ -81,7 +81,10 @@ def create_app(settings_override=None):
     csrf.init_app(app)
     init_admin(admin, app)
 
-    monitor(app)
+    if not app.config.get('TESTING'):
+        # there's a known issue when prometheus is loaded
+        # during testing.
+        monitor(app)
 
     # Register custom error handlers
     if not app.debug:
