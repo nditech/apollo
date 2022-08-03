@@ -9,7 +9,7 @@
     {{ form.hidden_tag() }}
     <div class="card-header">{{ _('Import users') }}</div>
     <div class="card-body">
-      <div id="grid" data-roles='{{ roles|tojson|safe }}'></div>
+      <div id="grid" data-roles='{{ roles|tojson|safe }}' data-locales='{{ locales|tojson|safe }}'></div>
     </div>
     <div class="card-footer">
       <button type="button" class="btn btn-primary" id="importButton">Import</button>
@@ -33,10 +33,11 @@
       columns: [
         {title: "{{ _('Username') }}", name: 'username', type: 'text', width: 200},
         {title: "{{ _('Email') }}", name: 'email', type: 'text', width: 200},
-        {title: "{{ _('Role') }}", name: 'role', type: 'dropdown', source: JSON.parse(gridElement.dataset.roles), width: 200},
-        {title: "{{ _('Password') }}", name: 'password', type: 'text', width: 200}
+        {title: "{{ _('Role') }}", name: 'role', type: 'dropdown', autocomplete: true, source: JSON.parse(gridElement.dataset.roles), width: 200},
+        {title: "{{ _('Password') }}", name: 'password', type: 'text', width: 200},
+        {title: "{{ _('Locale') }}", name: 'locale', type: 'dropdown', autocomplete: true, source: JSON.parse(gridElement.dataset.locales), width: 200}
       ],
-      minDimensions: [4, 10]
+      minDimensions: [5, 10]
     });
 
     importButton.addEventListener('click', function () {

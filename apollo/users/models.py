@@ -110,6 +110,9 @@ class User(BaseModel, UserMixin):
 
     @classmethod
     def import_user_list(cls, dataset, deployment_id, task=None):
+        from apollo.deployments.models import Deployment
+        deployment = Deployment.query.filter_by(id=deployment_id).first()
+
         total_records = len(dataset)
         warning_records = 0
         processed_records = 0
@@ -140,6 +143,12 @@ class User(BaseModel, UserMixin):
             user.set_password(record['password'].strip())
             user.roles = Role.query.filter(
                 func.lower(Role.name) == record['role'].strip().lower()).all()
+
+            # set the locale if it's set and valid
+            locale = record['locale'].strip().lower()
+            if locale in deployment.locale_codes:
+                user.locale = locale
+
             user.save()
             processed_records += 1
 

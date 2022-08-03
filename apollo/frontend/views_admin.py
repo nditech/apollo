@@ -494,13 +494,17 @@ class UserAdminView(BaseAdminView):
 
             return redirect(url_for('user.index_view'))
 
+        deployment = models.Deployment.query.filter_by(
+            id=g.deployment.id).first()
+        locales = deployment.locale_codes if deployment else []
         context = {
             'form': form,
             'roles': [
                 r.name
                 for r in models.Role.query.filter(
                     models.Role.name != 'field-coordinator')
-            ]
+            ],
+            'locales': locales,
         }
         template_name = 'admin/user_import.html'
         return self.render(template_name, **context)
