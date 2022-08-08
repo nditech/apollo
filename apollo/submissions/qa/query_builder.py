@@ -215,16 +215,16 @@ class QATreeVisitor(BaseVisitor):
 
         if top_level_attr == 'location':
             if symbol == '.':
-                return getattr(Location, name).cast(Integer)
+                return getattr(Location, name).cast(BigInteger)
             else:
-                return Location.extra_data[name].astext.cast(Integer)
+                return Location.extra_data[name].astext.cast(BigInteger)
         elif top_level_attr == 'participant':
             if symbol == '.':
-                return getattr(Participant, name).cast(Integer)
+                return getattr(Participant, name).cast(BigInteger)
             else:
-                return Participant.extra_data[name].astext.cast(Integer)
+                return Participant.extra_data[name].astext.cast(BigInteger)
         else:
-            return getattr(Submission, name).cast(Integer)
+            return getattr(Submission, name).cast(BigInteger)
 
     def visit_variable(self, node, children):
         var_name = node.value
