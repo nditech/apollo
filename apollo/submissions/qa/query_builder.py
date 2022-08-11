@@ -6,7 +6,7 @@ import operator as op
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from sqlalchemy import (
-    BigInteger, Integer, String, and_, case, false, func, null, or_)
+    BigInteger, Integer, String, and_, case, cast, false, func, null, or_)
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
@@ -263,7 +263,14 @@ class QATreeVisitor(BaseVisitor):
             return null()
         else:
             self.prev_cast_type = cast_type
-            if cast_type is not None:
+            if cast_type in (BigInteger, Integer):
+                return cast(
+                    func.coalesce(
+                        func.nullif(Submission.data[var_name].astext, ''),
+                        '0'
+                    ), cast_type
+                )
+            elif cast_type is not None:
                 return Submission.data[var_name].astext.cast(cast_type)
             return Submission.data[var_name]
 
