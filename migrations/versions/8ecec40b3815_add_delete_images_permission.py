@@ -41,15 +41,36 @@ def upgrade():
         insert_query = sa.text(
             """
             INSERT INTO permission (name, deployment_id, uuid)
-            VALUES (:name, :id, :uuid)
+            VALUES (:name, :deployment_id, :uuid) RETURNING id
             """
         )
-        connection.execute(
+        permission_id = connection.execute(
             insert_query,
             name=permission_name,
-            id=deployment_id,
+            deployment_id=deployment_id,
             uuid=uuid.uuid4().hex,
-        )
+        ).scalar()
+
+        roles = ["analyst", "manager"]  # admin already has all permissions
+        for role in roles:
+            insert_query_alt = sa.text(
+                """
+                INSERT INTO roles_permissions (role_id, permission_id)
+                VALUES (
+                    (
+                        SELECT id FROM role
+                        WHERE deployment_id=:deployment_id
+                        AND name=:role
+                    ), :permission_id
+                )
+                """
+            )
+            connection.execute(
+                insert_query_alt,
+                deployment_id=deployment_id,
+                permission_id=permission_id,
+                role=role,
+            )
 
 
 def downgrade():
