@@ -48,6 +48,8 @@ export_locations = Permission(
 
 # Others
 send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
+delete_images = Permission(
+    ActionNeed('delete_images'), RoleNeed('admin'))
 
 
 def role(role):
