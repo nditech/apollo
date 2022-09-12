@@ -212,7 +212,7 @@
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <div class="form-check" v-for="(value, label) in field.options">
+                        <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
                           <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
@@ -742,7 +742,7 @@
           return false;
         },
         formatLastUpdate(submission) {
-          if (isEmpty(submission)) return '';
+          if (isEmpty(submission) || !submission.updated) return '';
           const prefix = "{{ _('Updated') }}"
           return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
         }
