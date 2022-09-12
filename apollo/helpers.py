@@ -9,6 +9,7 @@ import pkgutil
 CSV_MIMETYPES = [
     "text/csv",
     "application/csv",
+    "text/plain",
     "text/x-csv",
     "application/x-csv",
     "text/comma-separated-values",
