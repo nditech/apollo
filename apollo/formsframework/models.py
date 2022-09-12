@@ -176,6 +176,15 @@ class Form(Resource):
 
         return tags
 
+    @property
+    def has_image_fields(self):
+        img_tags = [
+            tag for tag in self.tags
+            if self.get_field_by_tag(tag)['type'] == 'image'
+        ]
+
+        return len(img_tags) > 0
+
     def to_xml(self):
         root = HTML_E.html()
         head = HTML_E.head(HTML_E.title(self.name))
