@@ -721,8 +721,14 @@
         },
         getSubmission(form) {
           let sub = this.submissions.find(submission => submission.form === form.id);
-          if (sub === undefined)
+          if (sub === undefined) {
             sub = {data: {}, errorFields: new Set(), images: {}, posted: null};
+            form.data.groups.forEach(group => {
+              group.fields.filter(field => field.type === 'multiselect').forEach(field => {
+                sub.data[field.tag] = [];
+              });
+            });
+          }
           
           return sub;
         },
