@@ -974,6 +974,8 @@
               let fields = group.fields.filter(f => f.type !== 'image');
               let newData = copyFunc(instance.data);
               fields.forEach(f => delete newData[f.tag]);
+              let multiSelectFields = fields.filter(f => f.type === 'multiselect');
+              multiSelectFields.forEach(f => newData[f.tag] = []);
               instance.data = newData;
             }
           );
