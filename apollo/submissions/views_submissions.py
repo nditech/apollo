@@ -1124,10 +1124,6 @@ def submission_edit(submission_id):
 
                         db.session.commit()
                         update_submission_version(submission)
-                    # submission is for a checklist form, update
-                    # contributor completion rating
-                    # update_participant_completion_rating(
-                    #     submission.participant)
                 else:
                     no_error = False
 
