@@ -212,7 +212,7 @@
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-                        <div class="form-check" v-for="(value, label) in field.options">
+                        <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
                           <label :for="field.tag" class="form-label">[[ label ]]</label>
                           <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
                         </div>
@@ -237,7 +237,7 @@
           </div>
           <div class="card-footer">
             <button class="btn btn-outline-dark" type="button" @click="postSubmission" :disabled="locked">{{ _('Submit') }}</button>
-            <button class="btn btn-outline-dark" @click="stopEditing" v-if="form.form_type !== 'INCIDENT'">[[ actionText ]]</button>
+            <button class="btn btn-outline-dark" @click="stopEditing">[[ actionText ]]</button>
           </div>
         </div>
       </div>
@@ -350,8 +350,10 @@
           completion.total += 1;
           if (field.type === 'image')
             completion.filled += (images[field.tag] !== undefined ? 1 : 0);
-          else if (field.type === 'multiselect')
+          else if (field.type === 'multiselect') {
+            data[field.tag] = data[field.tag] || [];
             completion.filled += (data[field.tag].length > 0 ? 1 : 0);
+          }
           else
             completion.filled += (data[field.tag] !== undefined ? 1 : 0);
         });
@@ -719,8 +721,14 @@
         },
         getSubmission(form) {
           let sub = this.submissions.find(submission => submission.form === form.id);
-          if (sub === undefined)
+          if (sub === undefined) {
             sub = {data: {}, errorFields: new Set(), images: {}, posted: null};
+            form.data.groups.forEach(group => {
+              group.fields.filter(field => field.type === 'multiselect').forEach(field => {
+                sub.data[field.tag] = [];
+              });
+            });
+          }
           
           return sub;
         },
@@ -740,7 +748,7 @@
           return false;
         },
         formatLastUpdate(submission) {
-          if (isEmpty(submission)) return '';
+          if (isEmpty(submission) || !submission.updated) return '';
           const prefix = "{{ _('Updated') }}"
           return prefix + ' ' + luxon.DateTime.fromJSDate(submission.updated).setLocale('{{ g.locale.language }}').toRelative();
         }
@@ -972,6 +980,8 @@
               let fields = group.fields.filter(f => f.type !== 'image');
               let newData = copyFunc(instance.data);
               fields.forEach(f => delete newData[f.tag]);
+              let multiSelectFields = fields.filter(f => f.type === 'multiselect');
+              multiSelectFields.forEach(f => newData[f.tag] = []);
               instance.data = newData;
             }
           );
