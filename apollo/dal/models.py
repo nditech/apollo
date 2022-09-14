@@ -9,7 +9,7 @@ import warnings
 from uuid import uuid4
 
 from flask import g
-from flask_babelex import get_locale
+from flask_babelex import get_locale, gettext as _
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import TranslationHybrid
@@ -90,6 +90,36 @@ class BaseModel(CRUDMixin, db.Model):
 class Permission(BaseModel):
     __tablename__ = 'permission'
 
+    # NOTE: please update this list when adding new permissions
+    PERMISSION_DESCRIPTIONS = {
+        'view_events': _('Users can change events manually'),
+        'view_participants': _('Users can view the participant list'),
+        'view_messages': _('Users can view the message list'),
+        'view_quality_assurance': _(
+            'Users can view the quality assurance list'),
+        'view_process_analysis': _('Users can view the process data summary'),
+        'view_result_analysis': _('Users can view the results data summary'),
+        'add_submission': _('Users can create critical incidents'),
+        'edit_forms': _('Users can modify forms'),
+        'edit_locations': _('Users can edit location data'),
+        'edit_submission': _('Users can edit submissions'),
+        'edit_both_submissions': _(
+            'Users can modify observer and location checklists'),
+        'edit_submission_quarantine_status': _(
+            'Users can edit checklist quarantine statuses'),
+        'edit_submission_verification_status': _(
+            'Users can edit checklist verification statuses'),
+        'edit_participant': _('Users can edit participant data'),
+        'import_participants': _('Users can import participant data'),
+        'import_locations': _('Users can import location data'),
+        'export_participants': _('Users can export participant data'),
+        'export_locations': _('Users can export location data'),
+        'export_messages': _('Users can export messages'),
+        'export_submissions': _('Users can export submissions'),
+        'send_messages': _('Users can send participants messages'),
+        'delete_messages': _('Users can delete submission images'),
+    }
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
@@ -100,7 +130,7 @@ class Permission(BaseModel):
         'Deployment', backref=db.backref('permissions', cascade='all, delete'))
 
     def __str__(self):
-        return self.description if self.description else self.name
+        return self.__class__.PERMISSION_DESCRIPTIONS.get(self.name, self.name)
 
 
 class ResourceMixin(object):
