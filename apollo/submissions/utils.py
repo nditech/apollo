@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from pandas.io.json import json_normalize
-from sqlalchemy import String, cast, func
+from sqlalchemy import BigInteger, String, cast, func
 from sqlalchemy.dialects.postgresql import array_agg
 from sqlalchemy.orm import aliased
 
@@ -24,10 +24,24 @@ def make_submission_dataframe(query, form, selected_tags=None,
         fields = fields.difference(excluded_tags)
 
     # the 'updated' field is required for results analysis
+    integral_fields = [
+        tag for tag in fields
+        if form.get_field_by_tag(tag)['type'] == 'integer'
+        or form.get_field_by_tag(tag)['type'] == 'select'
+    ]
+
     columns = [
-        Submission.data[tag].label(tag) for tag in fields] + [
+        cast(
+            func.coalesce(
+                func.nullif(Submission.data[tag].astext, ''),
+                '0'),
+            BigInteger).label(tag) for tag in integral_fields]
+    other_fields = fields.difference(integral_fields)
+
+    columns.extend([
+        Submission.data[tag].label(tag) for tag in other_fields] + [
             Submission.updated
-        ]
+        ])
 
     # alias just in case the query is already joined to the tables below
     ancestor_loc = aliased(Location, name='ancestor')
@@ -71,7 +85,9 @@ def make_submission_dataframe(query, form, selected_tags=None,
     type_coercions = {
         tag: np.float64
         for tag in form.tags
-        if form.get_field_by_tag(tag)['type'] == 'integer'}
+        if form.get_field_by_tag(tag)['type'] == 'integer'
+        or form.get_field_by_tag(tag)['type'] == 'select'
+    }
 
     dataframe_query = query.filter(
         Submission.location_id == own_loc.id
@@ -99,36 +115,3 @@ def make_submission_dataframe(query, form, selected_tags=None,
     ], axis=1, join_axes=[df.index])
 
     return df_summary
-
-
-def update_participant_completion_rating(submission):
-    participant = submission.participant
-    submissions = participant.submissions
-
-    numerator = 0
-    denominator = 0
-    completion_map = {
-        'Missing': 0,
-        'Partial': 1,
-        'Complete': 2,
-        'Conflict': 2  # TODO: find a better way to compute the ratings
-    }
-
-    # TODO: fix this
-    # if len(submissions) == 0:
-    #     participant.completion_rating = 1
-    # else:
-    #     for submission in submissions:
-    #         completion_values = [
-    #             completion_map[i] for i in
-    #             list(submission.completion.values())
-    #         ]
-    #         denominator += len(submission.form.groups) * 2.0
-    #         numerator += sum(completion_values)
-
-    #     try:
-    #         participant.completion_rating = (numerator / denominator)
-    #     except ZeroDivisionError:
-    #         # this should never happen
-    #         participant.completion_rating = 1
-    # participant.save()

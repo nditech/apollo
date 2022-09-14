@@ -331,10 +331,6 @@ class BaseQuestionnaireForm(wtforms.Form):
                         submission.update_related(data)
                         update_submission_version(submission)
 
-                # update completion rating for participant
-                # if submission.form.form_type == 'CHECKLIST':
-                #     update_participant_completion_rating(participant)
-
         return submission
 
 
