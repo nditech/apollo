@@ -11,6 +11,7 @@ settings.ini
 **/.env*
 **/.webassets-cache
 **/*.pyc
+**/node_modules/
 apollo-*.tar.gz
 bin/
 circle.yml
@@ -24,4 +25,3 @@ messages.mo
 share/
 src/
 uploads/
-node_modules/
