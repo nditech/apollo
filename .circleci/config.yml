@@ -22,9 +22,14 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
       - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-      - run: pip install -r requirements/dev.txt
+      - restore_cache:
+          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
+      - run: pip install --user -r requirements/dev.txt
+      - save_cache:
+          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
+          paths:
+            - "/home/circleci/.local"
       - run: nosetests apollo/
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: large
 
 workflows:
