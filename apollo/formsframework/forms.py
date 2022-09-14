@@ -123,7 +123,7 @@ class NullValueValidator:
             and not math.isnan(data)
             and (self.min is None or data >= self.min)
             and (
-                self.max is None or self.value_is_null(data) or data <= self.max
+                self.max is None or self.value_is_null(data) or data <= self.max # noqa
             )
         ):
             return
@@ -435,6 +435,10 @@ class FormForm(SecureForm):
     vote_shares = wtforms.SelectMultipleField(
         _('Vote Shares'),
         description=_('Questions representing election results.'))  # noqa
+    result_images = wtforms.SelectMultipleField(
+        _('Result Images'),
+        description=_('Questions representing election result images.') # noqa
+    )
 
 
 class FormImportForm(SecureForm):

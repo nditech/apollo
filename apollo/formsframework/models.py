@@ -99,6 +99,7 @@ class Form(Resource):
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
     vote_shares = db.Column(JSONB)
+    result_images = db.Column(JSONB)
     show_moment = db.Column(db.Boolean, default=False)
     show_map = db.Column(db.Boolean, default=False)
     show_progress = db.Column(db.Boolean, default=False)
@@ -174,6 +175,15 @@ class Form(Resource):
                     tags.append(f.get('tag'))
 
         return tags
+
+    @property
+    def has_image_fields(self):
+        img_tags = [
+            tag for tag in self.tags
+            if self.get_field_by_tag(tag)['type'] == 'image'
+        ]
+
+        return len(img_tags) > 0
 
     def to_xml(self):
         root = HTML_E.html()

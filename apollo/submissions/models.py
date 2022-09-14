@@ -482,6 +482,23 @@ class Submission(BaseModel):
 
         return self._master
 
+    def has_image_data(self):
+        image_field_tags = [
+            tag for tag in self.form.tags
+            if self.form.get_field_by_tag(tag).get('type') == 'image'
+        ]
+
+        image_data = [self.data.get(tag) for tag in image_field_tags]
+        return any(image_data)
+
+    def get_result_image_count(self):
+        result_fields = self.form.result_images or []
+
+        if not result_fields:
+            return 0
+
+        return sum([bool(self.data.get(tag)) for tag in result_fields])
+
 
 class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'

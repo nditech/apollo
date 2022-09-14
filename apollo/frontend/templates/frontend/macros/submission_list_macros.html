@@ -94,6 +94,8 @@
     <th scope="col" class="text-center"><abbr title="{{ _('Phone Confirmation') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="fa fa-exclamation-triangle"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Geolocation') }}"><i class="fa fa-globe"></i></abbr></th>
+    {% if form.has_image_fields %}<th class="text-center" scope="col"><abbr title="{{ _('Any Image Uploaded?') }}"><i class="fa fa-camera-retro"></i></abbr></th>{% endif %}
+    {% if form.result_images %}<th class="text-center" scope="col"><abbr title="{{ _('Number of Results Images Uploaded') }}"><i class="fa fa-images"></i></abbr></th>{% endif %}
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
@@ -191,6 +193,18 @@
         <i class="fa fa-map-marker text-black-50" aria-hidden="true" title="{{ _('No GPS') }}"></i>
         {% endif %}
     </td>
+    {% if form.has_image_fields %}
+    <td class="text-center">
+        {% if submission.has_image_data() %}
+        <i class="fas fa-image text-primary" aria-hidden="true" title="{{ _('One or more images uploaded') }}"></i>
+        {% else %}
+        <i class="far fa-image text-black-50" aria-hidden="true" title="{{ _('No image uploaded') }}"></i>
+        {% endif %}
+    </td>
+    {% endif %}
+    {% if form.result_images %}
+    <td class="text-center">{{ submission.get_result_image_count() }}</td>
+    {% endif %}
 </tr>
 {% else %}
 {%- if perms.edit_submission.can() %}
@@ -200,13 +214,15 @@
     {%- else %}
         {%- set cspan = 9 if form.show_moment else 8 %}
     {%- endif %}
+    {%- if form.has_image_fields %}{% set cspan = cspan + 1 %}{% endif -%}
+    {%- if form.result_images %}{% set cspan = cspan + 1 %}{% endif -%}
     {%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
     {%- set cspan = 10 if form.show_moment else 9 %}
-    {%- set colspan = cspan + (location_types|length) + form_fields|length -%}
+    {%- set colspan = cspan + (location_types|length) + form_fields|length + (1 if form.has_image_fields else 0) -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
@@ -218,13 +234,15 @@
     {%- else %}
         {%- set cspan = 8 if form.show_moment else 7 %}
     {%- endif %}
+    {%- if form.has_image_fields %}{% set cspan = cspan + 1 %}{% endif -%}
+    {%- if form.result_images %}{% set cspan = cspan + 1 %}{% endif -%}
     {%- set colspan = cspan + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
     {%- set cspan = 9 if form.show_moment else 8 %}
-    {%- set colspan = cspan + (location_types|length) + form_fields|length -%}
+    {%- set colspan = cspan + (location_types|length) + form_fields|length + (1 if form.has_image_fields else 0)  -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
