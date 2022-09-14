@@ -23,12 +23,12 @@ jobs:
       - run: sudo apt-get install -y postgresql-client
       - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
       - restore_cache:
-          key: deps-v3-1663187159-{{ checksum "requirements/dev.txt" }}
+          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
       - run: pip install --user -r requirements/dev.txt
       - save_cache:
-          key: deps-v3-1663187159-{{ checksum "requirements/dev.txt" }}
+          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
           paths:
-            - "/home/circleci/.local/lib/python3.6"
+            - "/home/circleci/.local"
       - run: nosetests apollo/
     resource_class: large
 
