@@ -3,25 +3,26 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.4
+      - image: cimg/python:3.6.15
         environment:
           - TEST_DATABASE_HOSTNAME: localhost
-          - TEST_DATABASE_USERNAME: postgres
-          - TEST_DATABASE_PASSWORD: notapassword
+          - TEST_DATABASE_USERNAME: circleci
           - SECRET_KEY: notasecret
           - REDIS_HOSTNAME: localhost
 
-      - image: circleci/postgres:10-alpine-postgis-ram
+      - image: cimg/postgres:12.11-postgis
         environment:
           - POSTGRES_DB: apollo
-          - POSTGRES_USER: postgres
-          - POSTGRES_PASSWORD: notapassword
+          - POSTGRES_USER: circleci
 
-      - image: circleci/redis:4-alpine
+      - image: cimg/redis:7.0
 
     steps:
       - checkout
-      - run: sudo pip install -r requirements/dev.txt
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y postgresql-client
+      - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+      - run: pip install -r requirements/dev.txt
       - run: nosetests apollo/
 
 workflows:
