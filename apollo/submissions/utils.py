@@ -32,9 +32,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
 
     columns = [
         cast(
-            func.coalesce(
-                func.nullif(Submission.data[tag].astext, ''),
-                '0'),
+            func.nullif(Submission.data[tag].astext, ''),
             BigInteger).label(tag) for tag in integral_fields]
     other_fields = fields.difference(integral_fields)
 
