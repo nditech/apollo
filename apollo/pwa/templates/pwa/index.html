@@ -248,7 +248,7 @@
       <div class="card"><img src="" alt="" class="card-img-top" ref="viewer" width="320"></div>
       <button type="button" class="btn btn-outline-dark m-2" v-if="hasContent" @click="removeImage">{{ _('Remove') }}</button>
       <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
-      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept="image/*" @change="processFile($event)" :disabled="disabled">
+      <input type="file" :name="field.tag" :id="field.tag" class="form-control" accept=".jpg,.png,image/jpg,image/png" capture="environment" @change="processFile($event)" :disabled="disabled">
     </div>
   </template>
   <template id="completion-icon">
