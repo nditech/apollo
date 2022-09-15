@@ -9,11 +9,20 @@
 {% elif field_type == 'select' %}
 {{ form_field(class_="custom-select " + klass_, disabled=disabled) }}
 {% elif field_type == 'image' %}
-<div>
-<label class="btn btn-secondary w-100" data-context="select_button">
-<span role="button" tabindex="0">{% trans %}Choose File{% endtrans %}</span>
-<input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
+<div class="d-flex justify-content-end">
+{% if form_field.data %}
+<label class="btn btn-light mx-2"><span role="button" tabindex="1"><i class="fas fa-file-image text-primary"></i></span></label>
+<label class="btn btn-secondary mx-2" style="cursor: pointer;" data-context="select_button">
+  <span role="button" tabindex="0"><i class="fas fa-file-upload"></i></span>
+  <input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
 </label>
+{% else %}
+<label class="btn btn-light disabled mx-2"><span role="button" tabindex="1"><i class="far fa-file-image text-dark"></i></span></label>
+<label class="btn btn-secondary mx-2" style="cursor: pointer;" data-context="select_button">
+  <span role="button" tabindex="0"><i class="fas fa-file-upload"></i></span>
+  <input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
+</label>
+{% endif %}
 </div>
 {% else %}
 {{ form_field(class_=klass_, disabled=disabled) }}
