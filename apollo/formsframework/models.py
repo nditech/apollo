@@ -162,6 +162,12 @@ class Form(Resource):
 
         return self._field_cache.get(tag)
 
+    def get_image_fields(self):
+        return [
+            tag for tag in self.tags
+            if self.get_field_by_tag(tag)['type'] == 'image'
+        ]
+
     def get_group_tags(self, group_name, field_types=FIELD_TYPES):
         if not hasattr(self, '_group_cache'):
             self._populate_group_cache()
@@ -178,12 +184,7 @@ class Form(Resource):
 
     @property
     def has_image_fields(self):
-        img_tags = [
-            tag for tag in self.tags
-            if self.get_field_by_tag(tag)['type'] == 'image'
-        ]
-
-        return len(img_tags) > 0
+        return len(self.get_image_fields()) > 0
 
     def to_xml(self):
         root = HTML_E.html()

@@ -483,21 +483,23 @@ class Submission(BaseModel):
         return self._master
 
     def has_image_data(self):
-        image_field_tags = [
-            tag for tag in self.form.tags
-            if self.form.get_field_by_tag(tag).get('type') == 'image'
-        ]
-
-        image_data = [self.data.get(tag) for tag in image_field_tags]
-        return any(image_data)
+        return any([
+            self.data.get(tag)
+            for tag in self.form.get_image_fields()
+        ])
 
     def get_result_image_count(self):
-        result_fields = self.form.result_images or []
+        return sum([
+            bool(self.data.get(tag))
+            for tag in self.form.result_images or []
+        ])
 
-        if not result_fields:
-            return 0
-
-        return sum([bool(self.data.get(tag)) for tag in result_fields])
+    def get_image_data_fields(self):
+        return {
+            self.data.get(tag): self.form.get_field_by_tag(tag)
+            for tag in self.form.get_image_fields()
+            if self.data.get(tag)
+        }
 
 
 class SubmissionComment(BaseModel):

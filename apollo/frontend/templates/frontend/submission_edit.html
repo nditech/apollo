@@ -277,25 +277,6 @@
       </div>
     </div>
 
-    {% if submission.image_attachments -%}
-    <div class="card text-white bg-secondary mb-3 sticky-top" id="images">
-      <div class="card-header">
-        <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
-      </div>
-      <div class="card-body">
-        <div class='slick m-3'>
-          {% for image in submission.image_attachments -%}
-          <div class="d-flex justify-content-center mb-3">
-            <a href="{{ image.photo.url }}" data-lightbox="image-1">
-              <img src="{{ image.photo.thumb_url }}">
-            </a>
-          </div>
-          {%- endfor %}
-        </div>
-      </div>
-    </div>
-    {%- endif %}
-
     {% for group in form.data.groups %}
     {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
     <div class="card bg-light {%- if not loop.last %} mb-3{% endif %} {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
@@ -354,6 +335,29 @@
       </div>
     </div>
     {% endfor %}
+
+    {% if submission.image_attachments -%}
+    <div class="card text-white bg-secondary mt-3" id="images">
+      <div class="card-header">
+        <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
+      </div>
+      <div class="card-body">
+        <div class='slick m-3'>
+          {% for image in submission.image_attachments -%}
+          {% if image.uuid.hex in submission.get_image_data_fields() %}
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+            <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
+              <img src="{{ image.photo.thumb_url }}">
+            </a>
+            <span class="mt-2">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}</span>
+          </div>
+          {% endif %}
+          {%- endfor %}
+        </div>
+      </div>
+    </div>
+    {%- endif %}
+
   </div>
   <div class="tab-pane fade" id="messages-panel" role="tabpanel" aria-labelledby="messages-tab">
     <div class="table-responsive">
