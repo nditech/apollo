@@ -12,18 +12,21 @@
 <div class="d-flex justify-content-end">
 {% if form_field.data %}
 <label class="btn btn-light mx-2" data-presence-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fas fa-file-image text-primary"></i></span></label>
-{% if perms.delete_images.can() %}<label class="btn btn-danger mx-2" data-delete-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fa fa-trash"></i></span></label>{% endif %}
+{% if perms.delete_images.can() %}
+<label class="btn btn-danger mx-2" data-delete-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fa fa-trash"></i></span></label>
 <label class="btn btn-secondary mx-2" style="cursor: pointer;" data-context="select_button">
   <span role="button" tabindex="0"><i class="fas fa-file-upload"></i></span>
   <input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
 </label>
+{% endif %}
 {% else %}
 <label class="btn btn-light disabled mx-2"><span role="button" tabindex="1"><i class="far fa-file-image text-dark"></i></span></label>
-{% if perms.delete_images.can() %}<label class="btn btn-danger disabled mx-2" data-delete-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fa fa-trash"></i></span></label>{% endif %}
+{% if perms.delete_images.can() %}<label class="btn btn-danger disabled mx-2" data-delete-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fa fa-trash"></i></span></label>
 <label class="btn btn-secondary mx-2" style="cursor: pointer;" data-context="select_button">
   <span role="button" tabindex="0"><i class="fas fa-file-upload"></i></span>
   <input type="file" name="{{ form_field.name }}" id="{{ form_field.id }}" data-context="hidden_file" accept=".jpg,.png,image/jpeg,image/png" hidden />
 </label>
+{% endif %}
 {% endif %}
 </div>
 {% else %}
