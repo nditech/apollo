@@ -345,7 +345,7 @@
         <div class='slick m-3'>
           {% for image in submission.image_attachments -%}
           {% if image.uuid.hex in submission.get_image_data_fields() %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">
             <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
               <img src="{{ image.photo.thumb_url }}">
             </a>
@@ -677,17 +677,6 @@
     </div>
   </div>
 </div>
-
-<div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="toast-header">
-    <i class="fas fa-info-circle" id="deleteNotifyIcon"></i>
-    <strong class="mr-auto">{{ _('Notification') }}</strong>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="toast-body"></div>
-</div>
 {% endblock %}
 
 
@@ -705,24 +694,12 @@
 
 
 {%- block scripts %}
-<script type="text/javascript" src="{{ asset_url_for('gettext.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
-
-  fetch("{{ url_for('static', filename='js/i18n/') }}" + i18n.getLocale() + ".json")
-    .then(function (response) {
-      if (response.ok)
-        return response.json();
-      else
-        throw new Error();
-    })
-    .then(function (data) {
-      i18n.loadJSON(data, 'messages');
-    });
 
   document.querySelector('#checklist-panel').addEventListener('click', function (event) {
     var element = event.target.closest('label[data-delete-label]');
@@ -752,14 +729,14 @@
         payload: response.json()
       };
     }).then(function (message) {
-      var selector = 'label[data-delete-label=' + tag + ']';
-      var otherSelector = 'label[data-presence-label=' + tag + ']';
-      document.querySelector(selector).classList.toggle('disabled');
-      document.querySelector(otherSelector).classList.toggle('disabled');
-      document.querySelector(otherSelector).firstChild.firstChild.classList.remove('text-primary');
-      document.querySelector(otherSelector).firstChild.firstChild.classList.add('text-dark');
-      document.querySelector('.toast-body').textContent = message.payload.message;
-      $('#notification').toast({delay: 5000});
+      var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+      var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+      var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+      document.querySelector(deleteLabelSelector).classList.toggle('disabled');
+      document.querySelector(imagePresenceLabelSelector).classList.toggle('disabled');
+      document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.remove('text-primary');
+      document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.add('text-dark');
+      document.querySelector(galleryItemSelector).remove();
     });
   });
 
