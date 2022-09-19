@@ -677,6 +677,30 @@
     </div>
   </div>
 </div>
+
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+  <div id="notificationSuccess" class="toast" role="alert" style="position: absolute; top: 0; right: 0;" data-delay="5000">
+    <div class="toast-header">
+      <i class="fas fa-info-circle text-info"></i>&nbsp;<strong class="mr-auto">{{ _('Notification') }}</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">{{ _('Image deleted') }}</div>
+  </div>
+</div>
+
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+  <div id="notificationFail" class="toast" role="alert" style="position: absolute; top: 0; right: 0;" data-delay="5000">
+    <div class="toast-header">
+      <i class="fas fa-exclmation-triangle text-warning"></i>&nbsp;<strong class="mr-auto">{{ _('Notification') }}</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">{{ _('Image was not found') }}</div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -700,6 +724,8 @@
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+  $('#notificationSuccess').toast();
+  $('#notificationFail').toast();
 
   document.querySelector('#checklist-panel').addEventListener('click', function (event) {
     var element = event.target.closest('label[data-delete-label]');
@@ -737,6 +763,13 @@
       document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.remove('text-primary');
       document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.add('text-dark');
       document.querySelector(galleryItemSelector).remove();
+
+      if (message.isOk) {
+        $('#notificationSuccess').toast('show');
+      } else {
+        $('#notificationFail').toast('show');
+      }
+      
     });
   });
 
