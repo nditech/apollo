@@ -2,13 +2,14 @@
 import codecs
 from datetime import datetime
 from functools import partial
+from http import HTTPStatus
 from uuid import uuid4
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
     redirect, render_template, request, stream_with_context, url_for, session
 )
-from flask_babelex import get_locale, lazy_gettext as _
+from flask_babelex import get_locale, gettext, lazy_gettext as _
 from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
@@ -1706,3 +1707,32 @@ def submission_export(form_id):
     return Response(
         dataset,
         mimetype='text/csv')
+
+
+@route(bp, '/submissions/<int:submission_id>/image/delete', methods=['POST'])
+@permissions.delete_images.require(403)
+def delete_image(submission_id: int):
+    submission = models.Submission.query.filter_by(
+        id=submission_id).first()
+
+    if submission is None:
+        return jsonify({
+            'status': 'error',
+            'message': 'Not found',
+        }), HTTPStatus.NOT_FOUND
+
+    form_class = forms.generate_image_delete_form_class(submission)
+    delete_form = form_class()
+    if delete_form.validate_on_submit():
+        tag = delete_form.data['tag']
+        flag = submission.delete_image_attachment(tag)
+        if flag:
+            return jsonify({
+                'status': 'ok',
+                'message': gettext('Image deleted'),
+            }), HTTPStatus.OK
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': gettext('Image not found'),
+            }), HTTPStatus.NOT_FOUND

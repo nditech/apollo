@@ -249,24 +249,24 @@
               <td class="col-2 align-middle obs-on">
                 <label for="{{ submission_form.quarantine_status.id }}" class="sr-only">{{ submission_form.quarantine_status.label.text }}</label>
                 {%- if readonly %}
-                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
                 {%- else %}
-                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms) }}
                 {%- endif %}
               </td>
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
                 <label for="{{ sibling_form.quarantine_status.id }}" class="sr-only">{{ sibling_form.quarantine_status.label.text }}</label>
-                {{ render_field(sibling_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(sibling_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
               </td>
               {% endfor %}
               <td class="col-2 align-middle ps-on">
                 <label for="{{ master_form.quarantine_status.id }}" class="sr-only">{{ master_form.quarantine_status.label.text }}</label>
                 {%- if readonly %}
-                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms) }}
                 {%- else %}
-                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
                 {%- endif %}
               </td>
               {%- endif %}
@@ -306,26 +306,26 @@
                 </div>
               </td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- endif %}
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts and field['type'] != 'image' -%}
               {% for sibling_form in sibling_forms -%}
-              <td class="col-2 align-middle"><label for="{{ sibling_form[field.tag].id }}" class="sr-only">{{ sibling_form[field.tag].label.text }}</label>{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle"><label for="{{ sibling_form[field.tag].id }}" class="sr-only">{{ sibling_form[field.tag].label.text }}</label>{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {% endfor %}
               {% if readonly -%}
               {% if master_form[field.tag].errors -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- endif %}
               {%- endif %}
             </tr>
@@ -594,9 +594,9 @@
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">{{ field.description }}</td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
@@ -656,6 +656,38 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="imageDeleteConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ _('Delete Image?') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mb-n2">
+        <p>Are you sure you want to delete the image for the following question?</p>
+        <p><strong id="deleteTag"></strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('No') }}</button>
+        <button type="button" class="btn btn-danger" id="confirmImageDelete">{{ _('Yes, delete') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <i class="fas fa-info-circle" id="deleteNotifyIcon"></i>
+    <strong class="mr-auto">{{ _('Notification') }}</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body"></div>
+</div>
 {% endblock %}
 
 
@@ -673,12 +705,63 @@
 
 
 {%- block scripts %}
+<script type="text/javascript" src="{{ asset_url_for('gettext.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+
+  fetch("{{ url_for('static', filename='js/i18n/') }}" + i18n.getLocale() + ".json")
+    .then(function (response) {
+      if (response.ok)
+        return response.json();
+      else
+        throw new Error();
+    })
+    .then(function (data) {
+      i18n.loadJSON(data, 'messages');
+    });
+
+  document.querySelector('#checklist-panel').addEventListener('click', function (event) {
+    var element = event.target.closest('label[data-delete-label]');
+    if (!element) return;
+    if (!element.classList.contains('disabled')) {
+      document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
+      $('#imageDeleteConfirmModal').modal('show');
+    }
+  });
+
+  document.querySelector('#confirmImageDelete').addEventListener('click', function () {
+    var tag = document.querySelector('#deleteTag').textContent;
+    var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
+    var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
+    var formData = new FormData();
+    formData.append('tag', tag);
+    $('#imageDeleteConfirmModal').modal('hide');
+    fetch(deleteEndpoint, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': CSRFToken,
+      },
+      body: formData
+    }).then(function (response) {
+      return {
+        isOk: response.ok,
+        payload: response.json()
+      };
+    }).then(function (message) {
+      var selector = 'label[data-delete-label=' + tag + ']';
+      var otherSelector = 'label[data-presence-label=' + tag + ']';
+      document.querySelector(selector).classList.toggle('disabled');
+      document.querySelector(otherSelector).classList.toggle('disabled');
+      document.querySelector(otherSelector).firstChild.firstChild.classList.remove('text-primary');
+      document.querySelector(otherSelector).firstChild.firstChild.classList.add('text-dark');
+      document.querySelector('.toast-body').textContent = message.payload.message;
+      $('#notification').toast({delay: 5000});
+    });
+  });
 
   var fileChangeHandler = function (changeEventObj) {
     var fileInput = changeEventObj.target;

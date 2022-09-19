@@ -52,9 +52,9 @@
                 {%- endif %}
               </td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
