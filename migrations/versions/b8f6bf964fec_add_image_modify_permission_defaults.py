@@ -1,4 +1,4 @@
-"""add image delete permission defaults
+"""add image modify permission defaults
 
 Revision ID: b8f6bf964fec
 Revises: 690fb1fe46b4
@@ -20,14 +20,14 @@ depends_on = None
 
 def upgrade():
     connection = op.get_bind()
-    permission_name = "delete_images"
+    permission_name = "modify_images"
 
     # get the deployment ids where the permission does not exist
     query = sa.text("SELECT id FROM deployment")
     result = connection.execute(query)
     deployment_ids = list(itertools.chain(*result.fetchall()))
 
-    # for each deployment, insert the delete image permission
+    # for each deployment, insert the modify image permission
     # if it does not exist
     # NOTE: the loop is necessary since the UUIDs are generated
     #       in Python, not the database

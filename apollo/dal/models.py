@@ -117,7 +117,7 @@ class Permission(BaseModel):
         'export_messages': _('Users can export messages'),
         'export_submissions': _('Users can export submissions'),
         'send_messages': _('Users can send participants messages'),
-        'delete_messages': _('Users can delete submission images'),
+        'modify_images': _('Users can delete or replace submission images'),
     }
 
     id = db.Column(db.Integer, primary_key=True)

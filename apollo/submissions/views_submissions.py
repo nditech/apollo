@@ -1710,7 +1710,7 @@ def submission_export(form_id):
 
 
 @route(bp, '/submissions/<int:submission_id>/image/delete', methods=['POST'])
-@permissions.delete_images.require(403)
+@permissions.modify_images.require(403)
 def delete_image(submission_id: int):
     submission = models.Submission.query.filter_by(
         id=submission_id).first()
