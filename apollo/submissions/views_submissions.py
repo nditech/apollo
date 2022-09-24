@@ -68,6 +68,11 @@ bp.add_url_rule(
     view_func=api_views.SubmissionItemResource.as_view('api_submission_item'),
     methods=['GET']
 )
+bp.add_url_rule(
+    '/api/submissions/image_manifest',
+    view_func=api_views.get_image_manifest,
+    methods=['GET', 'POST'],
+)
 
 docs.register(
     api_views.SubmissionItemResource, 'submissions.api_submission_item')

@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 import json
 from http import HTTPStatus
+from itertools import chain
+from pathlib import Path
 from uuid import uuid4
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_security.decorators import login_required
+from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
@@ -402,3 +406,56 @@ def submission():
     }
 
     return jsonify(response_body)
+
+
+@csrf.exempt
+@login_required
+@use_kwargs({
+    'event': fields.Int(required=True), 'form': fields.Int(required=True),
+    'participant': fields.Int(), 'field': fields.Str()
+})
+def get_image_manifest(**kwargs):
+    def _generate_filename(attachment: SubmissionImageAttachment, tag=None):
+        extension = Path(attachment.photo.filename).suffix
+        parts = [
+            attachment.submission.event.name,
+            attachment.submission.form.name,
+            attachment.submission.participant.participant_id,
+        ]
+        if tag:
+            parts.append(tag)
+
+        filename = slugify('-'.join(parts)) + extension
+        return filename
+
+    params = {
+        'event_id': kwargs.get('event'),
+        'form_id': kwargs.get('form'),
+        'submission_type': 'O'
+    }
+
+    if kwargs.get('participant') is not None:
+        params.update(participant_id=kwargs.get('participant'))
+
+    if kwargs.get('field'):
+        submissions = Submission.query.filter_by(**params)
+        attachment_uuids = list(
+            chain(*submissions.with_entities(
+                Submission.data[kwargs.get('field')]))
+        )
+        attachments = SubmissionImageAttachment.query.filter(
+            SubmissionImageAttachment.uuid.in_(attachment_uuids)
+        ).join(SubmissionImageAttachment.submission)
+    else:
+        attachments = SubmissionImageAttachment.query.join(
+            SubmissionImageAttachment.submission).filter_by(**params)
+
+    query = attachments.join(Submission.event).join(
+        Submission.participant).join(Submission.form)
+
+    dataset = [{
+        'url': attachment.photo.url,
+        'filename': _generate_filename(attachment, kwargs.get('field'))
+    } for attachment in query]
+
+    return jsonify({'images': dataset})
