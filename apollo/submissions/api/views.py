@@ -413,7 +413,7 @@ def submission():
 @login_required
 @use_kwargs({
     'event': fields.Int(required=True), 'form': fields.Int(required=True),
-    'participant': fields.Int(), 'field': fields.Str()
+    'fields': fields.DelimitedList(fields.Str()),
 })
 def get_image_manifest(**kwargs):
     def _generate_filename(attachment: SubmissionImageAttachment, tag=None):
@@ -439,18 +439,12 @@ def get_image_manifest(**kwargs):
         'submission_type': 'O'
     }
 
-    if kwargs.get('participant') is not None:
-        params.update(participant_id=kwargs.get('participant'))
-
-    if kwargs.get('field'):
+    if kwargs.get('fields'):
         submissions = Submission.query.filter_by(**params)
-        try:
-            attachment_uuids = list(
-                chain(*submissions.with_entities(
-                    Submission.data[kwargs.get('field')]))
-            )
-        except ProgrammingError:
-            attachment_uuids = []
+        entities = [Submission.data[tag] for tag in kwargs.get('fields')]
+        attachment_uuids = list(
+            chain(*submissions.with_entities(*entities)))
+        attachment_uuids = [v for v in attachment_uuids if v]
         attachments = SubmissionImageAttachment.query.filter(
             SubmissionImageAttachment.uuid.in_(attachment_uuids)
         ).join(SubmissionImageAttachment.submission)
@@ -461,9 +455,21 @@ def get_image_manifest(**kwargs):
     query = attachments.join(Submission.event).join(
         Submission.participant).join(Submission.form)
 
-    dataset = [{
-        'url': attachment.photo.url,
-        'filename': _generate_filename(attachment, kwargs.get('field'))
-    } for attachment in query]
+    try:
+        dataset = [{
+            'url': attachment.photo.url,
+            'filename': _generate_filename(attachment, kwargs.get('field'))
+        } for attachment in query]
+    except ProgrammingError:
+        response = jsonify({
+            'images': [],
+            'status': 'error',
+        })
+        response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
 
-    return jsonify({'images': dataset})
+        return response
+
+    response = jsonify({'images': dataset, 'status': 'ok'})
+    response.status_code = HTTPStatus.OK
+
+    return response
