@@ -11,6 +11,7 @@ from flask_babelex import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_security.decorators import login_required
 from slugify import slugify
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
@@ -424,6 +425,10 @@ def get_image_manifest(**kwargs):
         ]
         if tag:
             parts.append(tag)
+        else:
+            image_fields = attachment.submission.get_image_data_fields()
+            associated_tag = image_fields.get(attachment.uuid.hex).get('tag')
+            parts.append(associated_tag)
 
         filename = slugify('-'.join(parts)) + extension
         return filename.lower()
@@ -439,10 +444,13 @@ def get_image_manifest(**kwargs):
 
     if kwargs.get('field'):
         submissions = Submission.query.filter_by(**params)
-        attachment_uuids = list(
-            chain(*submissions.with_entities(
-                Submission.data[kwargs.get('field')]))
-        )
+        try:
+            attachment_uuids = list(
+                chain(*submissions.with_entities(
+                    Submission.data[kwargs.get('field')]))
+            )
+        except ProgrammingError:
+            attachment_uuids = []
         attachments = SubmissionImageAttachment.query.filter(
             SubmissionImageAttachment.uuid.in_(attachment_uuids)
         ).join(SubmissionImageAttachment.submission)
