@@ -128,23 +128,27 @@ def checklist_qa_status(uuid):
     try:
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
     except NoResultFound:
-        response = {
+        response_body = {
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     try:
         submission = Submission.query.filter_by(
             uuid=uuid, participant_id=participant.id).one()
     except NoResultFound:
-        response = {
+        response_body = {
             'message': gettext('Invalid checklist'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     form = submission.form
     submission_qa_status = [
@@ -152,13 +156,13 @@ def checklist_qa_status(uuid):
         if form.quality_checks else []
     passed_qa = QUALITY_STATUSES['FLAGGED'] not in submission_qa_status
 
-    response = {
+    response_body = {
         'message': gettext('Ok'),
         'status': 'ok',
         'passedQA': passed_qa
     }
 
-    return jsonify(response)
+    return jsonify(response_body)
 
 
 @csrf.exempt
@@ -167,12 +171,14 @@ def submission():
     try:
         request_data = json.loads(request.form.get('submission'))
     except Exception:
-        response = {
+        response_body = {
             'message': gettext('Invalid data sent'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     form_id = request_data.get('form')
     form_serial = request_data.get('serial')
@@ -181,45 +187,53 @@ def submission():
 
     form = filter_form(form_id)
     if form is None:
-        response = {
+        response_body = {
             'message': gettext('Invalid form'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     try:
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
     except NoResultFound:
-        response = {
+        response_body = {
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     participant = filter_participants(form, participant.participant_id)
     if participant is None:
-        response = {
+        response_body = {
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     # validate payload
     schema_class = form.create_schema()
     data, errors = schema_class().load(payload)
     if errors:
         error_fields = sorted(errors.keys())
-        response = {
+        response_body = {
             'message': gettext('Invalid value(s) for: %(fields)s',
                                fields=','.join(error_fields)),
             'status': 'error',
             'errorFields': error_fields,
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     current_event = getattr(g, 'event', Event.default())
     current_events = Event.overlapping_events(current_event)
@@ -268,11 +282,13 @@ def submission():
 
     # if submission is None, there's no submission
     if submission is None:
-        response = {
+        response_body = {
             'message': gettext('Could not update data. Please check your ID'),
             'status': 'error'
         }
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     data = submission.data.copy() if submission.data else {}
     payload2 = payload.copy()
@@ -376,7 +392,7 @@ def submission():
 
     # return the submission ID so that any updates
     # (for example, sending attachments) can be done
-    response = {
+    response_body = {
         'message': gettext('Data successfully submitted'),
         'status': 'ok',
         'submission': submission.id,
@@ -385,4 +401,4 @@ def submission():
         '_id': submission.uuid,
     }
 
-    return jsonify(response)
+    return jsonify(response_body)

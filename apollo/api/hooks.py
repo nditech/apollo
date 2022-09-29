@@ -8,24 +8,30 @@ from apollo.core import red
 
 
 def process_expired_token(jwt_header, jwt_payload):
-    return jsonify({
+    response = jsonify({
         'status': _('error'),
         'message': _('Token has expired')
-    }), HTTPStatus.UNAUTHORIZED
+    })
+    response.status_code = HTTPStatus.UNAUTHORIZED
+    return response
 
 
 def process_invalid_token(reason):
-    return jsonify({
+    response = jsonify({
         'status': _('error'),
         'message': _(reason)
-    }), HTTPStatus.UNPROCESSABLE_ENTITY
+    })
+    response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
+    return response
 
 
 def process_revoked_token(jwt_header, jwt_payload):
-    return jsonify({
+    response = jsonify({
         'status': _('error'),
         'message': _('Token has been revoked')
-    }), HTTPStatus.UNAUTHORIZED
+    })
+    response.status_code = HTTPStatus.UNAUTHORIZED
+    return response
 
 
 def check_if_token_is_blocklisted(jwt_header, jwt_payload):

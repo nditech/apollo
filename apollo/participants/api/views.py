@@ -150,8 +150,11 @@ def login():
     ).first()
 
     if participant is None:
-        response = {'message': gettext('Login failed'), 'status': 'error'}
-        return jsonify(response), HTTPStatus.FORBIDDEN
+        response_body = {'message': gettext('Login failed'), 'status': 'error'}
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.FORBIDDEN
+
+        return response
 
     access_token = create_access_token(
         identity=str(participant.uuid), fresh=True)
@@ -161,7 +164,7 @@ def login():
     send_jwts_in_response = 'cookies' not in settings.JWT_TOKEN_LOCATION or \
         (request.headers.get('X-TOKEN-IN-BODY') is not None)
 
-    response = {
+    response_body = {
         'data': {
             'participant': {
                 'events': [ev.id for ev in participant.participant_set.events],
@@ -178,11 +181,11 @@ def login():
     }
 
     if send_jwts_in_response:
-        response['data'].update(access_token=access_token)
+        response_body['data'].update(access_token=access_token)
 
-        return jsonify(response)
+        return jsonify(response_body)
 
-    resp = jsonify(response)
+    resp = jsonify(response_body)
     set_access_cookies(resp, access_token)
 
     return resp
@@ -197,16 +200,16 @@ def logout():
     # unset cookies if they are used
     unset_cookies = 'cookies' in settings.JWT_TOKEN_LOCATION
 
-    response = {
+    response_body = {
         'status': 'ok',
         'message': gettext('Logged out successfully')
     }
-    resp = jsonify(response)
+    response = jsonify(response_body)
 
     if unset_cookies:
-        unset_access_cookies(resp)
+        unset_access_cookies(response)
 
-    return resp
+    return response
 
 
 def _get_form_data(participant):
@@ -254,18 +257,20 @@ def get_forms():
     try:
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
     except NoResultFound:
-        response = {
+        response_body = {
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.BAD_REQUEST
+        return response
 
     forms, serials = _get_form_data(participant)
 
     form_data = FormSchema(many=True).dump(forms).data
 
-    result = {
+    response_body = {
         'data': {
             'forms': form_data,
             'serials': serials,
@@ -274,4 +279,4 @@ def get_forms():
         'status': 'ok'
     }
 
-    return jsonify(result)
+    return jsonify(response_body)
