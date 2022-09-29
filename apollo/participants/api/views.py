@@ -151,7 +151,10 @@ def login():
 
     if participant is None:
         response = {'message': gettext('Login failed'), 'status': 'error'}
-        return jsonify(response), HTTPStatus.FORBIDDEN
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.FORBIDDEN
+
+        return rv
 
     access_token = create_access_token(
         identity=str(participant.uuid), fresh=True)
@@ -259,7 +262,9 @@ def get_forms():
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     forms, serials = _get_form_data(participant)
 

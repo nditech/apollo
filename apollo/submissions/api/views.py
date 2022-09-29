@@ -133,7 +133,9 @@ def checklist_qa_status(uuid):
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     try:
         submission = Submission.query.filter_by(
@@ -144,7 +146,9 @@ def checklist_qa_status(uuid):
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     form = submission.form
     submission_qa_status = [
@@ -172,7 +176,9 @@ def submission():
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     form_id = request_data.get('form')
     form_serial = request_data.get('serial')
@@ -186,7 +192,9 @@ def submission():
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     try:
         participant = Participant.query.filter_by(uuid=participant_uuid).one()
@@ -196,7 +204,9 @@ def submission():
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     participant = filter_participants(form, participant.participant_id)
     if participant is None:
@@ -205,7 +215,9 @@ def submission():
             'status': 'error'
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     # validate payload
     schema_class = form.create_schema()
@@ -219,7 +231,9 @@ def submission():
             'errorFields': error_fields,
         }
 
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     current_event = getattr(g, 'event', Event.default())
     current_events = Event.overlapping_events(current_event)
@@ -272,7 +286,9 @@ def submission():
             'message': gettext('Could not update data. Please check your ID'),
             'status': 'error'
         }
-        return jsonify(response), HTTPStatus.BAD_REQUEST
+        rv = jsonify(response)
+        rv.status_code = HTTPStatus.BAD_REQUEST
+        return rv
 
     data = submission.data.copy() if submission.data else {}
     payload2 = payload.copy()
