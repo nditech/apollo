@@ -20,6 +20,7 @@ from apollo.api.decorators import protect
 from apollo.core import csrf, db
 from apollo.deployments.models import Event
 from apollo.formsframework.forms import filter_form, filter_participants
+from apollo.frontend import permissions
 from apollo.frontend.helpers import DictDiffer
 from apollo.odk.utils import make_message_text
 from apollo.participants.models import Participant
@@ -416,6 +417,12 @@ def submission():
     'fields': fields.DelimitedList(fields.Str()),
 })
 def get_image_manifest(**kwargs):
+    if not permissions.export_submissions.can():
+        response_body = {'images': [], 'status': 'error'}
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.FORBIDDEN
+        return response
+
     def _generate_filename(attachment: SubmissionImageAttachment, tag=None):
         extension = Path(attachment.photo.filename).suffix
         parts = [
