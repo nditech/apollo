@@ -737,12 +737,31 @@
   });
 
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
+    $('#imageDeleteConfirmModal').modal('hide');
+
     var tag = document.querySelector('#deleteTag').textContent;
+    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    var deleteLabel = document.querySelector(deleteLabelSelector);
+    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+    var inputField = document.querySelector('input[data-image-tag=' + tag + ']');
+
+    inputField.value = null;
+    deleteLabel.nextElementSibling.classList.remove('btn-primary');
+    deleteLabel.nextElementSibling.classList.add('btn-secondary');
+
+    if (!imagePresenceLabel) {
+      $('#notificationSuccess').toast('show');
+      deleteLabel.classList.toggle('disabled');
+      deleteLabel.style.cursor = 'default';
+      return;
+    }
+
     var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
     var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
     var formData = new FormData();
     formData.append('tag', tag);
-    $('#imageDeleteConfirmModal').modal('hide');
+
     fetch(deleteEndpoint, {
       method: 'POST',
       headers: {
@@ -755,13 +774,12 @@
         payload: response.json()
       };
     }).then(function (message) {
-      var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
-      var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
       var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
       document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-      document.querySelector(imagePresenceLabelSelector).classList.toggle('disabled');
-      document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.remove('text-primary');
-      document.querySelector(imagePresenceLabelSelector).firstChild.firstChild.classList.add('text-dark');
+      document.querySelector(deleteLabelSelector).style.cursor = 'default';
+      imagePresenceLabel.classList.toggle('disabled');
+      imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
+      imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
       document.querySelector(galleryItemSelector).remove();
 
       if (message.isOk) {
@@ -772,10 +790,14 @@
       
     });
   });
-
+  
   var fileChangeHandler = function (changeEventObj) {
     var fileInput = changeEventObj.target;
     var label = fileInput.parentElement;
+    var tag = fileInput.dataset.imageTag;
+    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    document.querySelector(deleteLabelSelector).style.cursor = 'pointer';
+    document.querySelector(deleteLabelSelector).classList.toggle('disabled');
     
     if (fileInput.files.length) {
       label.classList.remove('btn-secondary');
