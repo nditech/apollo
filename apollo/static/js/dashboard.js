@@ -151,7 +151,7 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
       .data(labels)
       .attr("x", window.rtl ? w - 35 + 30 : 35)
       .attr("y", h/2 + 32)
-      .attr("dy", ".29em")
+      .attr("dy", "3px")
       .attr('class', 'text-monospace')
       .text(function(d) { return labelsMap.get(d)});
 
@@ -160,31 +160,32 @@ function drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, tota
       .data(labels)
       .attr("x", window.rtl ? (w - (125 - (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
       .attr("y", h/2 + 32)
-      .attr("dy", ".29em")
+      .attr("dy", "3px")
       .attr("class", "text-monospace")
       .text(function(d) { return '· ' +  dataMap.get(d)});
 
+    // Totals
     var totals = svg.append("g")
       .attr("width", w)
       .attr("height", h/2)
       .selectAll("g")
-      .data(color.domain().slice().reverse())
+      .data(function () { return [0] })
       .enter().append("g")
-      .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("transform", function (d, i) { return "translate(0," + (i * 20 + (Array.from(dataMap.values()).length * 20)) + ")"; });
 
     totals.append("text")
       .data([total_label])
       .attr("x", window.rtl ? w - 35 + 30 : 35)
-      .attr("y", h/2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
-      .attr("dy", ".29em")
+      .attr("y", h/2 + 32)
+      .attr("dy", "3px")
       .attr('class', 'text-monospace font-weight-bold')
       .text(function (d) { return d });
 
     totals.append("text")
       .data([total])
       .attr("x", window.rtl ? (w - (125 - (numDigits(total) * 10))) : 155 - (numDigits(total) * 10))
-      .attr("y", h / 2 + 32 + (Array.from(dataMap.values()).length + 1) * 16)
-      .attr("dy", ".29em")
+      .attr("y", h / 2 + 32)
+      .attr("dy", "3px")
       .attr('class', 'text-monospace font-weight-bold')
       .text(function (d) { return '· ' + d });
 }

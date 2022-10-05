@@ -172,6 +172,7 @@ Id,Link,Name,Complete,Offline,Partial,Missing
       {%- if session['dashboard_chart_type'] != 'bar' %}
       $('.chart').each(function(idx, el) {
         var json = JSON.parse(el.dataset.chart);
+        {% if form.untrack_data_conflicts -%}
         var dataMap = new Map()
           .set('Missing', json.Missing + (json.Conflict || 0))
           .set('Partial', json.Partial)
@@ -185,6 +186,23 @@ Id,Link,Name,Complete,Offline,Partial,Missing
           .set('No Signal', "{{ _('No Signal') }}");
         var colors = ["#dc3545", "#ffc107", "#007bff", "#aaaaaa"];
         var label_colors = ["#ffffff", "#000000", "#ffffff", "#000000"];
+        {% else -%}
+        var dataMap = new Map()
+          .set('Missing', json.Missing)
+          .set('Partial', json.Partial)
+          .set('Complete', json.Complete)
+          .set('Conflict', json.Conflict)
+          .set('No Signal', json.Offline);
+        var labels = ['Missing', 'Partial', 'Complete', 'Conflict', 'No Signal'];
+        var labelsMap = new Map()
+          .set('Missing', "{{ _('Missing') }}")
+          .set('Partial', "{{ _('Partial') }}")
+          .set('Complete', "{{ _('Complete') }}")
+          .set('Conflict', "{{ _('Conflict') }}")
+          .set('No Signal', "{{ _('No Signal') }}");
+        var colors = ["#dc3545", "#ffc107", "#007bff", "#343a40", "#aaaaaa"];
+        var label_colors = ["#ffffff", "#000000", "#ffffff", "#ffffff", "#000000"];
+        {%- endif %}
         var total_label = "{{ _('Total') }}";
 
         drawPieChart(el, dataMap, labels, labelsMap, colors, label_colors, total_label);
