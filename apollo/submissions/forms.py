@@ -209,3 +209,10 @@ def make_submission_edit_form_class(event, form):
         (FlaskForm,),
         form_fields
     )
+
+
+def generate_image_delete_form_class(submission):
+    class ImageAttachmentDeleteForm(FlaskForm):
+        tag = fields.SelectField(choices=submission.form.get_image_fields())
+
+    return ImageAttachmentDeleteForm

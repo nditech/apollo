@@ -501,6 +501,24 @@ class Submission(BaseModel):
             if self.data.get(tag)
         }
 
+    def delete_image_attachment(self, tag):
+        if not self.data.get(tag):
+            return False
+
+        attachment = SubmissionImageAttachment.query.filter_by(
+            uuid=self.data.get(tag)).first()
+
+        if not attachment:
+            return False
+
+        data = self.data.copy()
+        data.pop(tag)
+        self.__class__.query.filter_by(id=self.id).update({'data': data})
+        db.session.delete(attachment)
+        db.session.commit()
+
+        return True
+
 
 class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'

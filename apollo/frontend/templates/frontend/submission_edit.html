@@ -249,24 +249,24 @@
               <td class="col-2 align-middle obs-on">
                 <label for="{{ submission_form.quarantine_status.id }}" class="sr-only">{{ submission_form.quarantine_status.label.text }}</label>
                 {%- if readonly %}
-                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
                 {%- else %}
-                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms) }}
                 {%- endif %}
               </td>
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts -%}
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
                 <label for="{{ sibling_form.quarantine_status.id }}" class="sr-only">{{ sibling_form.quarantine_status.label.text }}</label>
-                {{ render_field(sibling_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(sibling_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
               </td>
               {% endfor %}
               <td class="col-2 align-middle ps-on">
                 <label for="{{ master_form.quarantine_status.id }}" class="sr-only">{{ master_form.quarantine_status.label.text }}</label>
                 {%- if readonly %}
-                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms) }}
                 {%- else %}
-                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
+                {{ render_field(master_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}
                 {%- endif %}
               </td>
               {%- endif %}
@@ -306,26 +306,26 @@
                 </div>
               </td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- endif %}
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts and field['type'] != 'image' -%}
               {% for sibling_form in sibling_forms -%}
-              <td class="col-2 align-middle"><label for="{{ sibling_form[field.tag].id }}" class="sr-only">{{ sibling_form[field.tag].label.text }}</label>{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle"><label for="{{ sibling_form[field.tag].id }}" class="sr-only">{{ sibling_form[field.tag].label.text }}</label>{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {% endfor %}
               {% if readonly -%}
               {% if master_form[field.tag].errors -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on"><label for="{{ master_form[field.tag].id }}" class="sr-only">{{ master_form[field.tag].label.text }}</label>{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace border border-warning' if field.tag in master.overridden_fields else 'form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- endif %}
               {%- endif %}
             </tr>
@@ -345,7 +345,7 @@
         <div class='slick m-3'>
           {% for image in submission.image_attachments -%}
           {% if image.uuid.hex in submission.get_image_data_fields() %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">
             <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
               <img src="{{ image.photo.thumb_url }}">
             </a>
@@ -594,9 +594,9 @@
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">{{ field.description }}</td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
@@ -656,6 +656,27 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" id="imageDeleteConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ _('Delete Image?') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mb-n2">
+        <p>Are you sure you want to delete the image for the following question?</p>
+        <p><strong id="deleteTag"></strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('No') }}</button>
+        <button type="button" class="btn btn-danger" id="confirmImageDelete">{{ _('Yes, delete') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -680,13 +701,75 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
+  document.querySelector('#checklist-panel').addEventListener('click', function (event) {
+    var element = event.target.closest('label[data-delete-label]');
+    if (!element) return;
+    if (!element.classList.contains('disabled')) {
+      document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
+      $('#imageDeleteConfirmModal').modal('show');
+    }
+  });
+
+  document.querySelector('#confirmImageDelete').addEventListener('click', function () {
+    $('#imageDeleteConfirmModal').modal('hide');
+
+    var tag = document.querySelector('#deleteTag').textContent;
+    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    var deleteLabel = document.querySelector(deleteLabelSelector);
+    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+    var inputField = document.querySelector('input[data-image-tag=' + tag + ']');
+
+    inputField.value = null;
+    deleteLabel.nextElementSibling.classList.remove('btn-primary');
+    deleteLabel.nextElementSibling.classList.add('btn-secondary');
+
+    if (!imagePresenceLabel) {
+      deleteLabel.classList.toggle('disabled');
+      deleteLabel.style.cursor = 'default';
+      return;
+    }
+
+    var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
+    var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
+    var formData = new FormData();
+    formData.append('tag', tag);
+
+    fetch(deleteEndpoint, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': CSRFToken,
+      },
+      body: formData
+    }).then(function (response) {
+      return response.ok;
+    }).then(function (deleteSuccess) {
+      if (deleteSuccess) {
+        var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
+        document.querySelector(deleteLabelSelector).style.cursor = 'default';
+        imagePresenceLabel.classList.toggle('disabled');
+        imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
+        imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
+        document.querySelector(galleryItemSelector).remove();
+      }
+    });
+  });
+  
   var fileChangeHandler = function (changeEventObj) {
     var fileInput = changeEventObj.target;
     var label = fileInput.parentElement;
-    
-    if (fileInput.files.length) {
+    var tag = fileInput.dataset.imageTag;
+    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    document.querySelector(deleteLabelSelector).style.cursor = 'pointer';
+    if (fileInput.files.length > 0) {
+      document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
+    } else {
+      document.querySelector(deleteLabelSelector).classList.add('disabled');
+      label.classList.add('btn-secondary');
+      label.classList.remove('btn-primary');
     }
   };
 
