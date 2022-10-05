@@ -19,10 +19,28 @@
     </ol>
   </nav>
 </div>
-<div id="app" class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+<div class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <form method="post">
   <div class="row mt-3">
     <div class="col-md-12">
+      <div id="app" data-quality-checks='{{ quality_controls | tojson|safe }}' data-url-template="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa='{name}') }}">
+        <ul class="list-group">
+          <li class="list-group-item row d-flex">
+            <div class="col-2"><strong>{{ _('ID') }}</strong></div>
+            <div class="col-4"><strong>{{ _('Description') }}</strong></div>
+            <div class="col-6"><strong>{{ _('Conditions') }}</strong></div>
+          </li>
+          <li class="list-group-item row d-flex bg-warning" v-if="qualityChecks.length === 0">
+            <div class="col-12">{{ _('No Data Available') }}</div>
+          </li>
+          <li class="list-group-item row d-flex" v-for="check in qualityChecks">
+            <div class="col-2"><a :href="urlTemplate.replace('{name}', check.name)">[[ check.name ]]</a></div>
+            <div class="col-4">[[ check.description ]]</div>
+            <div class="col-6">[[ check.criteria ]]</div>
+          </li>
+        </ul>
+      </div>
+      <!--
       <div class="table-responsive-md mb-n3">
         <table class="table table-hover">
           <thead>
@@ -50,6 +68,7 @@
           </tbody>
         </table>
       </div>
+      -->
     </div>
   </div>
   </form>
@@ -62,3 +81,21 @@
   <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Quality Assurance') }}</a>
 </div>
 {% endblock %}
+
+{% block tail_js %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script>
+  let qualityChecks = JSON.parse(document.getElementById('app').dataset.qualityChecks);
+  let urlTemplate = decodeURI(document.getElementById('app').dataset.urlTemplate);
+  console.log(urlTemplate);
+  let vm = new Vue({
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    data: {
+      qualityChecks: qualityChecks,
+      urlTemplate: urlTemplate,
+    }
+  });
+</script>
+{% endblock tail_js %}
