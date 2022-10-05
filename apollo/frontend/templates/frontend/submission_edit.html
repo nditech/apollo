@@ -742,18 +742,17 @@
       },
       body: formData
     }).then(function (response) {
-      return {
-        isOk: response.ok,
-        payload: response.json()
-      };
-    }).then(function (message) {
-      var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
-      document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-      document.querySelector(deleteLabelSelector).style.cursor = 'default';
-      imagePresenceLabel.classList.toggle('disabled');
-      imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
-      imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
-      document.querySelector(galleryItemSelector).remove();
+      return response.ok;
+    }).then(function (deleteSuccess) {
+      if (deleteSuccess) {
+        var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
+        document.querySelector(deleteLabelSelector).style.cursor = 'default';
+        imagePresenceLabel.classList.toggle('disabled');
+        imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
+        imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
+        document.querySelector(galleryItemSelector).remove();
+      }
     });
   });
   
