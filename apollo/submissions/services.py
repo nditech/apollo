@@ -72,6 +72,7 @@ class SubmissionService(Service):
             dataset_headers.extend(sample_headers)
             if submission.submission_type == 'O':
                 dataset_headers.append(_('Comment'))
+            dataset_headers.append(_('Quarantine Status'))
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -127,8 +128,11 @@ class SubmissionService(Service):
                     if submission.updated else ''] + [
                         1 if sample in submission.participant.samples else 0
                         for sample in samples] + [
-                        submission.comments[0].comment.replace('\n', '')
-                    if submission.comments else ''])
+                                submission.comments[0].comment.replace('\n', '') # noqa
+                                if submission.comments else '',
+                                submission.quarantine_status.value
+                                if submission.quarantine_status else '',
+                            ])
             else:
                 sib = submission.siblings[0]
                 if submission.location.extra_data:
