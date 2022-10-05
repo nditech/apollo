@@ -130,7 +130,8 @@ class SubmissionService(Service):
                         for sample in samples] + [
                                 submission.comments[0].comment.replace('\n', '') # noqa
                                 if submission.comments else '',
-                                submission.quarantine_status,
+                                submission.quarantine_status.value
+                                if submission.quarantine_status else '',
                             ])
             else:
                 sib = submission.siblings[0]
