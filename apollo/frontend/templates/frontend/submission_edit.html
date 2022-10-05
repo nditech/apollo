@@ -762,11 +762,14 @@
     var tag = fileInput.dataset.imageTag;
     var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
     document.querySelector(deleteLabelSelector).style.cursor = 'pointer';
-    document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-    
-    if (fileInput.files.length) {
+    if (fileInput.files.length > 0) {
+      document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
+    } else {
+      document.querySelector(deleteLabelSelector).classList.add('disabled');
+      label.classList.add('btn-secondary');
+      label.classList.remove('btn-primary');
     }
   };
 
