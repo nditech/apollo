@@ -111,6 +111,7 @@ $(function () {
     if (!event.target.matches('[data-download-all]'))
       return;
 
+    window.onbeforeunload = () => true;
     const endpoint = event.target.dataset.manifestUrl;
     const eventId = event.target.dataset.eventId;
     const formId = event.target.dataset.formId;
@@ -148,8 +149,11 @@ $(function () {
               downloadArchive(memoryStorage, archiveName)
                 .finally(() => { memoryStorage = []; })
             }
-          })
+          }).finally(() => {
+          window.onbeforeunload = null;
+        });
       })
+      
   });
 
 
