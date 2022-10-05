@@ -58,7 +58,11 @@
 </div>
 {%- if session['dashboard_chart_type'] == 'bar' %}
 <pre style="display:none" id="csvdata">
+{% if form.untrack_data_conflicts -%}
 Id,Link,Name,Complete,Offline,Partial,Missing
+{%- else -%}
+Id,Link,Name,Complete,Offline,Partial,Conflict,Missing
+{%- endif %}
 {% for row in data -%}
 {{ row.id }},
 {%- if group %}
@@ -70,7 +74,11 @@ Id,Link,Name,Complete,Offline,Partial,Missing
 {{ url_for('dashboard.response_rate', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}
 {%- endif %}
 {%- endif -%}
+{% if form.untrack_data_conflicts -%}
 ,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Missing }}
+{%- else -%}
+,"{{ row.name }}",{{ row.Complete }},{{ row.Offline }},{{ row.Partial }},{{ row.Conflict }},{{ row.Missing }}
+{%- endif %}
 {% endfor -%}
 </pre>
 <div id="barchart"></div>
@@ -210,7 +218,12 @@ Id,Link,Name,Complete,Offline,Partial,Missing
       {%- else %}
       let rawData = d3.select('#csvdata').text();
       let csvData = d3.csvParse(rawData);
+
+      {% if form.untrack_data_conflicts -%}
       let colors = ["#007bff", "#aaaaaa", "#ffc107", "#dc3545"];
+      {%- else -%}
+      let colors = ["#007bff", "#aaaaaa", "#ffc107", "#343a40", "#dc3545"];
+      {%- endif %}
 
       drawNormalizedBarchart('#barchart', csvData, colors);
       {%- endif %}
