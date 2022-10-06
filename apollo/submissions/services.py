@@ -11,6 +11,7 @@ from apollo.locations.models import LocationType
 from apollo.participants.models import Sample
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
+from apollo.submissions.qa.query_builder import generate_qa_queries
 
 
 def export_field_value(form, submission, tag):
@@ -56,6 +57,14 @@ class SubmissionService(Service):
         else:
             dataset_headers = []
 
+        export_qa = bool(form.quality_checks)
+        if export_qa:
+            query = query.with_entities(
+                Submission,
+                *generate_qa_queries(form)[0],
+            )
+        quality_checks = form.quality_checks if export_qa else []
+
         dataset_headers.extend([
             _('Participant ID'), _('Name'), _('DB Phone'), _('Recent Phone')
         ] + [
@@ -72,7 +81,11 @@ class SubmissionService(Service):
             dataset_headers.extend(sample_headers)
             if submission.submission_type == 'O':
                 dataset_headers.append(_('Comment'))
-            dataset_headers.append(_('Quarantine Status'))
+                dataset_headers.append(_('Quarantine Status'))
+
+                if export_qa:
+                    dataset_headers.extend(
+                        [qc['description'] for qc in quality_checks])
 
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -81,7 +94,13 @@ class SubmissionService(Service):
         yield output.getvalue()
         output.close()
 
-        for submission in query:
+        for item in query:
+            if export_qa:
+                row_dict = item._asdict()
+                submission = row_dict['Submission']
+            else:
+                submission = item
+                row_dict = {}
             location_path = submission.location.make_path()
             if submission.submission_type == 'O':
                 if submission.location.extra_data:
@@ -133,6 +152,10 @@ class SubmissionService(Service):
                                 submission.quarantine_status.value
                                 if submission.quarantine_status else '',
                             ])
+
+                if export_qa:
+                    record.extend(
+                        [row_dict[qc['name']] for qc in quality_checks])
             else:
                 sib = submission.siblings[0]
                 if submission.location.extra_data:
