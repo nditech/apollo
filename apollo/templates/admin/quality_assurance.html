@@ -24,21 +24,7 @@
   <div class="row mt-3">
     <div class="col-md-12">
       <div id="app" data-quality-checks='{{ quality_controls | tojson|safe }}' data-url-template="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa='{name}') }}">
-        <ul class="list-group">
-          <li class="list-group-item row d-flex">
-            <div class="col-2"><strong>{{ _('ID') }}</strong></div>
-            <div class="col-4"><strong>{{ _('Description') }}</strong></div>
-            <div class="col-6"><strong>{{ _('Conditions') }}</strong></div>
-          </li>
-          <li class="list-group-item row d-flex bg-warning" v-if="qualityChecks.length === 0">
-            <div class="col-12">{{ _('No Data Available') }}</div>
-          </li>
-          <li class="list-group-item row d-flex" v-for="check in qualityChecks">
-            <div class="col-2"><a :href="urlTemplate.replace('{name}', check.name)">[[ check.name ]]</a></div>
-            <div class="col-4">[[ check.description ]]</div>
-            <div class="col-6">[[ check.criteria ]]</div>
-          </li>
-        </ul>
+        <qa-table :quality-checks="qualityChecks" :url-template="urlTemplate"></qa-table>
       </div>
       <!--
       <div class="table-responsive-md mb-n3">
@@ -84,13 +70,49 @@
 
 {% block tail_js %}
 {{ super() }}
+<template id="qa-table">
+  <div class="table-responsive mb-n3">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col" class="col-1">{{ _('ID') }}</th>
+          <th scope="col" class="col-3">{{ _('Description') }}</th>
+          <th scope="col">{{ _('Conditions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="check of qualityChecks">
+          <td class="text-monospace align-middle"><a :href="urlTemplate.replace('{name}', check.name)">[[ check.name ]]</a></td>
+          <td class="text-monospace align-middle">[[ check.description ]]</td>
+          <td class="text-monospace align-middle">[[ check.criteria ]]</td>
+        </tr>
+        <tr class="table-warning" v-if="qualityChecks.length === 0">
+          <td class="text-center text-muted" colspan="3">{{ _('No Data Available') }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+<template id="criterion-template">
+  <h5>
+    <span class="badge badge-pill" v-if="index > 1">
+      
+    </span>
+  </h5>
+</template>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script>
   let qualityChecks = JSON.parse(document.getElementById('app').dataset.qualityChecks);
   let urlTemplate = decodeURI(document.getElementById('app').dataset.urlTemplate);
+
+  Vue.component('qa-table', {
+    delimiters: ['[[', ']]'],
+    props: ['qualityChecks', 'urlTemplate'],
+    template: '#qa-table'
+  });
+
   let vm = new Vue({
     el: '#app',
-    delimiters: ['[[', ']]'],
     data: {
       qualityChecks: qualityChecks,
       urlTemplate: urlTemplate,
