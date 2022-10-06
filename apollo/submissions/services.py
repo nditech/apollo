@@ -33,7 +33,7 @@ def export_field_value(form, submission, tag):
 class SubmissionService(Service):
     __model__ = Submission
 
-    def export_list(self, query):
+    def export_list(self, query, include_qa=False):
         if query.count() == 0:
             raise StopIteration
 
@@ -57,7 +57,7 @@ class SubmissionService(Service):
         else:
             dataset_headers = []
 
-        export_qa = bool(form.quality_checks)
+        export_qa = bool(form.quality_checks) and include_qa
         if export_qa:
             query = query.with_entities(
                 Submission,
