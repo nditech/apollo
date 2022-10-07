@@ -31,12 +31,8 @@ $(function () {
       .then(() => {
         BROWSER_STORAGE_AVAILABLE = true;
         browserFileStorage.deleteAll()
-          .then(() => {
-            console.info('Existing storage cleared');
-          })
-          .catch(() => {
-            console.error('Could not clear existing storage');
-          });
+          .then(() => {})
+          .catch(() => {});
       })
       .catch(error => {
         if (error.dbError || !error.supported)
