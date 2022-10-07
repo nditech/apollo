@@ -106,7 +106,7 @@
       moveDown: function (index) {
         if (index === (this.qualityChecks.length - 1))
           return;
-        var check = this.qualityChecks.splice(index, 1)[0];
+        let check = this.qualityChecks.splice(index, 1)[0];
         this.qualityChecks.splice(index + 1, 0, check);
         this.pushUpdate();
       },
@@ -114,14 +114,14 @@
         if (index === 0)
         return;
         
-        var check = this.qualityChecks.splice(index, 1)[0];
+        let check = this.qualityChecks.splice(index, 1)[0];
         this.qualityChecks.splice(index - 1, 0, check);
         this.pushUpdate();
       },
       pushUpdate: function () {
-        var component = this;
-        _.debounce(function () {
-          component.$emit('update-order')
+        let component = this;
+        _.debounce(() => {
+          component.$emit('update-order');
         }, 3000)();
       }
     },
@@ -139,9 +139,9 @@
       orderUpdated: function () {
         // warn the user if they attempt to navigate away before
         // the update completes
-        window.onbeforeunload = function () { return true; };
+        window.onbeforeunload = () => true;
 
-        var remoteUrl = '{{ url_for("formsview.qc", form_id=form.id) }}';
+        let remoteUrl = '{{ url_for("formsview.qc", form_id=form.id) }}';
         fetch(remoteUrl, {
           body: JSON.stringify(this.qualityChecks),
           headers: {
