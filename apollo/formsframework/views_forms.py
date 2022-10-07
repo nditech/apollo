@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime
+from http import HTTPStatus
 from io import BytesIO
 
 from flask import (
@@ -244,6 +245,22 @@ def quality_controls(view, form_id):
         _('Quality Assurance'), form.name]
 
     quality_controls = []
+    if request.method == 'POST':
+        from apollo.formsframework.api.schema import QualityCheckSchema
+
+        result = QualityCheckSchema().load(request.get_json(), many=True)
+        if result.errors:
+            json_response = jsonify({'status': 'error'})
+            json_response.status_code = HTTPStatus.BAD_REQUEST
+            return json_response
+
+        # models.Form.query.filter_by(id=form_id).update(
+        #     {'quality_checks': result.data})
+        # db.session.commit()
+        form.quality_checks = result.data
+        form.save()
+
+        return jsonify({'status': 'ok'})
 
     if form.quality_checks:
         for quality_check in form.quality_checks:

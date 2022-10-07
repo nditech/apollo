@@ -20,3 +20,16 @@ class FormSchema(BaseModelSchema):
 
     def get_form_type(self, obj):
         return str(obj.form_type.code)
+
+
+class CriterionSchema(ma.Schema):
+    lvalue = ma.fields.String(required=True)
+    comparator = ma.fields.String(required=True)
+    rvalue = ma.fields.String(required=True)
+    conjunction = ma.fields.String(required=True)
+
+
+class QualityCheckSchema(ma.Schema):
+    name = ma.fields.String(required=True)
+    description = ma.fields.String(required=True)
+    criteria = ma.fields.List(ma.fields.Nested(CriterionSchema))

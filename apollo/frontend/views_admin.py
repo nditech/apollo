@@ -703,7 +703,7 @@ class FormsView(BaseView):
     def init_surveys(self):
         return survey_init()
 
-    @expose('/qa/<int:form_id>', methods=['GET'])
+    @expose('/qa/<int:form_id>', methods=['GET', 'POST'])
     def qc(self, form_id):
         return quality_controls(self, form_id)
 

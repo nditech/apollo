@@ -23,38 +23,9 @@
   <form method="post">
   <div class="row mt-3">
     <div class="col-md-12">
-      <div id="app" data-quality-checks='{{ quality_controls | tojson|safe }}' data-url-template="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa='{name}') }}">
-        <qa-table :quality-checks="qualityChecks" :url-template="urlTemplate"></qa-table>
+      <div id="app" data-quality-checks='{{ quality_controls | tojson|safe }}' data-url-template="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa='{name}') }}" data-csrf-token="{{ csrf_token() }}">
+        <qa-table :quality-checks="qualityChecks" :url-template="urlTemplate" @update-order="orderUpdated"></qa-table>
       </div>
-      <!--
-      <div class="table-responsive-md mb-n3">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col" class="col-1">{{ _('ID') }}</th>
-              <th scope="col" class="col-3">{{ _('Description') }}</th>
-              <th scope="col">{{ _('Conditions') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {%- for control in quality_controls %}
-            <tr>
-              <td class="text-monospace align-middle"><a href="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa=control.name) }}" class="text-decoration-none">{{ control.name }}</a></td>
-              <td class="text-monospace align-middle">{{ control.description }}</td>
-              <td class="text-monospace align-middle">
-              {%- for criterion in control.criteria %}
-                <h5>{% if loop.index > 1 %}<span class="badge badge-pill {% if criterion.conjunction == '&&' %}badge-warning{% else %}badge-info{% endif %}">{% if criterion.conjunction == '&&' %}{{ _('AND') }}{% else %}{{ _('OR') }}{% endif %}</span>{% endif %}<span class="badge badge-pill badge-primary">{{ criterion.lvalue }}</span><span class="badge badge-pill badge-secondary">{{ criterion.comparator }}</span><span class="badge badge-pill badge-primary">{{ criterion.rvalue }}</span></h5>
-              {%- endfor %}
-              </td>
-            </tr>
-            {%- else %}
-            <tr class="table-warning">
-              <td class="text-center text-muted" colspan="3">{{ _('No Data Available') }}</td>
-            {%- endfor %}
-          </tbody>
-        </table>
-      </div>
-      -->
     </div>
   </div>
   </form>
@@ -75,47 +46,114 @@
     <table class="table table-hover">
       <thead>
         <tr>
+          <th scope="col" class="col-1"></th>
           <th scope="col" class="col-1">{{ _('ID') }}</th>
-          <th scope="col" class="col-3">{{ _('Description') }}</th>
+          <th scope="col" class="col-2">{{ _('Description') }}</th>
           <th scope="col">{{ _('Conditions') }}</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="check of qualityChecks">
-          <td class="text-monospace align-middle"><a :href="urlTemplate.replace('{name}', check.name)">[[ check.name ]]</a></td>
-          <td class="text-monospace align-middle">[[ check.description ]]</td>
-          <td class="text-monospace align-middle">[[ check.criteria ]]</td>
-        </tr>
-        <tr class="table-warning" v-if="qualityChecks.length === 0">
-          <td class="text-center text-muted" colspan="3">{{ _('No Data Available') }}</td>
-        </tr>
-      </tbody>
+        <tbody>
+          <tr v-for="(check, idx) in qualityChecks" :key="idx">
+            <td>
+              <a class="btn btn-outline-light" :disabled="idx === 0" @click="moveUp(idx)"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.13523 8.84197C3.3241 9.04343 3.64052 9.05363 3.84197 8.86477L7.5 5.43536L11.158 8.86477C11.3595 9.05363 11.6759 9.04343 11.8648 8.84197C12.0536 8.64051 12.0434 8.32409 11.842 8.13523L7.84197 4.38523C7.64964 4.20492 7.35036 4.20492 7.15803 4.38523L3.15803 8.13523C2.95657 8.32409 2.94637 8.64051 3.13523 8.84197Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" width="15" height="15"></path></svg></a>
+              <a class="btn btn-outline-light" :disabled="idx === (qualityChecks.length - 1)" @click="moveDown(idx)"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" width="15" height="15"></path></svg></a>
+            </td>
+            <td class="text-monospace align-middle"><a :href="urlTemplate.replace('{name}', check.name)">[[ check.name ]]</a></td>
+            <td class="text-monospace align-middle">[[ check.description ]]</td>
+            <td class="text-monospace align-middle">
+              <criterion v-for="(criterion, index) in check.criteria" :criterion="criterion" :index="index" :key="index"></criterion>
+            </td>
+          </tr>
+          <tr class="table-warning" v-if="qualityChecks.length === 0">
+            <td class="text-center text-muted" colspan="3">{{ _('No Data Available') }}</td>
+          </tr>
+        </tbody>
     </table>
   </div>
 </template>
 <template id="criterion-template">
   <h5>
-    <span class="badge badge-pill" v-if="index > 1">
-      
-    </span>
+    <span class="badge badge-pill" :class="badgeColorClass" v-if="index > 0">[[ conjunctionBadgeText ]]</span>
+    <span class="badge badge-pill badge-primary">[[ criterion.lvalue ]]</span>
+    <span class="badge badge-pill badge-secondary">[[ criterion.comparator ]]</span>
+    <span class="badge badge-pill badge-primary">[[ criterion.rvalue ]]</span>
   </h5>
 </template>
+<script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script>
+  let csrfToken = decodeURI(document.getElementById('app').dataset.csrfToken);
   let qualityChecks = JSON.parse(document.getElementById('app').dataset.qualityChecks);
   let urlTemplate = decodeURI(document.getElementById('app').dataset.urlTemplate);
 
+  Vue.component('criterion', {
+    computed: {
+      badgeColorClass: function () {
+        return this.criterion.conjunction === '&&' ? 'badge-warning' : 'badge-info';
+      },
+      conjunctionBadgeText: function () {
+        return this.criterion.conjunction === '&&' ? '{{ _("AND") }}' : '{{ _("OR") }}';
+      }
+    },
+    delimiters: ['[[', ']]'],
+    props: ['criterion', 'index'],
+    template: '#criterion-template'
+  });
+
   Vue.component('qa-table', {
     delimiters: ['[[', ']]'],
+    methods: {
+      moveDown: function (index) {
+        if (index === (this.qualityChecks.length - 1))
+          return;
+        var check = this.qualityChecks.splice(index, 1)[0];
+        this.qualityChecks.splice(index + 1, 0, check);
+        this.pushUpdate();
+      },
+      moveUp: function (index) {
+        if (index === 0)
+        return;
+        
+        var check = this.qualityChecks.splice(index, 1)[0];
+        this.qualityChecks.splice(index - 1, 0, check);
+        this.pushUpdate();
+      },
+      pushUpdate: function () {
+        var component = this;
+        _.debounce(function () {
+          component.$emit('update-order')
+        }, 3000)();
+      }
+    },
     props: ['qualityChecks', 'urlTemplate'],
     template: '#qa-table'
   });
-
+  
   let vm = new Vue({
     el: '#app',
     data: {
       qualityChecks: qualityChecks,
       urlTemplate: urlTemplate,
+    },
+    methods: {
+      orderUpdated: function () {
+        // warn the user if they attempt to navigate away before
+        // the update completes
+        window.onbeforeunload = function () { return true; };
+
+        var remoteUrl = '{{ url_for("formsview.qc", form_id=form.id) }}';
+        fetch(remoteUrl, {
+          body: JSON.stringify(this.qualityChecks),
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          method: 'POST'
+        }).then(function (response) {
+          if (response.ok)
+            window.onbeforeunload = null;
+        });
+      }
     }
   });
 </script>
