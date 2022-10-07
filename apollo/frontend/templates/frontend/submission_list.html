@@ -370,7 +370,7 @@ ${(props.last_updated ? `
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a>
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a>
     {% if form.has_image_fields %}
-    <a class="dropdown-item" data-download-all="true" data-event-id="{{ g.event.id }}" data-form-id="{{ form.id }}" data-event-name="{{ g.event.name }}" data-form-name="{{ form.name }}" data-manifest-url="{{ url_for('submissions.get_image_manifest') }}" style="cursor: pointer;">{{ _('Download All Images') }}</a>
+    <a class="dropdown-item" data-download-all="true" data-event-id="{{ g.event.id }}" data-form-id="{{ form.id }}" data-event-name="{{ g.event.name }}" data-form-name="{{ form.name }}" data-manifest-url="{{ url_for('submissions.get_image_manifest') }}" style="cursor: pointer;">{{ _('Download Images') }}</a>
     {% endif %}
   </div>
 </div>
