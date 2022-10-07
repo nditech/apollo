@@ -149,7 +149,7 @@
             'X-CSRFToken': csrfToken
           },
           method: 'POST'
-        }).then(function (response) {
+        }).then((response) => {
           if (response.ok)
             window.onbeforeunload = null;
         });
