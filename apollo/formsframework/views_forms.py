@@ -254,9 +254,6 @@ def quality_controls(view, form_id):
             json_response.status_code = HTTPStatus.BAD_REQUEST
             return json_response
 
-        # models.Form.query.filter_by(id=form_id).update(
-        #     {'quality_checks': result.data})
-        # db.session.commit()
         form.quality_checks = result.data
         form.save()
 
