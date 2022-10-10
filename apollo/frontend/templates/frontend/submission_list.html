@@ -21,10 +21,16 @@
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  // initialize the toast
+  $('#notification-toast').toast();
+
   // initialize the storage. it uses IndexedDB, so it could fail to
   // initialize
   let BROWSER_STORAGE_AVAILABLE = null;   // IndexedDB storage
   let memoryStorage = [];                 // in-memory storage
+
+  let totalImageCount = 0;
+  let numProcessedImages = 0;
 
   const setUpBulkDownloads = () => {
     browserFileStorage.init('apollo-image-storage')
@@ -79,9 +85,21 @@ $(function () {
           }
         });
       })
+      .finally(() => {
+        numProcessedImages += imageSpecs.length;
+        updateProgressBar();
+      })
+  };
+
+  const updateProgressBar = () => {
+    let progressBar = document.getElementById('toast-progress');
+    let percentageDone = +(numProcessedImages / totalImageCount * 100).toFixed(1);
+    progressBar.innerText = percentageDone + '%';
+    progressBar.style.width = Math.ceil(percentageDone) + '%';
   };
 
   const processManifest = manifest => {
+    totalImageCount = manifest.length || 1;
     let chunks = chunk(manifest, 10);
     return chunks.map(processChunk);
   };
@@ -113,6 +131,7 @@ $(function () {
     const formId = event.target.dataset.formId;
     const eventName = event.target.dataset.eventName;
     const formName = event.target.dataset.formName;
+    $('#notification-toast').toast('show');
 
     fetch(endpoint, {
       method: 'POST',
@@ -147,6 +166,9 @@ $(function () {
             }
           }).finally(() => {
           window.onbeforeunload = null;
+          document.querySelector('#toast-dismiss').classList.remove('invisible');
+          totalImageCount = 0;
+          numProcessedImages = 0;
         });
       })
       
@@ -343,6 +365,28 @@ ${(props.last_updated ? `
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div aria-live="polite" aria-atomic="true">
+  <div class="toast p-2" role="alert" aria-live="assertive" aria-atomic="true" id="notification-toast" data-autohide="false" style="position: absolute; top: 100px; right: 50px;">
+    <div class="toast-header">
+      <span class="text-info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+        </svg>
+        &nbsp;
+      </span>
+      <strong class="mr-auto">{{ _('Download') }}</strong>
+      <button id="toast-dismiss" type="button" data-dismiss="toast" aria-label="Close" class="ml-2 mb-1 close invisible">
+        <span aria-hidden="true">&times</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <div class="progress">
+        <div id="toast-progress" class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
   </div>
