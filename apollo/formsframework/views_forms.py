@@ -281,6 +281,33 @@ def quality_controls(view, form_id):
 
     return view.render(template_name, **context)
 
+def sort_quality_controls(view, form_id):
+    form = models.Form.query.filter_by(id=form_id).first_or_404()
+
+    if request.method == 'POST':
+        try:
+            ordering = request.json.get('ordering')
+            if form.quality_checks and ordering:
+                qc_hashmap = {}
+                qc_list = []
+                for qc in form.quality_checks:
+                    qc_hashmap[qc['name']] = qc
+
+                for name in ordering:
+                    if name in qc_hashmap:
+                        qc_list.append(qc_hashmap.pop(name))
+                if len(qc_hashmap.keys()) > 0:
+                    for name in qc_hashmap.keys():
+                        qc_list.append(qc_hashmap.pop(name))
+
+                form.quality_checks = qc_list
+                form.save()
+
+                return jsonify({})
+        except ValueError:
+            abort(400, 'Bad Data')
+    else:
+        abort(403, 'Forbidden')
 
 def quality_control_edit(view, form_id, qc=None):
     template_name = 'admin/quality_assurance_edit.html'

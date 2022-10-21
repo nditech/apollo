@@ -39,7 +39,7 @@ from apollo.participants.views_participants import (
 from apollo.formsframework.views_forms import (
     forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
     quality_controls, quality_control_delete, quality_control_edit,
-    import_form_schema, survey_init)
+    sort_quality_controls, import_form_schema, survey_init)
 from apollo.utils import resize_image
 
 
@@ -717,6 +717,10 @@ class FormsView(BaseView):
     @expose('/qa/<int:form_id>/new', methods=['GET', 'POST'])
     def quality_control_add(self, form_id):
         return quality_control_edit(self, form_id)
+
+    @expose('/qa/ordering/<int:form_id>', methods=['POST'])
+    def quality_control_ordering(self, form_id):
+        return sort_quality_controls(self, form_id)
 
 
 class TaskView(BaseView):

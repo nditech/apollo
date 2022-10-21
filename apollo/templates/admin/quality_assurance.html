@@ -99,12 +99,28 @@
               var cursor = $('.ui-sortable-handle').css('cursor');
               $('.ui-sortable-handle').css('cursor', 'wait');
 
-              setTimeout(() => {
-                $('tbody').sortable('enable');
-                $('.ui-sortable-handle').css('cursor', cursor);
+              var ordering = [];
+              $('tbody > tr').each((ix, el) => {
+                ordering.push($(el).attr('id'));
+              });
 
-                $('table').addClass('table-hover');
-              }, 1000);
+              fetch('{{ url_for('formsview.quality_control_ordering', form_id=form.id) }}', {
+                body: JSON.stringify({
+                  ordering: ordering
+                }),
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': '{{ csrf_token() }}'
+                }
+              }).then((response) => {
+                if (response.ok) {
+                  $('tbody').sortable('enable');
+                  $('.ui-sortable-handle').css('cursor', cursor);
+
+                  $('table').addClass('table-hover');
+                }
+              })
             }
           });
         });
