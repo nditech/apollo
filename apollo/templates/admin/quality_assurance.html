@@ -1,4 +1,18 @@
 {% extends 'admin/base.html' %}
+{% block head_css %}
+{{ super() }}
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.css') }}">
+      <style>
+        .noselect {
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+      </style>
+{%- endblock %}%}
 {% block toolbar %}
 
 {% endblock %}
@@ -30,11 +44,12 @@
               <th scope="col" class="col-1">{{ _('ID') }}</th>
               <th scope="col" class="col-3">{{ _('Description') }}</th>
               <th scope="col">{{ _('Conditions') }}</th>
+              <th>&nbsp;</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="noselect">
             {%- for control in quality_controls %}
-            <tr>
+            <tr id="{{ control.name }}">
               <td class="text-monospace align-middle"><a href="{{ url_for('formsview.quality_control_edit', form_id=form.id, qa=control.name) }}" class="text-decoration-none">{{ control.name }}</a></td>
               <td class="text-monospace align-middle">{{ control.description }}</td>
               <td class="text-monospace align-middle">
@@ -42,6 +57,7 @@
                 <h5>{% if loop.index > 1 %}<span class="badge badge-pill {% if criterion.conjunction == '&&' %}badge-warning{% else %}badge-info{% endif %}">{% if criterion.conjunction == '&&' %}{{ _('AND') }}{% else %}{{ _('OR') }}{% endif %}</span>{% endif %}<span class="badge badge-pill badge-primary">{{ criterion.lvalue }}</span><span class="badge badge-pill badge-secondary">{{ criterion.comparator }}</span><span class="badge badge-pill badge-primary">{{ criterion.rvalue }}</span></h5>
               {%- endfor %}
               </td>
+              <td class="align-middle text-right"><i class="fas fa-sort"></i></td>
             </tr>
             {%- else %}
             <tr class="table-warning">
@@ -62,3 +78,51 @@
   <a href="{{ url_for('formsview.quality_control_add', form_id=form.id) }}" class="btn btn-primary">{{ _('Add Quality Assurance') }}</a>
 </div>
 {% endblock %}
+{% block tail_js %}
+{{ super() }}
+      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.js') }}"></script>
+      <script type="text/javascript">
+        $(function () {
+          $("td").each(function () {
+            $(this).css("width", $(this).width());
+          });
+
+          $('tbody').sortable({
+            cursor: 'ns-resize',
+            activate: (e, u) => {
+              u.placeholder.height(u.item[0].offsetHeight);
+            },
+            update: (e, u) => {
+              $('tbody').sortable('disable');
+              $('table').removeClass('table-hover');
+
+              var cursor = $('.ui-sortable-handle').css('cursor');
+              $('.ui-sortable-handle').css('cursor', 'wait');
+
+              var ordering = [];
+              $('tbody > tr').each((ix, el) => {
+                ordering.push($(el).attr('id'));
+              });
+
+              fetch('{{ url_for('formsview.quality_control_ordering', form_id=form.id) }}', {
+                body: JSON.stringify({
+                  ordering: ordering
+                }),
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRF-Token': '{{ csrf_token() }}'
+                }
+              }).then((response) => {
+                if (response.ok) {
+                  $('tbody').sortable('enable');
+                  $('.ui-sortable-handle').css('cursor', cursor);
+
+                  $('table').addClass('table-hover');
+                }
+              })
+            }
+          });
+        });
+      </script>
+{%- endblock %}
