@@ -98,6 +98,7 @@ LANGUAGES = {
     'es': 'Español',
     'fr': 'Français',
     'ka': 'ქართული',
+    'ne': 'नेपाली',
     'ro': 'Română',
     'ru': 'Русский',
     'si': "සිංහල",
