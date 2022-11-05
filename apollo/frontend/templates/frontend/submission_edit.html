@@ -1,4 +1,4 @@
-{% extends 'frontend/layout.html' -%}
+{% extends 'frontend/submission_edit_layout.html' -%}
 {% from 'frontend/macros/submission_field_macros.html' import render_field %}
 {%- set form, siblings, master = submission.form, submission.siblings, submission.master %}
 
@@ -698,6 +698,7 @@
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
@@ -773,7 +774,13 @@
     }
   };
 
+  var splitView = null;
+
   $(function () {
+    splitView = Split(['#editor', '#image-view'], {
+      sizes: [100, 0],
+      minSize: 0
+    });
     $('[data-toggle="tooltip"]').tooltip();
     $('.slick').slick({
         dots: true,
