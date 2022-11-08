@@ -864,7 +864,7 @@
     viewer = new Viewer(container, {
       url: 'data-original',
       inline: true,
-      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 70,
+      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 60,
       toolbar: {
         zoomIn: true,
         zoomOut: true,
@@ -893,7 +893,7 @@
   }, 300);
 
   $(function () {
-    splitView = Split(['#editor', '#image-view'], {
+    splitView = Split(['#lh-col', '#rh-col'], {
       sizes: [100, 0],
       minSize: 0,
       onDragEnd: function (sizes) {
