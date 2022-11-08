@@ -1,9 +1,11 @@
 FROM python:3.6
+ARG ENV
 
 LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 
 ADD requirements/ /app/requirements/
-RUN pip install --no-cache-dir -r /app/requirements/prod.txt
+ADD build.sh /app/
+RUN /app/build.sh
 ADD . /app/
 RUN cd /app/ \
     && make babel-compile
