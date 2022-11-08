@@ -5,9 +5,26 @@
 
 {%- block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick-theme.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.min.css') }}">
+<style>
+  .viewer-download, .viewer-delete {
+    color: #fff;
+    font-family: FontAwesome, serif;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    text-align: center;
+  }
+  .viewer-download::before {
+    content: "\f019";
+  }
+  .viewer-delete::before {
+    content: "\f1f8";
+  }
+</style>
 {% endblock %}
 
 
@@ -691,23 +708,42 @@
   </div>
 {%- endblock %}
 
-
+{% block imagegallery %}
+<div id="image-container" class="col">
+{% if submission.image_attachments %}
+  <ul class="list-group" id="image-viewer-source">
+    {% for image in submission.image_attachments -%}
+      {% if image.uuid.hex in submission.get_image_data_fields() %}
+      <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} <img class="img-fluid" src="{{ image.photo.thumb_url }}"  data-original="{{ image.photo.url }}" alt="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}" data-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}"></li>
+      {% endif %}
+    {%- endfor %}
+  </ul>
+{% endif %}
+</div>
+{% endblock imagegallery %}
 
 {%- block scripts %}
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/compressor.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/viewer.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+
+  function popupDeleteModal(tag) {
+    document.querySelector('#deleteTag').textContent = tag;
+    $('#imageDeleteConfirmModal').modal('show');
+  }
 
   document.querySelector('#checklist-panel').addEventListener('click', function (event) {
     var element = event.target.closest('label[data-delete-label]');
     if (!element) return;
     if (!element.classList.contains('disabled')) {
-      document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
-      $('#imageDeleteConfirmModal').modal('show');
+      popupDeleteModal(element.dataset.deleteLabel);
     }
   });
 
@@ -724,6 +760,14 @@
     inputField.value = null;
     deleteLabel.nextElementSibling.classList.remove('btn-primary');
     deleteLabel.nextElementSibling.classList.add('btn-secondary');
+
+    // update the image preview
+    var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+    var selectedImageViewerEl = document.querySelector(viewerItemSelector);
+    if (selectedImageViewerEl) {
+      selectedImageViewerEl.remove();
+      buildViewer();
+    }
 
     if (!imagePresenceLabel) {
       deleteLabel.classList.toggle('disabled');
@@ -747,12 +791,15 @@
     }).then(function (deleteSuccess) {
       if (deleteSuccess) {
         var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+        var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
         document.querySelector(deleteLabelSelector).classList.toggle('disabled');
         document.querySelector(deleteLabelSelector).style.cursor = 'default';
         imagePresenceLabel.classList.toggle('disabled');
         imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
         imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
         document.querySelector(galleryItemSelector).remove();
+        document.querySelector(viewerItemSelector).remove();
+        buildViewer();
       }
     });
   });
@@ -767,6 +814,35 @@
       document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
+
+      // insert/replace item in the image preview
+      var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+      var selectedImageViewerEl = document.querySelector(viewerItemSelector);
+      if (!selectedImageViewerEl) {
+        var imageViewerEl = document.querySelector('#image-viewer-source');
+        var newListItemNode = document.createElement('li');
+        newListItemNode.dataset.viewerItemTag = tag;
+        newListItemNode.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        var imageElement = document.createElement('img');
+        newListItemNode.appendChild(imageElement);
+        imageViewerEl.appendChild(newListItemNode);
+      } else {
+        var imageElement = selectedImageViewerEl.querySelector('img');
+      }
+      var reader = new FileReader();
+      reader.readAsDataURL(fileInput.files[0]);
+      reader.onloadend = function() {
+        var compressor = new Compressor(fileInput.files[0], {
+          maxHeight: 128,
+          maxWidth: 128,
+          success: function(result) {
+            imageElement.src = URL.createObjectURL(result);
+            imageElement.alt = tag + ' (unsaved)';
+            buildViewer();
+          }
+        });
+        imageElement.dataset.original = reader.result;
+      };
     } else {
       document.querySelector(deleteLabelSelector).classList.add('disabled');
       label.classList.add('btn-secondary');
@@ -775,12 +851,58 @@
   };
 
   var splitView = null;
+  var viewer = null;
+
+  var buildViewer = _.debounce(function () {
+    if (viewer) {
+      viewer.destroy();
+      viewer = null;
+    }
+
+    var container = document.getElementById('image-container');
+    var inheritedAttributes = ['crossOrigin', 'decoding', 'isMap', 'loading', 'referrerPolicy', 'sizes', 'srcset', 'useMap', 'data-tag'];
+    viewer = new Viewer(container, {
+      url: 'data-original',
+      inline: true,
+      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 70,
+      toolbar: {
+        zoomIn: true,
+        zoomOut: true,
+        reset: true,
+        oneToOne: true,
+        play: false,
+        prev: true,
+        next: true,
+        rotateLeft: true,
+        rotateRight: true,
+        flipHorizontal: true,
+        flipVertical: true,
+        download: function () {
+          const a = document.createElement('a');
+          a.href = viewer.image.src;
+          a.download = viewer.image.alt;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        },
+        delete: function () {
+          popupDeleteModal(viewer.image.alt.replace(' (unsaved)', ''));
+        }
+      }
+    });
+  }, 300);
 
   $(function () {
     splitView = Split(['#editor', '#image-view'], {
       sizes: [100, 0],
-      minSize: 0
+      minSize: 0,
+      onDragEnd: function (sizes) {
+        buildViewer();
+      }
     });
+
+    buildViewer();
+
     $('[data-toggle="tooltip"]').tooltip();
     $('.slick').slick({
         dots: true,

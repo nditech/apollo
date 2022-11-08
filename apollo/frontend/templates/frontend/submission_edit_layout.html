@@ -279,7 +279,13 @@
               </div>
             </footer>
           </div>
-          <div id="image-view" style="background-color: #ccc;"></div>
+          <div id="image-view" style="background-color: #ccc; overflow: clip; height: 100vh;">
+            <div class="container">
+              <div class="row">
+                {% block imagegallery %}{% endblock imagegallery %}
+              </div>
+            </div>
+          </div>
         </div>
         {% if g.locale.text_direction == 'rtl' -%}
           <script type="text/javascript">window.rtl = true;</script>
