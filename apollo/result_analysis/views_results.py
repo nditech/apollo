@@ -141,12 +141,12 @@ def _voting_results(form_id, location_id=None):
 
     try:
         overall_summation = dataset.groupby(
-            location.location_type.name).sum().ix[location.name]
+            location.location_type.name).sum().loc[location.name]
         reported_subset = dataset[dataset.reported == True]     # noqa
         valid_dataframe = reported_subset[
             reported_subset[location.location_type.name] == location.name]
         valid_summation = reported_subset.fillna(0).groupby(
-            location.location_type.name).sum().ix[location.name]
+            location.location_type.name).sum().loc[location.name]
         reporting = overall_summation[['missing', 'reported']]
         reporting['reported_pct'] = reporting['reported']/(
             reporting['reported'] + reporting['missing'])
@@ -278,9 +278,9 @@ def _voting_results(form_id, location_id=None):
 
             for sublocation in location_tree[location_type]:
                 try:
-                    _overall = grouped_summation.ix[sublocation.name]
+                    _overall = grouped_summation.loc[sublocation.name]
                     _valid = grouped_valid_summation.fillna(
-                        0).ix[sublocation.name]
+                        0).loc[sublocation.name]
                     _reported_subset = dataset[dataset.reported==True]  # noqa
                     _valid_dataframe = _reported_subset[
                         _reported_subset[location_type] == sublocation.name]
@@ -526,22 +526,22 @@ def results_analysis_with_location(form_id, location_id):
 def _point_estimate(dataframe, numerator, denominator):
     if not isinstance(numerator, list):
         numerator = [numerator]
-    m = dataframe.ix[:, denominator].sum(axis=1)
+    m = dataframe.loc[:, denominator].sum(axis=1)
     mbar = m.sum(axis=0) / m.size
-    return dataframe.ix[:, numerator].sum(axis=0).sum(axis=0) / (mbar * m.size)
+    return dataframe.loc[:, numerator].sum(axis=0).sum(axis=0) / (mbar * m.size)
 
 
 def _variance(dataframe, numerator, denominator):
     p = _point_estimate(dataframe, numerator, denominator)
     psquared = p * p
 
-    m = dataframe.ix[:, denominator].sum(axis=1)
+    m = dataframe.loc[:, denominator].sum(axis=1)
     msquared = m * m
 
     if isinstance(numerator, list):
-        a = dataframe.ix[:, numerator].sum(axis=1)
+        a = dataframe.loc[:, numerator].sum(axis=1)
     else:
-        a = dataframe.ix[:, [numerator]].sum(axis=1)
+        a = dataframe.loc[:, [numerator]].sum(axis=1)
     asquared = a * a
 
     mbar = m.sum(axis=0) / m.size

@@ -12,6 +12,7 @@ from apollo.formsframework.forms import build_questionnaire, find_active_forms
 from apollo.formsframework.models import Form
 from apollo.formsframework.parser import Comparator, grammar_factory
 from apollo.testutils import factory as test_factory, fixtures
+from sqlalchemy.orm.session import close_all_sessions
 
 DEFAULT_FIXTURE_PATH = pathlib.Path(__file__).parent / 'fixtures'
 
@@ -52,7 +53,7 @@ class QuestionnaireTest(TestCase):
         self.incident_form.data = {'groups': [grp2]}
 
     def tearDown(self):
-        db.session.close_all()
+        close_all_sessions()
         db.drop_all()
 
     @mock.patch('apollo.formsframework.forms.filter_form')
@@ -98,7 +99,7 @@ class ComparatorTest(TestCase):
         db.create_all()
 
     def tearDown(self):
-        db.session.close_all()
+        close_all_sessions()
         db.drop_all()
 
     def test_numeric_comparisons(self):
@@ -202,7 +203,7 @@ class FormUtilsTest(TestCase):
         db.create_all()
 
     def tearDown(self):
-        db.session.close_all()
+        close_all_sessions()
         db.drop_all()
 
     def test_active_form_selector(self):

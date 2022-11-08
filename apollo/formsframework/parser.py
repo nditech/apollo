@@ -75,9 +75,14 @@ class Comparator(object):
         self.param = None
 
     def parse(self, source):
-        grammar = '\n'.join(v.__doc__ for k, v in list(vars(self.__class__).items())
-                            if '__' not in k and hasattr(v, '__doc__')
-                            and v.__doc__)
+        # using explicit raw-strings prevents a deprecation warning
+        # caused by the parsing of the escape sequences
+        grammar = r'''
+            expr = operator _ operand
+            operator = ">=" / "<=" / ">" / "<" / "=" / "!="
+            operand = ~"\\-?[0-9\\.]+" / "True" / "False"
+            _ = ~"\\s*"
+        '''
         return Grammar(grammar).parse(source)
 
     def eval(self, source, param=None):
@@ -89,12 +94,10 @@ class Comparator(object):
         return method(node, [self.eval(n) for n in node])
 
     def expr(self, node, children):
-        'expr = operator _ operand'
         operator, _, operand = children
         return operator(self.param, operand)
 
     def operator(self, node, children):
-        'operator = ">=" / "<=" / ">" / "<" / "=" / "!="'
         operators = {
             '>': op.gt, '>=': op.ge,
             '<': op.lt, '<=': op.le,
@@ -102,7 +105,6 @@ class Comparator(object):
         return operators[node.text]
 
     def operand(self, node, children):
-        'operand = ~"\-?[0-9\.]+" / "True" / "False"'
         if node.text == "True":
             return True
         elif node.text == "False":
@@ -111,5 +113,4 @@ class Comparator(object):
             return float(node.text)
 
     def _(self, node, children):
-        '_ = ~"\s*"'
         pass
