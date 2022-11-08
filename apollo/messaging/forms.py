@@ -29,8 +29,8 @@ class KannelForm(wtforms.Form):
     :param charset: (Optional) character set for handling incoming message.
     :param coding: (Optional) not being used at the moment.'''
 
-    sender = wtforms.StringField(validators=[wtforms.validators.required()])
-    text = wtforms.StringField(validators=[wtforms.validators.required()])
+    sender = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
+    text = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
     charset = wtforms.StringField()
     coding = wtforms.StringField()
     timestamp = wtforms.IntegerField()
@@ -60,8 +60,8 @@ class TelerivetForm(BaseHttpForm):
 
     id = wtforms.StringField()
     from_number = wtforms.StringField(
-        validators=[wtforms.validators.required()])
-    content = wtforms.StringField(validators=[wtforms.validators.required()])
+        validators=[wtforms.validators.DataRequired()])
+    content = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
     time_created = wtforms.IntegerField()
 
     def get_message(self):

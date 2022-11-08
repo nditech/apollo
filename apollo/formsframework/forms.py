@@ -149,12 +149,12 @@ class NullValueValidator:
 
 class BaseQuestionnaireForm(wtforms.Form):
     form = wtforms.StringField(
-        'Form', validators=[wtforms.validators.required()],
+        'Form', validators=[wtforms.validators.DataRequired()],
         filters=[lambda data: filter_form(data)])
     form_serial = wtforms.StringField(
         'Form Serial', validators=[wtforms.validators.optional()])
     sender = wtforms.StringField('Sender',
-                                 validators=[wtforms.validators.required()])
+                                 validators=[wtforms.validators.DataRequired()])
     comment = wtforms.StringField('Comment',
                                   validators=[wtforms.validators.optional()])
 
@@ -339,7 +339,7 @@ def build_questionnaire(form, data=None):
     fields['participant'] = wtforms.StringField(
         'Participant',
         filters=[partial(filter_participants, form)],
-        validators=[wtforms.validators.required()])
+        validators=[wtforms.validators.DataRequired()])
 
     for group in form.data['groups']:
         groupspec = (group['name'], [])
@@ -397,15 +397,15 @@ def build_questionnaire(form, data=None):
 
 class FormForm(SecureForm):
     name = wtforms.StringField(
-        _('Name'), validators=[wtforms.validators.InputRequired()])
+        _('Name'), validators=[wtforms.validators.DataRequired()])
     prefix = wtforms.StringField(
-        _('Form Code'), validators=[wtforms.validators.InputRequired()],
+        _('Form Code'), validators=[wtforms.validators.DataRequired()],
         description=_('What code to identify this form in text messages.'))
     form_type = wtforms.SelectField(
         _('Form Type'), choices=Form.FORM_TYPES,
         coerce=choice_type_coerce_factory(
             Form.form_type.type),
-        validators=[wtforms.validators.InputRequired()])
+        validators=[wtforms.validators.DataRequired()])
     untrack_data_conflicts = wtforms.BooleanField(
         _("Don't Track Data Conflicts"),
         description=_('Whether data conflicts between observers in the same location are tracked or not.'))  # noqa
