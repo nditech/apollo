@@ -156,7 +156,7 @@ def update_participants(dataframe, header_map, participant_set, task):
         db.session.commit()
 
     for idx in index:
-        record = dataframe.ix[idx]
+        record = dataframe.iloc[idx]
         participant_id = record[PARTICIPANT_ID_COL]
         try:
             participant_id = int(participant_id)

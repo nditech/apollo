@@ -7,10 +7,10 @@ def incidents_csv(df, groupby, options):
         for group in list(grouped.groups.keys()):
             entry = {}
             entry['LOC'] = group
-            entry['TOT'] = int(df.ix[grouped.groups[group]].ix[:, options].fillna(0).sum().sum())
+            entry['TOT'] = int(df.loc[grouped.groups[group]].loc[:, options].fillna(0).sum().sum())
             for option in options:
                 try:
-                    entry[option] = int(df.ix[grouped.groups[group]][option].fillna(0).sum())
+                    entry[option] = int(df.loc[grouped.groups[group]][option].fillna(0).sum())
                 except KeyError:
                     entry[option] = 0
             incidents.append(entry)

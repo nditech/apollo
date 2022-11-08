@@ -154,7 +154,7 @@ def update_locations(
     # spreadsheet structure
 
     for idx in data_frame.index:
-        current_row = data_frame.ix[idx]
+        current_row = data_frame.iloc[idx]
         location_path_helper_map = {}
         error_this_row = False
         warning_this_row = False
