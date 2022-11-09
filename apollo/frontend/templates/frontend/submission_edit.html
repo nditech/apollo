@@ -353,28 +353,6 @@
     </div>
     {% endfor %}
 
-    {% if submission.image_attachments -%}
-    <div class="card text-white bg-secondary mt-3" id="images">
-      <div class="card-header">
-        <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
-      </div>
-      <div class="card-body">
-        <div class='slick m-3'>
-          {% for image in submission.image_attachments -%}
-          {% if image.uuid.hex in submission.get_image_data_fields() %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">
-            <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
-              <img src="{{ image.photo.thumb_url }}">
-            </a>
-            <span class="mt-2">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}</span>
-          </div>
-          {% endif %}
-          {%- endfor %}
-        </div>
-      </div>
-    </div>
-    {%- endif %}
-
   </div>
   <div class="tab-pane fade" id="messages-panel" role="tabpanel" aria-labelledby="messages-tab">
     <div class="table-responsive">
@@ -709,24 +687,31 @@
 {%- endblock %}
 
 {% block imagegallery %}
-<div id="image-container" class="col">
-{% if submission.image_attachments %}
-  <ul class="list-group" id="image-viewer-source">
-    {% for image in submission.image_attachments -%}
-      {% if image.uuid.hex in submission.get_image_data_fields() %}
-      <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} <img class="img-fluid" src="{{ image.photo.thumb_url }}"  data-original="{{ image.photo.url }}" alt="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}" data-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}"></li>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      {% if submission.image_attachments %}
+        <ul class="list-group invisible" id="image-viewer-source">
+          {% for image in submission.image_attachments -%}
+            {% if image.uuid.hex in submission.get_image_data_fields() %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}" data-viewer-item-description="{{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} <img class="img-fluid" src="{{ image.photo.thumb_url }}"  data-original="{{ image.photo.url }}" alt="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}" data-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}"></li>
+            {% endif %}
+          {%- endfor %}
+        </ul>
       {% endif %}
-    {%- endfor %}
-  </ul>
-{% endif %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div id="img-viewer" class="card sticky-top my-auto"></div>
+    </div>
+  </div>
 </div>
 {% endblock imagegallery %}
 
 {%- block scripts %}
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/slick.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/compressor.min.js') }}"></script>
@@ -790,14 +775,12 @@
       return response.ok;
     }).then(function (deleteSuccess) {
       if (deleteSuccess) {
-        var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
         var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
         document.querySelector(deleteLabelSelector).classList.toggle('disabled');
         document.querySelector(deleteLabelSelector).style.cursor = 'default';
         imagePresenceLabel.classList.toggle('disabled');
         imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
         imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
-        document.querySelector(galleryItemSelector).remove();
         document.querySelector(viewerItemSelector).remove();
         buildViewer();
       }
@@ -859,12 +842,11 @@
       viewer = null;
     }
 
-    var container = document.getElementById('image-container');
-    var inheritedAttributes = ['crossOrigin', 'decoding', 'isMap', 'loading', 'referrerPolicy', 'sizes', 'srcset', 'useMap', 'data-tag'];
+    var container = document.getElementById('image-viewer-source');
     viewer = new Viewer(container, {
       url: 'data-original',
       inline: true,
-      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 60,
+      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 100,
       toolbar: {
         zoomIn: true,
         zoomOut: true,
@@ -904,12 +886,6 @@
     buildViewer();
 
     $('[data-toggle="tooltip"]').tooltip();
-    $('.slick').slick({
-        dots: true,
-        infinite: true,
-        slidesToShow: 5,
-        slidesToScroll: 5
-    });
 
     $('[data-context="hidden_file"]').on('change', fileChangeHandler);
     $('label > span[role="button"').bind('keypress keyup', function (evt) {

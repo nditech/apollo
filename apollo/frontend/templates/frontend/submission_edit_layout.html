@@ -88,7 +88,12 @@
       }
 
       .gutter {
+        {% if form.has_image_fields %}
+        background-color: #6c757d !important;
+        {% else %}
         background-color: #eee;
+        {% endif %}
+        background-color: transparent;
         background-repeat: no-repeat;
         background-position: 50%;
       }
@@ -96,6 +101,10 @@
       .gutter.gutter-horizontal {
         background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
         cursor: col-resize;
+      }
+
+      #viewer1 {
+        height: 100%;
       }
     </style>
     {%- block stylesheets %}{%- endblock %}
@@ -111,7 +120,7 @@
       <!-- End Google Tag Manager -->
     {%- endif %}
   </head>
-  <body style="overflow-y: scroll" class="pb-4 mb-5">
+  <body class="pb-4 mb-5">
     {%- if not debug and gtm_key %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}"
@@ -231,7 +240,7 @@
     <main role="main">
       <div class="container mt-2 h-100">
         <div class="row no-gutters h-100 split">
-          <div id="lh-col">
+          <div id="lh-col" class="overflow-auto" style="height: 80vh;">
             <div class="d-flex justify-content-between align-items-md-center flex-row mb-n2">
               <nav class="nav mb-2" aria-label="breadcrumb">
                 {% block title -%}
@@ -255,7 +264,7 @@
             </div>
             <div class="card mt-3 border-0">{%- block content -%}{%- endblock %}</div>
           </div>
-          <div id="rh-col" class="overflow-hidden">
+          <div id="rh-col" class="overflow-hidden" style="height: 80vh;">
             {% block imagegallery %}{% endblock imagegallery %}
           </div>
         </div>
