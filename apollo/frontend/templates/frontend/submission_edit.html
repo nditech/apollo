@@ -728,7 +728,7 @@
   <ul class="list-group" id="image-viewer-source">
     {% for img_data in submission.get_image_data() %}
     {% if img_data['attachment'] %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ img_data['tag'] }}">
       <strong>{{ img_data['tag'] }}</strong> <img src="{{ img_data['attachment'].photo.thumb_url }}" alt="{{ img_data['tag'] }}" class="img-fluid" data-original="{{ img_data['attachment'].photo.url }}">
     </li>
     {% endif %}
@@ -818,12 +818,15 @@
     }).then(function (deleteSuccess) {
       if (deleteSuccess) {
         var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+        var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
         document.querySelector(deleteLabelSelector).classList.toggle('disabled');
         document.querySelector(deleteLabelSelector).style.cursor = 'default';
         imagePresenceLabel.classList.toggle('disabled');
         imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
         imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
         document.querySelector(galleryItemSelector).remove();
+        document.querySelector(viewerItemSelector).remove();
+        buildViewer();
       }
     });
   });
