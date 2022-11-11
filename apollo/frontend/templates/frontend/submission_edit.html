@@ -5,9 +5,11 @@
 
 {%- block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick-theme.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.min.css') }}">
 <style>
   .split {
     display: flex;
@@ -24,6 +26,30 @@
   .gutter.gutter-horizontal {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
     cursor: col-resize;
+  }
+
+  .viewer-download, .viewer-delete, .viewer-close {
+    color: #fff;
+    font-family: FontAwesome, serif;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    text-align: center;
+  }
+
+  .viewer-close::before {
+    content: "\f00d";
+  }
+
+  .viewer-delete::before {
+    content: "\f1f8";
+  }
+
+  .viewer-download::before {
+    content: "\f019";
+  }
+
+  #viewer1 {
+    height: 100%;
   }
 </style>
 {% endblock %}
@@ -698,7 +724,17 @@
   </div>
 </div>
 </div>
-<div id="rhs" class="d-none bg-dark"></div>
+<div id="rhs" class="d-none bg-dark">
+  <ul class="list-group" id="image-viewer-source">
+    {% for img_data in submission.get_image_data() %}
+    {% if img_data['attachment'] %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <strong>{{ img_data['tag'] }}</strong> <img src="{{ img_data['attachment'].photo.thumb_url }}" alt="{{ img_data['tag'] }}" class="img-fluid" data-original="{{ img_data['attachment'].photo.url }}">
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
 </div>
 {% endblock %}
 
@@ -722,6 +758,8 @@
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/viewer.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
@@ -731,10 +769,17 @@
       var element = event.target.closest('label[data-delete-label]');
       if (!element) return;
       if (!element.classList.contains('disabled')) {
-        document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
-        $('#imageDeleteConfirmModal').modal('show');
+        popupDeleteModal(element.dataset.deleteLabel);
+        return;
       }
     });
+
+    // process split pane activation
+    element = event.target.closest('label[data-presence-label]');
+    if (element) {
+      buildSplitView();
+      return;
+    };
   }
 
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
@@ -802,6 +847,48 @@
 
   let splitView = null;
   let splitViewActive = false;
+  let imageViewer = null;
+
+  let buildViewer = _.debounce(function() {
+    if (imageViewer) {
+      imageViewer.destroy();
+      imageViewer = null;
+    }
+
+    let container = document.querySelector('#image-viewer-source');
+    imageViewer = new Viewer(container, {
+      inline: true,
+      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 100,
+      toolbar: {
+        zoomIn: true,
+        zoomOut: true,
+        reset: true,
+        oneToOne: true,
+        play: false,
+        prev: true,
+        next: true,
+        rotateLeft: true,
+        rotateRight: true,
+        flipHorizontal: true,
+        flipVertical: true,
+        download: function() {
+          const anchor = document.createElement('a');
+          anchor.href = imageViewer.image.src;
+          anchor.download = imageViewer.image.alt;
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+        },
+        delete: function() {
+          popupDeleteModal(imageViewer.image.alt);
+        },
+        close: function() {
+          destroySplitView();
+        }
+      }
+    });
+  }, 300);
+
   function buildSplitView() {
     if (splitViewActive) {
       return;
@@ -817,15 +904,23 @@
     lhs.parentElement.classList.add('split');
     
     splitView = Split(['#lhs', '#rhs'], {
-      sizes: [50, 50]
+      sizes: [50, 50],
+      onDragEnd: function(sizes) {
+        buildViewer();
+      }
     });
+    buildViewer();
   }
   
   function destroySplitView() {
     if (!splitViewActive) {
       return;
     }
-    
+
+    if (imageViewer) {
+      imageViewer.destroy();
+    }
+
     splitViewActive = false;
     let lhs = document.querySelector('#lhs');
     let rhs = document.querySelector('#rhs');
@@ -837,6 +932,11 @@
     lhs.parentElement.classList.remove('split');
     splitView.destroy();
     splitView = null;
+  }
+
+  function popupDeleteModal(tag) {
+    document.querySelector('#deleteTag').textContent = tag;
+    $('#imageDeleteConfirmModal').modal('show');
   }
 
   $(function () {
@@ -854,7 +954,6 @@
         evt.preventDefault();
         var spanButton = this;
         var fileInput = spanButton.parentElement.children[1];
-        console.log(fileInput);
         fileInput.click();
       }
     });
