@@ -777,7 +777,7 @@
     // process split pane activation
     element = event.target.closest('label[data-presence-label]');
     if (element) {
-      buildSplitView();
+      buildSplitView(element.dataset.presenceLabel);
       return;
     };
   }
@@ -845,18 +845,27 @@
     }
   };
 
+  const imageViewerSource = document.querySelector('#image-viewer-source');
   let splitView = null;
   let splitViewActive = false;
   let imageViewer = null;
 
-  let buildViewer = _.debounce(function() {
+  function getImageTags() {
+    let elementList = Array.prototype.slice.call(imageViewerSource.querySelectorAll('li > img'))
+    return elementList.map(function(imgEl) {
+      return imgEl.alt;
+    });
+  }
+
+  let buildViewer = _.debounce(function(startTag) {
+    let currentTag = null;
     if (imageViewer) {
+      currentTag = imageViewer.image.alt;
       imageViewer.destroy();
       imageViewer = null;
     }
 
-    let container = document.querySelector('#image-viewer-source');
-    imageViewer = new Viewer(container, {
+    imageViewer = new Viewer(imageViewerSource, {
       inline: true,
       minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 100,
       toolbar: {
@@ -887,16 +896,32 @@
         }
       }
     });
+
+    if (startTag) {
+      const idx = getImageTags().indexOf(startTag);
+      if (idx !== -1) {
+        imageViewer.view(idx);
+      }
+    } else if (currentTag) {
+      const idx = getImageTags().indexOf(startTag);
+      if (idx !== -1) {
+        imageViewer.view(idx);  
+      }
+    }
   }, 300);
 
-  function buildSplitView() {
+  function buildSplitView(startTag) {
     if (splitViewActive) {
+      buildViewer(startTag);
       return;
     }
 
     splitViewActive = true;
     let lhs = document.querySelector('#lhs');
     let rhs = document.querySelector('#rhs');
+    let container = document.querySelector('main').firstElementChild;
+    container.classList.remove('container');
+    container.classList.add('px-1');
     lhs.classList.add('overflow-auto');
     rhs.classList.remove('d-none');
     rhs.classList.add('overflow-hidden');
@@ -909,7 +934,7 @@
         buildViewer();
       }
     });
-    buildViewer();
+    buildViewer(startTag);
   }
   
   function destroySplitView() {
@@ -924,6 +949,9 @@
     splitViewActive = false;
     let lhs = document.querySelector('#lhs');
     let rhs = document.querySelector('#rhs');
+    let container = document.querySelector('main').firstElementChild;
+    container.classList.add('container');
+    container.classList.remove('px-1');
     splitView.setSizes([100, 0]);
     lhs.classList.remove('overflow-auto');
     rhs.classList.add('d-none');
