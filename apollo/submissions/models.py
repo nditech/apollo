@@ -501,6 +501,30 @@ class Submission(BaseModel):
             if self.data.get(tag)
         }
 
+    def get_image_data(self):
+        image_tags = self.form.get_image_fields()
+        descriptions = [
+            self.form.get_field_by_tag(tag).get('description')
+            for tag in image_tags
+        ]
+        attachments = [
+            SubmissionImageAttachment.query.filter_by(
+                uuid=self.data.get(tag)).first()
+            if self.data.get(tag) else None
+            for tag in image_tags
+        ]
+
+        image_data = [
+            {
+                'tag': tag,
+                'description': description,
+                'attachment': attachment
+            } for (tag, description, attachment) in
+            zip(image_tags, descriptions, attachments)
+        ]
+
+        return image_data
+
     def delete_image_attachment(self, tag):
         if not self.data.get(tag):
             return False
