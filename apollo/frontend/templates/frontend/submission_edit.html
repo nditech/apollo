@@ -822,7 +822,8 @@
         document.querySelector(deleteLabelSelector).classList.toggle('disabled');
         document.querySelector(deleteLabelSelector).style.cursor = 'default';
         imagePresenceLabel.classList.toggle('disabled');
-        imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
+        imagePresenceLabel.firstChild.firstChild.classList.remove('text-white');
+        imagePresenceLabel.classList.remove('bg-primary');
         imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
         document.querySelector(galleryItemSelector).remove();
         document.querySelector(viewerItemSelector).remove();
