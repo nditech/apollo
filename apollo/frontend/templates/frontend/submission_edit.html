@@ -352,12 +352,12 @@
                 </div>
               </td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- endif %}
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts and field['type'] != 'image' -%}
@@ -729,7 +729,7 @@
     {% for img_data in submission.get_image_data() %}
     {% if img_data['attachment'] %}
     <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ img_data['tag'] }}">
-      <strong>{{ img_data['tag'] }}</strong> <img src="{{ img_data['attachment'].photo.thumb_url }}" alt="{{ img_data['tag'] }}" class="img-fluid" data-original="{{ img_data['attachment'].photo.url }}">
+      <strong>{{ img_data['tag'] }}</strong> <img src="{{ img_data['attachment'].photo.thumb_url }}" alt="{{ img_data['tag'] }}" class="img-fluid" data-original="{{ img_data['attachment'].photo.url }}" description="{{ img_data['description'] }}" tag="{{ img_data['tag'] }}" unsaved="false">
     </li>
     {% endif %}
     {% endfor %}
@@ -759,6 +759,7 @@
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/compressor.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/viewer.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
@@ -822,9 +823,10 @@
         document.querySelector(deleteLabelSelector).classList.toggle('disabled');
         document.querySelector(deleteLabelSelector).style.cursor = 'default';
         imagePresenceLabel.classList.toggle('disabled');
-        imagePresenceLabel.firstChild.firstChild.classList.remove('text-white');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
         imagePresenceLabel.classList.remove('bg-primary');
-        imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+        delete imagePresenceLabel.dataset.presenceLabel;
         document.querySelector(galleryItemSelector).remove();
         document.querySelector(viewerItemSelector).remove();
         buildViewer();
@@ -842,6 +844,48 @@
       document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
+      var otherLabel = label.previousElementSibling.previousElementSibling;
+      otherLabel.dataset.presenceLabel = tag;
+      otherLabel.classList.remove('disabled');
+
+      // insert/replace the item in the image preview
+      let viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+      let selectedImageViewerEl = document.querySelector(viewerItemSelector);
+      let imageElement;
+      if (!selectedImageViewerEl) {
+        let imageViewerEl = document.querySelector('#image-viewer-source');
+        let newListItemNode = document.createElement('li');
+        newListItemNode.dataset.viewerItemTag = tag;
+        newListItemNode.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        imageElement = document.createElement('img');
+        imageElement.classList.add('img-fluid');
+        let labelElement = document.createElement('strong');
+        labelElement.innerText = tag;
+        newListItemNode.appendChild(labelElement);
+        newListItemNode.appendChild(imageElement);
+        imageViewerEl.appendChild(newListItemNode);
+      } else {
+        imageElement = selectedImageViewerEl.querySelector('img');
+      }
+
+      var reader = new FileReader();
+      reader.readAsDataURL(fileInput.files[0]);
+      reader.addEventListener('load', function(evt) {
+        var compressor = new Compressor(fileInput.files[0], {
+          maxHeight: 128,
+          maxWidth: 128,
+          success: function(result) {
+            imageElement.src = URL.createObjectURL(result);
+            imageElement.alt = tag;
+            imageElement.setAttribute('tag', tag);
+            imageElement.setAttribute('description', fileInput.dataset.imageDescription);
+            imageElement.setAttribute('unsaved', 'true');
+            imageElement.dataset.original = evt.target.result;
+            buildViewer(tag);
+          }
+        });
+        imageElement.dataset.original = reader.result;
+      });
     } else {
       document.querySelector(deleteLabelSelector).classList.add('disabled');
       label.classList.add('btn-secondary');
@@ -870,8 +914,20 @@
     }
 
     imageViewer = new Viewer(imageViewerSource, {
+      inheritedAttributes: ['crossOrigin', 'decoding', 'isMap', 'loading', 'referrerPolicy', 'sizes', 'srcset', 'useMap', 'description', 'tag', 'unsaved'],
       inline: true,
       minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 100,
+      title: function(image, imageData) {
+        const tag = image.getAttribute('tag');
+        const description= image.getAttribute('description');
+        const status = image.getAttribute('unsaved');
+
+        if (status === 'false') {
+          return `${tag} · ${description} (${imageData.naturalWidth} × ${imageData.naturalHeight})`;
+        } else {
+          return `${tag} · ${description} · {{ _('Not saved') }} (${imageData.naturalWidth} × ${imageData.naturalHeight})`;
+        }
+      },
       toolbar: {
         zoomIn: true,
         zoomOut: true,
