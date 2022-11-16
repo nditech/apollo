@@ -703,7 +703,7 @@
 
   var checklistPanel = document.querySelector('#checklist-panel');
   if (checklistPanel) {
-    document.querySelector('#checklist-panel').addEventListener('click', function (event) {
+    checklistPanel.addEventListener('click', function (event) {
       var element = event.target.closest('label[data-delete-label]');
       if (!element) return;
       if (!element.classList.contains('disabled')) {
