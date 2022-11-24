@@ -773,14 +773,14 @@
         popupDeleteModal(element.dataset.deleteLabel);
         return;
       }
-    });
 
-    // process split pane activation
-    element = event.target.closest('label[data-presence-label]');
-    if (element) {
-      buildSplitView(element.dataset.presenceLabel);
-      return;
-    };
+      // process split pane activation
+      element = event.target.closest('label[data-presence-label]');
+      if (element) {
+        buildSplitView(element.dataset.presenceLabel);
+        return;
+      };
+    });
   }
 
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
