@@ -701,14 +701,17 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  document.querySelector('#checklist-panel').addEventListener('click', function (event) {
-    var element = event.target.closest('label[data-delete-label]');
-    if (!element) return;
-    if (!element.classList.contains('disabled')) {
-      document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
-      $('#imageDeleteConfirmModal').modal('show');
-    }
-  });
+  var checklistPanel = document.querySelector('#checklist-panel');
+  if (checklistPanel) {
+    checklistPanel.addEventListener('click', function (event) {
+      var element = event.target.closest('label[data-delete-label]');
+      if (!element) return;
+      if (!element.classList.contains('disabled')) {
+        document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
+        $('#imageDeleteConfirmModal').modal('show');
+      }
+    });
+  }
 
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
     $('#imageDeleteConfirmModal').modal('hide');
