@@ -265,11 +265,8 @@ class QATreeVisitor(BaseVisitor):
             self.prev_cast_type = cast_type
             if cast_type in (BigInteger, Integer):
                 return cast(
-                    func.coalesce(
-                        func.nullif(Submission.data[var_name].astext, ''),
-                        '0'
-                    ), cast_type
-                )
+                    func.nullif(Submission.data[var_name].astext, ''),
+                    cast_type)
             elif cast_type is not None:
                 return Submission.data[var_name].astext.cast(cast_type)
             return Submission.data[var_name]
