@@ -768,8 +768,7 @@
   if (checklistPanel) {
     checklistPanel.addEventListener('click', function (event) {
       var element = event.target.closest('label[data-delete-label]');
-      if (!element) return;
-      if (!element.classList.contains('disabled')) {
+      if (element && !element.classList.contains('disabled')) {
         popupDeleteModal(element.dataset.deleteLabel);
         return;
       }
