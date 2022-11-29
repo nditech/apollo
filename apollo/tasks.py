@@ -8,4 +8,4 @@ from apollo.messaging.tasks import send_messages, send_email
 from apollo.participants.tasks import import_participants
 from apollo.locations.tasks import import_locations
 from apollo.submissions.tasks import init_submissions
-from apollo.users.tasks import import_users
+

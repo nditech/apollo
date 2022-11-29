@@ -485,10 +485,6 @@ class UserAdminView(BaseAdminView):
         form = UserImportForm()
         if form.validate_on_submit():
             dataset = json.loads(form.data.get('payload'))
-
-            # uncomment the line below and commented-out
-            # import above to run task asynchronously
-            # import_users.delay(dataset, g.deployment.id)
             models.User.import_user_list(
                 dataset, deployment_id=g.deployment.id)
 
