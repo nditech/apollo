@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from pandas.io.json import json_normalize
-from sqlalchemy import BigInteger, String, cast, func
+from sqlalchemy import TIMESTAMP, BigInteger, String, cast, func
 from sqlalchemy.dialects.postgresql import array_agg
 from sqlalchemy.orm import aliased
 
@@ -23,7 +23,6 @@ def make_submission_dataframe(query, form, selected_tags=None,
     if excluded_tags:
         fields = fields.difference(excluded_tags)
 
-    # the 'updated' field is required for results analysis
     integral_fields = [
         tag for tag in fields
         if form.get_field_by_tag(tag)['type'] == 'integer'
@@ -36,9 +35,14 @@ def make_submission_dataframe(query, form, selected_tags=None,
             BigInteger).label(tag) for tag in integral_fields]
     other_fields = fields.difference(integral_fields)
 
+    # the 'updated' field is required for results analysis
     columns.extend([
         Submission.data[tag].label(tag) for tag in other_fields] + [
-            Submission.updated
+            func.coalesce(
+                # casting to TIMESTAMP so as to lose the time zone
+                Submission.extra_data['voting_timestamp'].cast(TIMESTAMP),
+                Submission.updated
+            ).label('updated')
         ])
 
     # alias just in case the query is already joined to the tables below
