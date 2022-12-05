@@ -320,6 +320,18 @@ class BaseQuestionnaireForm(wtforms.Form):
                         update_params['data'] = data
                         update_params['last_phone_number'] = phone_num
                         update_params['participant_updated'] = current_timestamp()  # noqa
+
+                        # set the 'voting_timestamp' extra data attribute to
+                        # the current timestamp only if a voting share was
+                        # updated and it has not been previously set
+                        if (
+                            any(vs in data.keys() for vs in submission.form.vote_shares)  # noqa
+                            and not (submission.extra_data or {}).get('voting_timestamp')  # noqa
+                        ):
+                            extra_data = submission.extra_data or {}
+                            extra_data['voting_timestamp'] = current_timestamp().isoformat()  # noqa
+                            update_params['extra_data'] = extra_data
+
                         services.submissions.find(
                             id=submission.id
                         ).update(update_params, synchronize_session=False)

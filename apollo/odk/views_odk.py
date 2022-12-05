@@ -266,6 +266,16 @@ def submission():
         submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
             longitude=geopoint_lon, latitude=geopoint_lat)
 
+    # set the 'voting_timestamp' extra data attribute to the current timestamp
+    # only if a voting share was updated and it has not been previously set
+    if (
+        any(vs in data.keys() for vs in submission.form.vote_shares)
+        and not (submission.extra_data or {}).get('voting_timestamp')
+    ):
+        extra_data = submission.extra_data or {}
+        extra_data['voting_timestamp'] = current_timestamp().isoformat()
+        submission.extra_data = extra_data
+
     db.session.add(submission)
     db.session.add_all(attachments)
     for attachment in deleted_attachments:

@@ -87,6 +87,13 @@ class Submission(BaseModel):
     location_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB, default={})
+
+    '''
+    The extra_data field contains values with the following keys:
+
+    voting_timestamp - a date time string representing the first time any of
+    the voting results were reported in ISO 8601 format
+    '''
     extra_data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES), index=True)
     serial_no = db.Column(db.String, index=True)
@@ -307,6 +314,17 @@ class Submission(BaseModel):
 
         master.data = subset
         master.participant_updated = self.participant_updated
+
+        # update the 'voting_timestamp' extra data attribute only if
+        # it has not been previously set and that it was defined in the
+        # submission
+        if (
+            not (master.extra_data or {}).get('voting_timestamp')
+            and (self.extra_data or {}).get('voting_timestamp')
+        ):
+            extra_data = master.extra_data or {}
+            extra_data['voting_timestamp'] = self.extra_data.get('voting_timestamp')  # noqa
+            master.extra_data = extra_data
 
         db.session.begin(nested=True)
         db.session.add_all([self, master])

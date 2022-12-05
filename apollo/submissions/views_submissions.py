@@ -42,6 +42,7 @@ from apollo.submissions.aggregation import (
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.qa.query_builder import generate_qa_queries
 from apollo.submissions.utils import make_submission_dataframe
+from apollo.utils import current_timestamp
 
 
 auth = HTTPBasicAuth()
@@ -981,6 +982,17 @@ def submission_edit(submission_id):
                         else:
                             update_params['overridden_fields'] = []
 
+                        # set the 'voting_timestamp' extra data attribute to
+                        # the current timestamp only if a voting share was
+                        # updated and it has not been previously set
+                        if (
+                            any(vs in data.keys() for vs in master_submission.form.vote_shares)  # noqa
+                            and not (master_submission.extra_data or {}).get('voting_timestamp')  # noqa
+                        ):
+                            extra_data = master_submission.extra_data or {}
+                            extra_data['voting_timestamp'] = current_timestamp().isoformat()  # noqa
+                            update_params['extra_data'] = extra_data
+
                         services.submissions.find(
                             id=master_submission.id).update(
                                 update_params, synchronize_session=False)
@@ -1112,6 +1124,18 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
+
+                        # set the 'voting_timestamp' extra data attribute to
+                        # the current timestamp only if a voting share was
+                        # updated and it has not been previously set
+                        if (
+                            any(vs in data.keys() for vs in submission.form.vote_shares)  # noqa
+                            and not (submission.extra_data or {}).get('voting_timestamp')  # noqa
+                        ):
+                            extra_data = submission.extra_data or {}
+                            extra_data['voting_timestamp'] = current_timestamp().isoformat()  # noqa
+                            update_params['extra_data'] = extra_data
+
                         services.submissions.find(id=submission.id).update(
                             update_params)
 
