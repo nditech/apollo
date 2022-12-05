@@ -125,14 +125,12 @@ $(function () {
     if (!event.target.matches('[data-download-all]'))
       return;
 
-    window.onbeforeunload = () => true;
     const endpoint = event.target.dataset.manifestUrl;
     const eventId = event.target.dataset.eventId;
     const formId = event.target.dataset.formId;
     const eventName = event.target.dataset.eventName;
     const formName = event.target.dataset.formName;
-    $('#notification-toast').toast('show');
-
+    
     fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({
@@ -143,35 +141,43 @@ $(function () {
         'Content-Type': 'application/json'
       }
     })
-      .then(response => response.json())
-      .then(data => {
+    .then(response => response.json())
+    .then(data => {
+      if (!data || !data.images || (data.images.length === 0)) {
 
-        Promise.all(processManifest(data.images))
-          .then(() => {
-            let fileSpecs = null;
-            const timestamp = Math.floor(Date.now() / 1000);
-            archiveName = `${eventName}-${formName}-${timestamp}.zip`;
-            if (BROWSER_STORAGE_AVAILABLE) {
-              browserFileStorage.loadAll()
-              .then(files => {
-                fileSpecs = files;
-                return downloadArchive(fileSpecs, archiveName);
-              })
-              .finally(() => {
-                browserFileStorage.deleteAll();
-              })
-            } else {
-              downloadArchive(memoryStorage, archiveName)
-                .finally(() => { memoryStorage = []; })
-            }
-          }).finally(() => {
+        return;
+      }
+
+      // prompt user if they try to exit the page once downloads begin,
+      // and show notification toast
+      window.onbeforeunload = () => true;
+      $('#notification-toast').toast('show');
+
+      Promise.all(processManifest(data.images))
+        .then(() => {
+          let fileSpecs = null;
+          const timestamp = Math.floor(Date.now() / 1000);
+          archiveName = `${eventName}-${formName}-${timestamp}.zip`;
+          if (BROWSER_STORAGE_AVAILABLE) {
+            browserFileStorage.loadAll()
+            .then(files => {
+              fileSpecs = files;
+              return downloadArchive(fileSpecs, archiveName);
+            })
+            .finally(() => {
+              browserFileStorage.deleteAll();
+            })
+          } else {
+            downloadArchive(memoryStorage, archiveName)
+              .finally(() => { memoryStorage = []; })
+          }
+        }).finally(() => {
           window.onbeforeunload = null;
           document.querySelector('#toast-dismiss').classList.remove('invisible');
           totalImageCount = 0;
           numProcessedImages = 0;
-        });
-      })
-      
+      });
+    });
   });
 
 
