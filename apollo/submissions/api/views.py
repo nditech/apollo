@@ -434,7 +434,15 @@ def get_image_manifest(**kwargs):
             parts.append(tag)
         else:
             image_fields = attachment.submission.get_image_data_fields()
-            associated_tag = image_fields.get(attachment.uuid.hex).get('tag')
+
+            # deal with orphan attachments and edge cases
+            if not image_fields:
+                return ''
+            image_field = image_fields.get(attachment.uuid.hex)
+            if not image_field:
+                return ''
+
+            associated_tag = image_field.get('tag')
             parts.append(associated_tag)
 
         filename = slugify('-'.join(parts)) + extension
@@ -475,6 +483,9 @@ def get_image_manifest(**kwargs):
         response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
 
         return response
+
+    # prune orphans
+    dataset = [record for record in dataset if record['filename'] != '']
 
     response = jsonify({'images': dataset, 'status': 'ok'})
     response.status_code = HTTPStatus.OK
