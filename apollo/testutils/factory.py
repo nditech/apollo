@@ -19,7 +19,6 @@ def create_test_app():
 
     test_settings = {
         'SQLALCHEMY_DATABASE_URI': settings.TEST_DATABASE_URL,
-        'TESTING': True,
     }
 
     testConfig = TestConfig()
@@ -33,7 +32,6 @@ def create_test_app():
 def create_full_test_app():
     test_settings = {
         'SQLALCHEMY_DATABASE_URI': settings.TEST_DATABASE_URL,
-        'TESTING': True,
     }
 
     testConfig = TestConfig()
