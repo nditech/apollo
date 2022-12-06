@@ -792,9 +792,8 @@
     deleteLabel.nextElementSibling.classList.remove('btn-primary');
     deleteLabel.nextElementSibling.classList.add('btn-secondary');
 
-    if (!imagePresenceLabel) {
-      deleteLabel.classList.toggle('disabled');
-      deleteLabel.style.cursor = 'default';
+    if (imagePresenceLabel && !imagePresenceLabel.dataset.remote) {
+      updateUIAfterDelete(tag, false);
       return;
     }
 
@@ -813,22 +812,45 @@
       return response.ok;
     }).then(function (deleteSuccess) {
       if (deleteSuccess) {
-        var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
-        var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
-        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-        document.querySelector(deleteLabelSelector).style.cursor = 'default';
-        imagePresenceLabel.classList.toggle('disabled');
-        imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
-        imagePresenceLabel.classList.remove('bg-primary');
-        imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
-        delete imagePresenceLabel.dataset.presenceLabel;
-        document.querySelector(galleryItemSelector).remove();
-        document.querySelector(viewerItemSelector).remove();
-        buildViewer();
+        updateUIAfterDelete(tag, true);
       }
     });
   });
-  
+
+  var updateUIAfterDelete = function (tag, remoteDeleted) {
+    var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+    var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+
+    if (imagePresenceLabel.dataset.remote) {
+      if (remoteDeleted) {
+        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
+        document.querySelector(deleteLabelSelector).style.cursor = 'default';
+      }
+    } else {
+      document.querySelector(deleteLabelSelector).classList.toggle('disabled');
+      document.querySelector(deleteLabelSelector).style.cursor = 'default';
+    }
+    imagePresenceLabel.classList.toggle('disabled');
+    imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
+    imagePresenceLabel.classList.remove('bg-primary');
+    imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+    imagePresenceLabel.style.cursor = 'default';
+    delete imagePresenceLabel.dataset.presenceLabel;
+
+    var galleryItemElement = document.querySelector(galleryItemSelector);
+    var viewerItemElement = document.querySelector(viewerItemSelector);
+    if (galleryItemElement) {
+      galleryItemElement.remove();
+    }
+    if (viewerItemElement) {
+      viewerItemElement.remove();
+    }
+    destroySplitView();
+  }
+
   var fileChangeHandler = function (changeEventObj) {
     var fileInput = changeEventObj.target;
     var label = fileInput.parentElement;
