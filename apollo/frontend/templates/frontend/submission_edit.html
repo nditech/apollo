@@ -385,13 +385,13 @@
       </div>
       <div class="card-body">
         <div class='slick m-3'>
-          {% for image in submission.image_attachments -%}
-          {% if image.uuid.hex in submission.get_image_data_fields() %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">
-            <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
-              <img src="{{ image.photo.thumb_url }}">
+          {% for item in submission.get_image_data() -%}
+          {% if item['attachment'] %}
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}">
+            <a href="{{ item['attachment'].photo.url }}" data-lightbox="images" data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
+              <img src="{{ item['attachment'].photo.thumb_url }}" alt="{{ item['description'] }}">
             </a>
-            <span class="mt-2">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}</span>
+            <span class="mt-2">{{ item['tag'] }}</span>
           </div>
           {% endif %}
           {%- endfor %}
