@@ -709,7 +709,7 @@
         </button>
       </div>
       <div class="modal-body mb-n2">
-        <p>Are you sure you want to delete the image for the following question?</p>
+        <p id="confirm-delete-message"></p>
         <p><strong id="deleteTag"></strong></p>
       </div>
       <div class="modal-footer">
@@ -816,6 +816,16 @@
       }
     });
   });
+
+  var isImageLoaded = function (tag) {
+    let selector = 'input[data-image-tag="' + tag + '"]';
+    let fileInput = document.querySelector(selector);
+    if (fileInput.files.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   var updateUIAfterDelete = function (tag, remoteDeleted) {
     var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
@@ -1042,6 +1052,15 @@
 
   function popupDeleteModal(tag) {
     document.querySelector('#deleteTag').textContent = tag;
+    const localMessage = "{{ _('Are you sure you want to delete the current loaded image for the following question?') }}";
+    const remoteMessage = "{{ _('Are you sure you want to delete the saved image for the following question?') }}";
+
+    let messageElement = document.querySelector('#confirm-delete-message');
+    if (isImageLoaded(tag)) {
+      messageElement.textContent = localMessage;
+    } else {
+      messageElement.textContent = remoteMessage;
+    }
     $('#imageDeleteConfirmModal').modal('show');
   }
 
