@@ -760,10 +760,10 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  var checklistPanel = document.querySelector('#checklist-panel');
+  let checklistPanel = document.querySelector('#checklist-panel');
   if (checklistPanel) {
     checklistPanel.addEventListener('click', function (event) {
-      var element = event.target.closest('label[data-delete-label]');
+      let element = event.target.closest('label[data-delete-label]');
       if (element && !element.classList.contains('disabled')) {
         popupDeleteModal(element.dataset.deleteLabel);
         return;
@@ -778,9 +778,35 @@
     });
   }
 
+  let originalImageInfo = {};
+  Array.from(document.querySelectorAll('#image-viewer-source > li')).forEach(listEl => {
+    let tagElement = listEl.querySelector('strong');
+    let imageElement = listEl.querySelector('img');
+
+    originalImageInfo[tagElement.textContent] = {
+      thumbnail: imageElement.src,
+      url: imageElement.dataset.original
+    };
+  });
+
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
     $('#imageDeleteConfirmModal').modal('hide');
 
+    let tag = document.querySelector('#deleteTag').textContent;
+    if (isImageLoaded(tag)) {
+      deleteLocalImage(tag);
+    } else {
+      let imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+      let imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+      if (imagePresenceLabel.dataset.remote) {
+        deleteRemoteImage(tag);
+      }
+    }
+
+
+
+
+    /*
     var tag = document.querySelector('#deleteTag').textContent;
     var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
     var deleteLabel = document.querySelector(deleteLabelSelector);
@@ -788,15 +814,20 @@
     var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
     var inputField = document.querySelector('input[data-image-tag=' + tag + ']');
 
-    inputField.value = null;
-    deleteLabel.nextElementSibling.classList.remove('btn-primary');
-    deleteLabel.nextElementSibling.classList.add('btn-secondary');
+    // if there's a loaded image, remove it, update the UI, and exit
+    if (inputField.value) {
+      inputField.value = null;
+      inputField.files = (new DataTransfer()).files;
 
-    if (imagePresenceLabel && !imagePresenceLabel.dataset.remote) {
+      if (!imagePresenceLabel.dataset.remote) {
+        deleteLabel.nextElementSibling.classList.remove('btn-primary');
+        deleteLabel.nextElementSibling.classList.add('btn-secondary');
+      }
       updateUIAfterDelete(tag, false);
       return;
     }
 
+    // if there's no loaded image, delete what's on the server
     var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
     var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
     var formData = new FormData();
@@ -815,9 +846,10 @@
         updateUIAfterDelete(tag, true);
       }
     });
+    */
   });
 
-  var isImageLoaded = function (tag) {
+  const isImageLoaded = function (tag) {
     let selector = 'input[data-image-tag="' + tag + '"]';
     let fileInput = document.querySelector(selector);
     if (fileInput.files.length > 0) {
@@ -827,51 +859,71 @@
     }
   };
 
-  var updateUIAfterDelete = function (tag, remoteDeleted) {
-    var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
-    var viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
-    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
-    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
-    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+  const updateUIAfterDelete = function (tag, remoteDeleted) {
+    let galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+    let viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+    let deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    let imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+    let imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+    let deleteLabel = document.querySelector(deleteLabelSelector);
+    let galleryItemElement = document.querySelector(galleryItemSelector);
+    let viewerItemElement = document.querySelector(viewerItemSelector);
 
+    // only disable the delete label if the remote
+    // image was present and deleted
     if (imagePresenceLabel.dataset.remote) {
       if (remoteDeleted) {
-        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-        document.querySelector(deleteLabelSelector).style.cursor = 'default';
+        if (deleteLabel) {
+          deleteLabel.classList.toggle('disabled');
+          deleteLabel.style.cursor = 'default';
+        }
+
+        imagePresenceLabel.classList.toggle('disabled');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
+        imagePresenceLabel.classList.remove('bg-primary');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+        imagePresenceLabel.style.cursor = 'default';
+        delete imagePresenceLabel.dataset.presenceLabel;
+        delete imagePresenceLabel.dataset.remote;
+
+        if (galleryItemElement) {
+          galleryItemElement.remove();
+        }
+        if (viewerItemElement) {
+          viewerItemElement.remove();
+        }
       }
     } else {
-      document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-      document.querySelector(deleteLabelSelector).style.cursor = 'default';
-    }
-    imagePresenceLabel.classList.toggle('disabled');
-    imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
-    imagePresenceLabel.classList.remove('bg-primary');
-    imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
-    imagePresenceLabel.style.cursor = 'default';
-    delete imagePresenceLabel.dataset.presenceLabel;
+      if (deleteLabel) {
+        deleteLabel.classList.toggle('disabled');
+        deleteLabel.style.cursor = 'default';
+      }
 
-    var galleryItemElement = document.querySelector(galleryItemSelector);
-    var viewerItemElement = document.querySelector(viewerItemSelector);
-    if (galleryItemElement) {
-      galleryItemElement.remove();
+      imagePresenceLabel.classList.toggle('disabled');
+      imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
+      imagePresenceLabel.classList.remove('bg-primary');
+      imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+      imagePresenceLabel.style.cursor = 'default';
+      delete imagePresenceLabel.dataset.presenceLabel;
     }
-    if (viewerItemElement) {
-      viewerItemElement.remove();
-    }
+    
     destroySplitView();
   }
 
-  var fileChangeHandler = function (changeEventObj) {
-    var fileInput = changeEventObj.target;
-    var label = fileInput.parentElement;
-    var tag = fileInput.dataset.imageTag;
-    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+  let deleteLocalImage = function (tag) {};
+  let deleteRemoteImage = function (tag) {};
+
+  const fileChangeHandler = function (changeEventObj) {
+    let fileInput = changeEventObj.target;
+    let label = fileInput.parentElement;
+    let tag = fileInput.dataset.imageTag;
+    let deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
     document.querySelector(deleteLabelSelector).style.cursor = 'pointer';
     if (fileInput.files.length > 0) {
       document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
-      var otherLabel = label.previousElementSibling.previousElementSibling;
+      let otherLabel = label.previousElementSibling.previousElementSibling;
       otherLabel.dataset.presenceLabel = tag;
       otherLabel.classList.remove('disabled');
 
@@ -895,10 +947,10 @@
         imageElement = selectedImageViewerEl.querySelector('img');
       }
 
-      var reader = new FileReader();
+      let reader = new FileReader();
       reader.readAsDataURL(fileInput.files[0]);
       reader.addEventListener('load', function(evt) {
-        var compressor = new Compressor(fileInput.files[0], {
+        let compressor = new Compressor(fileInput.files[0], {
           maxHeight: 128,
           maxWidth: 128,
           success: function(result) {
