@@ -11,7 +11,7 @@
 {% elif field_type == 'image' %}
 <div class="d-flex justify-content-end">
 {% if form_field.data %}
-<label class="btn btn-light mx-2 bg-primary" data-presence-label="{{ form_field.short_name }}" style="cursor: pointer;" data-remote="true"><span role="button" tabindex="1"><i class="fas fa-file-image text-white"></i></span></label>
+<label class="btn btn-light mx-2 bg-primary" data-presence-label="{{ form_field.short_name }}" style="cursor: pointer;"><span role="button" tabindex="1"><i class="fas fa-file-image text-white"></i></span></label>
 {% if perms.modify_images.can() %}
 <label class="btn btn-danger mx-2" style="cursor: pointer;" data-delete-label="{{ form_field.short_name }}"><span role="button" tabindex="1"><i class="fa fa-trash"></i></span></label>
 <label class="btn btn-secondary mx-2" style="cursor: pointer;" data-context="select_button">

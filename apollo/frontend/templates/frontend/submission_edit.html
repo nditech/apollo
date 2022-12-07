@@ -796,57 +796,10 @@
     if (isImageLoaded(tag)) {
       deleteLocalImage(tag);
     } else {
-      let imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
-      let imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
-      if (imagePresenceLabel.dataset.remote) {
+      if (originalImageInfo[tag]) {
         deleteRemoteImage(tag);
       }
     }
-
-
-
-
-    /*
-    var tag = document.querySelector('#deleteTag').textContent;
-    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
-    var deleteLabel = document.querySelector(deleteLabelSelector);
-    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
-    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
-    var inputField = document.querySelector('input[data-image-tag=' + tag + ']');
-
-    // if there's a loaded image, remove it, update the UI, and exit
-    if (inputField.value) {
-      inputField.value = null;
-      inputField.files = (new DataTransfer()).files;
-
-      if (!imagePresenceLabel.dataset.remote) {
-        deleteLabel.nextElementSibling.classList.remove('btn-primary');
-        deleteLabel.nextElementSibling.classList.add('btn-secondary');
-      }
-      updateUIAfterDelete(tag, false);
-      return;
-    }
-
-    // if there's no loaded image, delete what's on the server
-    var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
-    var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
-    var formData = new FormData();
-    formData.append('tag', tag);
-
-    fetch(deleteEndpoint, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': CSRFToken,
-      },
-      body: formData
-    }).then(function (response) {
-      return response.ok;
-    }).then(function (deleteSuccess) {
-      if (deleteSuccess) {
-        updateUIAfterDelete(tag, true);
-      }
-    });
-    */
   });
 
   const isImageLoaded = function (tag) {
@@ -909,9 +862,86 @@
     
     destroySplitView();
   }
+  */
+  let deleteLocalImage = function (tag) {
+    let deleteLabel = document.querySelector('label[data-delete-label=' + tag + ']');
+    let fileInput = document.querySelector('input[data-image-tag=' + tag + ']');
+    let imagePresenceLabel = document.querySelector('label[data-presence-label=' + tag + ']');
+    let viewerItemElement = document.querySelector('li[data-viewer-item-tag=' + tag + ']');
 
-  let deleteLocalImage = function (tag) {};
-  let deleteRemoteImage = function (tag) {};
+    // clear the file input
+    fileInput.value = null;
+    fileInput.files = (new DataTransfer()).files;
+
+    // change the labels
+    if (!originalImageInfo[tag]) {
+      // delete label
+      deleteLabel.classList.add('disabled');
+      deleteLabel.style.cursor = 'default';
+
+      // change the file presence label
+      imagePresenceLabel.classList.add('disabled');
+    }
+
+    // change the file loaded label
+    deleteLabel.nextElementSibling.classList.remove('btn-primary');
+    deleteLabel.nextElementSibling.classList.add('btn-secondary');
+
+    // update the viewer item
+    if (originalImageInfo[tag]) {
+      let imageEl = viewerItemElement.querySelector('img');
+      imageEl.src = originalImageInfo[tag].thumbnail;
+      imageEl.dataset.original = originalImageInfo[tag].url;
+    } else {
+      viewerItemElement.remove();
+    }
+
+    destroySplitView();
+  };
+
+  let deleteRemoteImage = function (tag) {
+    let deleteLabel = document.querySelector('label[data-delete-label=' + tag + ']');
+    let galleryItemElement = document.querySelector('div[data-gallery-item-tag=' + tag + ']');
+    let imagePresenceLabel = document.querySelector('label[data-presence-label=' + tag + ']');
+    let viewerItemElement = document.querySelector('li[data-viewer-item-tag=' + tag + ']');
+
+    const deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
+    const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+    let formData = new FormData();
+    formData.append('tag', tag);
+
+    fetch(deleteEndpoint, {
+      body: formData,
+      headers: {
+        'X-CSRFToken': csrfToken,
+      },
+      method: 'POST'
+    })
+    .then(response => response.ok)
+    .then(deleteSuceeded => {
+      if (deleteSuceeded) {
+        // change delete label
+        deleteLabel.classList.add('disabled');
+        deleteLabel.style.cursor = 'default';
+  
+        // change image presence label
+        imagePresenceLabel.classList.remove('bg-primary');
+        imagePresenceLabel.classList.add('disabled');
+        imagePresenceLabel.querySelector('i').classList.remove('fas', 'text-white');
+        imagePresenceLabel.querySelector('i').classList.add('far', 'text-dark');
+  
+        if (galleryItemElement) {
+          galleryItemElement.remove();
+        }
+
+        if (viewerItemElement) {
+          viewerItemElement.remove();
+        }
+
+        destroySplitView();
+      }
+    });
+  };
 
   const fileChangeHandler = function (changeEventObj) {
     let fileInput = changeEventObj.target;
