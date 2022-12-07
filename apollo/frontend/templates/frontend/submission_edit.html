@@ -1052,7 +1052,7 @@
         download: function() {
           const anchor = document.createElement('a');
           anchor.href = imageViewer.image.src;
-          anchor.download = imageViewer.image.alt;
+          anchor.download = `{{ submission.participant.participant_id }}-${imageViewer.image.alt}`;
           document.body.appendChild(anchor);
           anchor.click();
           document.body.removeChild(anchor);
