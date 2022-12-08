@@ -27,6 +27,9 @@ def _make_form_instance(metadata):
     vote_shares = metadata.get('vote_shares')
     if vote_shares is not None:
         form.vote_shares = sorted(vote_shares.split(','))
+    turnout_fields = metadata.get('turnout_fields')
+    if turnout_fields is not None:
+        form.turnout_fields = sorted(turnout_fields.split(','))
 
     try:
         form.calculate_moe = bool(int(metadata.get('calculate_moe')))
@@ -275,7 +278,7 @@ def export_form(form):
                        'require_exclamation', 'calculate_moe',
                        'accredited_voters_tag', 'invalid_votes_tag',
                        'registered_voters_tag', 'blank_votes_tag',
-                       'quality_checks_enabled', 'vote_shares']
+                       'quality_checks_enabled', 'vote_shares', 'turnout_fields']  # noqa
     qa_header = ['name', 'description', 'left', 'relation', 'right',
                  'conjunction']
 
@@ -304,7 +307,9 @@ def export_form(form):
     metadata_sheet.write(1, 8, form.blank_votes_tag)
     metadata_sheet.write(1, 9, 1 if form.quality_checks_enabled else 0)
     vote_shares = ','.join(form.vote_shares) if form.vote_shares else ''
+    turnout_fields = ','.join(form.turnout_fields) if form.turnout_fields else ''
     metadata_sheet.write(1, 10, vote_shares)
+    metadata_sheet.write(1, 11, turnout_fields)
 
     # write out form structure
     current_survey_row = 1

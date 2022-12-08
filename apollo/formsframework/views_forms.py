@@ -149,8 +149,9 @@ def new_form(view):
         _('Create Form')]
 
     web_form = FormForm()
-    web_form.vote_shares.choices = [('', '')]
-    web_form.result_images.choices = [('', '')]
+    web_form.vote_shares.choices = []
+    web_form.turnout_fields.choices = []
+    web_form.result_images.choices = []
 
     if not web_form.validate_on_submit():
         context = {
@@ -189,9 +190,11 @@ def edit_form(view, form_id):
         [(tag, tag) for tag in form.tags]
     web_form.registered_voters_tag.choices = [('', '')] + \
         [(tag, tag) for tag in form.tags]
-    web_form.vote_shares.choices = [('', '')] + \
+    web_form.vote_shares.choices = [] + \
         [(tag, tag) for tag in form.tags]
-    web_form.result_images.choices = [('', '')] + \
+    web_form.turnout_fields.choices = [] + \
+        [(tag, tag) for tag in form.tags]
+    web_form.result_images.choices = [] + \
         [
             (tag, tag)
             for tag in form.tags

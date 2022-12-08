@@ -9,7 +9,7 @@ from flask_babelex import gettext, lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from marshmallow import Schema, fields, validate
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy_json import NestedMutableJson
 from sqlalchemy_utils import ChoiceType
 from slugify import slugify
@@ -100,6 +100,7 @@ class Form(Resource):
     blank_votes_tag = db.Column(db.String)
     vote_shares = db.Column(JSONB)
     result_images = db.Column(JSONB)
+    turnout_fields = db.Column(ARRAY(db.String))
     show_moment = db.Column(db.Boolean, default=False)
     show_map = db.Column(db.Boolean, default=False)
     show_progress = db.Column(db.Boolean, default=False)

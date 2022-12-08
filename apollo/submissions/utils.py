@@ -40,7 +40,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
         Submission.data[tag].label(tag) for tag in other_fields] + [
             func.coalesce(
                 # casting to TIMESTAMP so as to lose the time zone
-                Submission.extra_data['voting_timestamp'].cast(TIMESTAMP),
+                Submission.extra_data['voting_timestamp'].astext.cast(TIMESTAMP),  # noqa
                 Submission.updated
             ).label('updated')
         ])
