@@ -266,14 +266,29 @@ def submission():
         submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
             longitude=geopoint_lon, latitude=geopoint_lat)
 
+    extra_data = submission.extra_data or {}
+    now = current_timestamp().isoformat()
+
     # set the 'voting_timestamp' extra data attribute to the current timestamp
     # only if a voting share was updated and it has not been previously set
     if (
         any(vs in data.keys() for vs in submission.form.vote_shares)
         and not (submission.extra_data or {}).get('voting_timestamp')
     ):
-        extra_data = submission.extra_data or {}
-        extra_data['voting_timestamp'] = current_timestamp().isoformat()
+        extra_data['voting_timestamp'] = now
+
+    # set the 'turnout_timestamps' attribute for any of the turnout fields if
+    # they have been reported for the first time
+    turnout_fields = set(data.keys()).intersection(set(submission.form.turnout_fields or []))  # noqa
+    if turnout_fields:
+        if not extra_data.get('turnout_timestamps'):
+            extra_data['turnout_timestamps'] = {}
+
+        for turnout_field in turnout_fields:
+            if not extra_data['turnout_timestamps'].get(turnout_field):  # noqa
+                extra_data['turnout_timestamps'][turnout_field] = now  # noqa
+
+    if extra_data:
         submission.extra_data = extra_data
 
     db.session.add(submission)

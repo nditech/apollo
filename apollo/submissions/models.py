@@ -93,6 +93,10 @@ class Submission(BaseModel):
 
     voting_timestamp - a date time string representing the first time any of
     the voting results were reported in ISO 8601 format
+
+    turnout_timestamps - a mapping of field tags to a date time string
+    representing the first time the turnout field was updated. The date time
+    string is stored in the ISO 8601 format.
     '''
     extra_data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES), index=True)

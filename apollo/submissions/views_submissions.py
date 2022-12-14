@@ -982,6 +982,9 @@ def submission_edit(submission_id):
                         else:
                             update_params['overridden_fields'] = []
 
+                        extra_data = master_submission.extra_data or {}
+                        now = current_timestamp().isoformat()
+
                         # set the 'voting_timestamp' extra data attribute to
                         # the current timestamp only if a voting share was
                         # updated and it has not been previously set
@@ -989,8 +992,21 @@ def submission_edit(submission_id):
                             any(vs in data.keys() for vs in master_submission.form.vote_shares)  # noqa
                             and not (master_submission.extra_data or {}).get('voting_timestamp')  # noqa
                         ):
-                            extra_data = master_submission.extra_data or {}
-                            extra_data['voting_timestamp'] = current_timestamp().isoformat()  # noqa
+                            extra_data['voting_timestamp'] = now
+
+                        # set the 'turnout_timestamps' attribute for any of the
+                        # turnout fields if they have been reported for the
+                        # first time
+                        turnout_fields = set(data.keys()).intersection(set(master_submission.form.turnout_fields or []))  # noqa
+                        if turnout_fields:
+                            if not extra_data.get('turnout_timestamps'):
+                                extra_data['turnout_timestamps'] = {}
+
+                            for turnout_field in turnout_fields:
+                                if not extra_data['turnout_timestamps'].get(turnout_field):  # noqa
+                                    extra_data['turnout_timestamps'][turnout_field] = now  # noqa
+
+                        if extra_data:
                             update_params['extra_data'] = extra_data
 
                         services.submissions.find(
@@ -1124,6 +1140,8 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
+                        extra_data = submission.extra_data or {}
+                        now = current_timestamp().isoformat()
 
                         # set the 'voting_timestamp' extra data attribute to
                         # the current timestamp only if a voting share was
@@ -1132,8 +1150,21 @@ def submission_edit(submission_id):
                             any(vs in data.keys() for vs in submission.form.vote_shares)  # noqa
                             and not (submission.extra_data or {}).get('voting_timestamp')  # noqa
                         ):
-                            extra_data = submission.extra_data or {}
-                            extra_data['voting_timestamp'] = current_timestamp().isoformat()  # noqa
+                            extra_data['voting_timestamp'] = now
+
+                        # set the 'turnout_timestamps' attribute for any of the
+                        # turnout fields if they have been reported for the
+                        # first time
+                        turnout_fields = set(data.keys()).intersection(set(submission.form.turnout_fields or []))  # noqa
+                        if turnout_fields:
+                            if not extra_data.get('turnout_timestamps'):
+                                extra_data['turnout_timestamps'] = {}
+
+                            for turnout_field in turnout_fields:
+                                if not extra_data['turnout_timestamps'].get(turnout_field):  # noqa
+                                    extra_data['turnout_timestamps'][turnout_field] = now  # noqa
+
+                        if extra_data:
                             update_params['extra_data'] = extra_data
 
                         services.submissions.find(id=submission.id).update(
