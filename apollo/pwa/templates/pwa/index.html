@@ -188,7 +188,7 @@
                 <div class="mb-3">
                   <label for="serial" class="form-label">{{ _('Serial number') }}</label>
                   <div id="autocomplete" class="autocomplete" ref="autocomplete">
-                    <input type="text" class="form-control" name="serial" id="serial" v-model="submission.serial" :disabled="disableSerialInput">
+                    <input type="text" class="form-control" name="serial" id="serial" v-model="submission.serial">
                     <ul class="autocomplete-result-list"></ul>
                   </div>
                 </div>
@@ -781,12 +781,6 @@
             return '{{ _("Close") }}';
           else
             return '{{ _("Save and close") }}';
-        },
-        disableSerialInput() {
-          return this.form.form_type === 'SURVEY' &&
-            this.submission.serial !== '' &&
-            this.submission.serial !== null &&
-            this.submission.serial !== undefined;
         }
       },
       data() {
@@ -997,7 +991,10 @@
             debounceTime: 500,
             search: instance.search,
             getResultValue: instance.getResultValue,
-            onSubmit: result => { instance.submission.serial = result.serial; }
+            onSubmit: result => {
+              if (instance.submission.serial !== result.serial)
+                instance.submission.serial = result.serial;
+            }
           });
         }
 
