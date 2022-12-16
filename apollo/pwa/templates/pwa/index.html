@@ -992,11 +992,8 @@
             search: instance.search,
             getResultValue: instance.getResultValue,
             onSubmit: result => {
-              /*
               if (instance.submission.serial !== result.serial)
-              instance.submission.serial = result.serial;
-              */
-              instance.$emit('load-survey', result.serial);
+                instance.submission.serial = result.serial;
             }
           });
         }
