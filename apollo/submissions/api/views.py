@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
 from http import HTTPStatus
+from itertools import chain
+from pathlib import Path
 from uuid import uuid4
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_security.decorators import login_required
+from slugify import slugify
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
@@ -15,6 +20,7 @@ from apollo.api.decorators import protect
 from apollo.core import csrf, db
 from apollo.deployments.models import Event
 from apollo.formsframework.forms import filter_form, filter_participants
+from apollo.frontend import permissions
 from apollo.frontend.helpers import DictDiffer
 from apollo.odk.utils import make_message_text
 from apollo.participants.models import Participant
@@ -402,3 +408,86 @@ def submission():
     }
 
     return jsonify(response_body)
+
+
+@csrf.exempt
+@login_required
+@use_kwargs({
+    'event': fields.Int(required=True), 'form': fields.Int(required=True),
+    'fields': fields.DelimitedList(fields.Str()),
+})
+def get_image_manifest(**kwargs):
+    if not permissions.export_submissions.can():
+        response_body = {'images': [], 'status': 'error'}
+        response = jsonify(response_body)
+        response.status_code = HTTPStatus.FORBIDDEN
+        return response
+
+    def _generate_filename(attachment: SubmissionImageAttachment, tag=None):
+        extension = Path(attachment.photo.filename).suffix
+        parts = [
+            attachment.submission.event.name,
+            attachment.submission.form.name,
+            attachment.submission.participant.participant_id,
+        ]
+        if tag:
+            parts.append(tag)
+        else:
+            image_fields = attachment.submission.get_image_data_fields()
+
+            # deal with orphan attachments and edge cases
+            if not image_fields:
+                return ''
+            image_field = image_fields.get(attachment.uuid.hex)
+            if not image_field:
+                return ''
+
+            associated_tag = image_field.get('tag')
+            parts.append(associated_tag)
+
+        filename = slugify('-'.join(parts)) + extension
+        return filename.lower()
+
+    params = {
+        'event_id': kwargs.get('event'),
+        'form_id': kwargs.get('form'),
+        'submission_type': 'O'
+    }
+
+    if kwargs.get('fields'):
+        submissions = Submission.query.filter_by(**params)
+        entities = [Submission.data[tag] for tag in kwargs.get('fields')]
+        attachment_uuids = list(
+            chain(*submissions.with_entities(*entities)))
+        attachment_uuids = [v for v in attachment_uuids if v]
+        attachments = SubmissionImageAttachment.query.filter(
+            SubmissionImageAttachment.uuid.in_(attachment_uuids)
+        ).join(SubmissionImageAttachment.submission)
+    else:
+        attachments = SubmissionImageAttachment.query.join(
+            SubmissionImageAttachment.submission).filter_by(**params)
+
+    query = attachments.join(Submission.event).join(
+        Submission.participant).join(Submission.form)
+
+    try:
+        dataset = [{
+            'url': attachment.photo.url,
+            'filename': _generate_filename(attachment, kwargs.get('field'))
+        } for attachment in query]
+    except ProgrammingError:
+        response = jsonify({
+            'images': [],
+            'status': 'error',
+        })
+        response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
+
+        return response
+
+    # prune orphans
+    dataset = [record for record in dataset if record['filename'] != '']
+
+    response = jsonify({'images': dataset, 'status': 'ok'})
+    response.status_code = HTTPStatus.OK
+
+    return response

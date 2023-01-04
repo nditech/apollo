@@ -14,11 +14,173 @@
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  // initialize the toast
+  $('#notification-toast').toast();
+
+  // initialize the storage. it uses IndexedDB, so it could fail to
+  // initialize
+  let BROWSER_STORAGE_AVAILABLE = null;   // IndexedDB storage
+  let memoryStorage = [];                 // in-memory storage
+
+  let totalImageCount = 0;
+  let numProcessedImages = 0;
+
+  const setUpBulkDownloads = () => {
+    browserFileStorage.init('apollo-image-storage')
+      .then(() => {
+        BROWSER_STORAGE_AVAILABLE = true;
+        browserFileStorage.deleteAll()
+          .then(() => {})
+          .catch(() => {});
+      })
+      .catch(error => {
+        if (error.dbError || !error.supported)
+          BROWSER_STORAGE_AVAILABLE = false;
+        else if (error.alreadyInit)
+          BROWSER_STORAGE_AVAILABLE = true;
+      })
+  };
+
+  const chunk = (array, chunkSize) => {
+    let outputArray = [];
+    for (let i = 0; i < array.length; i += chunkSize)
+      outputArray.push(array.slice(i, i + chunkSize));
+
+    return outputArray;
+  };
+
+  const downloadImage = (imageSpec) => {
+    return fetch(imageSpec.url)
+      .then(response => {
+        if (response.ok)
+          return response.blob();
+        else
+          return null;
+      })
+      .catch(() => null)
+  };
+
+  const processChunk = imageSpecs => {
+    let requests = imageSpecs.map(downloadImage);
+
+    return Promise.all(requests)
+      .then(responses => {
+        responses.forEach((blob, index) => {
+          const filename = imageSpecs[index].filename;
+          if (blob !== null) {
+            if (BROWSER_STORAGE_AVAILABLE) {
+              browserFileStorage.save(filename, blob)
+                .then(() => {})
+                .catch(() => {});
+            } else {
+              memoryStorage.push({filename: filename, blob: blob});
+            }
+          }
+        });
+      })
+      .finally(() => {
+        numProcessedImages += imageSpecs.length;
+        updateProgressBar();
+      })
+  };
+
+  const updateProgressBar = () => {
+    let progressBar = document.getElementById('toast-progress');
+    let percentageDone = +(numProcessedImages / totalImageCount * 100).toFixed(1);
+    progressBar.innerText = percentageDone + '%';
+    progressBar.style.width = Math.ceil(percentageDone) + '%';
+  };
+
+  const processManifest = manifest => {
+    totalImageCount = manifest.length || 1;
+    let chunks = chunk(manifest, 10);
+    return chunks.map(processChunk);
+  };
+
+  const downloadArchive = (fileSpecs, archiveName) => {
+    const zip = new JSZip();
+    fileSpecs.forEach(fileSpec => zip.file(fileSpec.filename, fileSpec.blob));
+
+    return zip.generateAsync({type: 'blob'})
+      .then(content => {
+        let archiveURL = URL.createObjectURL(content);
+        let anchor = document.createElement('a');
+        anchor.href = archiveURL;
+        anchor.download = archiveName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(archiveURL);
+      });
+  };
+
+  document.addEventListener('click', event => {
+    if (!event.target.matches('[data-download-all]'))
+      return;
+
+    const endpoint = event.target.dataset.manifestUrl;
+    const eventId = event.target.dataset.eventId;
+    const formId = event.target.dataset.formId;
+    const eventName = event.target.dataset.eventName;
+    const formName = event.target.dataset.formName;
+    
+    fetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({
+        event: eventId,
+        form: formId
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!data || !data.images || (data.images.length === 0)) {
+        $('#noImagesModal').modal();
+        return;
+      }
+
+      // prompt user if they try to exit the page once downloads begin,
+      // and show notification toast
+      window.onbeforeunload = () => true;
+      $('#notification-toast').toast('show');
+
+      Promise.all(processManifest(data.images))
+        .then(() => {
+          let fileSpecs = null;
+          const timestamp = Math.floor(Date.now() / 1000);
+          archiveName = `${eventName}-${formName}-${timestamp}.zip`;
+          if (BROWSER_STORAGE_AVAILABLE) {
+            browserFileStorage.loadAll()
+            .then(files => {
+              fileSpecs = files;
+              return downloadArchive(fileSpecs, archiveName);
+            })
+            .finally(() => {
+              browserFileStorage.deleteAll();
+            })
+          } else {
+            downloadArchive(memoryStorage, archiveName)
+              .finally(() => { memoryStorage = []; })
+          }
+        }).finally(() => {
+          window.onbeforeunload = null;
+          document.querySelector('#toast-dismiss').classList.remove('invisible');
+          totalImageCount = 0;
+          numProcessedImages = 0;
+      });
+    });
+  });
+
+
   moment.lang('{{ g.locale }}');
   var marker = undefined;
   var map = undefined;
@@ -213,6 +375,45 @@ ${(props.last_updated ? `
     </div>
   </div>
 </div>
+
+<div class="modal" id="noImagesModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">{{ _('Nothing To Download') }}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{ _('There are no images to download') }}</p>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button></div>
+    </div>
+  </div>
+</div>
+
+<div aria-live="polite" aria-atomic="true">
+  <div class="toast p-2" role="alert" aria-live="assertive" aria-atomic="true" id="notification-toast" data-autohide="false" style="position: absolute; bottom: 100px; right: 50px; min-width: 200px;">
+    <div class="toast-header">
+      <span class="text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+        </svg>
+        &nbsp;
+      </span>
+      <strong class="mr-auto">{{ _('Download Progress') }}</strong>
+      <button id="toast-dismiss" type="button" data-dismiss="toast" aria-label="Close" class="ml-2 mb-1 close invisible">
+        <span aria-hidden="true">&times</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <div class="progress">
+        <div id="toast-progress" class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: 50%" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block toolbar -%}
@@ -232,9 +433,12 @@ ${(props.last_updated ? `
     <span class="sr-only">{{ _('Toggle Dropdown') }}</span>
   </button>
   <div class="dropdown-menu" aria-labelledby="exportMenuReference">
-    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>
-    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a></li>
-    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a></li>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a>
+    {% if form.has_image_fields %}
+    <a class="dropdown-item" data-download-all="true" data-event-id="{{ g.event.id }}" data-form-id="{{ form.id }}" data-event-name="{{ g.event.name }}" data-form-name="{{ form.name }}" data-manifest-url="{{ url_for('submissions.get_image_manifest') }}" style="cursor: pointer;">{{ _('Images') }}</a>
+    {% endif %}
   </div>
 </div>
 {% endif %}
