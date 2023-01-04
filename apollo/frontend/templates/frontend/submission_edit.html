@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick-theme.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.min.css') }}">
 <style>
   .split {
@@ -383,12 +382,12 @@
       <div class="card-header">
         <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
       </div>
-      <div class="card-body">
+      <div id="carousel-body-el" class="card-body">
         <div class='slick m-3'>
           {% for item in submission.get_image_data() -%}
           {% if item['attachment'] %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}">
-            <a href="{{ item['attachment'].photo.url }}" data-lightbox="images" data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}" style="cursor: pointer;">
+            <a data-lightbox="images" data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
               <img src="{{ item['attachment'].photo.thumb_url }}" alt="{{ item['description'] }}">
             </a>
             <span class="mt-2">{{ item['tag'] }}</span>
@@ -752,7 +751,6 @@
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/compressor.min.js') }}"></script>
@@ -775,6 +773,17 @@
         buildSplitView(element.dataset.presenceLabel);
         return;
       };
+    });
+  }
+
+  let carouselBody = document.querySelector('#carousel-body-el');
+  if (carouselBody) {
+    carouselBody.addEventListener('click', (event) => {
+      let element = event.target.closest('div[data-gallery-item-tag]');
+      if (element) {
+        buildSplitView(element.dataset.galleryItemTag);
+        return;
+      }
     });
   }
 
