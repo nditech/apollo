@@ -206,15 +206,17 @@
                       <div class="mb-3" v-else-if="field.type === 'select'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
-                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <label :for="field.tag + '_' + value"  class="form-label">[[ label ]]
                           <input type="radio" :name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
+                          </label>
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'multiselect'">
                         <label :for="field.tag" class="form-label"><span class="fw-bold">[[ field.tag ]]</span> [[ field.description ]]</label>
                         <div class="form-check" v-for="{value, label} in sortOptions(field.options)">
-                          <label :for="field.tag" class="form-label">[[ label ]]</label>
+                          <label :for="field.tag + '_' + value" class="form-label">[[ label ]]
                           <input type="checkbox" name="field.tag" :id="field.tag + '_' + value" class="form-check-input" :value="value" v-model="data[field.tag]" :disabled="locked" @change="markUpdated">
+                          </label>
                         </div>
                       </div>
                       <div class="mb-3" v-else-if="field.type === 'string'">
