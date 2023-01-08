@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apollo-cache-static-v8';
+const CACHE_NAME = 'apollo-cache-static-v9';
 
 const CACHED_URLS = [
   '/pwa/',
