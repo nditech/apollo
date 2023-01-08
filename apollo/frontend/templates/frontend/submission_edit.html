@@ -387,7 +387,7 @@
           {% for item in submission.get_image_data() -%}
           {% if item['attachment'] %}
           <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}" style="cursor: pointer;">
-            <a data-lightbox="images" data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
+            <a data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
               <img src="{{ item['attachment'].photo.thumb_url }}" alt="{{ item['description'] }}">
             </a>
             <span class="mt-2">{{ item['tag'] }}</span>
