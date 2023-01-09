@@ -5,14 +5,55 @@
 
 {%- block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/slick-theme.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/lightbox.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.min.css') }}">
+<style>
+  .split {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .gutter {
+    background-color: #6c757d !important;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  .gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+  }
+
+  .viewer-download, .viewer-delete {
+    color: #fff;
+    font-family: FontAwesome, serif;
+    font-size: 0.75rem;
+    line-height: 1.5rem;
+    text-align: center;
+  }
+
+  .viewer-delete::before {
+    content: "\f1f8";
+  }
+
+  .viewer-download::before {
+    content: "\f019";
+  }
+
+  #viewer1 {
+    height: 100%;
+  }
+</style>
 {% endblock %}
 
 
 
 {%- block content %}
+<div>
+<div id="lhs">
 <form method="POST" enctype="multipart/form-data">
 <input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
 {{ submission_form.csrf_token() }}
@@ -306,12 +347,12 @@
                 </div>
               </td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace', perms=perms, disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
+              <td class="col-2 align-middle obs-on" {% if field['type'] == 'image' %}colspan="{{ num_forms }}"{% endif %}><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
               {%- endif %}
               {%- if form.form_type == 'CHECKLIST' and not form.untrack_data_conflicts and field['type'] != 'image' -%}
@@ -341,15 +382,15 @@
       <div class="card-header">
         <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
       </div>
-      <div class="card-body">
+      <div id="carousel-body-el" class="card-body">
         <div class='slick m-3'>
-          {% for image in submission.image_attachments -%}
-          {% if image.uuid.hex in submission.get_image_data_fields() %}
-          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}">
-            <a href="{{ image.photo.url }}" data-lightbox="images" data-title="{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }} &middot; {{ submission.get_image_data_fields().get(image.uuid.hex)['description'] }}">
-              <img src="{{ image.photo.thumb_url }}">
+          {% for item in submission.get_image_data() -%}
+          {% if item['attachment'] %}
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}" style="cursor: pointer;">
+            <a data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
+              <img src="{{ item['attachment'].photo.thumb_url }}" alt="{{ item['description'] }}">
             </a>
-            <span class="mt-2">{{ submission.get_image_data_fields().get(image.uuid.hex)['tag'] }}</span>
+            <span class="mt-2">{{ item['tag'] }}</span>
           </div>
           {% endif %}
           {%- endfor %}
@@ -667,7 +708,7 @@
         </button>
       </div>
       <div class="modal-body mb-n2">
-        <p>Are you sure you want to delete the image for the following question?</p>
+        <p id="confirm-delete-message"></p>
         <p><strong id="deleteTag"></strong></p>
       </div>
       <div class="modal-footer">
@@ -676,6 +717,19 @@
       </div>
     </div>
   </div>
+</div>
+</div>
+<div id="rhs" class="d-none bg-dark">
+  <ul class="list-group" id="image-viewer-source">
+    {% for img_data in submission.get_image_data() %}
+    {% if img_data['attachment'] %}
+    <li class="list-group-item d-flex justify-content-between align-items-center" data-viewer-item-tag="{{ img_data['tag'] }}">
+      <strong>{{ img_data['tag'] }}</strong> <img src="{{ img_data['attachment'].photo.thumb_url }}" alt="{{ img_data['tag'] }}" class="img-fluid" data-original="{{ img_data['attachment'].photo.url }}" description="{{ img_data['description'] }}" tag="{{ img_data['tag'] }}" unsaved="false">
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
 </div>
 {% endblock %}
 
@@ -697,84 +751,423 @@
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/compressor.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/viewer.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  var checklistPanel = document.querySelector('#checklist-panel');
+  let checklistPanel = document.querySelector('#checklist-panel');
   if (checklistPanel) {
     checklistPanel.addEventListener('click', function (event) {
-      var element = event.target.closest('label[data-delete-label]');
-      if (!element) return;
-      if (!element.classList.contains('disabled')) {
-        document.querySelector('#deleteTag').textContent = element.dataset.deleteLabel;
-        $('#imageDeleteConfirmModal').modal('show');
+      let element = event.target.closest('label[data-delete-label]');
+      if (element && !element.classList.contains('disabled')) {
+        popupDeleteModal(element.dataset.deleteLabel);
+        return;
+      }
+
+      // process split pane activation
+      element = event.target.closest('label[data-presence-label]');
+      if (element) {
+        buildSplitView(element.dataset.presenceLabel);
+        return;
+      };
+    });
+  }
+
+  let carouselBody = document.querySelector('#carousel-body-el');
+  if (carouselBody) {
+    carouselBody.addEventListener('click', (event) => {
+      let element = event.target.closest('div[data-gallery-item-tag]');
+      if (element) {
+        buildSplitView(element.dataset.galleryItemTag);
+        return;
       }
     });
   }
 
+  let originalImageInfo = {};
+  Array.from(document.querySelectorAll('#image-viewer-source > li')).forEach(listEl => {
+    let tagElement = listEl.querySelector('strong');
+    let imageElement = listEl.querySelector('img');
+
+    originalImageInfo[tagElement.textContent] = {
+      thumbnail: imageElement.src,
+      url: imageElement.dataset.original
+    };
+  });
+
   document.querySelector('#confirmImageDelete').addEventListener('click', function () {
     $('#imageDeleteConfirmModal').modal('hide');
 
-    var tag = document.querySelector('#deleteTag').textContent;
-    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
-    var deleteLabel = document.querySelector(deleteLabelSelector);
-    var imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
-    var imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
-    var inputField = document.querySelector('input[data-image-tag=' + tag + ']');
+    let tag = document.querySelector('#deleteTag').textContent;
+    if (isImageLoaded(tag)) {
+      deleteLocalImage(tag);
+    } else {
+      if (originalImageInfo[tag]) {
+        deleteRemoteImage(tag);
+      }
+    }
+  });
 
-    inputField.value = null;
+  const isImageLoaded = function (tag) {
+    let selector = 'input[data-image-tag="' + tag + '"]';
+    let fileInput = document.querySelector(selector);
+    if (fileInput.files.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const updateUIAfterDelete = function (tag, remoteDeleted) {
+    let galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
+    let viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+    let deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+    let imagePresenceLabelSelector = 'label[data-presence-label=' + tag + ']';
+    let imagePresenceLabel = document.querySelector(imagePresenceLabelSelector);
+    let deleteLabel = document.querySelector(deleteLabelSelector);
+    let galleryItemElement = document.querySelector(galleryItemSelector);
+    let viewerItemElement = document.querySelector(viewerItemSelector);
+
+    // only disable the delete label if the remote
+    // image was present and deleted
+    if (imagePresenceLabel.dataset.remote) {
+      if (remoteDeleted) {
+        if (deleteLabel) {
+          deleteLabel.classList.toggle('disabled');
+          deleteLabel.style.cursor = 'default';
+        }
+
+        imagePresenceLabel.classList.toggle('disabled');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
+        imagePresenceLabel.classList.remove('bg-primary');
+        imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+        imagePresenceLabel.style.cursor = 'default';
+        delete imagePresenceLabel.dataset.presenceLabel;
+        delete imagePresenceLabel.dataset.remote;
+
+        if (galleryItemElement) {
+          galleryItemElement.remove();
+        }
+        if (viewerItemElement) {
+          viewerItemElement.remove();
+        }
+      }
+    } else {
+      if (deleteLabel) {
+        deleteLabel.classList.toggle('disabled');
+        deleteLabel.style.cursor = 'default';
+      }
+
+      imagePresenceLabel.classList.toggle('disabled');
+      imagePresenceLabel.firstElementChild.firstElementChild.classList.remove('text-white');
+      imagePresenceLabel.classList.remove('bg-primary');
+      imagePresenceLabel.firstElementChild.firstElementChild.classList.add('text-dark');
+      imagePresenceLabel.style.cursor = 'default';
+      delete imagePresenceLabel.dataset.presenceLabel;
+    }
+    
+    destroySplitView();
+  }
+
+  let deleteLocalImage = function (tag) {
+    let deleteLabel = document.querySelector('label[data-delete-label=' + tag + ']');
+    let fileInput = document.querySelector('input[data-image-tag=' + tag + ']');
+    let imagePresenceLabel = document.querySelector('label[data-presence-label=' + tag + ']');
+    let viewerItemElement = document.querySelector('li[data-viewer-item-tag=' + tag + ']');
+
+    // clear the file input
+    fileInput.value = null;
+    fileInput.files = (new DataTransfer()).files;
+
+    // change the labels
+    if (!originalImageInfo[tag]) {
+      // delete label
+      deleteLabel.classList.add('disabled');
+      deleteLabel.style.cursor = 'default';
+
+      // change the file presence label
+      imagePresenceLabel.classList.add('disabled');
+    }
+
+    // change the file loaded label
     deleteLabel.nextElementSibling.classList.remove('btn-primary');
     deleteLabel.nextElementSibling.classList.add('btn-secondary');
 
-    if (!imagePresenceLabel) {
-      deleteLabel.classList.toggle('disabled');
-      deleteLabel.style.cursor = 'default';
-      return;
+    // update the viewer item
+    if (originalImageInfo[tag]) {
+      let imageEl = viewerItemElement.querySelector('img');
+      imageEl.src = originalImageInfo[tag].thumbnail;
+      imageEl.dataset.original = originalImageInfo[tag].url;
+    } else {
+      viewerItemElement.remove();
     }
 
-    var deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
-    var CSRFToken = document.querySelector('meta[name=csrf-token]').content;
-    var formData = new FormData();
+    destroySplitView();
+  };
+
+  let deleteRemoteImage = function (tag) {
+    let deleteLabel = document.querySelector('label[data-delete-label=' + tag + ']');
+    let galleryItemElement = document.querySelector('div[data-gallery-item-tag=' + tag + ']');
+    let imagePresenceLabel = document.querySelector('label[data-presence-label=' + tag + ']');
+    let viewerItemElement = document.querySelector('li[data-viewer-item-tag=' + tag + ']');
+
+    const deleteEndpoint = "{{ url_for('submissions.delete_image', submission_id=submission.id) }}";
+    const csrfToken = document.querySelector('meta[name=csrf-token]').content;
+    let formData = new FormData();
     formData.append('tag', tag);
 
     fetch(deleteEndpoint, {
-      method: 'POST',
+      body: formData,
       headers: {
-        'X-CSRFToken': CSRFToken,
+        'X-CSRFToken': csrfToken,
       },
-      body: formData
-    }).then(function (response) {
-      return response.ok;
-    }).then(function (deleteSuccess) {
-      if (deleteSuccess) {
-        var galleryItemSelector = 'div[data-gallery-item-tag=' + tag + ']';
-        document.querySelector(deleteLabelSelector).classList.toggle('disabled');
-        document.querySelector(deleteLabelSelector).style.cursor = 'default';
-        imagePresenceLabel.classList.toggle('disabled');
-        imagePresenceLabel.firstChild.firstChild.classList.remove('text-primary');
-        imagePresenceLabel.firstChild.firstChild.classList.add('text-dark');
-        document.querySelector(galleryItemSelector).remove();
+      method: 'POST'
+    })
+    .then(response => response.ok)
+    .then(deleteSuceeded => {
+      if (deleteSuceeded) {
+        // change delete label
+        deleteLabel.classList.add('disabled');
+        deleteLabel.style.cursor = 'default';
+  
+        // change image presence label
+        imagePresenceLabel.classList.remove('bg-primary');
+        imagePresenceLabel.classList.add('disabled');
+        imagePresenceLabel.querySelector('i').classList.remove('fas', 'text-white');
+        imagePresenceLabel.querySelector('i').classList.add('far', 'text-dark');
+  
+        if (galleryItemElement) {
+          galleryItemElement.remove();
+        }
+
+        if (viewerItemElement) {
+          viewerItemElement.remove();
+        }
+
+        destroySplitView();
       }
     });
-  });
-  
-  var fileChangeHandler = function (changeEventObj) {
-    var fileInput = changeEventObj.target;
-    var label = fileInput.parentElement;
-    var tag = fileInput.dataset.imageTag;
-    var deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
+  };
+
+  const fileChangeHandler = function (changeEventObj) {
+    let fileInput = changeEventObj.target;
+    let label = fileInput.parentElement;
+    let tag = fileInput.dataset.imageTag;
+    let deleteLabelSelector = 'label[data-delete-label=' + tag + ']';
     document.querySelector(deleteLabelSelector).style.cursor = 'pointer';
     if (fileInput.files.length > 0) {
       document.querySelector(deleteLabelSelector).classList.remove('disabled');
       label.classList.remove('btn-secondary');
       label.classList.add('btn-primary');
+      let otherLabel = label.previousElementSibling.previousElementSibling;
+      otherLabel.dataset.presenceLabel = tag;
+      otherLabel.classList.remove('disabled');
+
+      // insert/replace the item in the image preview
+      let viewerItemSelector = 'li[data-viewer-item-tag=' + tag + ']';
+      let selectedImageViewerEl = document.querySelector(viewerItemSelector);
+      let imageElement;
+      if (!selectedImageViewerEl) {
+        let imageViewerEl = document.querySelector('#image-viewer-source');
+        let newListItemNode = document.createElement('li');
+        newListItemNode.dataset.viewerItemTag = tag;
+        newListItemNode.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        imageElement = document.createElement('img');
+        imageElement.classList.add('img-fluid');
+        let labelElement = document.createElement('strong');
+        labelElement.innerText = tag;
+        newListItemNode.appendChild(labelElement);
+        newListItemNode.appendChild(imageElement);
+        imageViewerEl.appendChild(newListItemNode);
+      } else {
+        imageElement = selectedImageViewerEl.querySelector('img');
+      }
+
+      let reader = new FileReader();
+      reader.readAsDataURL(fileInput.files[0]);
+      reader.addEventListener('load', function(evt) {
+        let compressor = new Compressor(fileInput.files[0], {
+          maxHeight: 128,
+          maxWidth: 128,
+          success: function(result) {
+            imageElement.src = URL.createObjectURL(result);
+            imageElement.alt = tag;
+            imageElement.setAttribute('tag', tag);
+            imageElement.setAttribute('description', fileInput.dataset.imageDescription);
+            imageElement.setAttribute('unsaved', 'true');
+            imageElement.dataset.original = evt.target.result;
+            buildViewer(tag);
+          }
+        });
+        imageElement.dataset.original = reader.result;
+      });
     } else {
       document.querySelector(deleteLabelSelector).classList.add('disabled');
       label.classList.add('btn-secondary');
       label.classList.remove('btn-primary');
     }
   };
+
+  const imageViewerSource = document.querySelector('#image-viewer-source');
+  let splitView = null;
+  let splitViewActive = false;
+  let imageViewer = null;
+
+  function getImageTags() {
+    let elementList = Array.prototype.slice.call(imageViewerSource.querySelectorAll('li > img'))
+    return elementList.map(function(imgEl) {
+      return imgEl.alt;
+    });
+  }
+
+  let buildViewer = _.debounce(function(startTag) {
+    let currentTag = null;
+    if (imageViewer) {
+      currentTag = imageViewer.image.alt;
+      imageViewer.destroy();
+      imageViewer = null;
+    }
+
+    imageViewer = new Viewer(imageViewerSource, {
+      inheritedAttributes: ['crossOrigin', 'decoding', 'isMap', 'loading', 'referrerPolicy', 'sizes', 'srcset', 'useMap', 'description', 'tag', 'unsaved'],
+      inline: true,
+      minHeight: (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 100,
+      title: function(image, imageData) {
+        const tag = image.getAttribute('tag');
+        const description= image.getAttribute('description');
+        const status = image.getAttribute('unsaved');
+
+        if (status === 'false') {
+          return `${tag} · ${description} (${imageData.naturalWidth} × ${imageData.naturalHeight})`;
+        } else {
+          return `${tag} · ${description} · {{ _('Not saved') }} (${imageData.naturalWidth} × ${imageData.naturalHeight})`;
+        }
+      },
+      toolbar: {
+        zoomIn: true,
+        zoomOut: true,
+        reset: true,
+        oneToOne: true,
+        play: false,
+        prev: true,
+        next: true,
+        rotateLeft: true,
+        rotateRight: true,
+        flipHorizontal: true,
+        flipVertical: true,
+        download: function() {
+          const anchor = document.createElement('a');
+          anchor.href = imageViewer.image.src;
+          anchor.download = slugify(`{{ submission.event.name }}-{{ submission.participant.participant_id }}-${imageViewer.image.alt}`);
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+        },
+        delete: function() {
+          popupDeleteModal(imageViewer.image.alt);
+        },
+        close: function() {
+          destroySplitView();
+        }
+      },
+      url: 'data-original'
+    });
+
+    if (startTag) {
+      const idx = getImageTags().indexOf(startTag);
+      if (idx !== -1) {
+        imageViewer.view(idx);
+      }
+    } else if (currentTag) {
+      const idx = getImageTags().indexOf(startTag);
+      if (idx !== -1) {
+        imageViewer.view(idx);  
+      }
+    }
+  }, 300);
+
+  const slugify = function (text) {
+    // stolen from https://gist.github.com/codeguy/6684588
+    return text
+      .toString()                   // Cast to string (optional)
+      .normalize('NFKD')            // The normalize() using NFKD method returns the Unicode Normalization Form of a given string.
+      .toLowerCase()                // Convert the string to lowercase letters
+      .trim()                       // Remove whitespace from both sides of a string (optional)
+      .replace(/\s+/g, '-')         // Replace spaces with -
+      .replace(/[^\w\-]+/g, '')     // Remove all non-word chars
+      .replace(/\_/g,'-')           // Replace _ with -
+      .replace(/\-\-+/g, '-')       // Replace multiple - with single -
+      .replace(/\-$/g, '');         // Remove trailing -
+  };
+
+  function buildSplitView(startTag) {
+    if (splitViewActive) {
+      buildViewer(startTag);
+      return;
+    }
+
+    splitViewActive = true;
+    let lhs = document.querySelector('#lhs');
+    let rhs = document.querySelector('#rhs');
+    let container = document.querySelector('main').firstElementChild;
+    container.classList.remove('container');
+    container.classList.add('px-1');
+    lhs.classList.add('overflow-auto');
+    rhs.classList.remove('d-none');
+    rhs.classList.add('overflow-hidden');
+    lhs.style.height = rhs.style.height = '80vh';
+    lhs.parentElement.classList.add('split');
+    
+    splitView = Split(['#lhs', '#rhs'], {
+      sizes: [50, 50],
+      onDragEnd: function(sizes) {
+        buildViewer();
+      }
+    });
+    buildViewer(startTag);
+  }
+  
+  function destroySplitView() {
+    if (!splitViewActive) {
+      return;
+    }
+
+    if (imageViewer) {
+      imageViewer.destroy();
+    }
+
+    splitViewActive = false;
+    let lhs = document.querySelector('#lhs');
+    let rhs = document.querySelector('#rhs');
+    let container = document.querySelector('main').firstElementChild;
+    container.classList.add('container');
+    container.classList.remove('px-1');
+    splitView.setSizes([100, 0]);
+    lhs.classList.remove('overflow-auto');
+    rhs.classList.add('d-none');
+    rhs.classList.remove('overflow-hidden');
+    lhs.style.height = rhs.style.height = '';
+    lhs.parentElement.classList.remove('split');
+    splitView.destroy();
+    splitView = null;
+  }
+
+  function popupDeleteModal(tag) {
+    document.querySelector('#deleteTag').textContent = tag;
+    const localMessage = "{{ _('Are you sure you want to delete the current loaded image for the following question?') }}";
+    const remoteMessage = "{{ _('Are you sure you want to delete the saved image for the following question?') }}";
+
+    let messageElement = document.querySelector('#confirm-delete-message');
+    if (isImageLoaded(tag)) {
+      messageElement.textContent = localMessage;
+    } else {
+      messageElement.textContent = remoteMessage;
+    }
+    $('#imageDeleteConfirmModal').modal('show');
+  }
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
@@ -791,7 +1184,6 @@
         evt.preventDefault();
         var spanButton = this;
         var fileInput = spanButton.parentElement.children[1];
-        console.log(fileInput);
         fileInput.click();
       }
     });
