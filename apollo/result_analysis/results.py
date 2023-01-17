@@ -77,7 +77,7 @@ def voting_results(form_id, location_id=None):
     if location_id is None:
         location = locations.root(event.location_set_id)
     else:
-        location = locations.fget_or_404(pk=location_id)
+        location = locations.fget_or_404(id=location_id)
 
     template_name = 'result_analysis/results.html'
     breadcrumbs = [_('Results Data'), form.name]

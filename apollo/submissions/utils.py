@@ -117,3 +117,107 @@ def make_submission_dataframe(query, form, selected_tags=None,
     ], axis=1, join_axes=[df.index])
 
     return df_summary
+
+
+def make_turnout_dataframe(query, form):  # noqa
+    if not db.session.query(query.exists()).scalar():
+        return pd.DataFrame()
+
+    fields = set(form.turnout_fields)  # noqa
+
+    integral_fields = [
+        tag for tag in fields
+        if form.get_field_by_tag(tag)['type'] == 'integer'
+        or form.get_field_by_tag(tag)['type'] == 'select'
+    ]
+
+    columns = [
+        cast(
+            func.nullif(Submission.data[tag].astext, ''),
+            BigInteger).label(tag) for tag in integral_fields]
+    other_fields = fields.difference(integral_fields)
+
+    # the 'updated' field is required for results analysis
+    columns.extend([
+        Submission.data[tag].label(tag) for tag in other_fields] + [
+            func.coalesce(
+                # casting to TIMESTAMP so as to lose the time zone
+                Submission.extra_data['voting_timestamp'].astext.cast(TIMESTAMP),  # noqa
+                Submission.updated
+            ).label('updated')
+        ])
+
+    # alias just in case the query is already joined to the tables below
+    ancestor_loc = aliased(Location, name='ancestor')
+    ancestor_loc_type = aliased(LocationType, name='ancestor_type')
+    ancestor_loc_path = aliased(LocationPath, name='ancestor_path')
+    own_loc = aliased(Location, name='own_location')
+
+    sub_query = Submission.query.join(
+        own_loc,
+        Submission.location_id == own_loc.id
+    ).join(
+        ancestor_loc_path,
+        Submission.location_id == ancestor_loc_path.descendant_id
+    ).join(
+        ancestor_loc,
+        ancestor_loc.id == ancestor_loc_path.ancestor_id
+    ).join(
+        ancestor_loc_type,
+        ancestor_loc.location_type_id == ancestor_loc_type.id
+    ).with_entities(
+        cast(ancestor_loc.name, String).label('ancestor_name'),
+        cast(ancestor_loc_type.name, String).label('ancestor_type'),
+        Submission.id.label('submission_id')
+    ).subquery()
+
+    # add registered voters and path extraction to the columns
+    columns.append(own_loc.registered_voters.label(
+        'registered_voters') if not form.registered_voters_tag
+        else Submission.data[form.registered_voters_tag].label(
+        'registered_voters'))
+    columns.append(
+        func.jsonb_object(
+            array_agg(sub_query.c.ancestor_type),
+            array_agg(sub_query.c.ancestor_name),
+        ).label('location_data')
+    )
+
+    # type coercion is necessary for numeric columns
+    # if we allow Pandas to infer the column type for these,
+    # there's a risk that it will guess wrong, then it might
+    # raise exceptions when we're calculating the mean and
+    # standard deviation on those columns
+    type_coercions = {
+        tag: np.float64
+        for tag in form.turnout_fields
+        if form.get_field_by_tag(tag)['type'] == 'integer'
+        or form.get_field_by_tag(tag)['type'] == 'select'
+    }
+
+    dataframe_query = query.filter(
+        Submission.location_id == own_loc.id
+    ).join(
+        sub_query,
+        Submission.id == sub_query.c.submission_id
+    ).group_by(
+        Submission.id,
+        own_loc.registered_voters
+    ).with_entities(*columns)
+
+    df = pd.read_sql(
+        dataframe_query.statement,
+        dataframe_query.session.bind
+    ).astype(type_coercions)
+
+    loc_data_df = json_normalize(
+        df['location_data']
+    ).replace('(^"|"$)', '', regex=True)
+    loc_data_df.columns = loc_data_df.columns.str.strip('"')
+
+    df_summary = pd.concat([
+        df.drop('location_data', axis=1),
+        loc_data_df
+    ], axis=1, join_axes=[df.index])
+
+    return df_summary
