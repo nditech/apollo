@@ -81,6 +81,10 @@ def turnout_convergence(form_id, location_id=None):
     else:
         location = locations.fget_or_404(id=location_id)
 
+    location_ids = models.LocationPath.query.with_entities(
+        models.LocationPath.descendant_id).filter_by(
+            ancestor_id=location.id, location_set_id=event.location_set_id)
+
     template_name = 'result_analysis/turnout.html'
     breadcrumbs = [_('Partial Turnout Data'), form.name]
     filter_on_locations = not form.untrack_data_conflicts
@@ -113,7 +117,8 @@ def turnout_convergence(form_id, location_id=None):
 
     queryset = submissions.find(**query_kwargs).filter(
         models.Submission.verification_status != FLAG_STATUSES['rejected'][0],
-        not_(models.Submission.quarantine_status.in_(['A', 'R'])))
+        not_(models.Submission.quarantine_status.in_(['A', 'R'])),
+        models.Submission.location_id.in_(location_ids))
     filter_set = filter_class(queryset, request.args)
     dataset = make_turnout_dataframe(filter_set.qs, form)
 
@@ -144,9 +149,12 @@ def turnout_convergence(form_id, location_id=None):
             'missing_cnt': turnouts_missing[turnout_field_label],
             'missing_pct': turnouts_missing[turnout_field_label] / turnouts_count,  # noqa
             'turnout_cnt': turnouts_sum[turnout_field_label],
-            'turnout_pct': turnouts_sum[turnout_field_label] / turnouts_sum['registered_voters'],  # noqa
             'turnout_moe': _margin_of_error(dataset, [turnout_field_label], ['registered_voters'])  # noqa
         }
+        try:
+            summary[turnout_field_label]['turnout_pct'] = turnouts_sum[turnout_field_label] / turnouts_sum['registered_voters']  # noqa
+        except ZeroDivisionError:
+            summary[turnout_field_label]['turnout_pct'] = 0
 
     breadcrumb_data = analysis_breadcrumb_data(
         form, location, analysis_type='results')
