@@ -1,0 +1,59 @@
+{%- extends 'frontend/layout.html' -%}
+{% from 'result_analysis/macros/turnout_navigation.html' import render_turnout_navigation %}
+
+{%- block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
+  <form class="form-inline" method="GET" accept-charset="utf-8">
+    <div class="form-group mr-sm-2">
+      <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
+      {{ filter_form.sample(class_='form-control custom-select') }}
+    </div>
+    <div class="form-group mr-sm-2">
+      <label for="{{ filter_form.location_group.id }}" class="sr-only">{{ filter_form.location_group.label.text }}</label>
+      {{ filter_form.location_group(class_='form-control custom-select') }}
+    </div>
+    <button type="submit" class="btn btn-primary">{{ _('Filter') }}</button>
+  </form>
+</div>
+{%- endblock %}
+
+{%- block content -%}
+<div class="row">
+	<div class="col-md-12">
+		{{ render_turnout_navigation(navigation_data) }}
+	</div>
+</div>
+
+<div class="row pt-3">
+	<div class="col-md-12">
+        <div class="table-responsive">
+            <table id="partial_turnout" class="table table-striped table-bordered process" style="width:100%">
+            <thead>
+            <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th bgcolor="#eee">{{ _('Reported') }}</th>
+                <th bgcolor="#eee">{{ _('Missing') }}</th>
+                <th bgcolor="#eee">{{ _('Total Registered') }}</th>
+                <th bgcolor="#eee">{{ _('Turnout') }}</th>
+                <th bgcolor="#eee">{{ _('Margin of Error') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for field in turnout_fields %}
+            <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
+                <td width="30"><strong>{{ field.tag }}</strong></td>
+                <td>{{ field.description }}</td>
+                <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['reported_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['reported_cnt']|int }}</strong></div></div></td>
+                <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['missing_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['missing_cnt']|int }}</strong></div></div></td>
+                <td><strong>{{ summary['total_registered']|int }}</strong></td>
+                <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['turnout_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['turnout_cnt']|int }}</strong></div></div></td>
+                <td><strong>&pm; {{ '%.1f' % summary[field.tag]['turnout_moe'] }}%</strong></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+	</div>
+</div>
+{%- endblock -%}

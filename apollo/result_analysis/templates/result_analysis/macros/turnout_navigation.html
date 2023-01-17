@@ -1,0 +1,9 @@
+{% macro render_turnout_navigation(navigation_data) %}
+{% if navigation_data.locations %}
+<ul class="nav nav-pills">
+  {% for location in navigation_data.locations %}
+  <li class="nav-item"><a class="nav-link" href="{{ url_for('result_analysis.turnout_with_location', form_id=navigation_data.form.id, location_id=location.id) }}">{{ location.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endmacro %}

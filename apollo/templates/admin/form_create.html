@@ -50,7 +50,7 @@
               <div class="col-8">
                   {%- if field.name in ['form_type', 'accredited_voters_tag', 'blank_votes_tag', 'invalid_votes_tag', 'registered_voters_tag'] %}
                   {{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select', **{'aria-describedby': '{}_help'.format(field.id)}) }}
-                  {% elif field.name == 'vote_shares' %}
+                  {% elif field.name in ['vote_shares', 'turnout_fields', 'result_images'] %}
                   {{ field(class_='form-control select2', **{'aria-describedby': '{}_help'.format(field.id)}) }}
                   {% else %}
                   {{ field(class_='form-control is-invalid' if field.errors else 'form-control', **{'aria-describedby': '{}_help'.format(field.id)}) }}
