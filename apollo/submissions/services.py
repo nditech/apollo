@@ -2,12 +2,13 @@
 import csv
 from io import StringIO
 
+import sqlalchemy as sa
 from flask_babelex import gettext as _
 from geoalchemy2.shape import to_shape
 
 from apollo import constants
 from apollo.dal.service import Service
-from apollo.locations.models import LocationType
+from apollo.locations.models import LocationType, LocationTypePath
 from apollo.participants.models import Sample
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
@@ -41,9 +42,19 @@ class SubmissionService(Service):
         event = submission.event
         form = submission.form
         extra_fields = event.location_set.extra_fields
-        location_types = LocationType.query.filter_by(
-            is_administrative=True,
-            location_set_id=event.location_set_id).all()
+        location_types = LocationTypePath.query.filter_by(
+            location_set_id=event.location_set_id
+        ).join(
+            LocationType, LocationType.id == LocationTypePath.ancestor_id
+        ).with_entities(
+            LocationType
+        ).group_by(
+            LocationTypePath.ancestor_id,
+            LocationType.id
+        ).order_by(
+            sa.func.count(LocationTypePath.ancestor_id).desc(),
+            LocationType.name
+        ).all()
         samples = Sample.query.filter_by(
             participant_set_id=event.participant_set_id).all()
         tags = form.tags
