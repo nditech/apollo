@@ -801,6 +801,11 @@ def submission_edit(submission_id):
                                     photo=file_wrapper, submission=submission,
                                     uuid=identifier
                                 ))
+                    elif questionnaire_field['type'] in ('comment', 'string'):
+                        if field_value == '':
+                            if data.get(form_field) is not None:
+                                data.pop(form_field, None)
+                                changed = True
                     elif submission.data.get(form_field) != field_value:
                         if (
                             field_value is None and
@@ -949,6 +954,20 @@ def submission_edit(submission_id):
                             new_verification_status
 
                     for form_field in data_fields:
+
+                        questionnaire_field = \
+                            questionnaire_form.get_field_by_tag(form_field)
+                        if (
+                            master_form.data.get(form_field) == ''
+                            and
+                            questionnaire_field['type'] in ('comment',
+                                                            'string')
+                            and
+                            data.get(form_field) is not None
+                        ):
+                            data.pop(form_field, None)
+                            changed = True
+                            continue
 
                         if data.get(form_field, None) != master_form.data.get(
                                 form_field):
@@ -1134,6 +1153,15 @@ def submission_edit(submission_id):
                             ):
                                 data.pop(form_field, None)
                                 changed_fields.append(form_field)
+                            elif (
+                                (submission_form.data.get(form_field) == '')
+                                and
+                                (questionnaire_field['type']
+                                    in ('comment', 'string'))
+                            ):
+                                if data.get(form_field) is not None:
+                                    data.pop(form_field)
+                                    changed_fields.append(form_field)
                             else:
                                 if (
                                     submission_form.data.get(form_field)
