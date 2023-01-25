@@ -308,6 +308,14 @@ def submission():
                     payload2[tag] = sorted(value)
                 except Exception:
                     pass
+        elif field['type'] == 'integer':
+            value = payload.get(tag)
+            if value is not None:
+                try:
+                    payload2[tag] = int(value)
+                except ValueError:
+                    # invalid value
+                    payload2.pop(tag, None)
 
     attachments = []
     deleted_attachments = []
