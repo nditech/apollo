@@ -1,0 +1,42 @@
+{% macro section_navigation(submission) %}
+<ul class="nav nav-tabs justify-content-end mb-n1" id="tabbed" role="tablist">
+{%- with comments_count = submission.comments|count %}
+{%- if comments_count > 0 %}
+  <li class="flex-fill">
+    <span class="d-block py-2 px-3"><a href="#comments" class="text-decoration-none"><i class="fa {% if comments_count > 1 %}fa-comments{% else %}fa-comment{% endif %}"></i> {{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}</a></span>
+  </li>
+{%- endif %}
+{%- endwith %}
+  <li class="nav-item">
+    <a class="nav-link active" id="checklist-tab" data-toggle="tab" role="tab" aria-controls="checklist-panel" aria-selected="true" href="#checklist-panel">{{ _('Checklist') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="critical-incidents-tab" data-toggle="tab" role="tab" aria-controls="critical-incidents-panel" aria-selected="false" href="#critical-incidents-panel">{{ _('Critical Incidents') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="changelog-tab" data-toggle="tab" role="tab" aria-controls="changelog-panel" aria-selected="false" href="#changelog-panel">{{ _('Changelog') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="calllog-tab" data-toggle="tab" role="tab" aria-controls="calllog-panel" aria-selected="false" href="#calllog-panel">{{ _('Call Log') }}</a>
+  </li>
+</ul>
+{% endmacro %}
+
+{% macro failed_qa_checks(failed_checks) %}
+<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
+  <h5 class="alert-heading">{{ _('Quality Assurance Warnings') }}</h5>
+  <p>{{ _('The following quality assurance conditions were flagged while validating this submission. Please confirm with the participant that the submitted data is correct. If you find the data to be as reported by the participant, mark the data point as confirmed.') }}
+  </p>
+  <ul>
+    {% for criteria in failed_checks %}
+    <li>{{ criteria }}</li>
+    {% endfor %}
+  </ul>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endmacro %}
