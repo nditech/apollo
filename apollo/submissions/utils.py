@@ -173,8 +173,8 @@ def make_turnout_dataframe(query, form):  # noqa
 
     # add registered voters and path extraction to the columns
     columns.append(own_loc.registered_voters.label(
-        'registered_voters') if not form.registered_voters_tag
-        else Submission.data[form.registered_voters_tag].label(
+        'registered_voters') if not form.turnout_registered_voters_tag
+        else Submission.data[form.turnout_registered_voters_tag].label(
         'registered_voters'))
     columns.append(
         func.jsonb_object(
