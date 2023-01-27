@@ -101,6 +101,7 @@ class Form(Resource):
     vote_shares = db.Column(JSONB)
     result_images = db.Column(JSONB)
     turnout_fields = db.Column(ARRAY(db.String))
+    turnout_registered_voters_tag = db.Column(db.String)
     show_moment = db.Column(db.Boolean, default=False)
     show_map = db.Column(db.Boolean, default=False)
     show_progress = db.Column(db.Boolean, default=False)

@@ -181,15 +181,14 @@ def edit_form(view, form_id):
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
         _('Edit Form')]
+    field_options = [('', '')] + \
+        [(tag, tag) for tag in form.tags]
     web_form = FormForm(obj=form)
-    web_form.accredited_voters_tag.choices = [('', '')] + \
-        [(tag, tag) for tag in form.tags]
-    web_form.blank_votes_tag.choices = [('', '')] + \
-        [(tag, tag) for tag in form.tags]
-    web_form.invalid_votes_tag.choices = [('', '')] + \
-        [(tag, tag) for tag in form.tags]
-    web_form.registered_voters_tag.choices = [('', '')] + \
-        [(tag, tag) for tag in form.tags]
+    web_form.accredited_voters_tag.choices = field_options
+    web_form.blank_votes_tag.choices = field_options
+    web_form.invalid_votes_tag.choices = field_options
+    web_form.registered_voters_tag.choices = field_options
+    web_form.turnout_registered_voters_tag.choices = field_options
     web_form.vote_shares.choices = [] + \
         [(tag, tag) for tag in form.tags]
     web_form.turnout_fields.choices = [] + \

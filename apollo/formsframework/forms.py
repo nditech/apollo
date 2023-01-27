@@ -463,8 +463,10 @@ class FormForm(SecureForm):
         _('Vote Shares'),
         description=_('Questions representing election results.'))  # noqa
     turnout_fields = wtforms.SelectMultipleField(
-        _('Turnout Fields'),
+        _('Partial Turnout Fields'),
         description=_('Fields representing turnout values.'))  # noqa
+    turnout_registered_voters_tag = wtforms.SelectField(
+        _('Partial Turnout Registered Voters Field'), choices=[('', '')])  # noqa
     result_images = wtforms.SelectMultipleField(
         _('Result Images'),
         description=_('Questions representing election result images.') # noqa
