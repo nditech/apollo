@@ -1,5 +1,6 @@
 {% extends 'frontend/layout.html' -%}
 {% from 'frontend/macros/submission_field_macros.html' import render_field %}
+{% from 'frontend/macros/submission_components.html' import section_navigation, failed_qa_checks %}
 {%- set form, siblings, master = submission.form, submission.siblings, submission.master %}
 
 
@@ -169,45 +170,10 @@
 </div>
 
 {%- if form.form_type in ['CHECKLIST', 'SURVEY'] %}
-<ul class="nav nav-tabs justify-content-end mb-n1" id="tabbed" role="tablist">
-{%- with comments_count = submission.comments|count %}
-{%- if comments_count > 0 %}
-  <li class="flex-fill">
-    <span class="d-block py-2 px-3"><a href="#comments" class="text-decoration-none"><i class="fa {% if comments_count > 1 %}fa-comments{% else %}fa-comment{% endif %}"></i> {{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}</a></span>
-  </li>
-{%- endif %}
-{%- endwith %}
-  <li class="nav-item">
-    <a class="nav-link active" id="checklist-tab" data-toggle="tab" role="tab" aria-controls="checklist-panel" aria-selected="true" href="#checklist-panel">{{ _('Checklist') }}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="critical-incidents-tab" data-toggle="tab" role="tab" aria-controls="critical-incidents-panel" aria-selected="false" href="#critical-incidents-panel">{{ _('Critical Incidents') }}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="changelog-tab" data-toggle="tab" role="tab" aria-controls="changelog-panel" aria-selected="false" href="#changelog-panel">{{ _('Changelog') }}</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="calllog-tab" data-toggle="tab" role="tab" aria-controls="calllog-panel" aria-selected="false" href="#calllog-panel">{{ _('Call Log') }}</a>
-  </li>
-</ul>
+{{ section_navigation(submission) }}
 
   {%- if failed_checks and submission.form.quality_checks_enabled and perms.view_quality_assurance.can() %}
-<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0 {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" role="alert">
-  <h5 class="alert-heading">{{ _('Quality Assurance Warnings') }}</h5>
-  <p>{{ _('The following quality assurance conditions were flagged while validating this submission. Please confirm with the participant that the submitted data is correct. If you find the data to be as reported by the participant, mark the data point as confirmed.') }}
-  </p>
-  <ul>
-    {% for criteria in failed_checks %}
-    <li>{{ criteria }}</li>
-    {% endfor %}
-  </ul>
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+  {{ failed_qa_checks(failed_checks) }}
   {%- endif %}
 {%- endif %}
 
@@ -635,9 +601,9 @@
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">{{ field.description }}</td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace is-invalid', perms=perms) }}</td>
               {%- else -%}
-              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', perms=perms) }}</td>
+              <td class="col-2 align-middle"><label for="{{ submission_form[field.tag].id }}" class="sr-only">{{ submission_form[field.tag].label.text }}</label>{{ render_field(submission_form[field.tag], field.type, description=field.description, klass_='form-control tracked text-monospace', perms=perms) }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
@@ -646,6 +612,7 @@
       </div>
     </div>
     {% endfor %}
+
     <div class="card bg-light">
       <div class="card-body py-0 px-0">
         <table class="table table-borderless mb-0 table-responsive">
@@ -668,6 +635,29 @@
         </table>
       </div>
     </div>
+
+    {% if submission.image_attachments -%}
+    <div class="card text-white bg-secondary mt-3" id="images">
+      <div class="card-header">
+        <h5 class="mb-0">{% trans %}Images{% endtrans %}</h5>
+      </div>
+      <div id="carousel-body-el" class="card-body">
+        <div class='slick m-3'>
+          {% for item in submission.get_image_data() -%}
+          {% if item['attachment'] %}
+          <div class="d-flex flex-column align-items-center justify-content-center mb-3" data-gallery-item-tag="{{ item['tag'] }}" style="cursor: pointer;">
+            <a data-title="{{ item['tag'] }} &middot; {{ item['description'] }}">
+              <img src="{{ item['attachment'].photo.thumb_url }}" alt="{{ item['description'] }}">
+            </a>
+            <span class="mt-2">{{ item['tag'] }}</span>
+          </div>
+          {% endif %}
+          {%- endfor %}
+        </div>
+      </div>
+    </div>
+    {%- endif %}
+
   </div>
 </div>
 {%- endif %}
@@ -758,23 +748,20 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
 
-  let checklistPanel = document.querySelector('#checklist-panel');
-  if (checklistPanel) {
-    checklistPanel.addEventListener('click', function (event) {
-      let element = event.target.closest('label[data-delete-label]');
-      if (element && !element.classList.contains('disabled')) {
-        popupDeleteModal(element.dataset.deleteLabel);
-        return;
-      }
+  document.addEventListener('click', function (event) {
+    let element = event.target.closest('label[data-delete-label]');
+    if (element && !element.classList.contains('disabled')) {
+      popupDeleteModal(element.dataset.deleteLabel);
+      return;
+    }
 
-      // process split pane activation
-      element = event.target.closest('label[data-presence-label]');
-      if (element) {
-        buildSplitView(element.dataset.presenceLabel);
-        return;
-      };
-    });
-  }
+    // process split pane activation
+    element = event.target.closest('label[data-presence-label]');
+    if (element) {
+      buildSplitView(element.dataset.presenceLabel);
+      return;
+    };
+  });
 
   let carouselBody = document.querySelector('#carousel-body-el');
   if (carouselBody) {
