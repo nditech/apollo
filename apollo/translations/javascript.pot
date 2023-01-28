@@ -1,21 +1,21 @@
 # Translations template for PROJECT.
-# Copyright (C) 2021 ORGANIZATION
+# Copyright (C) 2023 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2023-01-28 17:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
@@ -25,41 +25,41 @@ msgstr ""
 msgid "Numeric Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:89
+#: apollo/static/js/angular-form-builder-components.js:94
 msgid "Single Choice Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 1"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 2"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:136
+#: apollo/static/js/angular-form-builder-components.js:141
 msgid "Yes/No Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "Yes"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "No"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:184
+#: apollo/static/js/angular-form-builder-components.js:189
 msgid "Multiple Choice Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:229
+#: apollo/static/js/angular-form-builder-components.js:234
 msgid "Comment Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:269
+#: apollo/static/js/angular-form-builder-components.js:274
 msgid "Image Attachment"
 msgstr ""
 
@@ -124,14 +124,18 @@ msgid "Maximum"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:60
-msgid "Type"
+msgid "Null Value"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:61
-msgid "Expected Value (Optional)"
+msgid "Type"
 msgstr ""
 
 #: apollo/static/js/angular-form-builder.js:62
+msgid "Expected Value (Optional)"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:63
 msgid "Validation"
 msgstr ""
 
