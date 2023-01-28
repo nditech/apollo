@@ -840,7 +840,7 @@
           });
 
           if (errorFields.length > 0) {
-            let errorMessage = '{{ _("Please check that you did not a value out of bounds or a decimal number for the following question(s)") }}: ' + errorFields.join();
+            let errorMessage = '{{ _("Please check that you did not enter a value out of bounds or a decimal number for the following question(s)") }}: ' + errorFields.join();
             Notiflix.Report.Failure(
               '{{ _("Error") }}',
               errorMessage,
