@@ -833,12 +833,14 @@
               if (instance.data[field.tag] !== undefined || instance.data[field.tag] !== null) {
                 if ((fieldData < field.min) || (fieldData > field.max))
                   errorFields.push(field.tag);
+                else if (Number.parseInt(fieldData.toString()) !== fieldData)
+                  errorFields.push(field.tag);
               }
             });
           });
 
           if (errorFields.length > 0) {
-            let errorMessage = '{{ _("Please check what you entered into the following fields") }}: ' + errorFields.join();
+            let errorMessage = '{{ _("Please check that you did not a value out of bounds or a decimal number for the following question(s)") }}: ' + errorFields.join();
             Notiflix.Report.Failure(
               '{{ _("Error") }}',
               errorMessage,
