@@ -221,3 +221,6 @@ def make_turnout_dataframe(query, form):  # noqa
     ], axis=1, join_axes=[df.index])
 
     return df_summary
+
+def valid_turnout_dataframe(dataframe: pd.DataFrame, turnout_field: str, rv_field: str):  # noqa
+    return dataframe[(dataframe[rv_field] > 0) & dataframe[turnout_field].notna()]  # noqa

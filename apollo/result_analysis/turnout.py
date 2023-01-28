@@ -14,7 +14,7 @@ from apollo.frontend.helpers import (
 from apollo.services import forms, locations, location_types, submissions
 from apollo.submissions.filters import make_submission_analysis_filter
 from apollo.submissions.models import FLAG_STATUSES
-from apollo.submissions.utils import make_turnout_dataframe
+from apollo.submissions.utils import make_turnout_dataframe, valid_turnout_dataframe
 
 import pandas as pd
 
@@ -134,22 +134,25 @@ def turnout_convergence(form_id, location_id=None):
         dataset[turnout_field['tag']] = dataset[turnout_field['tag']].replace(
             null_value, pd.np.nan)
 
-    turnouts_count = dataset.shape[0]
-    turnouts_reported = dataset.notna().sum()
-    turnouts_missing = dataset.isna().sum()
-    turnouts_sum = dataset.sum()
-    summary = {
-        'total_registered': turnouts_sum['registered_voters']
-    }
+    summary = {}
 
     for turnout_field_label in turnout_field_labels:
+        valid_dataset = valid_turnout_dataframe(dataset, turnout_field_label, 'registered_voters')  # noqa
+
+        turnouts_count = valid_dataset.shape[0]
+        turnouts_reported = valid_dataset.notna().sum()
+        turnouts_missing = valid_dataset.isna().sum()
+        turnouts_sum = valid_dataset.sum()
+
         summary[turnout_field_label] = {
+            'total_registered': turnouts_sum['registered_voters'],
             'reported_cnt': turnouts_reported[turnout_field_label],
             'reported_pct': turnouts_reported[turnout_field_label] / turnouts_count,  # noqa
             'missing_cnt': turnouts_missing[turnout_field_label],
             'missing_pct': turnouts_missing[turnout_field_label] / turnouts_count,  # noqa
             'turnout_cnt': turnouts_sum[turnout_field_label],
-            'turnout_moe': _margin_of_error(dataset, [turnout_field_label], ['registered_voters'])  # noqa
+            'turnout_moe_95': _margin_of_error(valid_dataset, [turnout_field_label], ['registered_voters'], 1.96),  # noqa
+            'turnout_moe_99': _margin_of_error(valid_dataset, [turnout_field_label], ['registered_voters'], 2.58)  # noqa
         }
         try:
             summary[turnout_field_label]['turnout_pct'] = turnouts_sum[turnout_field_label] / turnouts_sum['registered_voters']  # noqa
