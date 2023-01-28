@@ -1,7 +1,7 @@
 # Translations template for PROJECT.
-# Copyright (C) 2021 ORGANIZATION
+# Copyright (C) 2023 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
 # 
 # Translators:
 # NDItech, 2021
@@ -12,14 +12,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2023-01-28 17:11+0000\n"
 "PO-Revision-Date: 2020-10-28 20:14+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2021\n"
 "Language-Team: Arabic (https://www.transifex.com/nditech/teams/114236/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
+"Generated-By: Babel 2.9.1\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
@@ -31,41 +31,41 @@ msgstr "القسم"
 msgid "Numeric Question"
 msgstr "سؤال عددي"
 
-#: apollo/static/js/angular-form-builder-components.js:89
+#: apollo/static/js/angular-form-builder-components.js:94
 msgid "Single Choice Question"
 msgstr "سؤال ذو اختيار واحد"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 1"
 msgstr "الخيار ١"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 2"
 msgstr "خيار رقم 2"
 
-#: apollo/static/js/angular-form-builder-components.js:136
+#: apollo/static/js/angular-form-builder-components.js:141
 msgid "Yes/No Question"
 msgstr "سؤال إجابته نعم/لا"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "Yes"
 msgstr "نعم"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "No"
 msgstr "لا"
 
-#: apollo/static/js/angular-form-builder-components.js:184
+#: apollo/static/js/angular-form-builder-components.js:189
 msgid "Multiple Choice Question"
 msgstr "سؤال متعدد الخيارات"
 
-#: apollo/static/js/angular-form-builder-components.js:229
+#: apollo/static/js/angular-form-builder-components.js:234
 msgid "Comment Question"
 msgstr "سؤال حول تعليق"
 
-#: apollo/static/js/angular-form-builder-components.js:269
+#: apollo/static/js/angular-form-builder-components.js:274
 msgid "Image Attachment"
 msgstr "صورة مرفقة"
 
@@ -130,14 +130,18 @@ msgid "Maximum"
 msgstr "الحد الأقصى"
 
 #: apollo/static/js/angular-form-builder.js:60
+msgid "Null Value"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:61
 msgid "Type"
 msgstr "النوع"
 
-#: apollo/static/js/angular-form-builder.js:61
+#: apollo/static/js/angular-form-builder.js:62
 msgid "Expected Value (Optional)"
 msgstr "القيمة المتوقعة (اختياري)"
 
-#: apollo/static/js/angular-form-builder.js:62
+#: apollo/static/js/angular-form-builder.js:63
 msgid "Validation"
 msgstr "التحقق"
 
