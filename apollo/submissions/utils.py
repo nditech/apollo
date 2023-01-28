@@ -173,8 +173,8 @@ def make_turnout_dataframe(query, form):  # noqa
 
     # add registered voters and path extraction to the columns
     columns.append(own_loc.registered_voters.label(
-        'registered_voters') if not form.registered_voters_tag
-        else Submission.data[form.registered_voters_tag].label(
+        'registered_voters') if not form.turnout_registered_voters_tag
+        else Submission.data[form.turnout_registered_voters_tag].label(
         'registered_voters'))
     columns.append(
         func.jsonb_object(
@@ -221,3 +221,6 @@ def make_turnout_dataframe(query, form):  # noqa
     ], axis=1, join_axes=[df.index])
 
     return df_summary
+
+def valid_turnout_dataframe(dataframe: pd.DataFrame, turnout_field: str, rv_field: str):  # noqa
+    return dataframe[(dataframe[rv_field] > 0) & dataframe[turnout_field].notna()]  # noqa

@@ -36,7 +36,8 @@
                 <th bgcolor="#eee">{{ _('Missing') }}</th>
                 <th bgcolor="#eee">{{ _('Total Registered') }}</th>
                 <th bgcolor="#eee">{{ _('Turnout') }}</th>
-                <th bgcolor="#eee">{{ _('Margin of Error') }}</th>
+                <th bgcolor="#eee"><abbr title="{{ _('Margin of Error') }}">{{ _('MoE 95%%') }}</abbr></th>
+                <th bgcolor="#eee"><abbr title="{{ _('Margin of Error') }}">{{ _('MoE 99%%') }}</abbr></th>
             </tr>
             </thead>
             <tbody>
@@ -46,9 +47,10 @@
                 <td>{{ field.description }}</td>
                 <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['reported_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['reported_cnt']|int }}</strong></div></div></td>
                 <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['missing_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['missing_cnt']|int }}</strong></div></div></td>
-                <td><strong>{{ summary['total_registered']|int }}</strong></td>
+                <td><strong>{{ summary[field.tag]['total_registered']|int }}</strong></td>
                 <td><div class="d-flex flex-row"><div class="flex-fill pr-2"><strong>{{ '%.1f' % summary[field.tag]['turnout_pct']|percent_of(1, 0) }}%</strong></div><div class="flex-fill text-muted"><strong>{{ summary[field.tag]['turnout_cnt']|int }}</strong></div></div></td>
-                <td><strong>&pm; {{ '%.1f' % summary[field.tag]['turnout_moe'] }}%</strong></td>
+                <td><strong>&pm; {{ '%.3f' % summary[field.tag]['turnout_moe_95'] }}%</strong></td>
+                <td><strong>&pm; {{ '%.3f' % summary[field.tag]['turnout_moe_99'] }}%</strong></td>
             </tr>
             {% endfor %}
             </tbody>
