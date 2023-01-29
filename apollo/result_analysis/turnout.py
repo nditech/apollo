@@ -137,7 +137,7 @@ def turnout_convergence(form_id, location_id=None):
     summary = {}
 
     for turnout_field_label in turnout_field_labels:
-        valid_dataset = valid_turnout_dataframe(dataset, turnout_field_label, 'registered_voters')  # noqa
+        valid_dataset = valid_turnout_dataframe(dataset, form, turnout_field_label, 'registered_voters')  # noqa
 
         turnouts_count = valid_dataset.shape[0]
         turnouts_reported = valid_dataset.notna().sum()
