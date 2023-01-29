@@ -222,5 +222,19 @@ def make_turnout_dataframe(query, form):  # noqa
 
     return df_summary
 
-def valid_turnout_dataframe(dataframe: pd.DataFrame, turnout_field: str, rv_field: str):  # noqa
-    return dataframe[(dataframe[rv_field] > 0) & dataframe[turnout_field].notna()]  # noqa
+def valid_turnout_dataframe(dataframe: pd.DataFrame, form: object, turnout_field_label: str, rv_field_label: str):  # noqa
+    turnout_field = form.get_field_by_tag(turnout_field_label)
+    turnout_rv_field = form.get_field_by_tag(form.turnout_registered_voters_tag)  # noqa
+    if turnout_rv_field:
+        return dataframe[
+            (dataframe[rv_field_label] > 0) &
+            (dataframe[rv_field_label] != turnout_rv_field.get('null_value', pd.np.nan)) &  # noqa
+            dataframe[turnout_field['tag']].notna() &
+            (dataframe[turnout_field['tag']] != turnout_field.get('null_value', pd.np.nan))  # noqa
+        ]
+    else:
+        return dataframe[
+            (dataframe[rv_field_label] > 0) &
+            dataframe[turnout_field['tag']].notna() &
+            (dataframe[turnout_field['tag']] != turnout_field.get('null_value', pd.np.nan))  # noqa
+        ]
