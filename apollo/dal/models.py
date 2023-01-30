@@ -6,6 +6,7 @@ is liberally adapted (aka stolen) from the source of ziggurat_foundations
 (https://github.com/ergo/ziggurat-foundations)
 '''
 import warnings
+import sqlalchemy as sa
 from uuid import uuid4
 
 from flask import g
@@ -13,6 +14,7 @@ from flask_babelex import get_locale, gettext as _
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import TranslationHybrid
+from sqlalchemy_utils.i18n import cast_locale_expr
 
 from apollo.core import db
 
@@ -45,6 +47,34 @@ def get_default_locale(obj, attr):
     # return default deployment locale
     return locale
 
+
+def expr_factory(self, attr):
+    '''
+    The default `expr_factory` method for the TranslationHybrid accessor that
+    comes with sqlalchemy_utils expects that every field that uses it should
+    have at least a value for the default_locale. In our case, there's no
+    guarantee as we do not enforce that.
+
+    In order to mitigate a situation where there's no value for the
+    current_locale and that there's also no value for the default_locale, the
+    `expr_factory` method is monkey-patched to allow for retrieving the first
+    available value if there's no value for either the current_locale or the
+    default_locale
+    '''
+    def expr(cls):
+        cls_attr = getattr(cls, attr.key)
+        current_locale = cast_locale_expr(cls, self.current_locale, attr)
+        default_locale = cast_locale_expr(cls, self.default_locale, attr)
+        return sa.func.coalesce(
+            cls_attr[current_locale],
+            sa.func.coalesce(
+                cls_attr[default_locale],
+                sa.func.jsonb_path_query_first(cls_attr, '$.*'))
+        )
+    return expr
+
+
+TranslationHybrid.expr_factory = expr_factory
 
 translation_hybrid = TranslationHybrid(
     current_locale=get_locale,
