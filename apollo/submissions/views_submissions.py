@@ -806,6 +806,13 @@ def submission_edit(submission_id):
                             if data.get(form_field) is not None:
                                 data.pop(form_field, None)
                                 changed = True
+                        else:
+                            if (
+                                data.get(form_field) !=
+                                submission_form.data.get(form_field)
+                            ):
+                                data[form_field] = field_value
+                                changed = True
                     elif submission.data.get(form_field) != field_value:
                         if (
                             field_value is None and
