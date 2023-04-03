@@ -833,6 +833,8 @@
               if (instance.data[field.tag] !== undefined || instance.data[field.tag] !== null) {
                 if ((fieldData < field.min) || (fieldData > field.max))
                   errorFields.push(field.tag);
+                else if (Number.parseInt(fieldData.toString()) !== fieldData)
+                  errorFields.push(field.tag);
               }
             });
           });
