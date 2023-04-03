@@ -17,7 +17,7 @@ def make_message_text(form, participant, data, serial: str = None):
 
     if form.form_type == 'INCIDENT':
         message_body += '!'
-    if serial:
+    if serial and form.form_type == 'SURVEY':
         message_body += f'X{serial}'
 
     for tag in form.tags:
