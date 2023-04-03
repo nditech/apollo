@@ -12,7 +12,7 @@ from flask import url_for
 from apollo.settings import SSL_REQUIRED
 
 
-def make_message_text(form, participant, data, serial: str):
+def make_message_text(form, participant, data, serial: str = None) -> str:
     message_body = f'{form.prefix} {participant.participant_id}'
 
     if form.form_type == 'INCIDENT':
