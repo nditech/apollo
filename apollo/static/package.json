@@ -44,7 +44,7 @@
     "html-webpack-plugin": "^5.5.0",
     "manifest-revision-webpack-plugin": "^0.4.1",
     "mini-css-extract-plugin": "^2.7.2",
-    "node-sass": "^7.0.3",
+    "node-sass": "^9.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss-loader": "^7.0.2",
     "sass-loader": "^13.2.0",
