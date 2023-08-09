@@ -43,8 +43,8 @@
                     {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
             {%- else -%}
-                {%- for group in form.data.groups -%}
-                {%- for field in group.fields -%}
+                {%- for group in form.data.groups[:1] -%}
+                {%- for field in group.fields[:1] -%}
                 {%- if field['type'] == 'select' -%}
                 <div class="col-6 col-lg-2 mb-2">
                     <label for="{{ filter_form[field.tag].id }}" class="sr-only">{{ filter_form[field.tag].label.text }}</label>
