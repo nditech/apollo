@@ -9,18 +9,19 @@ from celery import Celery
 from depot.manager import DepotManager
 from flask import Flask, request
 from flask_babelex import gettext as _
-from flask_security import current_user
+from flask_security import SQLAlchemyUserDatastore, current_user
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
-from apollo import settings
+from apollo import models, settings
 from apollo.api import hooks as jwt_hooks
 from apollo.core import (
     babel, db, cors, debug_toolbar, fdt_available, jwt_manager,
-    mail, migrate, red, sentry, uploads)
+    mail, migrate, red, security, sentry, uploads)
 from apollo.helpers import register_blueprints
+from apollo.security_ext_forms import DeploymentLoginForm
 
 
 TASK_DESCRIPTIONS = {
@@ -95,6 +96,21 @@ def create_app(
     migrate.init_app(app, db)
     mail.init_app(app)
     red.init_app(app)
+
+    user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
+    security_ctx = security.init_app(
+        app, user_datastore, login_form=DeploymentLoginForm,
+        register_blueprint=register_all_blueprints)
+
+    @security_ctx.send_mail_task
+    def delay_flask_security_mail(msg):
+        from apollo.tasks import send_email
+
+        send_email.delay(
+            subject=msg.subject, sender=msg.sender, recipients=msg.recipients,
+            body=msg.body)
+
+
 
     configure_uploads(app, uploads)
 

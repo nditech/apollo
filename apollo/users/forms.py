@@ -5,6 +5,8 @@ from sqlalchemy.sql import and_, exists
 from wtforms import fields, validators, widgets
 
 from apollo import constants, models, services
+from apollo.frontend.forms import _make_choices
+from apollo.helpers import load_source_file
 
 
 class UserDetailsForm(FlaskForm):
@@ -65,3 +67,23 @@ class UserDetailsForm(FlaskForm):
             raise validators.ValidationError(
                 _('The email %(email)s is not available',
                     email=field.data))
+
+
+def make_import_mapping_form(import_file):
+    field_choices = _make_choices([
+        ('username', _('Username')),
+        ('email', _('Email')),
+        ('password', _('Password')),
+        ('role', _('Role')),
+        ('lang', _('Language code')),
+        ('first_name', _('First name')),
+        ('last_name', _('Last name')),
+    ])
+    attributes = {}
+
+    data_frame = load_source_file(import_file)
+    for index, column in enumerate(data_frame.columns):
+        attributes[str(index)] = fields.SelectField(
+            column, choices=field_choices)
+    
+    return type('UserImportMapForm', (FlaskForm,), attributes)

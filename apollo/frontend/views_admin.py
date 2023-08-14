@@ -29,6 +29,7 @@ from apollo import models, services, settings
 from apollo.core import admin, db
 from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
+from apollo.frontend import views_users as user_views
 from apollo.locations.views_locations import (
     locations_builder, import_divisions, export_divisions,
     locations_list, location_edit, locations_import, locations_headers,
@@ -414,6 +415,7 @@ class UserAdminView(BaseAdminView):
         rules.FieldSet(('email', 'username', 'password2', 'active', 'roles',
                         'permissions', 'locale'))
     ]
+    list_template = 'admin/user_list.html'
 
     def get_query(self):
         user = current_user._get_current_object()
@@ -476,6 +478,14 @@ class UserAdminView(BaseAdminView):
             role.active = True
             role.save()
         flash(str(_('User(s) successfully enabled.')), 'success')
+
+    @expose('/user-import', methods=['POST'])
+    def import_users(self):
+        return user_views.import_users()
+
+    @expose('/user-import-headers/<int:upload_id>', methods=['GET', 'POST'])
+    def import_headers(self, upload_id: int):
+        return user_views.import_headers(upload_id)
 
 
 class RoleAdminView(BaseAdminView):

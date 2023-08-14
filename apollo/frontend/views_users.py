@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
+import os
+
 from flask import (
-    Blueprint, abort, json, jsonify, redirect, render_template, session,
-    url_for)
+    Blueprint, abort, json, jsonify, redirect, render_template, request,
+    session, url_for)
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import hash_password
+from apollo import utils
 
-from apollo.core import red
+from apollo.core import red, sentry, uploads
 from apollo.frontend import route
-from apollo.users import forms
+from apollo.frontend.forms import file_upload_form
+from apollo.users import forms, tasks
+from apollo.users.models import UserUpload
 
 bp = Blueprint('users', __name__)
 
@@ -54,3 +59,70 @@ def task_list():
     }
 
     return jsonify(tasks)
+
+
+def import_users():
+    form = file_upload_form(request.form)
+
+    if not form.validate():
+        return abort(400)
+    
+    user = current_user._get_current_object()
+    upload_file = utils.strip_bom_header(request.files['spreadsheet'])
+    filename = uploads.save(upload_file)
+    upload = UserUpload(
+        deployment_id=user.deployment_id, upload_filename=filename,
+        user_id=user.id,
+    )
+    upload.save()
+
+    return redirect(url_for('user.import_headers', upload_id=upload.id))
+
+
+def import_headers(upload_id: int):
+    user = current_user._get_current_object()
+    upload = UserUpload.query.filter(
+        UserUpload.id == upload_id, UserUpload.user == user
+    ).first_or_404()
+    filepath = uploads.path(upload.upload_filename)
+    try:
+        with open(filepath, 'rb') as source_file:
+            mapping_form_class = forms.make_import_mapping_form(source_file)
+    except Exception:
+        sentry.captureException()
+
+        os.remove(filepath)
+        upload.delete()
+        return abort(400)
+
+    template_name = 'admin/location_headers.html'
+
+    if request.method == 'GET':
+        form = mapping_form_class()
+        return render_template(template_name, form=form)
+    else:
+        form = mapping_form_class()
+        if not form.validate():
+            error_msgs = []
+            for key in form.errors:
+                for msg in form.errors[key]:
+                    error_msgs.append(msg)
+            
+            return render_template(
+                'admin/location_headers_errors.html', error_msgs=error_msgs
+            ), 400
+    
+    data = {}
+    for field in form:
+        if not field.data:
+            continue
+        data.update({field.data: field.label.text})
+
+    kwargs = {
+        'upload_id': upload_id,
+        'mappings': data,
+        'channel': session.get('_id'),
+    }
+    tasks.import_users.apply_async(kwargs=kwargs)
+
+    return redirect(url_for('user.index_view'))
