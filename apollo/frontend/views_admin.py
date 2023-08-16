@@ -131,15 +131,18 @@ class HiddenObjectMixin(object):
         return self.get_query().filter(self.model.id == id).one()
 
     def get_query(self):
+        query = super().get_query()
+        return self.filter_hidden(query)
+
+    def filter_hidden(self, query):
         model_class = self.model
         query_params = request.args.to_dict(flat=False)
         show_hidden = bool(query_params.get(self.query_param_name))
         if show_hidden:
-            query = super().get_query()
+            pass
         else:
-            query = super().get_query().filter(
-                model_class.is_hidden == False) # noqa
-
+            query = query.filter(model_class.is_hidden == False) # noqa
+        
         return query
 
     def render(self, template, **kwargs):
@@ -422,7 +425,9 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
         user = current_user._get_current_object()
-        return models.Event.query.filter_by(deployment_id=user.deployment.id)
+        return self.filter_hidden(
+            models.Event.query.filter_by(deployment_id=user.deployment.id)
+        )
 
     def on_model_change(self, form, model, is_created):
         # if we're creating a new event, make sure to set the
