@@ -257,7 +257,9 @@ def forms_list(view):
         'forms': all_forms,
         'checklist_forms': checklist_forms,
         'survey_forms': survey_forms,
-        'events': models.Event.query.order_by('name').all(),
+        'events': models.Event.query.filter_by(
+            models.Event.is_hidden == False
+        ).order_by('name').all(),
         'roles': models.ParticipantRole.query.order_by('name').all(),
         'location_types': models.LocationType.query.all(),
         'breadcrumbs': breadcrumbs,
