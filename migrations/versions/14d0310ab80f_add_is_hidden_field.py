@@ -1,7 +1,7 @@
 """add is_hidden field
 
 Revision ID: 14d0310ab80f
-Revises: c4166678fb79
+Revises: c49246964b9d
 Create Date: 2022-04-19 17:23:29.131789
 
 """
@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "14d0310ab80f"
-down_revision = "c4166678fb79"
+down_revision = "c49246964b9d"
 branch_labels = None
 depends_on = None
 
