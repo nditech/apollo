@@ -2,6 +2,7 @@
 import os
 
 import pandas as pd
+from flask_babelex import gettext
 
 from apollo import helpers
 from apollo.core import uploads
@@ -57,6 +58,10 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         # email is required
         if not _is_valid(email):
+            error_log.append({
+                'label': 'ERROR',
+                'message': gettext('No valid email found'),
+            })
             error_records += 1
             continue
 
@@ -74,6 +79,10 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         # password is required for a new user
         if not _is_valid(password) and user.id is None:
+            error_log.append({
+                'label': 'ERROR',
+                'message': gettext('New user has no password set'),
+            })
             error_records += 1
             continue
         user.set_password(str(password))

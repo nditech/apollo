@@ -27,7 +27,9 @@ from apollo.security_ext_forms import DeploymentLoginForm
 TASK_DESCRIPTIONS = {
     'apollo.locations.tasks.import_locations': _('Import Locations'),
     'apollo.participants.tasks.import_participants': _('Import Participants'),
-    'apollo.submissions.tasks.init_submissions': _('Generate Checklists')
+    'apollo.submissions.tasks.init_submissions': _('Generate Checklists'),
+    'apollo.submissions.tasks.init_survey_submissions': _('Generate Surveys'),
+    'apollo.users.tasks.import_users': _('Import Users'),
 }
 
 
@@ -110,8 +112,6 @@ def create_app(
             subject=msg.subject, sender=msg.sender, recipients=msg.recipients,
             body=msg.body)
 
-
-
     configure_uploads(app, uploads)
 
     # set up JWT callbacks
@@ -187,7 +187,7 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': _('FAILED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'description': TASK_DESCRIPTIONS.get(self.request.task, _('Task')),
                     'quit': True,
                 }
 
@@ -205,7 +205,7 @@ def create_celery_app(app=None):
                     'id': task_id,
                     'status': _('COMPLETED'),
                     'progress': self.task_info,
-                    'description': TASK_DESCRIPTIONS.get(self.request.task),
+                    'description': TASK_DESCRIPTIONS.get(self.request.task, _('Task')),
                     'quit': True,
                 }
 
@@ -227,7 +227,7 @@ def create_celery_app(app=None):
                 'id': request.id,
                 'status': _('RUNNING'),
                 'progress': task_metadata.get('result'),
-                'description': TASK_DESCRIPTIONS.get(self.request.task)
+                'description': TASK_DESCRIPTIONS.get(self.request.task, _('Task'))
             }
 
             if channel is not None:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext, lazy_gettext as _
 from flask_wtf import FlaskForm
 from sqlalchemy.sql import and_, exists
 from wtforms import fields, validators, widgets
@@ -85,5 +85,24 @@ def make_import_mapping_form(import_file):
     for index, column in enumerate(data_frame.columns):
         attributes[str(index)] = fields.SelectField(
             column, choices=field_choices)
+
+    def _validate_mappings(form: FlaskForm) -> bool:
+        rv = FlaskForm.validate(form)
+
+        errors = []
+        mapped_values = form.data.values()
+
+        if 'email' not in mapped_values:
+            errors.append(
+                gettext('Email was not mapped'),
+            )
+            rv = False
+        
+        form.errors['__validate__'] = errors
+
+        return rv
+
+    attributes['validate'] = _validate_mappings
+
     
     return type('UserImportMapForm', (FlaskForm,), attributes)

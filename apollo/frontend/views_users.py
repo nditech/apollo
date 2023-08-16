@@ -95,7 +95,7 @@ def import_headers(upload_id: int):
         upload.delete()
         return abort(400)
 
-    template_name = 'admin/location_headers.html'
+    template_name = 'admin/user_headers.html'
 
     if request.method == 'GET':
         form = mapping_form_class()
@@ -109,7 +109,7 @@ def import_headers(upload_id: int):
                     error_msgs.append(msg)
             
             return render_template(
-                'admin/location_headers_errors.html', error_msgs=error_msgs
+                'admin/user_headers_errors.html', error_msgs=error_msgs
             ), 400
     
     data = {}

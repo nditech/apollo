@@ -1,0 +1,155 @@
+{% extends "admin/model/list.html" %}
+
+{% block model_menu_bar_after_filters %}
+<li class="nav-item"><a href="#" class="nav-link" id="open-wizard">{{ _('Bulk import') }}</a></li>
+{% endblock %}
+
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
+{% endblock head_css %}
+
+
+{% block body %}
+{{ super() }}
+
+<!-- IMPORT WIZARD -->
+<div id="import-wizard" class="wizard" data-title="{{ _('Import Users') }}">
+  <!-- step #1 -->
+  <div class="wizard-card" data-cardname="uploadFile">
+    <h3>{{ _('Upload File') }}</h3>
+    <div class="wizard-input-section">
+      <form action="{{ url_for('user.import_users') }}" enctype="multipart/form-data" method="post" id="upload-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="custom-file">
+          <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
+          <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+          <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- step #2 -->
+  <div class="wizard-card pr-0" data-cardname="mapFields">
+    <h3>{{ _('Map Fields') }}</h3>
+    <div class="wizard-input-section overflow-auto"></div>
+  </div>
+
+  <div class="wizard-card" data-cardname="finalize">
+    <h3>{{ _('Finalize') }}</h3>
+    <div class="wizard-input-section">
+      <div class="alert alert-info">
+        <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
+      </div>
+    </div>
+  
+    <div class="wizard-failure">
+      <div class="alert alert-danger">
+        {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block tail_js %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript">
+$(function() {
+  var wizard = $('#import-wizard').wizard({
+    keyboard : true,
+    contentHeight : 500,
+    contentWidth : 700,
+    showCancel: true,
+    backdrop: true,
+    buttons: {'cancelText': "{{ _('Cancel') }}",
+              'nextText': "{{ _('Next') }}",
+              'backText': "{{ _('Back') }}",
+              'submitText': "{{ _('Submit') }}",
+              'submittingText': "{{ _('Submitting...') }}"}
+  });
+
+  wizard.on('closed', function() {
+    wizard.reset();
+    var uploadFile = document.getElementById('uploadFile');
+    uploadFile.value = ''
+    uploadFile.dispatchEvent(new Event('change'));
+    $('#uploadFile').removeClass('is-invalid');
+    $('#uploadFileHelptext').removeClass('invalid-feedback');
+  });
+
+  wizard.cards['uploadFile'].on('validate', function (card) {
+    var cont = true;
+    $('#upload-form').ajaxSubmit({
+      async: false,
+      error: function (data) {
+        input = card.el.find("#uploadFile");
+        input_helptext = card.el.find('#uploadFileHelptext');
+        input.addClass('is-invalid');
+        input_helptext.removeClass('text-muted');
+        input_helptext.addClass('invalid-feedback');
+        cont = false;
+      },
+      success: function (data) {
+        $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+        $('.wizard-input-section').height(wizard.dimensions.cardContainer - 85);
+        cont = true;
+      }
+    });
+    return cont;
+  });
+
+  wizard.cards['mapFields'].on('validate', function (card) {
+    var cont = false;
+
+    $.ajax({
+      type: 'POST',
+      url: $('#form-action').val(),
+      data: wizard.serialize(),
+      async: false,
+      beforeSend: function (xhr) { xhr.setRequestHeader('X-Validate', '1'); },
+    }).done(function (response) {
+      cont = true;
+    }).fail(function (data) {
+      $('#form-action-errors', wizard.cards['mapFields'].el).html(data.responseText);
+      $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('d-none');
+      cont = false;
+    });
+
+    return cont;
+  });
+
+  wizard.on("submit", function(wizard) {
+    $.ajax({
+      type: 'POST',
+      url: $('#form-action').val(),
+      data: wizard.serialize()
+    }).done(function (response) {
+      wizard.trigger("success");
+      wizard.hideButtons();
+      wizard._submitting = false;
+      wizard.submitSuccess();
+      wizard.updateProgressBar(0);
+      wizard.close();
+    }).fail(function (data) {
+      wizard.submitFailure();
+      wizard.showButtons();
+    });
+  });
+
+  $('#open-wizard').click(function(e) {
+    e.preventDefault();
+    wizard.reset();
+    var uploadFile = document.getElementById('uploadFile');
+    uploadFile.value = ''
+    uploadFile.dispatchEvent(new Event('change'));
+    $('#uploadFile').removeClass('is-invalid');
+    $('#uploadFileHelptext').removeClass('invalid-feedback');
+    wizard.show();
+  });
+});
+</script>
+{% endblock tail_js %}
