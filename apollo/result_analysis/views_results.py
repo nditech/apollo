@@ -6,7 +6,6 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
-import pandas as pd
 
 from apollo.formsframework.models import Form
 from apollo.frontend import route, permissions
