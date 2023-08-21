@@ -189,6 +189,17 @@ class InlineQATreeVisitor(BaseVisitor):
                 # both sides are NULL
                 return 'NULL'
         return super().visit_comparison(node, children)
+    
+    def visit_exponent(self, node, children):
+        if len(children) == 1:
+            return children[0]
+
+        exponent = children[0]
+        for i in children[1:]:
+            # exponent **= i
+            exponent **= i
+
+        return exponent
 
 
 class QATreeVisitor(BaseVisitor):
@@ -259,6 +270,17 @@ class QATreeVisitor(BaseVisitor):
             elif cast_type is not None:
                 return Submission.data[var_name].astext.cast(cast_type)
             return Submission.data[var_name]
+
+    def visit_exponent(self, node, children):
+        if len(children) == 1:
+            return children[0]
+
+        exponent = children[0]
+        for i in children[1:]:
+            # exponent **= i
+            exponent = func.pow(exponent, i)
+
+        return exponent
 
 
 def generate_qa_query(expression, form):
