@@ -96,17 +96,6 @@ class BaseVisitor(PTNodeVisitor):
     def visit_value(self, node, children):
         return children[-1]
 
-    def visit_exponent(self, node, children):
-        if len(children) == 1:
-            return children[0]
-
-        exponent = children[0]
-        for i in children[1:]:
-            # exponent **= i
-            exponent = func.pow(exponent, i)
-
-        return exponent
-
     def visit_product(self, node, children):
         product = children[0]
         for i in range(2, len(children), 2):
