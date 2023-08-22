@@ -66,7 +66,7 @@ def import_users():
 
     if not form.validate():
         return abort(400)
-    
+
     user = current_user._get_current_object()
     upload_file = utils.strip_bom_header(request.files['spreadsheet'])
     filename = uploads.save(upload_file)
