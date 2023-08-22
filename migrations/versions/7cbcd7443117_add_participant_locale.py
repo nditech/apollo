@@ -1,7 +1,7 @@
 """add participant locale
 
 Revision ID: 7cbcd7443117
-Revises: c4166678fb79
+Revises: c49246964b9d
 Create Date: 2022-07-21 06:15:32.406241
 
 """
@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "7cbcd7443117"
-down_revision = "c4166678fb79"
+down_revision = "c49246964b9d"
 branch_labels = None
 depends_on = None
 
