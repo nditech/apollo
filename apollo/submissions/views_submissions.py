@@ -479,7 +479,7 @@ def submission_list(form_id):
         breadcrumbs = [_("Surveys"), form.name]
     else:
         # show only the first question in the incident form
-        tags = form.unsorted_tags
+        tags = form.response_fields
         form_fields = [form.get_field_by_tag(tags[0])] if tags else []
         breadcrumbs = [_("Critical Incidents"), form.name]
 

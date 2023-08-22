@@ -31,6 +31,10 @@
                     <label for="{{ filter_form.conjunction.id }}" class="sr-only">{{ filter_form.conjunction.label.text }}</label>
                     {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-width': '100', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
                 </div>
+                <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                    <label for="{{ filter_form.values.id }}" class="sr-only">{{ filter_form.values.label.text }}</label>
+                    {{ filter_form.values(class_='form-control', placeholder=_('Field values')) }}
+                </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
                 <div class="col-6 col-lg-2 mb-2">
@@ -43,10 +47,16 @@
                     {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
             {%- else -%}
+                <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                    <label for="{{ filter_form.values.id }}" class="sr-only">{{ filter_form.values.label.text }}</label>
+                    {{ filter_form.values(class_='form-control', placeholder=_('Field values')) }}
+                </div>
                 {%- if form.data.groups -%}
                 {%- for group in form.data.groups[:1] -%}
                 {%- if group.fields -%}
                 {%- for field in group.fields[:1] -%}
+                {%- for group in form.data.groups -%}
+                {%- for field in group.fields -%}
                 {%- if field['type'] == 'select' -%}
                 <div class="col-6 col-lg-2 mb-2">
                     <label for="{{ filter_form[field.tag].id }}" class="sr-only">{{ filter_form[field.tag].label.text }}</label>

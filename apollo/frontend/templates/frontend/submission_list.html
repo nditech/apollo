@@ -6,6 +6,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tagify.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 <style>
@@ -16,6 +17,8 @@
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ohm.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tagify.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
@@ -180,6 +183,36 @@ $(function () {
     });
   });
 
+  // initialize the parser
+  const questionnaireFields = JSON.parse(document.querySelector('#valuesWrapper').dataset.formSchema);
+  const freeFormTags = questionnaireFields.filter(f => (f.type === 'integer') || (f.type === 'select')).map(f => `"${f.tag}"`);
+  const freeFormGrammar = `
+  QueryItem {
+    expression = field spaces comparator spaces number
+    	| number spaces comparator spaces field
+	  number = digit+
+    comparator = "=" | "!=" | "<>" | ">=" | ">" | "<=" | "<"
+    field = ${freeFormTags.join(' | ')}
+  }
+  `;
+  const parser = ohm.grammar(freeFormGrammar);
+
+  // initiialize the tags input
+  let whitelistFields = [];
+  questionnaireFields.filter(f => f.type === 'select').forEach(f => {
+    for ([title, value] of Object.entries(f.options))
+      whitelistFields.push(`${f.tag}=${value}`);
+  });
+  var tagsInput = new Tagify(document.querySelector('#{{ filter_form.values.id }}'), {
+    dropdown: {
+      enabled: 1
+    },
+    validate(tagData) {
+      const matchResult = parser.match(tagData.value);
+      return matchResult.succeeded();
+    },
+    whitelist: whitelistFields.toSorted()
+  });
 
   moment.lang('{{ g.locale }}');
   var marker = undefined;

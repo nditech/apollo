@@ -35,7 +35,7 @@ exponent = value (("^") value)*
 product = exponent (("*" / "/") exponent)*
 sum = product (("+" / "-") product)*
 concat = sum (("|") sum)*
-comparison = concat ((">=" / ">" / "<=" / "<" / "=" / "!=") concat)*
+comparison = concat (("<>" / ">=" / ">" / "<=" / "<" / "=" / "!=") concat)*
 expression = comparison (("&&" / "||") comparison)*
 qa = expression+ EOF
 '''
@@ -53,6 +53,7 @@ OPERATIONS = {
     '<': op.lt,
     '=': op.eq,
     '!=': op.ne,
+    '<>': op.ne,
     '&&': op.and_,
     '||': op.or_
 }
