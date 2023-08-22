@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 from flask_babelex import gettext
+from sqlalchemy import func
 
 from apollo import helpers
 from apollo.core import uploads
@@ -35,6 +36,7 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
     total_records = dataframe.shape[0]
     processed_records = 0
     error_records = 0
+    warning_records = 0
     error_log = []
 
     USERNAME_COL = mappings.get('username')
@@ -68,7 +70,7 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
         # find user by email, or create one
         user = User.query.filter(
             User.deployment_id == upload.deployment_id,
-            User.email == str(email),
+            func.lower(User.email) == func.lower(str(email)),
         ).first()
         if user is None:
             user = User(deployment_id=upload.deployment_id, email=email)
@@ -107,6 +109,7 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
             total_records=total_records,
             processed_records=processed_records,
             error_records=error_records,
+            warning_records=warning_records,
             error_log=error_log,
         )
 
