@@ -71,6 +71,7 @@ $(function() {
               'submitText': "{{ _('Submit') }}",
               'submittingText': "{{ _('Submitting...') }}"}
   });
+  var submitted = false;
 
   wizard.on('closed', function() {
     wizard.reset();
@@ -123,21 +124,24 @@ $(function() {
   });
 
   wizard.on("submit", function(wizard) {
-    $.ajax({
-      type: 'POST',
-      url: $('#form-action').val(),
-      data: wizard.serialize()
-    }).done(function (response) {
-      wizard.trigger("success");
-      wizard.hideButtons();
-      wizard._submitting = false;
-      wizard.submitSuccess();
-      wizard.updateProgressBar(0);
-      wizard.close();
-    }).fail(function (data) {
-      wizard.submitFailure();
-      wizard.showButtons();
-    });
+    if (!submitted) {
+      submitted = true;
+      $.ajax({
+        type: 'POST',
+        url: $('#form-action').val(),
+        data: wizard.serialize()
+      }).done(function (response) {
+        wizard.trigger("success");
+        wizard.hideButtons();
+        wizard._submitting = false;
+        wizard.submitSuccess();
+        wizard.updateProgressBar(0);
+        wizard.close();
+      }).fail(function (data) {
+        wizard.submitFailure();
+        wizard.showButtons();
+      });
+    }
   });
 
   $('#open-wizard').click(function(e) {

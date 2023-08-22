@@ -79,26 +79,25 @@ def make_import_mapping_form(import_file):
         ('first_name', _('First name')),
         ('last_name', _('Last name')),
     ])
-    attributes = {}
+    attributes = {
+        'failed_custom_validation': False,
+    }
 
     data_frame = load_source_file(import_file)
     for index, column in enumerate(data_frame.columns):
         attributes[str(index)] = fields.SelectField(
             column, choices=field_choices)
 
-    def _validate_mappings(form: FlaskForm) -> bool:
+    def _validate_mappings(form) -> bool:
         rv = FlaskForm.validate(form)
 
-        errors = []
         mapped_values = form.data.values()
 
         if 'email' not in mapped_values:
-            errors.append(
-                gettext('Email was not mapped'),
-            )
+            form.failed_custom_validation = True
             rv = False
-        
-        form.errors['__validate__'] = errors
+        else:
+            form.failed_custom_validation 
 
         return rv
 
