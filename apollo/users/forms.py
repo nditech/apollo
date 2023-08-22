@@ -79,6 +79,8 @@ def make_import_mapping_form(import_file):
         ('first_name', _('First name')),
         ('last_name', _('Last name')),
     ])
+    # for some reason, setting the error dictionary
+    # didn't work, consistently, so this is the stopgap
     attributes = {
         'failed_custom_validation': False,
     }
