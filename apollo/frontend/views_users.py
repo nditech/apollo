@@ -96,33 +96,32 @@ def import_headers(upload_id: int):
         return abort(400)
 
     template_name = 'admin/user_headers.html'
+    form = mapping_form_class()
 
     if request.method == 'GET':
-        form = mapping_form_class()
         return render_template(template_name, form=form)
     else:
-        form = mapping_form_class()
         if not form.validate():
             error_msgs = []
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)
-            
             return render_template(
                 'admin/user_headers_errors.html', error_msgs=error_msgs
             ), 400
     
-    data = {}
-    for field in form:
-        if not field.data:
-            continue
-        data.update({field.data: field.label.text})
+    if 'X-Validate' not in request.headers:
+        data = {}
+        for field in form:
+            if not field.data:
+                continue
+            data.update({field.data: field.label.text})
 
-    kwargs = {
-        'upload_id': upload_id,
-        'mappings': data,
-        'channel': session.get('_id'),
-    }
-    tasks.import_users.apply_async(kwargs=kwargs)
+        kwargs = {
+            'upload_id': upload_id,
+            'mappings': data,
+            'channel': session.get('_id'),
+        }
+        tasks.import_users.apply_async(kwargs=kwargs)
 
     return redirect(url_for('user.index_view'))
