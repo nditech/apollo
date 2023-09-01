@@ -57,7 +57,7 @@ class SubmissionService(Service):
         ).all()
         samples = Sample.query.filter_by(
             participant_set_id=event.participant_set_id).all()
-        tags = form.tags
+        tags = form.unsorted_tags
 
         extra_field_headers = [fi.label for fi in extra_fields]
 
