@@ -2,6 +2,7 @@
 from collections import OrderedDict
 from functools import partial
 from operator import itemgetter
+from string import Template
 
 from flask import Blueprint, g, render_template, request, url_for
 from flask_babelex import lazy_gettext as _
@@ -22,6 +23,11 @@ from apollo.frontend.helpers import (
 from apollo.services import forms, locations, location_types, submissions
 from apollo.submissions import filters
 from apollo.submissions.utils import make_submission_dataframe
+
+
+def filter_option_value(tag, op, value):
+    s = Template('[{"value": "$tag$op$value"}]')
+    return s.substitute(tag=tag, op=op, value=value)
 
 
 def get_analysis_menu():
@@ -173,6 +179,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     context['field_groups'] = OrderedDict()
     context['navigation_data'] = analysis_navigation_data(
         form, location, display_tag)
+    context['filter_option_value'] = filter_option_value
 
     # processing for incident forms
     if form.form_type == 'INCIDENT':
