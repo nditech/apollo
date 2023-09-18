@@ -49,7 +49,7 @@
             {%- for lt in location_types -%}
 			<div class="tab-pane fade{{ ' show active' if loop.first else '' }} table-responsive" id="tab-{{ loop.index }}" role="tabpanel" aria-labelledby="tablink-{{ loop.index }}">
                 {%- if result_labels -%}
-                {% if current_user.is_admin() %}<div class="my-2"><button class="btn btn-secondary btn-export-table" data-export-target="#tab-{{ loop.index }}" data-location-type="{{ lt.name }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 19H21V21H3V19ZM13 13.1716L19.0711 7.1005L20.4853 8.51472L12 17L3.51472 8.51472L4.92893 7.1005L11 13.1716V2H13V13.1716Z" fill="rgba(255,255,255,1)"></path></svg> Export this table</button></div>{% endif %}
+                {% if current_user.is_admin() %}<div class="my-2"><button class="btn btn-secondary btn-export-table" data-export-target="#tab-{{ loop.index }}" data-location-type="{{ lt.name }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 19H21V21H3V19ZM13 13.1716L19.0711 7.1005L20.4853 8.51472L12 17L3.51472 8.51472L4.92893 7.1005L11 13.1716V2H13V13.1716Z" fill="rgba(255,255,255,1)"></path></svg> {{ _('Export this table')}}</button></div>{% endif %}
 				<table class="table table-hover{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
                     <thead class="thead-light">
                         <tr>
