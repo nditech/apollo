@@ -46,9 +46,10 @@
 			{%- endfor -%}
 		</ul>
 		<div class="tab-content mt-3" id="locationTabContent">
-			{%- for lt in location_types -%}
+            {%- for lt in location_types -%}
 			<div class="tab-pane fade{{ ' show active' if loop.first else '' }} table-responsive" id="tab-{{ loop.index }}" role="tabpanel" aria-labelledby="tablink-{{ loop.index }}">
-				{%- if result_labels -%}
+                {%- if result_labels -%}
+                {% if current_user.is_admin() %}<div class="my-2"><button class="btn btn-outline btn-export-table" data-export-target="#tab-{{ loop.index }}" data-location-type="{{ lt.name }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 19H21V21H3V19ZM13 13.1716L19.0711 7.1005L20.4853 8.51472L12 17L3.51472 8.51472L4.92893 7.1005L11 13.1716V2H13V13.1716Z"></path></svg> Export this table</button></div>{% endif %}
 				<table class="table table-hover{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
                     <thead class="thead-light">
                         <tr>
@@ -109,28 +110,28 @@
                             </tr>
                             <tr>
                                 <th style="vertical-align:middle">{{ location.name }}</th>
-                                <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
-                                <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
+                                <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
+                                <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
                                 <th class="border-left"><span class="text-primary">{{ '%d' % data_analyses.overall.rv }}</span></th>
                                 <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.turnout|percent_of(1, 0) }}%</th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.3f' % data_analyses.overall.turnout_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.3f' % data_analyses.overall.turnout_moe_99 }}%</th>
                                 {%- endif -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.all_votes }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.all_votes }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
                                 {%- endif -%}
                                 {% if form.invalid_votes_tag -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.total_rejected }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.total_rejected }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_99 }}%</th>
                                 {%- endif -%}
                                 {%- endif %}
                                 {% if form.blank_votes_tag -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_blanks_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.total_blanks }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_blanks_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.total_blanks }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.total_blanks_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % data_analyses.overall.total_blanks_moe_99 }}%</th>
@@ -140,7 +141,7 @@
                                 {%- for vote in result_labels -%}
                                 {%- with vote_cnt = data_analyses['overall']['{}_cnt'.format(vote)] -%}
                                 {%- with vote_pct = data_analyses['overall']['{}_pct'.format(vote)] -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 {%- with vote_moe_95 = data_analyses['overall']['{}_moe_95'.format(vote)] -%}
                                 {%- with vote_moe_99 = data_analyses['overall']['{}_moe_99'.format(vote)] -%}
@@ -156,28 +157,28 @@
                             {%- for sublocation in data_analyses.grouped[lt.name] -%}
                             <tr>
                                 <td style="vertical-align:middle">{{ sublocation.name }}</td>
-                                <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
-                                <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
+                                <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
+                                <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
                                 <th class="border-left"><span class="text-primary">{{ '%d' % sublocation.rv }}</span></th>
                                 <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.turnout|percent_of(1, 0) }}%</th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.3f' % sublocation.turnout_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.3f' % sublocation.turnout_moe_99 }}%</th>
                                 {%- endif -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.all_votes }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.all_votes }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_99 }}%</th>
                                 {%- endif -%}
                                 {% if form.invalid_votes_tag -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.total_rejected }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.total_rejected }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_99 }}%</th>
                                 {%- endif -%}
                                 {%- endif %}
                                 {% if form.blank_votes_tag -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_blanks_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.total_blank }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_blanks_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.total_blank }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.total_blanks_moe_95 }}%</th>
                                 <th class="border-left">&plusmn;{{ '%.1f' % sublocation.total_blanks_moe_99 }}%</th>
@@ -187,7 +188,7 @@
                                 {%- for vote in result_labels -%}
                                 {%- with vote_cnt = sublocation['{}_cnt'.format(vote)] -%}
                                 {%- with vote_pct = sublocation['{}_pct'.format(vote)] -%}
-                                <th class="{{ 'border-left' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
+                                <th class="{{ 'border-left' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 {%- with vote_moe_95 = sublocation['{}_moe_95'.format(vote)] -%}
                                 {%- with vote_moe_99 = sublocation['{}_moe_99'.format(vote)] -%}
@@ -242,28 +243,28 @@
                             </tr>
                             <tr>
                                 <th style="vertical-align:middle">{{ location.name }}</th>
-                                <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
-                                <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
+                                <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
+                                <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
                                 <th class="border-right"><span class="text-primary">{{ '%d' % data_analyses.overall.rv }}</span></th>
                                 <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.turnout|percent_of(1, 0) }}%</th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.3f' % data_analyses.overall.turnout_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.3f' % data_analyses.overall.turnout_moe_99 }}%</th>
                                 {%- endif -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.all_votes }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.all_votes }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
                                 {%- endif -%}
                                 {% if form.invalid_votes_tag -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.total_rejected }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.total_rejected }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_99 }}%</th>
                                 {%- endif -%}
                                 {%- endif %}
                                 {% if form.blank_votes_tag -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_blanks_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ data_analyses.overall.total_blanks }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % data_analyses.overall.total_blanks_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.total_blanks }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th>&plusmn;{{ '%.1f' % data_analyses.overall.total_blanks_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % data_analyses.overall.total_blanks_moe_99 }}%</th>
@@ -273,7 +274,7 @@
                                 {%- for vote in result_labels -%}
                                 {%- with vote_cnt = data_analyses['overall']['{}_cnt'.format(vote)] -%}
                                 {%- with vote_pct = data_analyses['overall']['{}_pct'.format(vote)] -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 {%- with vote_moe_95 = data_analyses['overall']['{}_moe_95'.format(vote)] -%}
                                 {%- with vote_moe_99 = data_analyses['overall']['{}_moe_99'.format(vote)] -%}
@@ -289,28 +290,28 @@
                             {%- for sublocation in data_analyses.grouped[lt.name] -%}
                             <tr>
                                 <td style="vertical-align:middle">{{ sublocation.name }}</td>
-                                <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
-                                <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
+                                <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
+                                <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
                                 <th class="border-right"><span class="text-primary">{{ '%d' % sublocation.rv }}</span></th>
                                 <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.turnout|percent_of(1, 0) }}%</th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.3f' % sublocation.turnout_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.3f' % sublocation.turnout_moe_99 }}%</th>
                                 {%- endif -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.all_votes }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.all_votes }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_99 }}%</th>
                                 {%- endif -%}
                                 {% if form.invalid_votes_tag -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.total_rejected }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.total_rejected }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_99 }}%</th>
                                 {%- endif -%}
                                 {%- endif %}
                                 {% if form.blank_votes_tag -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_blanks_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ sublocation.total_blank }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe else '' }}">{{ '%.1f' % sublocation.total_blanks_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.total_blank }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 <th class="">&plusmn;{{ '%.1f' % sublocation.total_blanks_moe_95 }}%</th>
                                 <th class="border-right">&plusmn;{{ '%.1f' % sublocation.total_blanks_moe_99 }}%</th>
@@ -320,7 +321,7 @@
                                 {%- for vote in result_labels -%}
                                 {%- with vote_cnt = sublocation['{}_cnt'.format(vote)] -%}
                                 {%- with vote_pct = sublocation['{}_pct'.format(vote)] -%}
-                                <th class="{{ 'border-right' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
+                                <th class="{{ 'border-right' if not form.calculate_moe and not loop.last else '' }}">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ vote_cnt|int }}</span></th>
                                 {%- if form.calculate_moe and config.ENABLE_MOE -%}
                                 {%- with vote_moe_95 = sublocation['{}_moe_95'.format(vote)] -%}
                                 {%- with vote_moe_99 = sublocation['{}_moe_99'.format(vote)] -%}
@@ -425,6 +426,7 @@
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+<script src="{{ url_for('static', filename='js/xlsx.mini.min.js') }}"></script>
 <script>
 var dataset = [];
 var data = $('#scatterplot-chart').data('chart');
@@ -433,6 +435,23 @@ Object.keys(data).forEach(function (share) {
         dataset.push([datum[0], datum[1] / 100, share]);
     });
 });
+
+{% if current_user.is_admin() %}
+function exportTable(event) {
+    var buttonClicked = event.target;
+    var targetTableSelector = buttonClicked.dataset.exportTarget;
+    var tableToExport = document.querySelector(targetTableSelector).querySelectorAll('table.table-hover')[0];
+    if (!tableToExport) return;
+    var workbook = XLSX.utils.table_to_book(tableToExport);
+    var locationType = buttonClicked.dataset.locationType;
+    var fileName = `${locationType}-${Math.floor((new Date()).getTime() / 1000)}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+}
+
+Array.from(document.querySelectorAll('.btn-export-table')).forEach(function (btn) {
+    btn.addEventListener('click', exportTable);
+});
+{% endif %}
 
 var margin = {top: 20, right: 56, bottom: 60, left: 40},
     width = $('#chart-content').width() - margin.left - margin.right,
