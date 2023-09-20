@@ -97,6 +97,11 @@ class Submission(BaseModel):
     turnout_timestamps - a mapping of field tags to a date time string
     representing the first time the turnout field was updated. The date time
     string is stored in the ISO 8601 format.
+
+    group_timestamps - a mapping of group names to date time strings in
+    ISO 8601 format representing the last time that group was updated.
+    Consider a group updated if a value was saved for a field tag
+    belonging to that group.
     '''
     extra_data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES), index=True)
@@ -239,6 +244,30 @@ class Submission(BaseModel):
                     error_log=error_log
                 )
 
+    def update_group_timestamps(self, data: dict) -> None:
+        # local to avoid circular import
+        from apollo.frontend.helpers import DictDiffer
+
+        form = self.form
+        form._populate_group_cache()
+        group_names = form._group_cache.keys()
+        original_data = (self.data or {}).copy()
+        diff = DictDiffer(data, original_data)
+        modified_tags = diff.added().union(diff.removed()).union(
+            diff.changed())
+        extra_data = (self.extra_data or {}).copy()
+        group_timestamps = extra_data.get('group_timestamps', {})
+
+        modified_timestamp = current_timestamp()
+        for group_name in group_names:
+            common_tags = modified_tags.intersection(
+                form.get_group_tags(group_name))
+            if common_tags:
+                group_timestamps[group_name] = modified_timestamp.isoformat()
+        
+        extra_data['group_timestamps'] = group_timestamps
+        self.extra_data = extra_data
+
     def update_related(self, data):
         '''
         Given a dict used to update the submission,
@@ -316,6 +345,7 @@ class Submission(BaseModel):
             else:
                 subset.pop(key, None)
 
+        master.update_group_timestamps(subset)
         master.data = subset
         master.participant_updated = self.participant_updated
 
@@ -559,7 +589,12 @@ class Submission(BaseModel):
 
         data = self.data.copy()
         data.pop(tag)
-        self.__class__.query.filter_by(id=self.id).update({'data': data})
+        self.update_group_timestamps(data)
+        extra_data = self.extra_data.copy()
+        self.__class__.query.filter_by(id=self.id).update({
+            'data': data,
+            'extra_data': extra_data,
+        })
         db.session.delete(attachment)
         db.session.commit()
 

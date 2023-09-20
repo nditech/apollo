@@ -579,6 +579,7 @@ def submission_create(form_id):
                         )
 
         data.update(image_data)
+        submission.update_group_timestamps(data)
         submission.data = data
         db.session.add_all(attachments)
         db.session.add(submission)
@@ -846,7 +847,9 @@ def submission_edit(submission_id):
                         changed = True
                         update_params['participant_id'] = new_participant.id
 
+                submission.update_group_timestamps(data)
                 update_params['data'] = data
+                update_params['extra_data'] = submission.extra_data.copy()
 
                 if changed:
                     db.session.add_all(attachments)
@@ -1180,6 +1183,7 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
+                        submission.update_group_timestamps(data)
                         extra_data = submission.extra_data or {}
                         now = current_timestamp().isoformat()
 
