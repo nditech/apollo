@@ -198,6 +198,7 @@ def submission_list(form_id):
 
     if request.args.get('export') and permissions.export_submissions.can():
         query = filter_class(query, request.args).qs
+        include_group_timestamps = False
 
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
@@ -223,6 +224,7 @@ def submission_list(form_id):
                     models.Location.code
                 )
         else:
+            include_group_timestamps = True if mode == 'observer-ts' else False
             queryset = query.filter(
                 models.Submission.submission_type == 'O',
                 models.Submission.form == form,
@@ -249,7 +251,8 @@ def submission_list(form_id):
             # if you have columns that have float values
             dataset = aggregate_dataset(queryset.order_by(None), form, True)
         else:
-            dataset = services.submissions.export_list(queryset)
+            dataset = services.submissions.export_list(
+                queryset, include_group_timestamps=include_group_timestamps)
 
         return Response(
             stream_with_context(dataset),

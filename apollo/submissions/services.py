@@ -44,7 +44,9 @@ def export_timestamp(ts_string: str) -> str:
 class SubmissionService(Service):
     __model__ = Submission
 
-    def export_list(self, query, include_qa=False):
+    def export_list(
+            self, query, include_qa=False, include_group_timestamps=False
+        ):
         if query.count() == 0:
             raise StopIteration
 
@@ -104,7 +106,8 @@ class SubmissionService(Service):
 
         # add in group headers
         for group_name in form_groups:
-            dataset_headers.append(_('%(group)s updated', group=group_name))
+            if include_group_timestamps:
+                dataset_headers.append(_('%(group)s updated', group=group_name))
             dataset_headers.extend(group_tags[group_name])
         
         dataset_headers.append(_('Timestamp'))
@@ -170,8 +173,9 @@ class SubmissionService(Service):
                 ])
 
                 for group_name in form_groups:
-                    record.append(
-                        export_timestamp(group_timestamps.get(group_name, '')))
+                    if include_group_timestamps:
+                        record.append(
+                            export_timestamp(group_timestamps.get(group_name, '')))
                     record.extend([
                         export_field_value(form, submission, tag)
                         for tag in group_tags.get(group_name)
