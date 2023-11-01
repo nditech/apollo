@@ -277,7 +277,7 @@
         fetch(endpoint + params)
           .then(response => response.json())
           .then(result => {
-            if (result.participants) {
+            if (result.participants !== null) {
               instance.participantCount = result.participants;
             } else {
               instance.participantCount = 'N/A';
