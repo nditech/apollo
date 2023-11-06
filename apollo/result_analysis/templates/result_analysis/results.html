@@ -426,7 +426,7 @@
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
-<script src="{{ url_for('static', filename='js/xlsx.mini.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/papaparse.min.js') }}"></script>
 <script>
 var dataset = [];
 var data = $('#scatterplot-chart').data('chart');
@@ -442,10 +442,59 @@ function exportTable(event) {
     var targetTableSelector = buttonClicked.dataset.exportTarget;
     var tableToExport = document.querySelector(targetTableSelector).querySelectorAll('table.table-hover')[0];
     if (!tableToExport) return;
-    var workbook = XLSX.utils.table_to_book(tableToExport);
     var locationType = buttonClicked.dataset.locationType;
-    var fileName = `${locationType}-${Math.floor((new Date()).getTime() / 1000)}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
+    var fileName = `${locationType}-${Math.floor((new Date()).getTime() / 1000)}.csv`;
+    downloadCSV(generateCSVFromTable(tableToExport), fileName);
+}
+
+function getHeaders(table) {
+    var moeEnabled = table.rows[0].cells[1].colSpan > 1;
+    var headers;
+    if (moeEnabled) {
+        headers = ['Location', 'Reported %', 'Reported', 'Missing %', 'Missing', 'Total Registered', 'Turnout %', 'Turnout MoE 95%', 'Turnout MoE 99%', 'Total Votes %', 'Total Votes', 'Total Votes MoE 95%', 'Total Votes MoE 99%', 'Rejected Ballots %', 'Rejected Ballots', 'Rejected Ballots MoE 95%', 'Rejected Ballots MoE 99%', 'Total Valid'];
+    } else {
+        headers = ['Location', 'Reported %', 'Reported', 'Missing %', 'Missing', 'Total Registered', 'Turnout %', 'Total Votes %', 'Total Votes', 'Rejected Ballots %', 'Rejected Ballots', 'Total Valid'];
+    }
+
+    Array.from(table.rows[0].cells).slice(5).forEach(cell => {
+        var label = cell.innerText;
+        headers.push(`${label} Votes %`);
+        headers.push(`${label} Votes`);
+        if (moeEnabled) {
+            headers.push(`${label} Votes MoE 95%`);
+            headers.push(`${label} Votes MoE 99%`);
+        }
+    });
+
+    return headers;
+}
+
+function getData(table) {
+    var moeEnabled = table.rows[0].cells[1].colSpan > 1;
+    return Array.from(table.rows).slice(2).map(row => {
+        return Array.from(row.cells).map(cell => cell.innerText.replace('%', '').replace('±', '').split(/\r\n|\r|\n/).map(a => a.trim())).flat();
+    });
+}
+
+function downloadCSV(csvContent, fileName) {
+    var blob = new Blob([csvContent], {type: 'text/csv'});
+    var anchor = document.createElement('a');
+    anchor.href = URL.createObjectURL(blob);
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(anchor.href);
+}
+
+function generateCSVFromTable(table) {
+    var headers = getHeaders(table);
+    var data = getData(table);
+
+    return Papa.unparse({
+        fields: headers,
+        data: data
+    });
 }
 
 Array.from(document.querySelectorAll('.btn-export-table')).forEach(function (btn) {
