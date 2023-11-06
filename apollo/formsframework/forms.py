@@ -310,6 +310,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                 if commit:
                     if submission.id is None:
                         # for a fresh submission, everything will get saved
+                        submission.update_group_timestamps(data)
                         submission.data = data
                         submission.last_phone_number = phone_num
                         submission.participant_updated = current_timestamp()
@@ -320,6 +321,7 @@ class BaseQuestionnaireForm(wtforms.Form):
                         update_params['data'] = data
                         update_params['last_phone_number'] = phone_num
                         update_params['participant_updated'] = current_timestamp()  # noqa
+                        submission.update_group_timestamps(data)
                         extra_data = submission.extra_data or {}
                         now = current_timestamp().isoformat() 
 

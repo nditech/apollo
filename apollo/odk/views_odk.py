@@ -260,6 +260,7 @@ def submission():
     except IndexError:
         pass
 
+    submission.update_group_timestamps(data)
     submission.data = data
     submission.participant_updated = current_timestamp()
     if geopoint_lat is not None and geopoint_lon is not None:

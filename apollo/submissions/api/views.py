@@ -350,12 +350,15 @@ def submission():
     for attachment in deleted_attachments:
         db.session.delete(attachment)
 
+
     if data != payload2:
         data.update(payload2)
+        submission.update_group_timestamps(data)
         geopoint = 'SRID=4326; POINT({lon:f} {lat:f})'.format(
             lat=location_data[1],
             lon=location_data[0]
         ) if location_data is not None else None
+
         if submission.id is None:
             submission.data = data
             if geopoint is not None:
@@ -366,6 +369,7 @@ def submission():
             update_params = {'data': data, 'unreachable': False}
             if geopoint is not None:
                 update_params['geom'] = geopoint
+            update_params['extra_data'] = submission.extra_data.copy()
             query.update(update_params, synchronize_session='fetch')
             db.session.commit()
 

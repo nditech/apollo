@@ -3,6 +3,7 @@ import csv
 from io import StringIO
 
 import sqlalchemy as sa
+from dateutil.parser import isoparse
 from flask_babelex import gettext as _
 from geoalchemy2.shape import to_shape
 
@@ -31,10 +32,21 @@ def export_field_value(form, submission, tag):
     return data
 
 
+def export_timestamp(ts_string: str) -> str:
+    try:
+        dt = isoparse(ts_string)
+    except Exception:
+        return ''
+    
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+
 class SubmissionService(Service):
     __model__ = Submission
 
-    def export_list(self, query, include_qa=False):
+    def export_list(
+            self, query, include_qa=False, include_group_timestamps=False
+        ):
         if query.count() == 0:
             raise StopIteration
 
@@ -58,6 +70,12 @@ class SubmissionService(Service):
         samples = Sample.query.filter_by(
             participant_set_id=event.participant_set_id).all()
         tags = form.unsorted_tags
+        form._populate_group_cache()
+        form_groups = form._group_cache.keys()
+        group_tags = {
+            group: form.get_group_tags(group)
+            for group in form_groups
+        }
 
         extra_field_headers = [fi.label for fi in extra_fields]
 
@@ -84,7 +102,15 @@ class SubmissionService(Service):
             _('Location'), _('Location Code'), _('Latitude'), _('Longitude')
         ] + extra_field_headers + [
             _('Registered Voters')
-        ] + tags + [_('Timestamp')])
+        ])
+
+        # add in group headers
+        for group_name in form_groups:
+            if include_group_timestamps:
+                dataset_headers.append(_('%(group)s updated', group=group_name))
+            dataset_headers.extend(group_tags[group_name])
+        
+        dataset_headers.append(_('Timestamp'))
 
         if form.form_type == 'INCIDENT':
             dataset_headers.extend([_('Status'), _('Description')])
@@ -113,6 +139,8 @@ class SubmissionService(Service):
                 submission = item
                 row_dict = {}
             location_path = submission.location.make_path()
+            group_timestamps = (submission.extra_data or {}).get(
+                'group_timestamps', {})
             if submission.submission_type == 'O':
                 if submission.location.extra_data:
                     extra_data_columns = [
@@ -142,10 +170,16 @@ class SubmissionService(Service):
                     to_shape(submission.geom).x if hasattr(submission.geom, 'desc') else ''  # noqa
                 ] + extra_data_columns + [
                     submission.location.registered_voters
-                ] + [
-                    export_field_value(form, submission, tag)
-                    for tag in tags
                 ])
+
+                for group_name in form_groups:
+                    if include_group_timestamps:
+                        record.append(
+                            export_timestamp(group_timestamps.get(group_name, '')))
+                    record.extend([
+                        export_field_value(form, submission, tag)
+                        for tag in group_tags.get(group_name)
+                    ])
 
                 record += [
                     submission.updated.strftime('%Y-%m-%d %H:%M:%S')
@@ -197,9 +231,15 @@ class SubmissionService(Service):
                     to_shape(sib.geom).x if hasattr(sib.geom, 'desc') else '', # noqa
                 ] + extra_data_columns + [
                     submission.location.registered_voters
-                ] + [
-                    export_field_value(form, submission, tag)
-                    for tag in tags])
+                ])
+
+                for group_name in form_groups:
+                    record.append(
+                        export_timestamp(group_timestamps.get(group_name, '')))
+                    record.extend([
+                        export_field_value(form, submission, tag)
+                        for tag in group_tags.get(group_name)
+                    ])
 
                 record += [
                     submission.updated.strftime('%Y-%m-%d %H:%M:%S')

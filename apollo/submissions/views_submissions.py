@@ -198,6 +198,7 @@ def submission_list(form_id):
 
     if request.args.get('export') and permissions.export_submissions.can():
         query = filter_class(query, request.args).qs
+        include_group_timestamps = False
 
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
@@ -223,6 +224,7 @@ def submission_list(form_id):
                     models.Location.code
                 )
         else:
+            include_group_timestamps = True if mode == 'observer-ts' else False
             queryset = query.filter(
                 models.Submission.submission_type == 'O',
                 models.Submission.form == form,
@@ -249,7 +251,8 @@ def submission_list(form_id):
             # if you have columns that have float values
             dataset = aggregate_dataset(queryset.order_by(None), form, True)
         else:
-            dataset = services.submissions.export_list(queryset)
+            dataset = services.submissions.export_list(
+                queryset, include_group_timestamps=include_group_timestamps)
 
         return Response(
             stream_with_context(dataset),
@@ -579,6 +582,7 @@ def submission_create(form_id):
                         )
 
         data.update(image_data)
+        submission.update_group_timestamps(data)
         submission.data = data
         db.session.add_all(attachments)
         db.session.add(submission)
@@ -846,7 +850,9 @@ def submission_edit(submission_id):
                         changed = True
                         update_params['participant_id'] = new_participant.id
 
+                submission.update_group_timestamps(data)
                 update_params['data'] = data
+                update_params['extra_data'] = submission.extra_data.copy()
 
                 if changed:
                     db.session.add_all(attachments)
@@ -1180,6 +1186,7 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
+                        submission.update_group_timestamps(data)
                         extra_data = submission.extra_data or {}
                         now = current_timestamp().isoformat()
 
