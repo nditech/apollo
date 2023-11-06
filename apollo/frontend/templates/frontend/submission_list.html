@@ -434,7 +434,7 @@ ${(props.last_updated ? `
   </button>
   <div class="dropdown-menu" aria-labelledby="exportMenuReference">
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a>
-    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer-ts', **request.args) }}">{{ _('Observer, with section updates') }}</a>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer-ts', **request.args) }}">{{ _('Observer, with timestamps') }}</a>
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a>
     <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a>
     {% if form.has_image_fields %}
