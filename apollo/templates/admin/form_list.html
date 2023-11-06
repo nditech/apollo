@@ -230,7 +230,7 @@
         event: '',
         role: '',
         level: '',
-        participantCount: 'N/A'
+        participantCount: '{{ _("N/A/") }}'
       }
     },
     computed: {
@@ -280,7 +280,7 @@
             if (result.participants !== null) {
               instance.participantCount = result.participants;
             } else {
-              instance.participantCount = 'N/A';
+              instance.participantCount = '{{ _("N/A") }}';
             }
           })
       }
