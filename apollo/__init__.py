@@ -12,7 +12,7 @@ from flask_jwt_extended import (
     create_access_token, get_jwt_identity, get_jwt, set_access_cookies)
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
-from flask_security import SQLAlchemyUserDatastore, current_user
+from flask_security import current_user
 from flask_security.utils import login_user, url_for_security
 from loginpass import create_flask_blueprint, Facebook, Google
 from werkzeug.urls import url_encode
@@ -21,12 +21,10 @@ from whitenoise import WhiteNoise
 from apollo import assets, models, services, settings, utils
 from apollo.frontend import permissions, template_filters
 from apollo.core import (
-    admin, csrf, db, docs, gravatar, menu, oauth, security, webpack
+    admin, csrf, docs, gravatar, menu, oauth, webpack
 )
 from apollo.prometheus.flask import monitor
-from apollo.tasks import send_email
 from .frontend.helpers import set_request_presets
-from .security_ext_forms import DeploymentLoginForm
 
 from apollo import factory
 
@@ -53,7 +51,7 @@ def init_admin(admin, app):
     admin.index_view = AdminIndex()
 
 
-def create_app(settings_override=None, register_security_blueprint=True):
+def create_app(settings_override=None):
     """Returns the frontend application instance"""
     app = factory.create_app(__name__, __path__, settings_override)
 
@@ -67,18 +65,6 @@ def create_app(settings_override=None, register_security_blueprint=True):
     oauth.init_app(app)
     menu.init_app(app)
     gravatar.init_app(app)
-
-    userdatastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
-
-    security_ctx = security.init_app(
-        app, userdatastore, login_form=DeploymentLoginForm,
-        register_blueprint=register_security_blueprint)
-
-    @security_ctx.send_mail_task
-    def delay_flask_security_mail(msg):
-        send_email.delay(
-            subject=msg.subject, sender=msg.sender, recipients=msg.recipients,
-            body=msg.body)
 
     # initialize the OpenAPI extension
     spec = APISpec(

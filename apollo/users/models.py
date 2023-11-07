@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_security import RoleMixin, UserMixin
+from flask_security.utils import hash_password
+from sqlalchemy import func
 
 from apollo.core import db
 from apollo.dal.models import BaseModel
@@ -64,8 +66,11 @@ class Role(BaseModel, RoleMixin):
     def __str__(self):
         return self.name or ''
 
-    def get_by_name(self, name):
-        return Role.query.filter_by(name=name).one_or_none()
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query.filter(
+            func.lower(cls.name) == func.lower(name)
+        ).first()
 
 
 class User(BaseModel, UserMixin):
@@ -101,6 +106,9 @@ class User(BaseModel, UserMixin):
             Role.deployment == self.deployment, Role.name == 'admin',
             Role.users.contains(self)).first()
         return bool(role)
+
+    def set_password(self, new_password: str) -> None:
+        self.password = hash_password(new_password)
 
 
 class UserUpload(BaseModel):
