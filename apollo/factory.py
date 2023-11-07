@@ -29,6 +29,7 @@ TASK_DESCRIPTIONS = {
     'apollo.participants.tasks.import_participants': _('Import Participants'),
     'apollo.submissions.tasks.init_submissions': _('Generate Checklists'),
     'apollo.users.tasks.import_users': _('Import Users'),
+    'apollo.submissions.tasks.init_survey_submissions': _('Generate Surveys'),
 }
 
 
