@@ -57,6 +57,11 @@ bp.add_url_rule(
     '/api/participants/',
     view_func=api_views.ParticipantListResource.as_view(
         'api_participant_list'))
+bp.add_url_rule(
+    '/api/participant_count/',
+    endpoint='api_participant_count',
+    view_func=api_views.get_participant_count,
+)
 
 docs.register(
     api_views.ParticipantItemResource, 'participants.api_participant_item')

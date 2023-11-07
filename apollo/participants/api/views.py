@@ -18,11 +18,12 @@ from apollo.core import csrf, red
 from apollo.deployments.models import Event
 from apollo.formsframework.api.schema import FormSchema
 from apollo.formsframework.models import Form
+from apollo.locations.models import Location
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
-    Participant, ParticipantSet, ParticipantFirstNameTranslations,
+    Participant, ParticipantFirstNameTranslations,
     ParticipantFullNameTranslations, ParticipantLastNameTranslations,
-    ParticipantOtherNamesTranslations)
+    ParticipantOtherNamesTranslations, ParticipantRole, ParticipantSet)
 from apollo.submissions.models import Submission
 
 
@@ -280,3 +281,36 @@ def get_forms():
     }
 
     return jsonify(response_body)
+
+
+@use_kwargs({
+    "event_id": fields.Int(),
+    "level_id": fields.Int(),
+    "role_id": fields.Int()
+})
+@protect
+def get_participant_count(**kwargs):
+    event_id = kwargs.get("event_id")
+    level_id = kwargs.get("level_id")
+    role_id = kwargs.get("role_id")
+
+    event = Event.query.filter_by(id=event_id).first()
+    if event is None:
+        return {"participants": None}
+
+    participants = Participant.query.filter_by(
+        participant_set_id=event.participant_set_id
+    )
+
+    if level_id:
+        participants = participants.join(
+            Location, Participant.location_id == Location.id
+        ).filter(Location.location_type_id == level_id)
+    
+    if role_id:
+        participants = participants.join(
+            ParticipantRole, Participant.role_id == ParticipantRole.id
+        ).filter(ParticipantRole.id == role_id)
+
+    num_participants = participants.with_entities(Participant).count()
+    return {"participants": num_participants}
