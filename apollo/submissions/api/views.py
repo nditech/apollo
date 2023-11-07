@@ -378,7 +378,8 @@ def submission():
             submission.update_master_offline_status()
         update_submission_version(submission)
 
-    message_text = make_message_text(form, participant, data)
+    message_text = make_message_text(
+        form, participant, data, serial=form_serial)
     sender = participant.primary_phone or participant.participant_id
     message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,

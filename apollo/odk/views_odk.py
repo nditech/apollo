@@ -132,6 +132,7 @@ def submission():
 
     # only for ODK Collect
     source_file = request.files.get('xml_submission_file')
+    form_serial = None
     try:
         parser = etree.XMLParser(resolve_entities=False)
         document = etree.parse(source_file, parser)
@@ -300,7 +301,8 @@ def submission():
     models.Submission.update_related(submission, data)
     update_submission_version(submission)
 
-    message_text = utils.make_message_text(form, participant, data)
+    message_text = utils.make_message_text(
+        form, participant, data, serial=form_serial)
     sender = participant.primary_phone or participant.participant_id
     message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,
