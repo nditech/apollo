@@ -43,7 +43,9 @@
                     {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
             {%- else -%}
+                {%- if form.data.groups -%}
                 {%- for group in form.data.groups[:1] -%}
+                {%- if group.fields -%}
                 {%- for field in group.fields[:1] -%}
                 {%- if field['type'] == 'select' -%}
                 <div class="col-6 col-lg-2 mb-2">
@@ -52,7 +54,9 @@
                 </div>
                 {%- endif -%}
                 {%- endfor -%}
+                {%- endif -%}
                 {%- endfor -%}
+                {%- endif -%}
                 <div class="col-6 col-lg-2 mb-2">
                     <label for="{{ filter_form.status.id }}" class="sr-only">{{ filter_form.status.label.text }}</label>
                     {{ filter_form.status(class_='form-control custom-select select2-container select2', placeholder=_('All Statuses')) }}
