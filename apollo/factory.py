@@ -229,7 +229,7 @@ def create_celery_app(app=None):
                 'id': request.id,
                 'status': _('RUNNING'),
                 'progress': task_metadata.get('result'),
-                'description': TASK_DESCRIPTIONS.get(self.request.task, _('Task'))
+                'description': TASK_DESCRIPTIONS.get(self.request.task, _('Task')),
                 'name': self.request.task.split('.')[-1],
                 'quit': False,
             }
