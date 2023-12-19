@@ -62,7 +62,7 @@
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
 {%- endif %}
 
-<div class="table-responsive {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
+<div class="table-responsive sticky-top bg-white {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <table class="table table-bordered">
   {%- if submission.form.form_type == 'SURVEY' %}
   <tr>
