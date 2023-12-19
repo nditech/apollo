@@ -69,7 +69,7 @@ class SubmissionService(Service):
         ).all()
         samples = Sample.query.filter_by(
             participant_set_id=event.participant_set_id).all()
-        tags = form.response_fields
+        tags = form.unsorted_tags
         form._populate_group_cache()
         form_groups = form._group_cache.keys()
         group_tags = {
