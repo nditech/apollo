@@ -33,7 +33,7 @@
                 </div>
                 <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
                     <label for="{{ filter_form.values.id }}" class="sr-only">{{ filter_form.values.label.text }}</label>
-                    {{ filter_form.values(class_='form-control', placeholder=_('Field values')) }}
+                    {{ filter_form.values(class_='form-control', placeholder=_('Field Values')) }}
                 </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
@@ -49,7 +49,7 @@
             {%- else -%}
                 <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
                     <label for="{{ filter_form.values.id }}" class="sr-only">{{ filter_form.values.label.text }}</label>
-                    {{ filter_form.values(class_='form-control', placeholder=_('Field values')) }}
+                    {{ filter_form.values(class_='form-control', placeholder=_('Field Values')) }}
                 </div>
                 {%- if form.data.groups -%}
                 {%- for group in form.data.groups[:1] -%}
