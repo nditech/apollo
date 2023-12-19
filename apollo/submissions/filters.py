@@ -651,8 +651,11 @@ class SubmissionValuesFilter(CharFilter):
         if value:
             filter_data = json.loads(value)
             expressions = [f['value'] for f in filter_data]
-            terms = [
-                generate_qa_query(expr, self.form)[0] for expr in expressions]
+            try:
+                terms = [
+                    generate_qa_query(expr, self.form)[0] for expr in expressions]
+            except Exception:
+                return queryset.filter(False)
             return queryset.filter(*terms)
         return super().queryset_(queryset, value, **kwargs)
 
