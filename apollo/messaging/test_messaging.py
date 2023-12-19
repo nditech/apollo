@@ -10,7 +10,7 @@ from apollo.core import force_locale
 from apollo.formsframework.models import Form
 from apollo.messaging.utils import (
     get_unsent_codes, parse_responses, parse_text)
-from apollo.testutils.factory import create_test_app, create_full_test_app
+from apollo.testutils.factory import create_test_app
 
 
 class AttributeDict(dict):
@@ -178,7 +178,7 @@ class MessageParsingTest(FlaskTestCase):
 
 class TranslationContextTestCase(FlaskTestCase):
     def create_app(self):
-        return create_full_test_app()
+        return create_test_app()
 
     def test_context_switching(self):
         d = datetime(2010, 4, 12, 13, 46)
