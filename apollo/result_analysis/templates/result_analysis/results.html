@@ -49,9 +49,9 @@
             {%- for lt in location_types -%}
 			<div class="tab-pane fade{{ ' show active' if loop.first else '' }} table-responsive" id="tab-{{ loop.index }}" role="tabpanel" aria-labelledby="tablink-{{ loop.index }}">
                 {%- if result_labels -%}
-				<table class="table table-hover{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
+				<table class="table table-striped data-table{{ ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
                     <thead class="thead-light">
-                        <tr>
+                        <tr class="data-title">
                             <th colspan="4">{% if current_user.is_admin() %}<div class="my-2"><button class="btn btn-outline-secondary btn-export-table" data-export-target="#tab-{{ loop.index }}" data-location-type="{{ lt.name }}">{{ _('Export Table')}}</button></div>{% else %}&nbsp;{% endif %}</th>
                             <th class="{{ 'text-center' if form.calculate_moe else '' }}" {% if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%}>{{ _('Turnout') }}</th>
                             <th class="{{ 'text-center' if form.calculate_moe else '' }}" {% if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%}>{{ _('Total Votes') }}</th>
@@ -69,8 +69,8 @@
                     </thead>
                     <tbody>
                         {% if g.locale.text_direction == 'rtl' %}
-                            <tr>
-                                <td>&nbsp;</td>
+                            <tr class="data-title bg-white">
+                                <td class="fixed-col" style="z-index: 3">&nbsp;</td>
                                 <td><em>{{ _('Reported') }}</em></td>
                                 <td><em>{{ _('Missing') }}</em></td>
                                 <td class="border-left"><em><abbr title="{{ _('Total Registered') }}">{{ _('TR') }}</abbr></em></td>
@@ -108,7 +108,7 @@
                                 {%- endfor -%}
                             </tr>
                             <tr>
-                                <th style="vertical-align:middle">{{ location.name }}</th>
+                                <th class="fixed-col">{{ location.name }}</th>
                                 <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
                                 <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
                                 <th class="border-left"><span class="text-primary">{{ '%d' % data_analyses.overall.rv }}</span></th>
@@ -155,7 +155,7 @@
                             </tr>
                             {%- for sublocation in data_analyses.grouped[lt.name] -%}
                             <tr>
-                                <td style="vertical-align:middle">{{ sublocation.name }}</td>
+                                <td class="fixed-col">{{ sublocation.name }}</td>
                                 <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
                                 <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
                                 <th class="border-left"><span class="text-primary">{{ '%d' % sublocation.rv }}</span></th>
@@ -202,8 +202,8 @@
                             </tr>
                             {%- endfor -%}
                         {% else %}
-                            <tr>
-                                <td>&nbsp;</td>
+                            <tr class="data-title bg-white">
+                                <td class="fixed-col" style="z-index: 3">&nbsp;</td>
                                 <td><em>{{ _('Reported') }}</em></td>
                                 <td><em>{{ _('Missing') }}</em></td>
                                 <td class="border-right"><em><abbr title="{{ _('Total Registered') }}">{{ _('TR') }}</abbr></em></td>
@@ -241,7 +241,7 @@
                                 {%- endfor -%}
                             </tr>
                             <tr>
-                                <th style="vertical-align:middle">{{ location.name }}</th>
+                                <th class="fixed-col">{{ location.name }}</th>
                                 <th>{{ '%.1f' % data_analyses.overall.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.reported_cnt }}</span></th>
                                 <th>{{ '%.1f' % data_analyses.overall.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ data_analyses.overall.missing_cnt }}</span></th>
                                 <th class="border-right"><span class="text-primary">{{ '%d' % data_analyses.overall.rv }}</span></th>
@@ -288,7 +288,7 @@
                             </tr>
                             {%- for sublocation in data_analyses.grouped[lt.name] -%}
                             <tr>
-                                <td style="vertical-align:middle">{{ sublocation.name }}</td>
+                                <td style="" class="fixed-col">{{ sublocation.name }}</td>
                                 <th class="">{{ '%.1f' % sublocation.reported_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.reported_cnt }}</span></th>
                                 <th class="">{{ '%.1f' % sublocation.missing_pct|percent_of(1, 0) }}%&nbsp;<br /><span class="text-primary">{{ sublocation.missing_cnt }}</span></th>
                                 <th class="border-right"><span class="text-primary">{{ '%d' % sublocation.rv }}</span></th>
@@ -655,5 +655,9 @@ legend.append('text')
 .midpoint line {
   stroke: #fdd;
 }
+.data-table {height: 472px; overflow-y: scroll; display:block; }
+tr.data-title th { position: sticky; top: 0; z-index: 2; }
+tr.data-title td { position: sticky; top: 73.9px; background-color: white; z-index: 2; }
+.fixed-col { vertical-align:middle; position: sticky; left: 0; width:200px; background-color: white; z-index: 1; }
 </style>
 {%- endblock %}
