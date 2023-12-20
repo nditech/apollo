@@ -91,7 +91,7 @@ def generate_participant_edit_form(participant, data=None):
     attributes['phone'] = StringField(_('Phone'))
     attributes['password'] = StringField(_('Password'))
     attributes['locale'] = SelectField(
-        _('Locale'),
+        _('Preferred Language'),
         choices=_make_choices(languages.items(), _('Unspecified')))
 
     participant_set = participant.participant_set
