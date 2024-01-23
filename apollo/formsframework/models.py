@@ -151,11 +151,11 @@ class Form(Resource):
         return list(self._field_cache.keys())
 
     @property
-    def unsorted_tags(self):
+    def response_fields(self):
         if not hasattr(self, '_field_cache'):
             self._populate_field_cache()
 
-        return list(self._field_cache.keys())
+        return list(self._field_cache.values())
 
     @property
     def qa_tags(self):
