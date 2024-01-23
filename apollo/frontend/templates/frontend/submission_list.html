@@ -6,6 +6,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tom-select.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 <style>
@@ -14,13 +15,37 @@
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ohm.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tom-select.complete.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  // initialize the parser
+  const questionnaireFields = JSON.parse(document.querySelector('#valuesWrapper').dataset.formSchema);
+  const freeformTags = questionnaireFields.filter(f => (f.type === 'integer') || (f.type === 'select')).map(f => `"${f.tag}"`);
+  const freeformGrammar = `
+  QueryItem {
+    expression = field spaces comparator spaces number | number spaces comparator spaces field
+    number = digit+
+    comparator = "=" | "!=" | "<>" | ">=" | ">" | "<=" | "<"
+    field = ${freeformTags.join(' | ')}
+    }
+  `;
+  const parser = ohm.grammar(freeformGrammar);
+  
+  // set up omnisearch field
+  const omnisearch = new TomSelect('#{{ filter_form.values.id }}', {
+    create: true,
+    createFilter: function (input) {
+      return parser.match(input).succeeded();
+    },
+    plugins: ['clear_button', 'remove_button']
+  });
+
   // initialize the toast
   $('#notification-toast').toast();
 

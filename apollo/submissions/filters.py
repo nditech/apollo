@@ -649,12 +649,13 @@ class SubmissionValuesFilter(CharFilter):
     def queryset_(self, queryset, value, **kwargs):
         if value:
             if self.form is None:
-                return queryset.filter(false)
-            
+                return queryset.filter(false())
+
             try:
-                terms = [generate_qa_query(item, self.forms)[0] for item in value]
+                parsed = value.split(',')
+                terms = [generate_qa_query(item, self.form)[0] for item in parsed]
             except Exception:
-                return queryset.filter(false)
+                return queryset.filter(false())
             
             return queryset.filter(*terms)
         return super().queryset_(queryset, value, **kwargs)
@@ -769,6 +770,7 @@ def make_submission_list_filter(event, form, filter_on_locations=False):
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
         event.participant_set_id)()
+    attributes['values'] = SubmissionValuesFilter(questionnaire=form)
 
     return type(
         'SubmissionFilterSet',

@@ -47,7 +47,11 @@
 						{% elif tag_stats.type == 'histogram' %}
 						{% for label, option in tag_stats.meta %}
 						{%- if tag_stats.labels %}
+						{% if field.type == 'integer' %}
 						<th colspan="2">{{ _('%(label)s', label=label) }} ({{ option }})</th>
+						{% else %}
+						<th colspan="2"><a href="{{ url_for('submissions.submission_list', form_id=form.id, values=filter_option_value(field['tag'], '=', option)) }}">{{ _('%(label)s', label=label) }} ({{ option }})</a></th>
+						{% endif %}
 						{%- else %}
 						<th colspan="2">{{ option }}</th>
 						{% endif %}
