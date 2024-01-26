@@ -439,7 +439,7 @@ Object.keys(data).forEach(function (share) {
 function exportTable(event) {
     var buttonClicked = event.target;
     var targetTableSelector = buttonClicked.dataset.exportTarget;
-    var tableToExport = document.querySelector(targetTableSelector).querySelectorAll('table.table-hover')[0];
+    var tableToExport = document.querySelector(targetTableSelector).querySelectorAll('table')[0];
     if (!tableToExport) return;
     var locationType = buttonClicked.dataset.locationType;
     var fileName = `${locationType}-${Math.floor((new Date()).getTime() / 1000)}.csv`;
@@ -496,9 +496,7 @@ function generateCSVFromTable(table) {
     });
 }
 
-Array.from(document.querySelectorAll('.btn-export-table')).forEach(function (btn) {
-    btn.addEventListener('click', exportTable);
-});
+$('.btn-export-table').on('click', event => exportTable(event.originalEvent));
 {% endif %}
 
 var margin = {top: 20, right: 56, bottom: 60, left: 40},
