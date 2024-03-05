@@ -1,7 +1,35 @@
-{% macro render_filter_form(filter_form, location) %}
+{% macro render_filter_form(dashboard_form, filter_form, location) %}
 <div class="card border-light bg-light mb-3">
     <div class="card-header">
         <form class="mb-n2 ml-n2 mr-n2">
+            {% if dashboard_form.untrack_data_conflicts or dashboard_form.form_type != 'CHECKLIST' %}
+            <div class="form-row">
+                <div class="col-md-4 mb-2">
+                    <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
+                    {{ filter_form.sample(class_='form-control custom-select') }}
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label for="{{ filter_form.location_group.id }}" class="sr-only">{{ filter_form.location_group.label.text }}</label>
+                    {{ filter_form.location_group(class_='form-control custom-select') }}
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label for="{{ filter_form.participant_group.id }}" class="sr-only">{{ filter_form.participant_group.label.text }}</label>
+                    {{ filter_form.participant_group(class_='form-control custom-select') }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-md-10 mb-2">
+                    <label for="{{ filter_form.location.id }}" class="sr-only">{{ filter_form.location.label.text }}</label>
+                    {{ filter_form.location(class_='form-control select2 select2-locations') }}
+                </div>
+                <div class="col-md-2 mb-2">
+                    <div class="d-flex flex-row">
+                        <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>
+                        <a class="btn btn-secondary flex-fill" href="#" id="filter_reset">{{ _('Clear') }}</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
             <div class="form-row">
                 <div class="col-md-2 mb-2">
                     <label for="{{ filter_form.sample.id }}" class="sr-only">{{ filter_form.sample.label.text }}</label>
@@ -22,6 +50,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </form>
     </div>
 </div>

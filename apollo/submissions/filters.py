@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
 from itertools import chain
 from operator import itemgetter
 
@@ -13,7 +14,7 @@ from wtforms.compat import text_type
 from wtforms.widgets import html_params, HTMLString
 from wtforms_alchemy.fields import QuerySelectField
 
-from apollo import models
+from apollo import models, services
 from apollo.core import BooleanFilter, CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.settings import TIMEZONE
@@ -21,6 +22,7 @@ from apollo.submissions.models import FLAG_CHOICES
 from apollo.submissions.qa.query_builder import (
     build_expression, generate_qa_query
 )
+from apollo.wtforms_ext import ExtendedSelectField
 
 APP_TZ = gettz(TIMEZONE)
 
@@ -150,7 +152,8 @@ def make_submission_location_group_filter(location_set_id):
             ).all()
             self.location_set_id = location_set_id
 
-            kwargs['choices'] = _make_choices(group_choices, _('Group'))
+            kwargs['choices'] = _make_choices(
+                group_choices, _('Location Group'))
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value, **kwargs):
@@ -168,6 +171,48 @@ def make_submission_location_group_filter(location_set_id):
             return query
 
     return SubmissionLocationGroupFilter
+
+
+def make_participant_group_filter(participant_set_id):
+    class ParticipantGroupFilter(ChoiceFilter):
+        field_class = ExtendedSelectField
+
+        def __init__(self, *args, **kwargs):
+            self.participant_set_id = participant_set_id
+
+            choices = OrderedDict()
+            choices[''] = _('Participant Group')
+            for group_type in services.participant_group_types.find(
+                participant_set_id=participant_set_id
+            ).order_by(models.ParticipantGroupType.name):
+                for group in services.participant_groups.find(
+                    group_type=group_type
+                ).order_by(models.ParticipantGroup.name):
+                    choices.setdefault(group_type.name, []).append(
+                        (group.id, group.name)
+                    )
+
+            kwargs['choices'] = [(k, choices[k]) for k in choices]
+            print(kwargs['choices'])
+            kwargs['coerce'] = int
+            super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
+
+        def queryset_(self, queryset, value):
+            if value:
+                participant_ids = models.Participant.query.join(
+                    models.Participant.groups
+                ).filter(
+                    models.Participant.participant_set_id == self.participant_set_id, # noqa
+                    models.ParticipantGroup.id == value
+                ).with_entities(models.Participant.id)
+
+                return queryset.filter(
+                    models.Submission.participant_id.in_(participant_ids)
+                )
+
+            return queryset
+
+    return ParticipantGroupFilter
 
 
 def make_base_submission_filter(event, filter_on_locations=False):
@@ -676,6 +721,8 @@ def make_dashboard_filter(event, filter_on_locations=False):
         event.participant_set_id, filter_on_locations=filter_on_locations)()
     attributes['location_group'] = make_submission_location_group_filter(
         event.location_set_id)()
+    attributes['participant_group'] = make_participant_group_filter(
+        event.participant_set_id)()
 
     return type(
         'SubmissionFilterSet',
@@ -750,6 +797,8 @@ def make_submission_list_filter(event, form, filter_on_locations=False):
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
         event.participant_set_id)()
+    attributes['participant_group'] = make_participant_group_filter(
+        event.participant_set_id)()
 
     return type(
         'SubmissionFilterSet',
@@ -807,6 +856,8 @@ def generate_quality_assurance_filter(event, form):
     attributes['date'] = SubmissionDateFilter()
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
+        event.participant_set_id)()
+    attributes['participant_group'] = make_participant_group_filter(
         event.participant_set_id)()
 
     return type(

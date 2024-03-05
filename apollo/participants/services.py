@@ -8,8 +8,8 @@ from flask_babelex import gettext as _
 from apollo import constants
 from apollo.dal.service import Service
 from apollo.participants.models import (
-    ParticipantSet, Participant, ParticipantPartner, ParticipantRole,
-    PhoneContact)
+    ParticipantSet, Participant, ParticipantGroup, ParticipantGroupType,
+    ParticipantPartner, ParticipantRole, PhoneContact)
 
 number_regex = re.compile('[^0-9]')
 
@@ -97,6 +97,14 @@ class ParticipantService(Service):
             writer.writerow(record)
             yield output_buffer.getvalue()
             output_buffer.close()
+
+
+class ParticipantGroupService(Service):
+    __model__ = ParticipantGroup
+
+
+class ParticipantGroupTypeService(Service):
+    __model__ = ParticipantGroupType
 
 
 class ParticipantPartnerService(Service):
