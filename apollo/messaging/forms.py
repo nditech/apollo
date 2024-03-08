@@ -77,11 +77,12 @@ class TelerivetForm(BaseHttpForm):
 
 def retrieve_form(prefix, exclamation=False):
     '''
-    Retrieves a matching form for the given deployment, prefix and form_type.
+    Retrieves a matching form for the given prefix.
 
     :param:`prefix` - The form prefix
-    :param:`form_type` - (optional) the form type in narrowing the result
-    :returns: a Form document or None
+    :param:`exclamation` - (optional) if specified, the search is limited to
+                           incident forms
+    :returns: a Form instance or None
     '''
     current_events = services.events.overlapping_events(g.event)
 
