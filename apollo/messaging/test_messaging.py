@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pathlib
 from datetime import datetime
 from unittest import TestCase
 
@@ -6,11 +7,15 @@ import flask_babelex as babel
 from flask_testing import TestCase as FlaskTestCase
 from mimesis import Generic, locales
 
-from apollo.core import force_locale
+from apollo import services
+from apollo.core import db, force_locale
 from apollo.formsframework.models import Form
+from apollo.messaging.helpers import lookup_participant
 from apollo.messaging.utils import (
     get_unsent_codes, parse_responses, parse_text)
-from apollo.testutils.factory import create_test_app
+from apollo.testutils import factory, fixtures
+
+DEFAULT_FIXTURES_PATH = pathlib.Path(__file__).parent / 'fixtures'
 
 
 class AttributeDict(dict):
@@ -121,7 +126,7 @@ class MessagePartialTest(TestCase):
 
 class MessageParsingTest(FlaskTestCase):
     def create_app(self):
-        return create_test_app()
+        return factory.create_test_app()
 
     def test_parse_invalid_message(self):
         sample_text = '2014'
@@ -178,7 +183,7 @@ class MessageParsingTest(FlaskTestCase):
 
 class TranslationContextTestCase(FlaskTestCase):
     def create_app(self):
-        return create_test_app()
+        return factory.create_test_app()
 
     def test_context_switching(self):
         d = datetime(2010, 4, 12, 13, 46)
@@ -227,3 +232,70 @@ class TranslationContextTestCase(FlaskTestCase):
             assert babel.format_time(d) == '1:46:00 م'
             for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_AR):
                 assert babel.gettext(orig_msg) == trans_msg
+
+
+class ParticipantLookupTest(FlaskTestCase):
+    fixtures_path = DEFAULT_FIXTURES_PATH / '417efb586ef.sql'
+
+    def create_app(self):
+        return factory.create_test_app()
+
+    def setUp(self) -> None:
+        db.create_all()
+
+    def tearDown(self) -> None:
+        db.session.close()
+        db.drop_all()
+
+    def test_lookup_nonexistent_participant(self):
+        fixtures.load_sql_fixture(self.fixtures_path)
+        participant_id = '111111'
+        phone_number = '111111'
+        message = f'AV{participant_id}'
+
+        rv = lookup_participant(message, phone_number)
+        self.assertIsNone(rv)
+        event = services.events.fget_or_404(id=1)
+        rv = lookup_participant(message, phone_number, event)
+        self.assertIsNone(rv)
+
+    def test_lookup_with_message(self):
+        fixtures.load_sql_fixture(self.fixtures_path)
+        participant_id = '403794'
+        message = f'AV{participant_id}'
+        phone_number = ''
+        event1, event2, event3 = services.events.find().order_by('id').all()
+
+        # participant doesn't exist in event1
+        rv = lookup_participant(message, phone_number, event1)
+        self.assertIsNone(rv)
+
+        # participant in event2...
+        rv = lookup_participant(message, phone_number, event2)
+        self.assertEqual(rv.participant_id, participant_id)
+
+        # ...is not the same as event3
+        rv2 = lookup_participant(message, phone_number, event3)
+        self.assertEqual(rv.participant_id, participant_id)
+        self.assertNotEqual(rv.id, rv2.id)
+
+
+    def test_lookup_with_number(self):
+        fixtures.load_sql_fixture(self.fixtures_path)
+        participant_id = '111111' # does not exist in any event
+        phone_number = '7326767526' # exists in event2 and event3
+        message = f'AA{participant_id}'
+        event1, event2, event3 = services.events.find().order_by('id').all()
+
+        # participant doesn't exist in event1
+        rv = lookup_participant(message, phone_number, event1)
+        self.assertIsNone(rv)
+
+        # participant in event2...
+        rv = lookup_participant(message, phone_number, event2)
+        self.assertEqual(rv.phone_contacts[0].number, phone_number)
+
+        # ...is not the same as event3
+        rv2 = lookup_participant(message, phone_number, event3)
+        self.assertEqual(rv2.phone_contacts[0].number, phone_number)
+        self.assertNotEqual(rv.id, rv2.id)
