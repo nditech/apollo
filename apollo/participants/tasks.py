@@ -127,6 +127,7 @@ def update_participants(dataframe, header_map, participant_set, task):
     GENDER_COL = header_map.get('gender')
     EMAIL_COL = header_map.get('email')
     PASSWORD_COL = header_map.get('password')
+    LOCALE_COL = header_map.get('locale')
     phone_columns = header_map.get('phone', [])
     sample_columns = header_map.get('sample', [])
     full_name_columns = [
@@ -342,6 +343,11 @@ def update_participants(dataframe, header_map, participant_set, task):
                 if _is_valid(record[PASSWORD_COL]) else generate_password(6)
         else:
             participant.password = generate_password(6)
+
+        if LOCALE_COL:
+            locale = record[LOCALE_COL]
+            if _is_valid(locale) and str(locale).lower() in locales:
+                participant.locale = locale
 
         # save if this is a new participant - we need an id for lookup
         if not participant.id:

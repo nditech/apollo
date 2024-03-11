@@ -29,8 +29,9 @@ class KannelForm(wtforms.Form):
     :param charset: (Optional) character set for handling incoming message.
     :param coding: (Optional) not being used at the moment.'''
 
-    sender = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
-    text = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
+    sender = wtforms.StringField(
+        validators=[wtforms.validators.data_required()])
+    text = wtforms.StringField(validators=[wtforms.validators.data_required()])
     charset = wtforms.StringField()
     coding = wtforms.StringField()
     timestamp = wtforms.IntegerField()
@@ -60,8 +61,9 @@ class TelerivetForm(BaseHttpForm):
 
     id = wtforms.StringField()
     from_number = wtforms.StringField(
-        validators=[wtforms.validators.DataRequired()])
-    content = wtforms.StringField(validators=[wtforms.validators.DataRequired()])
+        validators=[wtforms.validators.data_required()])
+    content = wtforms.StringField(
+        validators=[wtforms.validators.data_required()])
     time_created = wtforms.IntegerField()
 
     def get_message(self):
@@ -75,11 +77,12 @@ class TelerivetForm(BaseHttpForm):
 
 def retrieve_form(prefix, exclamation=False):
     '''
-    Retrieves a matching form for the given deployment, prefix and form_type.
+    Retrieves a matching form for the given prefix.
 
     :param:`prefix` - The form prefix
-    :param:`form_type` - (optional) the form type in narrowing the result
-    :returns: a Form document or None
+    :param:`exclamation` - (optional) if specified, the search is limited to
+                           incident forms
+    :returns: a Form instance or None
     '''
     current_events = services.events.overlapping_events(g.event)
 

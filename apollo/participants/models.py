@@ -52,7 +52,8 @@ class ParticipantSet(BaseModel):
             'location': _('Location code'),
             'gender': _('Gender'),
             'email': _('Email'),
-            'password': _('Password')
+            'password': _('Password'),
+            'locale': _('Preferred Language'),
         }
         for locale, language in self.deployment.languages.items():
             fields[f'full_name_{locale}'] = _(
@@ -201,6 +202,7 @@ class Participant(BaseModel):
     device_id = db.Column(db.String)
     password = db.Column(db.String)
     extra_data = db.Column(JSONB)
+    locale = db.Column(db.String)
 
     full_name = translation_hybrid(full_name_translations)
     first_name = translation_hybrid(first_name_translations)

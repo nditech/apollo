@@ -149,14 +149,14 @@ class NullValueValidator:
 
 class BaseQuestionnaireForm(wtforms.Form):
     form = wtforms.StringField(
-        'Form', validators=[wtforms.validators.DataRequired()],
+        'Form', validators=[wtforms.validators.data_required()],
         filters=[lambda data: filter_form(data)])
     form_serial = wtforms.StringField(
         'Form Serial', validators=[wtforms.validators.optional()])
-    sender = wtforms.StringField('Sender',
-                                 validators=[wtforms.validators.DataRequired()])  # noqa
-    comment = wtforms.StringField('Comment',
-                                  validators=[wtforms.validators.optional()])
+    sender = wtforms.StringField(
+        'Sender', validators=[wtforms.validators.data_required()])
+    comment = wtforms.StringField(
+        'Comment', validators=[wtforms.validators.optional()])
 
     def process(self, formdata=None, obj=None, **kwargs):
         self._formdata = formdata
@@ -368,7 +368,7 @@ def build_questionnaire(form, data=None):
     fields['participant'] = wtforms.StringField(
         'Participant',
         filters=[partial(filter_participants, form)],
-        validators=[wtforms.validators.DataRequired()])
+        validators=[wtforms.validators.data_required()])
 
     for group in form.data['groups']:
         groupspec = (group['name'], [])

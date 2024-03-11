@@ -18,7 +18,7 @@ def create_test_app():
     path = pathlib.Path().resolve().parent
 
     test_settings = {
-        'SQLALCHEMY_DATABASE_URI': settings.TEST_DATABASE_URL
+        'SQLALCHEMY_DATABASE_URI': settings.TEST_DATABASE_URL,
     }
 
     testConfig = TestConfig()

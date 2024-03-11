@@ -90,6 +90,9 @@ def generate_participant_edit_form(participant, data=None):
         _('Partner'), choices=_make_choices(partner_choices))
     attributes['phone'] = StringField(_('Phone'))
     attributes['password'] = StringField(_('Password'))
+    attributes['locale'] = SelectField(
+        _('Preferred Language'),
+        choices=_make_choices(languages.items(), _('Default')))
 
     participant_set = participant.participant_set
 
@@ -111,6 +114,7 @@ def generate_participant_edit_form(participant, data=None):
         'supervisor': participant.supervisor,
         'phone': participant.primary_phone,
         'password': participant.password,
+        'locale': participant.locale,
     }
 
     kwargs.update({

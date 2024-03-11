@@ -5,41 +5,15 @@ import re
 from flask import Blueprint, make_response, request, g, current_app
 from unidecode import unidecode
 
-from apollo import models, services
+from apollo import services
 from ..core import db, csrf
 from ..frontend import route
 from ..frontend.helpers import get_event
 from ..messaging.forms import KannelForm, TelerivetForm
-from ..messaging.helpers import parse_message
-from ..messaging.utils import parse_text
+from ..messaging.helpers import lookup_participant, parse_message
 
 
 bp = Blueprint('messaging', __name__)
-
-
-def lookup_participant(msg, event=None):
-    participant = None
-    unused, participant_id, unused, unused, unused, unused = parse_text(msg.text)
-
-    evt = getattr(g, 'event', None) or event
-
-    if participant_id:
-        participant = services.participants.find(
-            participant_set_id=evt.participant_set_id,
-            participant_id=participant_id
-        ).first()
-
-    if not participant:
-        clean_number = msg.sender.replace('+', '')
-        participant = services.participants.query.join(
-            models.PhoneContact,
-            models.Participant.id == models.PhoneContact.participant_id
-        ).filter(
-            models.Participant.participant_set_id == evt.participant_set_id,
-            models.PhoneContact.number == clean_number
-        ).first()
-
-    return participant
 
 
 def update_datastore(inbound, outbound, submission, had_errors):
@@ -49,7 +23,8 @@ def update_datastore(inbound, outbound, submission, had_errors):
     if submission:
         participant = submission.participant
     else:
-        participant = lookup_participant(inbound)
+        event = g.event
+        participant = lookup_participant(inbound.text, inbound.sender, event)
 
     if participant:
         inbound.submission = submission
