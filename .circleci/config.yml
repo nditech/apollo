@@ -29,7 +29,6 @@ jobs:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
           paths:
             - "/home/circleci/.local"
-      - run: pybabel compile -f -d apollo/translations/
       - run: pytest -v apollo/
     resource_class: large
 

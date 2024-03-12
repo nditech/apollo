@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
-from contextlib import contextmanager
-
-import six
 from authlib.flask.client import OAuth
-from flask import _request_ctx_stack, redirect, url_for
-from flask_admin import Admin, AdminIndexView, expose
+from collections import OrderedDict
+from flask import redirect, url_for
+from flask_admin import expose, Admin, AdminIndexView
 from flask_apispec import FlaskApiSpec
 from flask_babelex import Babel
 from flask_cors import CORS
-
 try:
     from flask_debugtoolbar import DebugToolbarExtension
     fdt_available = True
 except ImportError:
     fdt_available = False
-from flask_gravatar import Gravatar
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_menu import Menu
@@ -24,9 +19,11 @@ from flask_redis import FlaskRedis
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import DEFAULTS, UploadSet
+from flask_gravatar import Gravatar
 from flask_webpack import Webpack
 from flask_wtf.csrf import CSRFProtect
 from raven.contrib.flask import Sentry
+import six
 from sqlalchemy import and_, or_
 from wtforms import Form, fields
 
@@ -212,44 +209,3 @@ class BaseFilterSet(object):
 
 class FilterSet(six.with_metaclass(FilterSetMetaclass, BaseFilterSet)):
     pass
-
-
-# copied from the main flask-babel source
-# TODO: maybe replace flask-babelex with flask-babel? tough job though
-@contextmanager
-def force_locale(locale: str):
-    """Temporarily overrides the selected locale. Sometimes
-    it is useful to switch the current locale to a different one, do
-    some tasks and then revert back to the original one. For example,
-    if the user uses German on the web site, but you want to send
-    them an email in English, you can use this function as a context
-    manager::
-
-        with force_locale('en_US'):
-            send_email(gettext('Hello!'), ...)
-    """
-    ctx = _request_ctx_stack.top
-    if ctx is None:
-        yield
-        return
-
-    languages = ctx.app.config.get('LANGUAGES', {})
-    if locale not in languages.keys():
-        yield
-        return
-
-    babel = ctx.app.extensions['babel']
-    orig_locale_selector_func = babel.locale_selector_func
-    orig_attrs = {}
-    for key in ('babel_translations', 'babel_locale'):
-        orig_attrs[key] = getattr(ctx, key, None)
-
-    try:
-        babel.locale_selector_func = lambda: locale
-        for key in orig_attrs:
-            setattr(ctx, key, None)
-        yield
-    finally:
-        babel.locale_selector_func = orig_locale_selector_func
-        for key, value in orig_attrs.items():
-            setattr(ctx, key, value)

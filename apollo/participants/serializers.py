@@ -3,6 +3,7 @@ import json
 
 from sqlalchemy import String, cast, func
 
+from apollo.core import db
 from apollo.dal.serializers import ArchiveSerializer
 from apollo.locations.models import Location, LocationSet
 from apollo.participants.models import (
@@ -71,7 +72,6 @@ class ParticipantSerializer(object):
             'location': obj.location.uuid.hex if obj.location else None,
             'partner': obj.partner.uuid.hex if obj.partner else None,
             'gender': obj.gender.code if obj.gender else '',
-            'locale': obj.locale if obj.locale else '',
             'message_count': obj.message_count,
             'accurate_message_count': obj.accurate_message_count,
             'completion_rating': obj.completion_rating,
