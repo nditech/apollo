@@ -231,11 +231,10 @@ def forms_list(view):
     show_hidden = bool(query_params.get(show_hidden_param))
 
     if show_hidden:
-        show_toggle_link_label = _('Hide Hidden')
+        show_toggle_link_label = _('Hide Archived')
         add_show_url_param = False
     else:
-        show_toggle_link_label = _(
-            'Show All (%(count)d Hidden)', count=hidden_form_count)
+        show_toggle_link_label = _('Show All')
         add_show_url_param = True
         query = query.filter(
             models.Form.is_hidden == False).order_by('name') # noqa

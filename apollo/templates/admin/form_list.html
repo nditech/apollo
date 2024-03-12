@@ -17,8 +17,8 @@
   </nav>
   <div class="d-flex justify-content-between align-items-start flex-row mt-1 mb-1">
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
-      <button class="btn btn-secondary mr-2 invisible" id="hide_button">{{ _('Hide Selected') }}</button>
-      <button class="btn btn-secondary mr-2 invisible" id="show_button">{{ _('Show Selected') }}</button>
+      <button class="btn btn-secondary mr-2 invisible" id="hide_button">{{ _('Archive') }}</button>
+      <button class="btn btn-secondary mr-2 invisible" id="show_button">{{ _('Unarchive') }}</button>
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.index') }}{% if add_show_url_param %}?{{ show_hidden_param }}=1{% endif %}">{{ show_toggle_link_label }}</a>
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
       <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Form') }}</a>
