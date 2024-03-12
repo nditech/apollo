@@ -80,7 +80,7 @@ class Form(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    is_hidden = db.Column(db.Boolean, default=False)
+    is_hidden = db.Column(db.Boolean, default=False, nullable=False)
     prefix = db.Column(db.String, nullable=False)
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
