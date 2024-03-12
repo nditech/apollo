@@ -9,6 +9,7 @@ from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
 from flask_wtf.file import FileField
 import wtforms
+from wtforms_alchemy.fields import QuerySelectMultipleField
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
 from .. import services
@@ -477,3 +478,24 @@ class FormForm(SecureForm):
 
 class FormImportForm(SecureForm):
     import_file = FileField(_('Import file'))
+
+
+def make_questionnaire_hidden_toggle_form(deployment):
+    def _get_forms():
+        return Form.query.filter(Form.deployment == deployment).all()
+
+    class QuestionnaireHiddenToggleForm(SecureForm):
+        forms = QuerySelectMultipleField(
+            query_factory=_get_forms,
+            option_widget=wtforms.widgets.CheckboxInput(),
+            widget=wtforms.widgets.ListWidget(prefix_label=False),
+            get_pk=lambda f: f.id,
+        )
+        mode = wtforms.HiddenField(
+            validators=[
+                wtforms.validators.AnyOf(['hide', 'show']),
+                wtforms.validators.InputRequired(),
+            ]
+        )
+
+    return QuestionnaireHiddenToggleForm()
