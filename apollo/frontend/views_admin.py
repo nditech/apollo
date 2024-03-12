@@ -109,14 +109,14 @@ class HiddenObjectMixin(object):
     can_delete = False
     query_param_name = 'show_all'
 
-    @action('hide', _('Hide'), _('Are you sure you want to hide the selected items?'))
+    @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
     def action_hide(self, ids):
         model_class = self.model
         model_class.query.filter(model_class.id.in_(ids)).update(
             {'is_hidden': True}, synchronize_session=False)
         db.session.commit()
 
-    @action('unhide', _('Always Show'), _('Are you sure you want to always show the selected items?'))
+    @action('unhide', _('Unarchive'), _('Are you sure you want to unarchive the selected items?'))
     def action_unhide(self, ids):
         model_class = self.model
         model_class.query.filter(model_class.id.in_(ids)).update(
@@ -146,24 +146,18 @@ class HiddenObjectMixin(object):
         return query
 
     def render(self, template, **kwargs):
-        model_class = self.model
-        # get counts
-        hidden_instances_count = model_class.query.filter(
-            model_class.is_hidden == True).count() # noqa
-
         query_params = request.args.to_dict(flat=False)
         show_hidden = bool(query_params.get(self.query_param_name))
         if show_hidden:
             # remove the 'show all' query parameter
             query_params.pop(self.query_param_name)
-            kwargs['hidden_toggle_label'] = _('Hide Hidden')
+            kwargs['hidden_toggle_label'] = _('Hide Archived')
             kwargs['hidden_toggle_params'] = urlencode(
                 query_params, doseq=True)
         else:
             # add the 'show all' query parameter
             query_params[self.query_param_name] = 1
-            kwargs['hidden_toggle_label'] = _(
-                'Show All (%(count)d Hidden)', count=hidden_instances_count)
+            kwargs['hidden_toggle_label'] = _('Show All')
             kwargs['hidden_toggle_params'] = urlencode(
                 query_params, doseq=True)
         kwargs['hide_toggle_on'] = True
