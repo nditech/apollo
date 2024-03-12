@@ -78,7 +78,7 @@ class Event(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    is_hidden = db.Column(db.Boolean, default=False)
+    is_hidden = db.Column(db.Boolean, default=False, nullable=False)
     start = db.Column(
         db.DateTime(timezone=True), default=_default_event_start,
         nullable=False)
