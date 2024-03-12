@@ -124,7 +124,8 @@ def verify_pw(username, password):
 def submission_list(form_id):
     event = g.event
     form = models.Form.query.filter_by(
-        id=form_id
+        id=form_id,
+        is_hidden=False,
     ).join(
         models.Form.events
     ).filter(models.Form.events.contains(event)).first_or_404()
