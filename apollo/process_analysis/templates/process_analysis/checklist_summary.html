@@ -44,7 +44,7 @@
 							{%- if field['type'] == 'integer' %}
 							<th>{{ value }}</th>
 							{%- else %}
-							<th>{{ _('%(label)s', label=label) }} ({{ value }})</th>
+							<th><a href="{{ url_for('submissions.submission_list', form_id=form.id, values=filter_option_value(field['tag'], '=', value)) }}">{{ _('%(label)s', label=label) }} ({{ value }})</a></th>
 							{%- endif %}
 							{% endfor %}
 							{% elif stats['type'] == 'bucket' %}
