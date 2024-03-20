@@ -14,10 +14,54 @@
 </style>
 {% endblock %}
 {% block scripts -%}
+<template id="expression-builder">
+  <div class="p-2 my-1" :class="cardStyle">
+    <div class="d-flex justify-content-around">
+      <div class="input-group">
+        <select class="form-control custom-select" v-model="term.field">
+          <option disabled value="">{{ _('Select field') }}</option>
+          <option v-for="(field, fieldIndex) in schema.filter(f => f.type === 'integer' || f.type === 'select')" :key="fieldIndex" :value="field">[[ field.tag ]]</option>
+        </select>
+        <select class="form-control custom-select" v-model="term.operator" v-if="term.field !== null">
+          <option disabled value="">{{ _('Select operator') }}</option>
+          <option value="=">=</option>
+          <option value="<>">&lt;&gt;</option>
+          <option value="<" v-if="term.field.type === 'integer'">&lt;</option>
+          <option value="<=" v-if="term.field.type === 'integer'">&lt;=</option>
+          <option value=">" v-if="term.field.type === 'integer'">&gt;</option>
+          <option value=">=" v-if="term.field.type === 'integer'">&gt;=</option>
+        </select>
+        <select class="form-control custom-select" v-model="term.source" v-if="term.field !== null && term.field.type === 'integer'">
+          <option disabled value="">{{ _('Select source') }}</option>
+          <option value="field">Field</option>
+          <option value="value">Value</option>
+        </select>
+        <input type="number" class="form-control" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'value'">
+        <select class="form-control custom-select" v-model="term.value"  v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'">
+          <option disabled value="">{{ _('Select field') }}</option>
+          <option :value="fi" :key="fi" v-for="fi in getIntegerFields()">[[ fi ]]</option>
+        </select>
+        <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'select'">
+          <option disabled value="">{{ _('Select value') }}</option>
+          <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ key ]]</option>
+        </select>
+      </div>
+      <div class="pl-2">
+        <a class="btn btn-danger" @click="removeItem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</template>
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ohm.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/tom-select.complete.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
@@ -25,26 +69,216 @@
 <script type="text/javascript">
 $(function () {
   // initialize the parser
-  const questionnaireFields = JSON.parse(document.querySelector('#valuesWrapper').dataset.formSchema);
-  const freeformTags = questionnaireFields.filter(f => (f.type === 'integer') || (f.type === 'select')).map(f => `"${f.tag}"`);
-  const freeformGrammar = `
-  QueryItem {
-    expression = field spaces comparator spaces number | number spaces comparator spaces field
-    number = digit+
-    comparator = "=" | "!=" | "<>" | ">=" | ">" | "<=" | "<"
-    field = ${freeformTags.join(' | ')}
+  const formSchema = JSON.parse(document.querySelector('#valuesWrapper').dataset.formSchema);
+
+  const choiceFields = formSchema.filter(f => f.type === 'select').reduce((accumulator, f) => {
+    accumulator[f.tag] = f;
+    return accumulator
+  }, {});
+
+  const integerFields = formSchema.filter(f => f.type === 'integer').reduce((accumulator, f) => {
+    accumulator[f.tag] = f;
+    return accumulator
+  }, {});
+
+  let choiceFieldsGrammar, integerFieldsGrammar, choiceActions, intActions, choiceSemantics, intSemantics;
+  if (Object.keys(choiceFields).length > 0) {
+    choiceFieldsGrammar = ohm.grammar(`
+      QueryItem {
+        expression = field spaces operator spaces number
+        number = digit+
+        operator = "=" | "!=" | "<>"
+        field = ${Object.keys(choiceFields).map(f => `"${f}"`).join(" | ")}
+      }
+    `);
+    choiceActions = {
+      expression(field, _1, operator, _2, number) {
+        return {
+          field: choiceFields[field.eval()],
+          operator: operator.eval(),
+          value: number.eval(),
+          source: "value"
+        };
+      },
+      operator(o) {
+        return o.sourceString;
+      },
+      field(f) {
+        return f.sourceString;
+      },
+      number(digits) {
+        return parseInt(digits.sourceString);
+      }
+    };
+    choiceSemantics = choiceFieldsGrammar.createSemantics();
+    choiceSemantics.addOperation('eval', choiceActions);
+  }
+
+  if (Object.keys(integerFields).length > 0) {
+    integerFieldsGrammar = ohm.grammar(`
+      QueryItem {
+        expression = field spaces operator spaces entity
+        entity = field | number
+        number = digit+
+        operator = "=" | "!=" | "<>" | ">=" | ">" | "<=" | "<"
+        field = ${Object.keys(integerFields).map(f => `"${f}"`).join(" | ")}
+      }
+    `);
+  
+    intActions = {
+      expression(field, _1, operator, _2, entity) {
+        data = {
+          field: integerFields[field.eval()],
+          operator: operator.eval(),
+          value: entity.eval()
+        };
+  
+        if (typeof data["value"] === "number")
+          data["source"] = "value";
+        else
+          data["source"] = "field";
+  
+        return data;
+      },
+      entity(e) {
+        return e.eval();
+      },
+      operator(o) {
+        return o.sourceString;
+      },
+      field(f) {
+        return f.sourceString;
+      },
+      number(digits) {
+        return parseInt(digits.sourceString);
+      }
+    };
+  
+    intSemantics = integerFieldsGrammar.createSemantics();
+    intSemantics.addOperation('eval', intActions);
+  }
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const valueParams = queryParams.get('values');
+  const expressions = (valueParams || '').split(',');
+
+  let choiceData, integerData;
+
+  if (choiceFieldsGrammar) {
+    choiceData = expressions.filter(
+      e => choiceFieldsGrammar.match(e).succeeded()
+    ).map(
+      e => choiceSemantics(choiceFieldsGrammar.match(e)).eval()
+    );
+  } else {
+    choiceData = [];
+  }
+
+  if (integerFieldsGrammar) {
+    integerData = expressions.filter(
+      e => integerFieldsGrammar.match(e).succeeded()
+    ).map(
+      e => intSemantics(integerFieldsGrammar.match(e)).eval()
+    );
+  } else {
+    integerData = [];
+  }
+
+  const initialData = [...choiceData, ...integerData];
+
+  const expressionBuilder = Vue.component('expression-builder', {
+    computed: {
+      cardStyle: function () {
+        if (!this.isEmpty(this.term.field) && !this.isEmpty(this.term.operator) && !this.isEmpty(this.term.value))
+          return [];
+
+        return ["bg-warning"];
+      }
+    },
+    data: function () {
+      return {};
+    },
+    delimiters: ['[[', ']]'],
+    methods: {
+      isEmpty: function (val) {
+        return (val === null) || (val === undefined) || (val === "");
+      },
+      selectField: function () {
+        this.term.field = this.schema[idx];
+      },
+      removeItem: function () {
+        this.$emit('remove-item', this.index);
+      },
+      getSortedOptions: function (options) {
+        if (options === undefined)
+          return [];
+
+        const pairs = Object.entries(options).toSorted((a, b) => a[1] - b[1]);
+        return pairs;
+      },
+      getIntegerFields: function () {
+        const thisRef = this;
+        if (!thisRef.term.field || thisRef.term.field.type !== 'integer') return [];
+
+        const tags = thisRef.schema.filter(f => f.tag !== thisRef.term.field.tag && f.type === 'integer').map(f => f.tag);
+        return tags;
+      }
+    },
+    props: ['schema', 'index', 'term'],
+    template: '#expression-builder'
+  });
+
+  const app = new Vue({
+    computed: {
+      expressions: function () {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`);
+      },
+      serializedExpressions: function () {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`).join(',');
+      },
+    },
+    delimiters: ['[[', ']]'],
+    methods: {
+      addNewTerm: function () {
+        this.terms.push({
+          field: null,
+          operator: null,
+          value: null,
+          source: null
+        });
+      },
+      isComplete: function (term) {
+        return !this.isEmpty(term.field) && !this.isEmpty(term.operator) && !this.isEmpty(term.value);
+      },
+      isEmpty: function (val) {
+        return (val === null) || (val === undefined) || (val === "");
+      },
+      removeItem: function (index) {
+        this.terms.splice(index, 1);
+      }
+    },
+    el: '#filter-app',
+    data: {
+      terms: [...initialData],
+      schema: formSchema
+    },
+    components: {
+      'expression-builder': expressionBuilder,
     }
-  `;
-  const parser = ohm.grammar(freeformGrammar);
+  });
   
   // set up omnisearch field
-  const omnisearch = new TomSelect('#{{ filter_form.values.id }}', {
-    create: true,
-    createFilter: function (input) {
-      return parser.match(input).succeeded();
-    },
-    plugins: ['clear_button', 'remove_button']
-  });
+  // const omnisearch = new TomSelect('#{{ filter_form.values.id }}', {
+  //   create: true,
+  //   createFilter: function (input) {
+  //     return parser.match(input).succeeded();
+  //   },
+  //   plugins: ['clear_button', 'remove_button']
+  // });
 
   // initialize the toast
   $('#notification-toast').toast();
