@@ -1,5 +1,5 @@
 {% macro render_filter_form(form, filter_form, location) %}
-<div class="card border-light bg-light mb-3">
+<div class="card border-light bg-light mb-3" id="filter-app">
     <div class="card-header">
         <form class="mb-n2 ml-n2 mr-n2">
         {% if form.show_map %}<input type="hidden" id="v" name="v" value="{{ request.args.v }}">{% endif %}
@@ -30,10 +30,6 @@
                 <div class="{% if form.form_type == 'SURVEY' %}col-6 col-md-2 col-lg-1{% else %}col-6 col-lg-1{% endif %} mb-2 d-flex">
                     <label for="{{ filter_form.conjunction.id }}" class="sr-only">{{ filter_form.conjunction.label.text }}</label>
                     {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-width': '100', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
-                </div>
-                <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
-                    <label for="{{ filter_form.values.id }}" class="sr-only">{{ filter_form.values.label.text }}</label>
-                    {{ filter_form.values(placeholder=_('Field Values')) }}
                 </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
@@ -89,6 +85,21 @@
                     </div>
                 </div>
                 {%- endif %}
+                <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-info" @click="addNewTerm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                </svg>
+                                {{ _('Add search term') }}
+                            </a>
+                        </div>
+                    </div>
+                    <expression-builder v-for="(term, index) in terms" @remove-item="removeItem" :index="index" :key="index" :schema="schema" :term.sync="term"></expression-builder>
+                    <input type="hidden" name="{{ filter_form.values.name }}" id="{{ filter_form.values.id }}" :value="serializedExpressions">
+                </div>
                 <div class="col-12 col-md-6 col-lg-2 mb-2">
                     <div class="d-flex flex-row">
                         <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>
