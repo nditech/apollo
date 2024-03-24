@@ -548,7 +548,7 @@ def submission_create(form_id):
         submission = models.Submission(
             event_id=event.id,
             deployment_id=event.deployment_id,
-            form_id=form_id,
+            form=questionnaire_form,
             submission_type='O',
             created=utils.current_timestamp(),
             participant=submission_form.participant.data,
