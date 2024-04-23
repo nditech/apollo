@@ -14,14 +14,23 @@
 </style>
 {% endblock %}
 {% block scripts -%}
+<template id="custom-dropdown">
+  <select class="form-control" ref="dropdownEl">
+    <option v-if="blankOption" disabled :selected="blankOption.value === selected" :value="blankOption.value">[[ blankOption.label ]]</option>
+    <option v-for="(option, index) in options" :key="index" :selected="option.value === selected" :value="option.value">[[ option.label ]]</option>
+  </select>
+</template>
 <template id="expression-builder">
   <div class="p-2 my-1" :class="cardStyle">
     <div class="d-flex justify-content-around">
       <div class="input-group">
-        <select class="form-control custom-select" v-model="term.field">
-          <option disabled value="">{{ _('Select field') }}</option>
-          <option v-for="(field, fieldIndex) in schema.filter(f => f.type === 'integer' || f.type === 'select')" :key="fieldIndex" :value="field">[[ field.tag ]]</option>
-        </select>
+        <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
+        <!--
+          <select class="form-control custom-select" v-model="term.field">
+            <option disabled value="">{{ _('Select field') }}</option>
+            <option v-for="(field, fieldIndex) in schema.filter(f => f.type === 'integer' || f.type === 'select')" :key="fieldIndex" :value="field">[[ field.tag ]]</option>
+          </select>
+        -->
         <select class="form-control custom-select" v-model="term.operator" v-if="term.field !== null">
           <option disabled value="">{{ _('Select operator') }}</option>
           <option value="=">=</option>
@@ -80,6 +89,8 @@ $(function () {
     accumulator[f.tag] = f;
     return accumulator
   }, {});
+
+  const usableFields = {...choiceFields, ...integerFields};
 
   let choiceFieldsGrammar, integerFieldsGrammar, choiceActions, intActions, choiceSemantics, intSemantics;
   if (Object.keys(choiceFields).length > 0) {
@@ -186,6 +197,38 @@ $(function () {
 
   const initialData = [...choiceData, ...integerData];
 
+  const customDropdown = Vue.component('custom-dropdown', {
+    data: function () {
+      return {};
+    },
+    delimiters: ['[[', ']]'],
+    mounted: function () {
+      const thisRef = this;
+      const elementRef = thisRef.$refs.dropdownEl;
+      thisRef.$nextTick(() => {
+        thisRef.dropdown = new TomSelect(elementRef, {
+          duplicates: true,
+          onChange: function (newValue) {
+            if (thisRef.fieldMap !== null)
+              thisRef.$emit('input', thisRef.fieldMap[newValue]);
+            else
+              thisRef.$emit('input', newValue);
+          },
+          onInitialize: function () {
+            if (thisRef.selected) {
+              if (thisRef.fieldMap !== null)
+                thisRef.$emit('input', thisRef.fieldMap[thisRef.selected]);
+              else
+                thisRef.$emit('input', thisRef.selected);
+            }
+          }
+        });
+      });
+    },
+    props: ['blankOption', 'fieldMap', 'options', 'selected', 'value'],
+    template: '#custom-dropdown',
+  });
+
   const expressionBuilder = Vue.component('expression-builder', {
     computed: {
       cardStyle: function () {
@@ -193,6 +236,14 @@ $(function () {
           return [];
 
         return ["bg-warning"];
+      },
+      fieldMap: function () {
+        return usableFields;
+      },
+      fieldOptions: function () {
+        return Object.keys(usableFields).sort().map(i => {
+          return {label: i, value: i};
+        });
       }
     },
     data: function () {
