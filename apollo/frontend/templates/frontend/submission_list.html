@@ -25,12 +25,6 @@
     <div class="d-flex justify-content-around">
       <div class="input-group">
         <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
-        <!--
-          <select class="form-control custom-select" v-model="term.field">
-            <option disabled value="">{{ _('Select field') }}</option>
-            <option v-for="(field, fieldIndex) in schema.filter(f => f.type === 'integer' || f.type === 'select')" :key="fieldIndex" :value="field">[[ field.tag ]]</option>
-          </select>
-        -->
         <select class="form-control custom-select" v-model="term.operator" v-if="term.field !== null">
           <option disabled value="">{{ _('Select operator') }}</option>
           <option value="=">=</option>
@@ -46,10 +40,7 @@
           <option value="value">Value</option>
         </select>
         <input type="number" class="form-control" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'value'">
-        <select class="form-control custom-select" v-model="term.value"  v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'">
-          <option disabled value="">{{ _('Select field') }}</option>
-          <option :value="fi" :key="fi" v-for="fi in getIntegerFields()">[[ fi ]]</option>
-        </select>
+        <custom-dropdown v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'select'">
           <option disabled value="">{{ _('Select value') }}</option>
           <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ key ]]</option>
@@ -267,12 +258,14 @@ $(function () {
         const pairs = Object.entries(options).toSorted((a, b) => a[1] - b[1]);
         return pairs;
       },
-      getIntegerFields: function () {
+      getValueFields: function () {
         const thisRef = this;
         if (!thisRef.term.field || thisRef.term.field.type !== 'integer') return [];
 
         const tags = thisRef.schema.filter(f => f.tag !== thisRef.term.field.tag && f.type === 'integer').map(f => f.tag);
-        return tags;
+        return tags.filter(f => f !== thisRef.term.field.tag).map(f => {
+          return {label: f, value: f};
+        });
       }
     },
     props: ['schema', 'index', 'term'],
