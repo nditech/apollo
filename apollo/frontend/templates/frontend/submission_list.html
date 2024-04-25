@@ -6,7 +6,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/tom-select.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap4.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 <style>
@@ -60,7 +60,7 @@
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/ohm.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/tom-select.complete.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/selectize.js') }}"></script>
 <script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
@@ -197,7 +197,7 @@ $(function () {
       const thisRef = this;
       const elementRef = thisRef.$refs.dropdownEl;
       thisRef.$nextTick(() => {
-        thisRef.dropdown = new TomSelect(elementRef, {
+        thisRef.dropdown = $(elementRef).selectize({
           duplicates: true,
           onChange: function (newValue) {
             if (thisRef.fieldMap !== null)
