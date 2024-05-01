@@ -62,7 +62,7 @@
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
 {%- endif %}
 
-<div class="table-responsive sticky-top bg-white {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
+<div id="infocard" class="table-responsive sticky-top bg-white {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
   <table class="table table-bordered">
   {%- if submission.form.form_type == 'SURVEY' %}
   <tr>
@@ -70,7 +70,7 @@
     <td><strong>{{ submission.serial_no }}</strong></td>
   </tr>
   {%- endif %}
-  <tr>
+  <tr class="important">
     <th class="col-2">{{ _('Participant') }}</th>
     <td>{% if submission.participant %}<strong>{{ submission.participant.name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.primary_phone %} ({{ submission.participant.primary_phone }}){%- endif %}
     <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
@@ -121,7 +121,7 @@
   </tr>
   {%- if form.form_type in ['CHECKLIST', 'SURVEY'] -%}
   {#- checklist #}
-  <tr>
+  <tr class="important">
     <th>{{ _('Location') }}</th>
     <td>
       {% for location_type, location_name in submission.location.make_path().items() %}
@@ -1308,6 +1308,36 @@
       window.onbeforeunload = null;
       window.location.href = url;
     });
+  });
+
+  handlingScroll = false;
+  minimized = false;
+
+  var minimizeTable = function () {
+    if (!handlingScroll) {
+      handlingScroll = true;
+      $("#infocard tr:not(.important)").slideUp(0);
+      $("#infocard").get(0).scrollIntoView();
+      setTimeout(function () { handlingScroll = false; minimized = true; }, 50);
+    }
+  };
+  var maximizeTable = function () {
+    if (!handlingScroll) {
+      handlingScroll = true;
+      $("#infocard tr:not(.important)").slideDown(0);
+      if (minimized) {
+        $("body").get(0).scrollIntoView();
+      }
+      setTimeout(function () { handlingScroll = false; minimized = false; }, 50);
+    }
+  };
+
+  $(window).scroll(function () {
+    if ($("#infocard").offset().top - $(window).scrollTop() == 0) {
+      minimizeTable();
+    } else {
+      maximizeTable();
+    }
   });
 </script>
 {%- endblock %}
