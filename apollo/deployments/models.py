@@ -4,7 +4,7 @@ from datetime import datetime
 from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
 from flask_babelex import gettext
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, false, or_
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.constants import LANGUAGES
@@ -78,7 +78,8 @@ class Event(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    is_hidden = db.Column(db.Boolean, default=False, nullable=False)
+    is_hidden = db.Column(
+        db.Boolean, default=False, nullable=False, server_default=false())
     start = db.Column(
         db.DateTime(timezone=True), default=_default_event_start,
         nullable=False)

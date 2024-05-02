@@ -15,7 +15,8 @@ class LocationSet(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    is_hidden = db.Column(db.Boolean, default=False, nullable=False)
+    is_hidden = db.Column(
+        db.Boolean, default=False, nullable=False, server_default=false())
     slug = db.Column(db.String)
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
