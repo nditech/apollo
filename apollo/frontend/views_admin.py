@@ -397,7 +397,10 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
             as_attachment=True)
 
     def get_one(self, pk):
-        event = super(EventAdminView, self).get_one(pk)
+        model_class = self.model
+        event = super(EventAdminView, self).get_query().filter(
+            model_class.resource_id == pk
+        ).one()
 
         # convert start and end dates to app time zone
         event.start = event.start.astimezone(app_time_zone)
