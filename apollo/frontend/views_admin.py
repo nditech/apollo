@@ -398,7 +398,7 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
 
     def get_one(self, pk):
         model_class = self.model
-        event = super(EventAdminView, self).get_query().filter(
+        event = self.get_query().filter(
             model_class.resource_id == pk
         ).one()
 
