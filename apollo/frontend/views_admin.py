@@ -13,7 +13,7 @@ from flask_admin import (
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.fields import InlineModelFormList
-from flask_admin.contrib.sqla.form import InlineModelConverter
+from flask_admin.contrib.sqla.form import AdminModelConverter, InlineModelConverter
 from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
@@ -68,6 +68,19 @@ def resize_logo(pil_image: Image):
         result = Image.new('RBBA', (height, height), background_color)
         result.paste(pil_image, ((height - width) // 2, 0))
         return result
+
+
+class EventFormModelConverter(AdminModelConverter):
+    def _model_select_field(self, prop, multiple, remote_model, **kwargs):
+        if (
+            remote_model == models.ParticipantSet
+            or remote_model == models.Form
+        ):
+            # TODO: there should be a better way of doing this
+            query_factory = lambda: remote_model.query.filter_by(is_hidden=False)
+            kwargs['query_factory'] = query_factory
+
+        return super()._model_select_field(prop, multiple, remote_model, **kwargs)
 
 
 class MultipleSelect2Field(fields.Select2Field):
@@ -377,6 +390,7 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
     column_formatters = {
         'archive': macro('event_archive'),
     }
+    model_form_converter = EventFormModelConverter
 
     @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
     def action_hide(self, ids):
