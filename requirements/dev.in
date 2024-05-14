@@ -1,9 +1,0 @@
--r prod.in
-autopep8
-coverage
-flake8
-flask-debugtoolbar==0.10.1
-flask-testing==0.8.1
-mimesis
-pip-tools
-pytest==7.0.1
