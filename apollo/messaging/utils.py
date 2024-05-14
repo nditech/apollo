@@ -37,7 +37,7 @@ def parse_text(text):
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
-        '(?P<exclamation>!?)(?:X(?P<form_serial>\d+))?(?P<responses>[A-Z0-9\s]*)$',  # noqa
+        r'(?P<exclamation>!?)(?:X(?P<form_serial>\d+))?(?P<responses>[A-Z0-9\s]*)$',  # noqa
         re.I | re.M)
 
     at_position = text.find("@")
