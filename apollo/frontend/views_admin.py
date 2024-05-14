@@ -378,6 +378,20 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
         'archive': macro('event_archive'),
     }
 
+    @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
+    def action_hide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.resource_id.in_(ids)).update(
+            {'is_hidden': True}, synchronize_session=False)
+        db.session.commit()
+    
+    @action('unhide', _('Unarchive'), _('Are you sure you want to unarchive the selected items?'))
+    def action_unhide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.resource_id.in_(ids)).update(
+            {'is_hidden': False}, synchronize_session=False)
+        db.session.commit()
+
     @expose('/download/<int:event_id>')
     def download(self, event_id):
         event = services.events.find(id=event_id).first_or_404()
