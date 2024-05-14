@@ -719,18 +719,24 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     def create_form(self, obj=None):
         deployment = g.deployment
         form = super().create_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter_by(
-            deployment=deployment).with_entities(
-                models.LocationSet.id, models.LocationSet.name).all()
+        form.location_set.choices = models.LocationSet.query.filter(
+            models.LocationSet.deployment == deployment,
+            models.LocationSet.is_hidden != True,   # noqa
+        ).with_entities(
+            models.LocationSet.id, models.LocationSet.name
+        ).all()
 
         return form
 
     def edit_form(self, obj=None):
         deployment = g.deployment
         form = super().edit_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter_by(
-            deployment=deployment).with_entities(
-                models.LocationSet.id, models.LocationSet.name).all()
+        form.location_set.choices = models.LocationSet.query.filter(
+            models.LocationSet.deployment == deployment,
+            models.LocationSet.is_hidden != True,   # noqa
+        ).with_entities(
+            models.LocationSet.id, models.LocationSet.name
+        ).all()
 
         return form
 
