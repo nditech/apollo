@@ -24,7 +24,7 @@ jobs:
       - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
       - restore_cache:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
-      - run: pip install --user -r requirements/dev.txt
+      - run: pip install --user --require-hashes --no-deps -r requirements/dev.txt
       - save_cache:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
           paths:
