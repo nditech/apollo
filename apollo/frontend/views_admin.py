@@ -70,12 +70,33 @@ def resize_logo(pil_image: Image):
         return result
 
 
-class EventFormModelConverter(AdminModelConverter):
+def _get_usable_forms():
+    deployment = g.deployment
+    return models.Form.query.filter(
+        models.Form.deployment == deployment,
+        models.Form.is_hidden == False,  # noqa
+    )
+
+
+def _get_usable_location_sets():
+    deployment = g.deployment
+    return models.LocationSet.query.filter(
+        models.LocationSet.deployment == deployment,
+        models.LocationSet.is_hidden == False,  # noqa
+    )
+
+
+def _get_usable_participant_sets():
+    deployment = g.deployment
+    return models.ParticipantSet.query.filter(
+        models.ParticipantSet.deployment == deployment,
+        models.ParticipantSet.is_hidden == False,  # noqa
+    )
+
+
+class ParticipantSetFormModelConverter(AdminModelConverter):
     def _model_select_field(self, prop, multiple, remote_model, **kwargs):
-        if (
-            remote_model == models.ParticipantSet
-            or remote_model == models.Form
-        ):
+        if remote_model == models.LocationSet:
             # TODO: there should be a better way of doing this
             query_factory = lambda: remote_model.query.filter_by(is_hidden=False)
             kwargs['query_factory'] = query_factory
@@ -390,7 +411,6 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
     column_formatters = {
         'archive': macro('event_archive'),
     }
-    model_form_converter = EventFormModelConverter
 
     @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
     def action_hide(self, ids):
@@ -486,6 +506,20 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
             message = str(_("You cannot delete the last remaining event"))
             flash(message, 'danger')
             return False
+    
+    def create_form(self, obj=None):
+        form = super().create_form(obj)
+        form.forms.query_factory = _get_usable_forms
+        form.participant_set.query_factory = _get_usable_participant_sets
+
+        return form
+
+    def edit_form(self, obj=None):
+        form = super().edit_form(obj)
+        form.forms.query_factory = _get_usable_forms
+        form.participant_set.query_factory = _get_usable_participant_sets
+
+        return form
 
 
 class UserAdminView(BaseAdminView):
@@ -717,26 +751,14 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     inline_model_form_converter = ParticipantExtraDataModelConverter
 
     def create_form(self, obj=None):
-        deployment = g.deployment
         form = super().create_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter(
-            models.LocationSet.deployment == deployment,
-            models.LocationSet.is_hidden != True,   # noqa
-        ).with_entities(
-            models.LocationSet.id, models.LocationSet.name
-        ).all()
+        form.location_set.query_factory = _get_usable_location_sets
 
         return form
 
     def edit_form(self, obj=None):
-        deployment = g.deployment
         form = super().edit_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter(
-            models.LocationSet.deployment == deployment,
-            models.LocationSet.is_hidden != True,   # noqa
-        ).with_entities(
-            models.LocationSet.id, models.LocationSet.name
-        ).all()
+        form.location_set.query_factory = _get_usable_location_sets
 
         return form
 
