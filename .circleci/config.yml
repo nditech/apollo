@@ -12,7 +12,7 @@ jobs:
 
       - image: cimg/postgres:12.11-postgis
         environment:
-          - POSTGRES_DB: apollo
+          - POSTGRES_DB: apollo_testing
           - POSTGRES_USER: circleci
 
       - image: cimg/redis:7.0
@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
-      - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+      - run: psql -h localhost -d apollo_testing -c "CREATE EXTENSION IF NOT EXISTS postgis;"
       - restore_cache:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
       - run: pip install --user --require-hashes --no-deps -r requirements/dev.txt
