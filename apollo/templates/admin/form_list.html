@@ -378,7 +378,7 @@
       hideButton.classList.remove('invisible');
       showButton.classList.remove('invisible');
     }
-
+    
     changeToggleAllState();
   }
   
@@ -387,7 +387,7 @@
     // are checked
     var numCheckboxes = document.querySelectorAll('input[data-show-toggle]').length;
     var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
-
+    
     if (numChecked === 0) {
       // none are checked, make it unchecked
       toggleAll.indeterminate = false;
@@ -413,6 +413,14 @@
       document.querySelectorAll('input[data-show-toggle]').forEach(function (checkbox) {
         checkbox.checked = toggleAll.checked;
       });
+      
+      if (toggleAll.checked) {
+        hideButton.classList.remove('invisible');
+        showButton.classList.remove('invisible');
+      } else {
+        hideButton.classList.add('invisible');
+        showButton.classList.add('invisible');
+      }
     }
   });
 
