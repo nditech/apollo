@@ -15,18 +15,16 @@ def generate_event_selection_form(*args, **kwargs):
         choices = []
     else:
         user = current_user._get_current_object()
-        if user.is_admin():
-            query = Event.query.filter_by(
-                deployment_id=user.deployment_id)
-        else:
+        query = Event.query.filter(
+            Event.deployment_id == user.deployment_id,
+            Event.is_hidden == False, # noqa
+        )
+        if not user.is_admin():
             perm_cache = services.users.get_permissions_cache(user)
             allowed_event_ids = [
                 n.value for n in perm_cache
                 if n.method == 'access_resource' and n.type == 'event']
-            query = Event.query.filter(
-                Event.is_hidden == False, # noqa
-                Event.resource_id.in_(allowed_event_ids),
-                Event.deployment_id == user.deployment_id)
+            query = query.filter(Event.resource_id.in_(allowed_event_ids))
 
         choices = [
             (e.id, e.name) for e in query.with_entities(

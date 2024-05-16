@@ -94,6 +94,26 @@ def _get_usable_participant_sets():
     )
 
 
+def _get_usable_resources():
+    deployment = g.deployment
+    event_resources = models.Resource.query.filter(
+        models.Resource.deployment_id == deployment.id,
+        models.Resource.resource_type == 'event'
+    ).join(
+        models.Event,
+        models.Event.resource_id == models.Resource.resource_id
+    ).filter(models.Event.is_hidden == False).with_entities(models.Resource)
+    form_resources = models.Resource.query.filter(
+        models.Resource.deployment_id == deployment.id,
+        models.Resource.resource_type == 'form'
+    ).join(
+        models.Form,
+        models.Form.resource_id == models.Resource.resource_id
+    ).filter(models.Form.is_hidden == False).with_entities(models.Resource)
+
+    return event_resources.union(form_resources)
+
+
 class ParticipantSetFormModelConverter(AdminModelConverter):
     def _model_select_field(self, prop, multiple, remote_model, **kwargs):
         if remote_model == models.LocationSet:
@@ -630,18 +650,14 @@ class RoleAdminView(BaseAdminView):
     form_columns = ('name', 'description', 'permissions', 'resources')
 
     def create_form(self, obj=None):
-        deployment = g.deployment
         form = super().create_form(obj)
-        form.resources.query = models.Resource.query.filter_by(
-            deployment=deployment)
+        form.resources.query_factory = _get_usable_resources
 
         return form
 
     def edit_form(self, obj=None):
-        deployment = g.deployment
         form = super().edit_form(obj)
-        form.resources.query = models.Resource.query.filter_by(
-            deployment=deployment)
+        form.resources.query_factory = _get_usable_resources
 
         return form
 

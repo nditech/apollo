@@ -101,8 +101,9 @@ class Event(Resource):
     @classmethod
     def default(cls):
         now = current_timestamp()
+        query = cls.query.filter(cls.is_hidden == False)
 
-        event = cls.query.filter(
+        event = query.filter(
             cls.start <= now, cls.end >= now
         ).order_by(cls.start.desc(), cls.id).first()
 
@@ -110,14 +111,14 @@ class Event(Resource):
             return event
 
         # if there's no event, pick the closest past event
-        event = cls.query.filter(cls.end <= now).order_by(
+        event = query.filter(cls.end <= now).order_by(
             cls.end.desc(), cls.id).first()
 
         if event:
             return event
 
         # if there's no event, pick the closest future event
-        event = cls.query.filter(cls.start >= now).order_by(
+        event = query.filter(cls.start >= now).order_by(
             cls.start, cls.id).first()
 
         if event:
