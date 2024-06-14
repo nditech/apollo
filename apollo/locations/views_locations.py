@@ -95,6 +95,7 @@ def locations_list(view, location_set_id):
     else:
         ctx = dict(
             args=args,
+            channel=session.get('_id'),
             extra_fields=extra_fields,
             filter_form=queryset_filter.form,
             breadcrumbs=breadcrumbs,

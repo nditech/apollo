@@ -358,7 +358,8 @@ def participant_list(participant_set_id=0, view=None):
         location_types=helpers.displayable_location_types(
             is_administrative=True, location_set_id=location_set_id),
         participants=queryset_filterset.qs.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+            page=page, per_page=current_app.config.get('PAGE_SIZE')),
+        channel=session.get('_id'),
     )
 
     if view:
