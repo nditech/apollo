@@ -22,6 +22,7 @@ jobs:
     steps:
       - checkout
       - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
       - run: psql -h localhost -d apollo_testing -c "CREATE EXTENSION IF NOT EXISTS postgis;"
