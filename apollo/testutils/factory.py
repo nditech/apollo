@@ -2,7 +2,7 @@
 import pathlib
 
 from apollo import settings
-from apollo.factory import create_app
+from apollo import create_app
 
 
 class TestConfig(object):
@@ -24,6 +24,6 @@ def create_test_app():
     testConfig = TestConfig()
     testConfig.update(**test_settings)
 
-    app = create_app('apollo', [str(path)], testConfig)
+    app = create_app(testConfig)
 
     return app
