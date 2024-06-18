@@ -261,6 +261,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "chromedriver-autoinstaller"
+version = "0.6.2"
+description = "Automatically install chromedriver that supports the currently installed version of chrome."
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "click"
 version = "8.0.4"
 description = "Composable command line interface toolkit"
@@ -1463,6 +1471,17 @@ python-versions = "*"
 botocore = ">=1.12.36,<2.0a.0"
 
 [[package]]
+name = "selenium"
+version = "3.141.0"
+description = "Python bindings for Selenium"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+urllib3 = "*"
+
+[[package]]
 name = "shapely"
 version = "1.6.4.post2"
 description = "Geometric objects, predicates, and operations"
@@ -1819,7 +1838,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.6.15"
-content-hash = "2fd9b62d97d1722603f4b51cc61b7142749a9213dbbf2c48a0f8196510e4659c"
+content-hash = "cb1d6c02f8301b51a9d30ff0b30d6018e6b7f945e7a5225a67a9b9a1b577bc97"
 
 [metadata.files]
 alembic = [
@@ -1966,6 +1985,10 @@ cffi = [
 chardet = [
     {file = "chardet-4.0.0-py2.py3-none-any.whl", hash = "sha256:f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"},
     {file = "chardet-4.0.0.tar.gz", hash = "sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa"},
+]
+chromedriver-autoinstaller = [
+    {file = "chromedriver-autoinstaller-0.6.2.tar.gz", hash = "sha256:8ff5c715160b294c9e7cc0fae5ecc5ccaff5563ca1405daed6b959cca606e57c"},
+    {file = "chromedriver_autoinstaller-0.6.2-py3-none-any.whl", hash = "sha256:7055e3e5a64e4352855fafab15d266e2ed325620222224fb261a2131e821dfe3"},
 ]
 click = [
     {file = "click-8.0.4-py3-none-any.whl", hash = "sha256:6a7a62563bbfabfda3a38f3023a1db4a35978c0abd76f6c9605ecd6554d6d9b1"},
@@ -2734,6 +2757,10 @@ requests = [
 s3transfer = [
     {file = "s3transfer-0.3.7-py2.py3-none-any.whl", hash = "sha256:efa5bd92a897b6a8d5c1383828dca3d52d0790e0756d49740563a3fb6ed03246"},
     {file = "s3transfer-0.3.7.tar.gz", hash = "sha256:35627b86af8ff97e7ac27975fe0a98a312814b46c6333d8a6b889627bcd80994"},
+]
+selenium = [
+    {file = "selenium-3.141.0-py2.py3-none-any.whl", hash = "sha256:2d7131d7bc5a5b99a2d9b04aaf2612c411b03b8ca1b1ee8d3de5845a9be2cb3c"},
+    {file = "selenium-3.141.0.tar.gz", hash = "sha256:deaf32b60ad91a4611b98d8002757f29e6f2c2d5fcaf202e1c9ad06d6772300d"},
 ]
 shapely = [
     {file = "Shapely-1.6.4.post2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3ca69d4b12e2b05b549465822744b6a3a1095d8488cc27b2728a06d3c07d0eee"},

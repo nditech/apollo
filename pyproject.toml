@@ -106,6 +106,8 @@ Flask-Testing = "0.8.1"
 mimesis = "~=3.2.0"
 pip-tools = "~=4.1.0"
 pytest = "7.0.1"
+selenium = "~=3.141.0"
+chromedriver-autoinstaller = "~=0.6.2"
 
 [build-system]
 requires = ["poetry-core"]
