@@ -11,6 +11,8 @@ jobs:
           - TEST_DATABASE_USERNAME: circleci
           - SECRET_KEY: notasecret
           - REDIS_HOSTNAME: localhost
+          - SSL_REQUIRED: False
+          - MESSAGING_SECRET: notasecret
 
       - image: cimg/postgres:12.11-postgis
         environment:
