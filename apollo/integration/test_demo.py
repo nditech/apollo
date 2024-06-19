@@ -12,7 +12,7 @@ from apollo.testutils import factory as test_factory
 class DemoTest(LiveServerTestCase):
     def create_app(self):
         app = test_factory.create_test_app()
-        app.config['LIVE_SERVER_PORT'] = 8943
+        app.config['LIVESERVER_PORT'] = 8943
         return app
 
     def setUp(self):
