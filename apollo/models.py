@@ -7,9 +7,10 @@ from apollo.locations.models import (  # noqa
     LocationTypePath, LocationGroup, locations_groups)
 from apollo.messaging.models import Message  # noqa
 from apollo.participants.models import (  # noqa
-    ParticipantSet, ParticipantDataField,
-    Participant, ParticipantPartner, ParticipantRole, PhoneContact,
-    ContactHistory, Sample, samples_participants)
+    ParticipantGroup, ParticipantGroupType, ParticipantSet,
+    ParticipantDataField, Participant, ParticipantPartner,
+    ParticipantRole, PhoneContact, ContactHistory, Sample,
+    groups_participants, samples_participants)
 from apollo.submissions.models import (  # noqa
     Submission, SubmissionComment, SubmissionImageAttachment,
     SubmissionVersion)

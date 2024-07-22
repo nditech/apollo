@@ -7,6 +7,7 @@ import pandas as pd
 import pkgutil
 
 CSV_MIMETYPES = [
+    "text/plain",
     "text/csv",
     "text/plain",
     "application/csv",
