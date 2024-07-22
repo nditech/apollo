@@ -43,7 +43,7 @@
         <custom-dropdown v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'select'">
           <option disabled value="">{{ _('Select value') }}</option>
-          <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ key ]]</option>
+          <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ value ]]</option>
         </select>
       </div>
       <div class="pl-2">
