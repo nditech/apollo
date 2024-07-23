@@ -193,6 +193,9 @@ $(function () {
       return {};
     },
     delimiters: ['[[', ']]'],
+    destroyed: function () {
+      this.destroyDropdown();
+    },
     methods: {
       destroyDropdown: function () {
         this.dropdown[0].selectize.destroy();
