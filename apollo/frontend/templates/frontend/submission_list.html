@@ -34,13 +34,13 @@
           <option value=">" v-if="term.field.type === 'integer'">&gt;</option>
           <option value=">=" v-if="term.field.type === 'integer'">&gt;=</option>
         </select>
-        <select class="form-control custom-select" v-model="term.source" v-if="term.field !== null && term.field.type === 'integer'">
+        <select class="form-control custom-select" v-model="term.source" v-if="term.field !== null && term.field.type === 'integer'" @change="updateSource">
           <option disabled value="">{{ _('Select source') }}</option>
           <option value="field">Field</option>
           <option value="value">Value</option>
         </select>
         <input type="number" class="form-control" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'value'">
-        <custom-dropdown v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
+        <custom-dropdown ref="valueDropdown" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'select'">
           <option disabled value="">{{ _('Select value') }}</option>
           <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ value ]]</option>
@@ -193,6 +193,11 @@ $(function () {
       return {};
     },
     delimiters: ['[[', ']]'],
+    methods: {
+      destroyDropdown: function () {
+        this.dropdown[0].selectize.destroy();
+      }
+    },
     mounted: function () {
       const thisRef = this;
       const elementRef = thisRef.$refs.dropdownEl;
@@ -266,6 +271,11 @@ $(function () {
         return tags.filter(f => f !== thisRef.term.field.tag).map(f => {
           return {label: f, value: f};
         });
+      },
+      updateSource: function () {
+        if (this.term.source === 'value' && this.$refs.valueDropdown) {
+          this.$refs.valueDropdown.destroyDropdown();
+        }
       }
     },
     props: ['schema', 'index', 'term'],
