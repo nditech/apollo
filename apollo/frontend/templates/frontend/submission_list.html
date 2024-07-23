@@ -198,7 +198,10 @@ $(function () {
     },
     methods: {
       destroyDropdown: function () {
-        this.dropdown[0].selectize.destroy();
+        if (this.dropdown) {
+          this.dropdown[0].selectize.destroy();
+          this.dropdown = null;
+        }
       }
     },
     mounted: function () {
@@ -279,6 +282,7 @@ $(function () {
         if (this.term.source === 'value' && this.$refs.valueDropdown) {
           this.$refs.valueDropdown.destroyDropdown();
         }
+        this.term.value = null;
       }
     },
     props: ['schema', 'index', 'term'],
