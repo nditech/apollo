@@ -692,6 +692,9 @@ pyjwt==2.4.0; python_version >= "3.6" and python_version < "4" \
 pyparsing==3.1.2; python_full_version >= "3.6.8" and python_version >= "3.6" \
     --hash=sha256:f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742 \
     --hash=sha256:a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad
+pytest-flask==1.2.0; python_version >= "3.5" \
+    --hash=sha256:46fde652f77777bf02dc91205aec4ce20cdf2acbbbd66a918ab91f5c14693d3d \
+    --hash=sha256:fe25b39ad0db09c3d1fe728edecf97ced85e774c775db259a6d25f0270a4e7c9
 pytest==7.0.1; python_version >= "3.6" \
     --hash=sha256:9ce3ff477af913ecf6321fe337b93a2c0dcf2a0a1439c43f5452112c1e4280db \
     --hash=sha256:e30905a0c131d3d94b89624a1cc5afec3e0ba2fbdb151867d8e0ebd49850f171
