@@ -124,7 +124,8 @@ def verify_pw(username, password):
 def submission_list(form_id):
     event = g.event
     form = models.Form.query.filter_by(
-        id=form_id
+        id=form_id,
+        is_hidden=False,
     ).join(
         models.Form.events
     ).filter(models.Form.events.contains(event)).first_or_404()
@@ -1399,6 +1400,7 @@ def submission_version(submission_id, version_id):
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(
         models.Form.id == form_id,
+        models.Form.is_hidden == False, # noqa
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_('Quality Assurance Dashboard'), form.name]
     filter_class = filters.generate_quality_assurance_filter(g.event, form)
@@ -1461,6 +1463,7 @@ def quality_assurance_list(form_id):
     event = g.event
     form = services.forms.get_or_404(
         models.Form.id == form_id,
+        models.Form.is_hidden == False, # noqa
         models.Form.form_type.in_(['CHECKLIST', 'SURVEY']))
     breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = filters.generate_quality_assurance_filter(event, form)

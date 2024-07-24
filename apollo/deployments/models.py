@@ -4,7 +4,7 @@ from datetime import datetime
 from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
 from flask_babelex import gettext
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, false, or_
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.constants import LANGUAGES
@@ -78,6 +78,8 @@ class Event(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    is_hidden = db.Column(
+        db.Boolean, default=False, nullable=False, server_default=false())
     start = db.Column(
         db.DateTime(timezone=True), default=_default_event_start,
         nullable=False)
@@ -99,8 +101,9 @@ class Event(Resource):
     @classmethod
     def default(cls):
         now = current_timestamp()
+        query = cls.query.filter(cls.is_hidden == False)
 
-        event = cls.query.filter(
+        event = query.filter(
             cls.start <= now, cls.end >= now
         ).order_by(cls.start.desc(), cls.id).first()
 
@@ -108,14 +111,14 @@ class Event(Resource):
             return event
 
         # if there's no event, pick the closest past event
-        event = cls.query.filter(cls.end <= now).order_by(
+        event = query.filter(cls.end <= now).order_by(
             cls.end.desc(), cls.id).first()
 
         if event:
             return event
 
         # if there's no event, pick the closest future event
-        event = cls.query.filter(cls.start >= now).order_by(
+        event = query.filter(cls.start >= now).order_by(
             cls.start, cls.id).first()
 
         if event:
@@ -136,4 +139,7 @@ class Event(Resource):
         cond3 = (cls.id == event.id) if event else (cls.id == None) # noqa
         term = and_(cond1, cond2)
 
-        return cls.query.filter(or_(term, cond3))
+        return cls.query.filter(
+            or_(term, cond3),
+            cls.is_hidden == False,     # noqa
+        )

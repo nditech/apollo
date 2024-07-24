@@ -11,8 +11,9 @@ from flask_security import current_user
 from slugify import slugify
 
 from apollo import core, models
-from apollo.core import uploads
-from apollo.formsframework.forms import FormForm, FormImportForm
+from apollo.core import db, uploads
+from apollo.formsframework.forms import (
+    FormForm, FormImportForm, make_questionnaire_hidden_toggle_form)
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
 from apollo.formsframework.api import views as api_views
@@ -215,25 +216,58 @@ def edit_form(view, form_id):
 
 
 def forms_list(view):
+    show_hidden_param = 'show_all'
     template_name = 'admin/form_list.html'
 
     breadcrumbs = [_('Forms')]
 
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
+    show_hide_form = make_questionnaire_hidden_toggle_form(g.deployment)
+    query_params = request.args.to_dict(flat=False)
+    hidden_form_count = models.Form.query.filter(
+        models.Form.is_hidden == True).count() # noqa
+    query = models.Form.query.order_by('name')
+    show_hidden = bool(query_params.get(show_hidden_param))
+
+    if show_hidden:
+        show_toggle_link_label = _('Hide Archived')
+        add_show_url_param = False
+    else:
+        show_toggle_link_label = _('Show All')
+        add_show_url_param = True
+        query = query.filter(
+            models.Form.is_hidden == False).order_by('name') # noqa
+
+    if show_hide_form.validate_on_submit():
+        posted_data = show_hide_form.data.copy()
+        hide_forms = True if posted_data.get('mode') == 'hide' else False
+        posted_form_ids = [f.id for f in posted_data.get('forms')]
+        models.Form.query.filter(models.Form.id.in_(posted_form_ids)).update(
+            {'is_hidden': hide_forms}, synchronize_session='fetch')
+        db.session.commit()
+        db.session.expire_all()
+
+    all_forms = query.all()
+    checklist_forms = query.filter(models.Form.form_type == 'CHECKLIST').all()
+    survey_forms = query.filter(models.Form.form_type == 'SURVEY').all()
 
     context = {
-        'forms': models.Form.query.order_by('name').all(),
-        'checklist_forms': models.Form.query.filter(
-            models.Form.form_type == 'CHECKLIST').order_by('name').all(),
-        'survey_forms': models.Form.query.filter(
-            models.Form.form_type == 'SURVEY').order_by('name').all(),
-        'events': models.Event.query.order_by('name').all(),
+        'forms': all_forms,
+        'checklist_forms': checklist_forms,
+        'survey_forms': survey_forms,
+        'events': models.Event.query.filter(
+            models.Event.is_hidden == False
+        ).order_by('name').all(),
         'roles': models.ParticipantRole.query.order_by('name').all(),
         'location_types': models.LocationType.query.all(),
         'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
+        'show_hide_form': show_hide_form,
+        'show_toggle_link_label': show_toggle_link_label,
+        'add_show_url_param': add_show_url_param,
+        'show_hidden_param': show_hidden_param,
     }
 
     return view.render(template_name, **context)

@@ -38,6 +38,7 @@ def get_analysis_menu():
                        form_id=form.id),
         'text': form.name
     } for form in forms.filter(
+        models.Form.is_hidden == False, # noqa
         models.Form.events.contains(event),
         or_(
             models.Form.form_type == 'INCIDENT',
@@ -59,6 +60,7 @@ def get_process_analysis_menu(form_type='CHECKLIST'):
             ]
         )
         formlist = forms.filter(
+            models.Form.is_hidden == False,
             models.Form.events.contains(event),
             models.Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             subquery
@@ -81,7 +83,7 @@ bp = Blueprint('process_analysis', __name__, template_folder='templates',
 
 
 def _process_analysis(event, form_id, location_id=None, tag=None):
-    form = forms.fget_or_404(id=form_id)
+    form = forms.fget_or_404(id=form_id, is_hidden=False)
     location = locations.fget_or_404(id=location_id) \
         if location_id else locations.root(event.location_set_id)
 

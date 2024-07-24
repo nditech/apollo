@@ -9,6 +9,7 @@ from flask_babelex import gettext, lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from marshmallow import Schema, fields, validate
+from sqlalchemy import false
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy_json import NestedMutableJson
 from sqlalchemy_utils import ChoiceType
@@ -80,6 +81,9 @@ class Form(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    is_hidden = db.Column(
+        db.Boolean, default=False, nullable=False,
+        server_default=false())
     prefix = db.Column(db.String, nullable=False)
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
@@ -261,11 +265,11 @@ class Form(Resource):
                     field_type = field.get('type')
                     if field_type == 'boolean':
                         field_element = E.select1(
-                                E.label(field['description']),
-                                E.item(E.label('True'), E.value('1')),
-                                E.item(E.label('False'), E.value('0')),
-                                ref=field['tag']
-                            )
+                            E.label(field['description']),
+                            E.item(E.label('True'), E.value('1')),
+                            E.item(E.label('False'), E.value('0')),
+                            ref=field['tag']
+                        )
                         model.append(E.bind(nodeset=path, type='select1'))
                     elif field_type == 'location':
                         field_element = E.input(
@@ -273,9 +277,9 @@ class Form(Resource):
                         model.append(E.bind(nodeset=path, type='geopoint'))
                     elif field_type in ('comment', 'string'):
                         field_element = E.input(
-                                E.label(field['description']),
-                                ref=field['tag']
-                            )
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
                         model.append(E.bind(nodeset=path, type='string'))
                     elif field_type == 'integer':
                         field_element = E.input(

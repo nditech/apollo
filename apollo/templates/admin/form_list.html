@@ -17,6 +17,9 @@
   </nav>
   <div class="d-flex justify-content-between align-items-start flex-row mt-1 mb-1">
     <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      <button class="btn btn-secondary mr-2 invisible" id="hide_button">{{ _('Archive') }}</button>
+      <button class="btn btn-secondary mr-2 invisible" id="show_button">{{ _('Unarchive') }}</button>
+      <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.index') }}{% if add_show_url_param %}?{{ show_hidden_param }}=1{% endif %}">{{ show_toggle_link_label }}</a>
       <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
       <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Form') }}</a>
       <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Generate Checklists') }}</a>
@@ -60,9 +63,12 @@
 {% endwith %}
 
 <div class="mb-n3">
+  <form method="post" id="toggle_form">
+    {{ show_hide_form.hidden_tag() }}
   <table class="table table-hover">
     <thead>
       <tr>
+        <th scope="col"><input type="checkbox" id="toggle_all"></th>
         <th scope="col">{{ _('Name') }}</th>
         <th scope="col" class="col-2">{{ _('Type') }}</th>
         <th scope="col" class="col-1">{{ _('Form Actions') }}</th>
@@ -71,7 +77,16 @@
     <tbody>
     {% for form in forms %}
       <tr class="{{ 'rtl' if g.locale.text_direction == 'rtl' else '' }}">
-        <td>{{ form.name }}</td>
+        <td><input type="checkbox" data-show-toggle="switch" name="{{ show_hide_form.forms.name }}" value="{{ form.id }}"></td>
+        <td>
+          {% if show_hidden_param and form.is_hidden %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="24" height="24">
+            <title>{{ _('Hidden') }}</title>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>&nbsp;
+          {% endif %}
+          {{ form.name }}
+        </td>
         <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% elif form.form_type == 'SURVEY' %}badge-success{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
         <td class="align-middle">
           <div class="dropdown">
@@ -92,11 +107,12 @@
       </tr>
     {% else %}
       <tr class="table-warning">
-        <td colspan="3" class="text-center text-muted">{{ _('No Forms Defined') }}</td>
+        <td colspan="4" class="text-center text-muted">{{ _('No Forms Defined') }}</td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+  </form>
 </div>
 
 <div id="app">
@@ -345,6 +361,81 @@
       roles: [{% for role in roles %}{id:{{ role.id }}, name:'{{ role.name }}', events:[{{ role.participant_set.events|join(', ', 'id') }}]},{% endfor %}],
       location_types: [{% for location_type in location_types %}{id:{{ location_type.id }}, name:'{{ location_type.name }}', events:[{{ location_type.location_set.events|join(',', 'id') }}]},{% endfor %}],
     },
+  });
+
+  var toggleForm = document.querySelector('#toggle_form');
+  var toggleAll = document.querySelector('#toggle_all');
+  var showButton = document.querySelector('#show_button');
+  var hideButton = document.querySelector('#hide_button');
+  var modeSelector = document.querySelector('#{{ show_hide_form.mode.id }}');
+
+  function toggleActionButtons() {
+    var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+    if (numChecked === 0) {
+      hideButton.classList.add('invisible');
+      showButton.classList.add('invisible');
+    } else {
+      hideButton.classList.remove('invisible');
+      showButton.classList.remove('invisible');
+    }
+    
+    changeToggleAllState();
+  }
+  
+  function changeToggleAllState() {
+    // change the state of the 'toggle all' checkbox depending on how many checkboxes
+    // are checked
+    var numCheckboxes = document.querySelectorAll('input[data-show-toggle]').length;
+    var numChecked = document.querySelectorAll('input[data-show-toggle]:checked').length;
+    
+    if (numChecked === 0) {
+      // none are checked, make it unchecked
+      toggleAll.indeterminate = false;
+      toggleAll.checked = false;
+    } else if (numCheckboxes === numChecked) {
+      // all are checked, make it checked
+      toggleAll.indeterminate = false;
+      toggleAll.checked = true;
+    } else {
+      // some are checked, but not all
+      toggleAll.indeterminate = true;
+    }
+  }
+
+  toggleForm.addEventListener('click', function (event) {
+    // capture all clicks on this form. if a form checkbox
+    // is checked, make the buttons visible
+    if (event.target.matches('[data-show-toggle]')) {
+      toggleActionButtons();
+    }
+
+    if (event.target === toggleAll) {
+      document.querySelectorAll('input[data-show-toggle]').forEach(function (checkbox) {
+        checkbox.checked = toggleAll.checked;
+      });
+      
+      if (toggleAll.checked) {
+        hideButton.classList.remove('invisible');
+        showButton.classList.remove('invisible');
+      } else {
+        hideButton.classList.add('invisible');
+        showButton.classList.add('invisible');
+      }
+    }
+  });
+
+  showButton.addEventListener('click', function () {
+    modeSelector.value = 'show';
+    toggleForm.submit();
+  });
+
+  hideButton.addEventListener('click', function () {
+    modeSelector.value = 'hide';
+    toggleForm.submit();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function () {
+    toggleActionButtons();
   });
 </script>
 {%- endblock %}

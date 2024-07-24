@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from io import BytesIO
+from urllib.parse import urlencode
 from zipfile import ZipFile, ZIP_DEFLATED
 
 import magic
@@ -12,7 +13,7 @@ from flask_admin import (
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.fields import InlineModelFormList
-from flask_admin.contrib.sqla.form import InlineModelConverter
+from flask_admin.contrib.sqla.form import AdminModelConverter, InlineModelConverter
 from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
@@ -22,6 +23,7 @@ from flask_security.utils import hash_password, url_for_security
 from flask_wtf.file import FileField
 from jinja2 import contextfunction
 from slugify import slugify
+from sqlalchemy import func
 from wtforms import (
     BooleanField, PasswordField, SelectField, SelectMultipleField, validators)
 
@@ -68,6 +70,60 @@ def resize_logo(pil_image: Image):
         return result
 
 
+def _get_usable_forms():
+    deployment = g.deployment
+    return models.Form.query.filter(
+        models.Form.deployment == deployment,
+        models.Form.is_hidden == False,  # noqa
+    )
+
+
+def _get_usable_location_sets():
+    deployment = g.deployment
+    return models.LocationSet.query.filter(
+        models.LocationSet.deployment == deployment,
+        models.LocationSet.is_hidden == False,  # noqa
+    )
+
+
+def _get_usable_participant_sets():
+    deployment = g.deployment
+    return models.ParticipantSet.query.filter(
+        models.ParticipantSet.deployment == deployment,
+        models.ParticipantSet.is_hidden == False,  # noqa
+    )
+
+
+def _get_usable_resources():
+    deployment = g.deployment
+    event_resources = models.Resource.query.filter(
+        models.Resource.deployment_id == deployment.id,
+        models.Resource.resource_type == 'event'
+    ).join(
+        models.Event,
+        models.Event.resource_id == models.Resource.resource_id
+    ).filter(models.Event.is_hidden == False).with_entities(models.Resource)
+    form_resources = models.Resource.query.filter(
+        models.Resource.deployment_id == deployment.id,
+        models.Resource.resource_type == 'form'
+    ).join(
+        models.Form,
+        models.Form.resource_id == models.Resource.resource_id
+    ).filter(models.Form.is_hidden == False).with_entities(models.Resource)
+
+    return event_resources.union(form_resources)
+
+
+class ParticipantSetFormModelConverter(AdminModelConverter):
+    def _model_select_field(self, prop, multiple, remote_model, **kwargs):
+        if remote_model == models.LocationSet:
+            # TODO: there should be a better way of doing this
+            query_factory = lambda: remote_model.query.filter_by(is_hidden=False)
+            kwargs['query_factory'] = query_factory
+
+        return super()._model_select_field(prop, multiple, remote_model, **kwargs)
+
+
 class MultipleSelect2Field(fields.Select2Field):
     def iter_choices(self):
         if self.allow_blank:
@@ -101,6 +157,66 @@ class MultipleSelect2Field(fields.Select2Field):
 
     def pre_validate(self, form):
         pass
+
+
+class HiddenObjectMixin(object):
+    can_delete = False
+    query_param_name = 'show_all'
+
+    @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
+    def action_hide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.id.in_(ids)).update(
+            {'is_hidden': True}, synchronize_session=False)
+        db.session.commit()
+
+    @action('unhide', _('Unarchive'), _('Are you sure you want to unarchive the selected items?'))
+    def action_unhide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.id.in_(ids)).update(
+            {'is_hidden': False}, synchronize_session=False)
+        db.session.commit()
+
+    def get_count_query(self):
+        return self.get_query().with_entities(
+            func.count(self.model.id))
+
+    def get_one(self, id):
+        return self.get_query().filter(self.model.id == id).one()
+
+    def get_query(self):
+        query = super().get_query()
+        return self.filter_hidden(query)
+
+    def filter_hidden(self, query):
+        model_class = self.model
+        query_params = request.args.to_dict(flat=False)
+        show_hidden = bool(query_params.get(self.query_param_name))
+        if show_hidden:
+            pass
+        else:
+            query = query.filter(model_class.is_hidden == False) # noqa
+        
+        return query
+
+    def render(self, template, **kwargs):
+        query_params = request.args.to_dict(flat=False)
+        show_hidden = bool(query_params.get(self.query_param_name))
+        if show_hidden:
+            # remove the 'show all' query parameter
+            query_params.pop(self.query_param_name)
+            kwargs['hidden_toggle_label'] = _('Hide Archived')
+            kwargs['hidden_toggle_params'] = urlencode(
+                query_params, doseq=True)
+        else:
+            # add the 'show all' query parameter
+            query_params[self.query_param_name] = 1
+            kwargs['hidden_toggle_label'] = _('Show All')
+            kwargs['hidden_toggle_params'] = urlencode(
+                query_params, doseq=True)
+        kwargs['hide_toggle_on'] = True
+
+        return super().render(template, **kwargs)
 
 
 class BaseAdminView(ModelView):
@@ -292,7 +408,7 @@ class DeploymentAdminView(BaseAdminView):
         return form_class
 
 
-class EventAdminView(BaseAdminView):
+class EventAdminView(HiddenObjectMixin, BaseAdminView):
     column_filters = ('name', 'start', 'end')
     column_list = ('name', 'start', 'end', 'location_set', 'participant_set',
                    'archive')
@@ -316,6 +432,20 @@ class EventAdminView(BaseAdminView):
         'archive': macro('event_archive'),
     }
 
+    @action('hide', _('Archive'), _('Are you sure you want to archive the selected items?'))
+    def action_hide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.resource_id.in_(ids)).update(
+            {'is_hidden': True}, synchronize_session=False)
+        db.session.commit()
+    
+    @action('unhide', _('Unarchive'), _('Are you sure you want to unarchive the selected items?'))
+    def action_unhide(self, ids):
+        model_class = self.model
+        model_class.query.filter(model_class.resource_id.in_(ids)).update(
+            {'is_hidden': False}, synchronize_session=False)
+        db.session.commit()
+
     @expose('/download/<int:event_id>')
     def download(self, event_id):
         event = services.events.find(id=event_id).first_or_404()
@@ -335,7 +465,10 @@ class EventAdminView(BaseAdminView):
             as_attachment=True)
 
     def get_one(self, pk):
-        event = super(EventAdminView, self).get_one(pk)
+        model_class = self.model
+        event = self.get_query().filter(
+            model_class.resource_id == pk
+        ).one()
 
         # convert start and end dates to app time zone
         event.start = event.start.astimezone(app_time_zone)
@@ -357,7 +490,9 @@ class EventAdminView(BaseAdminView):
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
         user = current_user._get_current_object()
-        return models.Event.query.filter_by(deployment_id=user.deployment.id)
+        return self.filter_hidden(
+            models.Event.query.filter_by(deployment_id=user.deployment.id)
+        )
 
     def on_model_change(self, form, model, is_created):
         # if we're creating a new event, make sure to set the
@@ -391,6 +526,20 @@ class EventAdminView(BaseAdminView):
             message = str(_("You cannot delete the last remaining event"))
             flash(message, 'danger')
             return False
+    
+    def create_form(self, obj=None):
+        form = super().create_form(obj)
+        form.forms.query_factory = _get_usable_forms
+        form.participant_set.query_factory = _get_usable_participant_sets
+
+        return form
+
+    def edit_form(self, obj=None):
+        form = super().edit_form(obj)
+        form.forms.query_factory = _get_usable_forms
+        form.participant_set.query_factory = _get_usable_participant_sets
+
+        return form
 
 
 class UserAdminView(BaseAdminView):
@@ -501,18 +650,14 @@ class RoleAdminView(BaseAdminView):
     form_columns = ('name', 'description', 'permissions', 'resources')
 
     def create_form(self, obj=None):
-        deployment = g.deployment
         form = super().create_form(obj)
-        form.resources.query = models.Resource.query.filter_by(
-            deployment=deployment)
+        form.resources.query_factory = _get_usable_resources
 
         return form
 
     def edit_form(self, obj=None):
-        deployment = g.deployment
         form = super().edit_form(obj)
-        form.resources.query = models.Resource.query.filter_by(
-            deployment=deployment)
+        form.resources.query_factory = _get_usable_resources
 
         return form
 
@@ -527,7 +672,7 @@ class RoleAdminView(BaseAdminView):
         super().on_model_change(form, model, is_created)
 
 
-class SetViewMixin(object):
+class SetViewMixin(HiddenObjectMixin):
     column_filters = ('name',)
 
     def on_model_change(self, form, model, is_created):
@@ -622,20 +767,14 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     inline_model_form_converter = ParticipantExtraDataModelConverter
 
     def create_form(self, obj=None):
-        deployment = g.deployment
         form = super().create_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter_by(
-            deployment=deployment).with_entities(
-                models.LocationSet.id, models.LocationSet.name).all()
+        form.location_set.query_factory = _get_usable_location_sets
 
         return form
 
     def edit_form(self, obj=None):
-        deployment = g.deployment
         form = super().edit_form(obj)
-        form.location_set.choices = models.LocationSet.query.filter_by(
-            deployment=deployment).with_entities(
-                models.LocationSet.id, models.LocationSet.name).all()
+        form.location_set.query_factory = _get_usable_location_sets
 
         return form
 
@@ -681,7 +820,7 @@ class FormsView(BaseView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for_security('login', next=request.url))
 
-    @expose('/')
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
         return forms_list(self)
 
