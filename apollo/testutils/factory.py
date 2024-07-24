@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import pathlib
-
 from apollo import settings
 from apollo import create_app
 
@@ -8,6 +6,7 @@ from apollo import create_app
 class TestConfig(object):
     TESTING = True
     TIMEZONE = 'UTC'
+    DEBUG = False
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
@@ -15,8 +14,6 @@ class TestConfig(object):
 
 
 def create_test_app():
-    path = pathlib.Path().resolve().parent
-
     test_settings = {
         'SQLALCHEMY_DATABASE_URI': settings.TEST_DATABASE_URL,
     }
