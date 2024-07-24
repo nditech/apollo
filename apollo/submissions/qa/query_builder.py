@@ -23,7 +23,7 @@ from apollo.submissions.models import QUALITY_STATUSES
 # to the Python syntax. Other advantages of the Python
 # syntax include case-insensitivty for regex and string
 # matches
-GRAMMAR = '''
+GRAMMAR = r'''
 number = r'\d+\.{0,1}\d*'
 variable = r'[A-Z]+'
 name = r'[a-zA-Z_][a-zA-Z0-9_]*'

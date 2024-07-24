@@ -8,6 +8,10 @@ import flask
 
 
 def monitor(app):
+    http_request_latency_ms = None
+    http_concurrent_request_count = None
+    http_request_count = None
+
     def before_request():
         flask.g.start_time = time.time()
         http_concurrent_request_count.inc()
@@ -22,13 +26,19 @@ def monitor(app):
         http_request_count.labels(request.method, request.path, response.status_code).inc()
         return response
 
-    http_request_latency_ms = Histogram('http_request_latency_ms', 'HTTP Request Latency',
-                                        ['method', 'endpoint'])
+    def before_first_request():
+        nonlocal http_request_latency_ms
+        nonlocal http_request_count
+        nonlocal http_concurrent_request_count
 
-    http_request_count = Counter('http_request_count', 'HTTP Request Count', ['method', 'endpoint', 'http_status'])
-    http_concurrent_request_count = Gauge('http_concurrent_request_count', 'Flask Concurrent Request Count')
+        http_request_latency_ms = Histogram('http_request_latency_ms', 'HTTP Request Latency',
+                                            ['method', 'endpoint'])
+        http_request_count = Counter('http_request_count', 'HTTP Request Count', ['method', 'endpoint', 'http_status'])
+        http_concurrent_request_count = Gauge('http_concurrent_request_count', 'Flask Concurrent Request Count')
+
     app.before_request(before_request)
     app.after_request(after_request)
+    app.before_first_request(before_first_request)
 
     if app.config.get('PROMETHEUS_SECRET'):
         app.add_url_rule(

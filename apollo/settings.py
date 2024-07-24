@@ -203,7 +203,7 @@ if test_postgres_password.is_file():
     TEST_DATABASE_PASSWORD = postgres_password.open().read()
 else:
     TEST_DATABASE_PASSWORD = config('TEST_DATABASE_PASSWORD', default='')
-TEST_DATABASE_NAME = config('TEST_DATABASE_NAME', default='apollo')
+TEST_DATABASE_NAME = config('TEST_DATABASE_NAME', default='apollo_testing')
 TEST_DATABASE_URL = config(
     'TEST_DATABASE_URL',
     default="{driver}://{username}:{password}@{hostname}/{database}".format(

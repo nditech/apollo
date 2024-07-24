@@ -219,7 +219,7 @@ class TranslationContextTestCase(FlaskTestCase):
                 assert babel.gettext(orig_msg) == trans_msg
 
         with force_locale('fr'):
-            assert babel.format_datetime(d) == '12 avr. 2010 à 13:46:00'
+            assert babel.format_datetime(d) == '12 avr. 2010, 13:46:00'
             assert babel.format_date(d) == '12 avr. 2010'
             assert babel.format_time(d) == '13:46:00'
             for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_FR):
@@ -227,7 +227,7 @@ class TranslationContextTestCase(FlaskTestCase):
 
         with force_locale('ar'):
             assert babel.format_datetime(d) == \
-                '12\u200f/04\u200f/2010 1:46:00 م'
+                '12\u200f/04\u200f/2010, 1:46:00 م'
             assert babel.format_date(d) == '12\u200f/04\u200f/2010'
             assert babel.format_time(d) == '1:46:00 م'
             for orig_msg, trans_msg in zip(MESSAGES_EN, MESSAGES_AR):

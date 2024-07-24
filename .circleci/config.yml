@@ -1,30 +1,36 @@
-version: 2
+version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.4.8
 
 jobs:
   build:
     docker:
-      - image: cimg/python:3.6.15
+      - image: cimg/python:3.6.15-browsers
         environment:
           - TEST_DATABASE_HOSTNAME: localhost
           - TEST_DATABASE_USERNAME: circleci
           - SECRET_KEY: notasecret
           - REDIS_HOSTNAME: localhost
+          - SSL_REQUIRED: False
+          - MESSAGING_SECRET: notasecret
 
       - image: cimg/postgres:12.11-postgis
         environment:
-          - POSTGRES_DB: apollo
+          - POSTGRES_DB: apollo_testing
           - POSTGRES_USER: circleci
 
       - image: cimg/redis:7.0
 
     steps:
       - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
-      - run: psql -h localhost -d apollo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+      - run: psql -h localhost -d apollo_testing -c "CREATE EXTENSION IF NOT EXISTS postgis;"
       - restore_cache:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
-      - run: pip install --user -r requirements/dev.txt
+      - run: pip install --user --require-hashes --no-deps -r requirements/dev.txt
       - save_cache:
           key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
           paths:
