@@ -9,7 +9,7 @@ repository = "https://github.com/nditech/apollo"
 keywords = ["elections", "political-parties", "election-quick-count", "pvt", "election-analysis",  "election-data", "elections-toolkit"]
 
 [tool.poetry.dependencies]
-python = "~3.6.15"
+python = "~3.11.9"
 aniso8601 = "0.82"
 Arpeggio = "1.7.1"
 awesome-slugify = "1.6.5"
