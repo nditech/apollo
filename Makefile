@@ -1,5 +1,7 @@
 .PHONY: pip-compile babel-compile parser babel-extract babel-init babel-update po2json version
 
+audit:
+	poetry audit
 babel-compile:
 	pybabel compile -f -d apollo/translations/
 parser:
