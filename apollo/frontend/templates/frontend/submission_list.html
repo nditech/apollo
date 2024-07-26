@@ -21,7 +21,7 @@
   </select>
 </template>
 <template id="expression-builder">
-  <div class="p-2 my-1" :class="cardStyle">
+  <div class="p-2 mb-1" :class="cardStyle">
     <div class="d-flex justify-content-around">
       <div class="input-group">
         <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :bus="bus" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
@@ -47,7 +47,7 @@
         </select>
       </div>
       <div class="pl-2">
-        <a class="btn btn-outline-danger" @click="removeItem">
+        <a class="btn btn-danger text-white" @click="removeItem">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
             <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
