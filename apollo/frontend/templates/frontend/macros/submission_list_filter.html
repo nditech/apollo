@@ -97,7 +97,7 @@
                             </a>
                         </div>
                     </div>
-                    <expression-builder v-for="(term, index) in terms" @remove-item="removeItem" :index="index" :key="index" :schema="schema" :term.sync="term"></expression-builder>
+                    <expression-builder v-for="(term, index) in terms" @remove-item="removeItem" :bus="bus" :index="index" :key="index" :schema="schema" :term.sync="term"></expression-builder>
                     <input type="hidden" name="{{ filter_form.values.name }}" id="{{ filter_form.values.id }}" :value="serializedExpressions">
                 </div>
                 <div class="col-12 col-md-6 col-lg-2 mb-2">

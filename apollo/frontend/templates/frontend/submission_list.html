@@ -24,7 +24,7 @@
   <div class="p-2 my-1" :class="cardStyle">
     <div class="d-flex justify-content-around">
       <div class="input-group">
-        <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
+        <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :bus="bus" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.operator" v-if="term.field !== null">
           <option disabled value="">{{ _('Select operator') }}</option>
           <option value="=">=</option>
@@ -40,14 +40,14 @@
           <option value="value">Value</option>
         </select>
         <input type="number" class="form-control" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'value'">
-        <custom-dropdown ref="valueDropdown" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
+        <custom-dropdown ref="valueDropdown" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'" :selected="term.value || ''" :options="getValueFields()" :field-map="null" :bus="bus" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'select'">
           <option disabled value="">{{ _('Select value') }}</option>
           <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ value ]]</option>
         </select>
       </div>
       <div class="pl-2">
-        <a class="btn btn-danger" @click="removeItem">
+        <a class="btn btn-outline-danger" @click="removeItem">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
             <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
@@ -204,6 +204,14 @@ $(function () {
         }
       }
     },
+    created: function() {
+      const thisRef = this;
+      thisRef.bus.$on('destroy-dropdown', () => {
+        if (thisRef.dropdown) {
+          thisRef.destroyDropdown();
+        }
+      });
+    },
     mounted: function () {
       const thisRef = this;
       const elementRef = thisRef.$refs.dropdownEl;
@@ -227,7 +235,7 @@ $(function () {
         });
       });
     },
-    props: ['blankOption', 'fieldMap', 'options', 'selected', 'value'],
+    props: ['blankOption', 'bus', 'fieldMap', 'options', 'selected', 'value'],
     template: '#custom-dropdown',
   });
 
@@ -285,7 +293,7 @@ $(function () {
         this.term.value = null;
       }
     },
-    props: ['schema', 'index', 'term'],
+    props: ['bus', 'schema', 'index', 'term'],
     template: '#expression-builder'
   });
 
@@ -320,12 +328,14 @@ $(function () {
       },
       removeItem: function (index) {
         this.terms.splice(index, 1);
+        this.bus.$emit('destroy-dropdown');
       }
     },
     el: '#filter-app',
     data: {
       terms: [...initialData],
-      schema: formSchema
+      schema: formSchema,
+      bus: new Vue()
     },
     components: {
       'expression-builder': expressionBuilder,
