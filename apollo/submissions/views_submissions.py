@@ -9,7 +9,7 @@ from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
     redirect, render_template, request, stream_with_context, url_for, session
 )
-from flask_babelex import get_locale, gettext, lazy_gettext as _
+from flask_babelex import get_locale, gettext as _
 from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
@@ -1834,10 +1834,10 @@ def delete_image(submission_id: int):
         if flag:
             return jsonify({
                 'status': 'ok',
-                'message': gettext('Image deleted'),
+                'message': _('Image deleted'),
             }), HTTPStatus.OK
         else:
             return jsonify({
                 'status': 'error',
-                'message': gettext('Image not found'),
+                'message': _('Image not found'),
             }), HTTPStatus.NOT_FOUND

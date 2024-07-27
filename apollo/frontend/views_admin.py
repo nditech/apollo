@@ -17,7 +17,7 @@ from flask_admin.contrib.sqla.form import AdminModelConverter, InlineModelConver
 from flask_admin.form import rules, fields
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
 from flask_wtf.file import FileField

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
 
-from sqlalchemy import func
-from flask_babelex import lazy_gettext as _
-from sqlalchemy import false
-from sqlalchemy.dialects.postgresql import JSONB
 import sqlalchemy_utils
+from flask_babelex import gettext as _
+from sqlalchemy import false, func
+from sqlalchemy.dialects.postgresql import JSONB
 
 from apollo import utils
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource, translation_hybrid
-
 
 number_cleaner = re.compile(r'[^0-9]+', re.I)
 

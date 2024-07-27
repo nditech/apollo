@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 
 from apollo.deployments.models import Locale, deployment_locales
 

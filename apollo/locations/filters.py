@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .models import Location, LocationGroup, LocationType
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 
 from sqlalchemy import text
 from apollo.core import CharFilter, ChoiceFilter, FilterSet

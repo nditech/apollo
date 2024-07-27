@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from cgi import escape
 
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from sqlalchemy import func, or_, text, true
 from wtforms import widgets
 from wtforms.compat import text_type

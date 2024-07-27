@@ -4,7 +4,7 @@ from collections import defaultdict
 from cgi import escape
 from dateutil.parser import parse
 from dateutil.tz import gettz, UTC
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from sqlalchemy import or_
 from wtforms import widgets, fields
 from wtforms.compat import text_type

@@ -7,7 +7,7 @@ import re
 from flask import (
     Blueprint, Response, abort, current_app, g, redirect, render_template,
     request, session, stream_with_context, url_for)
-from flask_babelex import get_locale, lazy_gettext as _
+from flask_babelex import get_locale, gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify

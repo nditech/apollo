@@ -7,7 +7,7 @@ import string
 
 from flask import render_template_string
 from flask_babelex import gettext
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 import pandas as pd
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 

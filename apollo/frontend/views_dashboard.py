@@ -3,7 +3,7 @@ from functools import partial
 
 from flask import (
     Blueprint, abort, g, redirect, render_template, request, url_for, session)
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 from sqlalchemy import false

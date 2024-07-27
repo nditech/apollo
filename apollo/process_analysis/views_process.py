@@ -4,7 +4,7 @@ from functools import partial
 from operator import itemgetter
 
 from flask import Blueprint, g, render_template, request, url_for
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 from apollo.process_analysis.common import (
