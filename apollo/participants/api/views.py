@@ -288,7 +288,7 @@ def get_forms():
     "event_id": fields.Int(),
     "level_id": fields.Int(),
     "role_id": fields.Int()
-})
+}, location='query')
 @protect
 def get_participant_count(**kwargs):
     event_id = kwargs.get("event_id")
