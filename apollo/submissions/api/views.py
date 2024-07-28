@@ -76,7 +76,7 @@ def update_submission_version(submission):
 
 
 @marshal_with(SubmissionSchema)
-@use_kwargs({'event_id': fields.Int()}, locations=['query'])
+@use_kwargs({'event_id': fields.Int()}, location='query')
 class SubmissionItemResource(MethodResource):
     @protect
     def get(self, submission_id, **kwargs):
@@ -98,7 +98,7 @@ class SubmissionItemResource(MethodResource):
 
 
 @use_kwargs({'event_id': fields.Int(), 'form_id': fields.Int(required=True),
-            'submission_type': fields.Str()}, locations=['query'])
+            'submission_type': fields.Str()}, location='query')
 class SubmissionListResource(BaseListResource):
     schema = SubmissionSchema()
 

@@ -13,7 +13,7 @@ from apollo.locations.models import (
 
 
 @marshal_with(LocationTypeSchema)
-@use_kwargs({'event_id': fields.Int()}, locations=['query'])
+@use_kwargs({'event_id': fields.Int()}, location='query')
 class LocationTypeItemResource(MethodResource):
     @protect
     def get(self, loc_type_id, **kwargs):
@@ -35,7 +35,7 @@ class LocationTypeItemResource(MethodResource):
             location_set_id = None
 
         location_type = LocationType.query.join(
-            LocationType.location_set
+            LocationSet.location_types
         ).filter(
             LocationType.id == loc_type_id,
             LocationType.location_set_id == location_set_id,
@@ -45,7 +45,7 @@ class LocationTypeItemResource(MethodResource):
         return location_type
 
 
-@use_kwargs({'event_id': fields.Int()}, locations=['query'])
+@use_kwargs({'event_id': fields.Int()}, location='query')
 class LocationTypeListResource(BaseListResource):
     schema = LocationTypeSchema()
 
@@ -68,7 +68,7 @@ class LocationTypeListResource(BaseListResource):
             location_set_id = None
 
         return LocationType.query.join(
-            LocationType.location_set
+            LocationSet.location_types
         ).filter(
             LocationSet.deployment_id == deployment_id,
             LocationSet.id == location_set_id
@@ -76,7 +76,7 @@ class LocationTypeListResource(BaseListResource):
 
 
 @marshal_with(LocationSchema)
-@use_kwargs({'event_id': fields.Int()}, locations=['query'])
+@use_kwargs({'event_id': fields.Int()}, location='query')
 class LocationItemResource(MethodResource):
     @protect
     def get(self, location_id, **kwargs):
@@ -97,7 +97,7 @@ class LocationItemResource(MethodResource):
 
 
 @use_kwargs(
-    {'event_id': fields.Int(), 'q': fields.String()}, locations=['query'])
+    {'event_id': fields.Int(), 'q': fields.String()}, location='query')
 class LocationListResource(BaseListResource):
     schema = LocationSchema()
 

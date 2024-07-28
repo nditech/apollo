@@ -28,7 +28,7 @@ from apollo.submissions.models import Submission
 
 
 @marshal_with(ParticipantSchema)
-@use_kwargs({'event_id': fields.Int()}, locations=['query'])
+@use_kwargs({'event_id': fields.Int()}, location='query')
 class ParticipantItemResource(MethodResource):
     @protect
     def get(self, participant_id, **kwargs):
@@ -62,7 +62,7 @@ class ParticipantItemResource(MethodResource):
 
 
 @use_kwargs(
-    {'event_id': fields.Int(), 'q': fields.String()}, locations=['query'])
+    {'event_id': fields.Int(), 'q': fields.String()}, location='query')
 class ParticipantListResource(BaseListResource):
     schema = ParticipantSchema()
 

@@ -28,7 +28,7 @@ class FormItemResource(MethodResource):
     {'events': fields.DelimitedList(fields.Int()),
      'form_type': fields.String(),
      'last_modified_after': fields.DateTime()},
-    locations=['query'])
+    location='query')
 class FormListResource(BaseListResource):
     schema = FormSchema()
 

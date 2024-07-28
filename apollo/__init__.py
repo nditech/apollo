@@ -197,4 +197,4 @@ def handle_error(e):
     elif code == 404:
         return render_template('404.html'), code
     else:
-        return render_template('500.html'.format(code=code)), 500
+        return render_template('500.html'), 500
