@@ -465,6 +465,8 @@ def participant_edit(id, participant_set_id=0, view=None):
 
             if form.locale.data:
                 participant.locale = form.locale.data
+            else:
+                participant.locale = None
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
             # do we have a phone number like this in the database?
