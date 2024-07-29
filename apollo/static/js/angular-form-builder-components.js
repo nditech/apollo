@@ -230,8 +230,8 @@
 
       $builderProvider.registerComponent("textarea", {
         group: "Default",
-        label: "Comment",
-        description: i18n.gettext("Comment Question"),
+        label: "EE",
+        description: i18n.gettext("Text Question"),
         placeholder: "",
         required: false,
         template:
@@ -270,7 +270,7 @@
 
       return $builderProvider.registerComponent("image", {
         group: "Default",
-        label: "Image",
+        label: "FF",
         description: i18n.gettext("Image Attachment"),
         placeholder: "",
         required: false,
