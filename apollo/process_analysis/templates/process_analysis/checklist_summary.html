@@ -148,7 +148,7 @@ const loader = () => {
 		tableData.push(row1);
 		tableData.push(row2);
 
-		return [tableData, splitCols];
+		return tableData;
 	};
 
 	document.querySelector('#export-btn').addEventListener('click', () => {
@@ -159,7 +159,7 @@ const loader = () => {
 		const workbook = XLSX.utils.book_new();
 		let worksheet;
 		tables.forEach((table, index) => {
-			const [tableData, splitCols] = extractTableData(table);
+			const tableData = extractTableData(table);
 			if (index === 0) {
 				worksheet = XLSX.utils.aoa_to_sheet(tableData);
 			} else {
@@ -167,7 +167,6 @@ const loader = () => {
 			}
 			createGapRows(worksheet, 2);
 		});
-		// console.log(extractTableData(tables[0]));
 		const formName = tables[0].dataset.formName;
 		const filename = `${formName}-process-data-summary-${Math.floor((new Date()).getTime() / 1000)}.xlsx`;
 		XLSX.utils.book_append_sheet(workbook, worksheet, formName);
