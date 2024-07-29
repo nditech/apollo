@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2024-07-29 21:52+0100\n"
 "PO-Revision-Date: 2021-08-04 03:45+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ka\n"
 "Language-Team: ka <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
@@ -26,41 +26,42 @@ msgstr "განყოფილება"
 msgid "Numeric Question"
 msgstr "რიცხვითი კითხვა"
 
-#: apollo/static/js/angular-form-builder-components.js:89
+#: apollo/static/js/angular-form-builder-components.js:94
 msgid "Single Choice Question"
 msgstr "ერთჯერადი არჩევანის კითხვა"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 1"
 msgstr "ვარიანტი 1"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 2"
 msgstr "ვარიანტი 2"
 
-#: apollo/static/js/angular-form-builder-components.js:136
+#: apollo/static/js/angular-form-builder-components.js:141
 msgid "Yes/No Question"
 msgstr "დიახ / არა კითხვა"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "Yes"
 msgstr "დიახ"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "No"
 msgstr "არა"
 
-#: apollo/static/js/angular-form-builder-components.js:184
+#: apollo/static/js/angular-form-builder-components.js:189
 msgid "Multiple Choice Question"
 msgstr ""
 
-#: apollo/static/js/angular-form-builder-components.js:229
-msgid "Comment Question"
+#: apollo/static/js/angular-form-builder-components.js:234
+#, fuzzy
+msgid "Text Question"
 msgstr "კომენტარი კითხვა"
 
-#: apollo/static/js/angular-form-builder-components.js:269
+#: apollo/static/js/angular-form-builder-components.js:274
 msgid "Image Attachment"
 msgstr ""
 
@@ -125,14 +126,18 @@ msgid "Maximum"
 msgstr "მაქსიმალური"
 
 #: apollo/static/js/angular-form-builder.js:60
+msgid "Null Value"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:61
 msgid "Type"
 msgstr "ტიპი"
 
-#: apollo/static/js/angular-form-builder.js:61
+#: apollo/static/js/angular-form-builder.js:62
 msgid "Expected Value (Optional)"
 msgstr "მოსალოდნელი ღირებულების (სურვილისამებრ)"
 
-#: apollo/static/js/angular-form-builder.js:62
+#: apollo/static/js/angular-form-builder.js:63
 msgid "Validation"
 msgstr "ვალიდაცია"
 
