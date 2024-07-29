@@ -1,27 +1,27 @@
-# Translations template for PROJECT.
+# French translations for PROJECT.
 # Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
-# 
+#
 # Translators:
 # NDItech, 2020
 # Tim Akinbo <takinbo@timbaobjects.com>, 2022
-# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-09-08 05:19+0000\n"
+"POT-Creation-Date: 2024-07-29 21:52+0100\n"
 "PO-Revision-Date: 2020-10-28 20:14+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2022\n"
-"Language-Team: French (https://www.transifex.com/nditech/teams/114236/fr/)\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
 "Language: fr\n"
+"Language-Team: French "
+"(https://www.transifex.com/nditech/teams/114236/fr/)\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
@@ -31,41 +31,42 @@ msgstr "Section"
 msgid "Numeric Question"
 msgstr "Question numérique"
 
-#: apollo/static/js/angular-form-builder-components.js:89
+#: apollo/static/js/angular-form-builder-components.js:94
 msgid "Single Choice Question"
 msgstr "Question à choix unique"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 1"
 msgstr "Option 1"
 
-#: apollo/static/js/angular-form-builder-components.js:92
-#: apollo/static/js/angular-form-builder-components.js:187
+#: apollo/static/js/angular-form-builder-components.js:97
+#: apollo/static/js/angular-form-builder-components.js:192
 msgid "Option 2"
 msgstr "Option 2"
 
-#: apollo/static/js/angular-form-builder-components.js:136
+#: apollo/static/js/angular-form-builder-components.js:141
 msgid "Yes/No Question"
 msgstr "Question Oui/Non"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "Yes"
 msgstr "Oui"
 
-#: apollo/static/js/angular-form-builder-components.js:139
+#: apollo/static/js/angular-form-builder-components.js:144
 msgid "No"
 msgstr "Non"
 
-#: apollo/static/js/angular-form-builder-components.js:184
+#: apollo/static/js/angular-form-builder-components.js:189
 msgid "Multiple Choice Question"
 msgstr "Question à choix multiples"
 
-#: apollo/static/js/angular-form-builder-components.js:229
-msgid "Comment Question"
+#: apollo/static/js/angular-form-builder-components.js:234
+#, fuzzy
+msgid "Text Question"
 msgstr "Question commentaire"
 
-#: apollo/static/js/angular-form-builder-components.js:269
+#: apollo/static/js/angular-form-builder-components.js:274
 msgid "Image Attachment"
 msgstr ""
 
@@ -130,21 +131,24 @@ msgid "Maximum"
 msgstr "Maximum"
 
 #: apollo/static/js/angular-form-builder.js:60
+msgid "Null Value"
+msgstr ""
+
+#: apollo/static/js/angular-form-builder.js:61
 msgid "Type"
 msgstr "Type"
 
-#: apollo/static/js/angular-form-builder.js:61
+#: apollo/static/js/angular-form-builder.js:62
 msgid "Expected Value (Optional)"
 msgstr "Valeur Attendue (Facultatif)"
 
-#: apollo/static/js/angular-form-builder.js:62
+#: apollo/static/js/angular-form-builder.js:63
 msgid "Validation"
 msgstr "Validation"
 
 #: apollo/static/js/formbuilder-duplicates.js:33
 msgid "The question code <strong>%2</strong> has been used more than once"
-msgid_plural ""
-"The question codes <strong>%2</strong> have been used more than once"
+msgid_plural "The question codes <strong>%2</strong> have been used more than once"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -153,3 +157,4 @@ msgid "The section <strong>%2</strong> has been used more than once"
 msgid_plural "The sections <strong>%2</strong> have been used more than once"
 msgstr[0] ""
 msgstr[1] ""
+

@@ -310,10 +310,12 @@
                 return;
               }
               if (!isHover && draggable.mode === 'drag') {
-                formObject = draggable.object.formObject;
-                if (formObject.editable) {
-                  $builder.removeFormObject(attrs.fbBuilder, formObject.index);
-                }
+                //// commented the snippet below to prevent the removal of the form object from 
+                //// the builder when it is being dragged outside of the builder
+                // formObject = draggable.object.formObject;
+                // if (formObject.editable) {
+                //   $builder.removeFormObject(attrs.fbBuilder, formObject.index);
+                // }
               } else if (isHover) {
                 if (draggable.mode === 'mirror') {
                   $builder.insertFormObject(scope.formName, $(element).find('.empty').index('.fb-form-object-editable'), {

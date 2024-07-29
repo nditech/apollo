@@ -1,27 +1,28 @@
-# Translations template for PROJECT.
+# Arabic translations for PROJECT.
 # Copyright (C) 2023 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
-# 
+#
 # Translators:
 # NDItech, 2021
 # Tim Akinbo <takinbo@timbaobjects.com>, 2021
-# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-01-28 17:11+0000\n"
+"POT-Creation-Date: 2024-07-29 21:52+0100\n"
 "PO-Revision-Date: 2020-10-28 20:14+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2021\n"
-"Language-Team: Arabic (https://www.transifex.com/nditech/teams/114236/ar/)\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
 "Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language-Team: Arabic "
+"(https://www.transifex.com/nditech/teams/114236/ar/)\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : "
+"n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
@@ -62,7 +63,8 @@ msgid "Multiple Choice Question"
 msgstr "سؤال متعدد الخيارات"
 
 #: apollo/static/js/angular-form-builder-components.js:234
-msgid "Comment Question"
+#, fuzzy
+msgid "Text Question"
 msgstr "سؤال حول تعليق"
 
 #: apollo/static/js/angular-form-builder-components.js:274
@@ -147,8 +149,7 @@ msgstr "التحقق"
 
 #: apollo/static/js/formbuilder-duplicates.js:33
 msgid "The question code <strong>%2</strong> has been used more than once"
-msgid_plural ""
-"The question codes <strong>%2</strong> have been used more than once"
+msgid_plural "The question codes <strong>%2</strong> have been used more than once"
 msgstr[0] "تم إستعمال رموز الأسئلة <strong>%2</strong> اكثر من مرة"
 msgstr[1] "تم إستعمال رمز السؤال <strong>%2</strong> اكثر من مرة"
 msgstr[2] "تم إستعمال رموز الأسئلة <strong>%2</strong> اكثر من مرة"
@@ -165,3 +166,4 @@ msgstr[2] "تم إستعمال رموز المجموعة <strong>%2</strong> ا�
 msgstr[3] "تم إستعمال رموز المجموعة <strong>%2</strong> اكثر من مرة"
 msgstr[4] "تم إستعمال رموز المجموعة <strong>%2</strong> اكثر من مرة"
 msgstr[5] "تم إستعمال رموز المجموعة <strong>%2</strong> اكثر من مرة"
+

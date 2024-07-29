@@ -225,8 +225,6 @@ def forms_list(view):
     form_import_form = FormImportForm()
     show_hide_form = make_questionnaire_hidden_toggle_form(g.deployment)
     query_params = request.args.to_dict(flat=False)
-    hidden_form_count = models.Form.query.filter(
-        models.Form.is_hidden == True).count() # noqa
     query = models.Form.query.order_by('name')
     show_hidden = bool(query_params.get(show_hidden_param))
 
@@ -244,7 +242,7 @@ def forms_list(view):
         hide_forms = True if posted_data.get('mode') == 'hide' else False
         posted_form_ids = [f.id for f in posted_data.get('forms')]
         models.Form.query.filter(models.Form.id.in_(posted_form_ids)).update(
-            {'is_hidden': hide_forms}, synchronize_session='fetch')
+            {'is_hidden': hide_forms})
         db.session.commit()
         db.session.expire_all()
 
