@@ -28,7 +28,7 @@
 			<div class="tab-pane active" id="table">
 				{% for tag, question, tag_stats in process_summary.top %}
 				{% with field = form.get_field_by_tag(tag) %}
-				<table id="mytable" class="table table-striped table-bordered {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-form-name="{{ form.name }}">
+				<table id="mytable" class="table table-striped table-bordered {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}" data-summary-table data-form-name="{{ form.name }}" data-form-tag="{{ tag }}">
 					{% with %}
 					{% if field.get('null_value') is none %}{% set buffer = 0 %}{% else %}{% set buffer = 4 %}{% endif %}
 					<tr>
@@ -146,7 +146,7 @@
 <script>
 const loader = () => {
 	document.querySelector('#export-btn').addEventListener('click', () => {
-		const table = document.querySelector('table#mytable');
+		const table = document.querySelector('table[data-aummary-table]');
 		if (!table) {
 			return;
 		}
