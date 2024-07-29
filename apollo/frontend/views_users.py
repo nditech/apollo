@@ -4,7 +4,7 @@ import os
 from flask import (
     Blueprint, abort, json, jsonify, redirect, render_template, request,
     session, url_for)
-from flask_babelex import gettext, lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import hash_password
 from apollo import utils
@@ -104,7 +104,7 @@ def import_headers(upload_id: int):
         if not form.validate():
             error_msgs = []
             if form.failed_custom_validation:
-                error_msgs.append(gettext('Email was not mapped'))
+                error_msgs.append(_('Email was not mapped'))
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)

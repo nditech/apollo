@@ -7,7 +7,7 @@ import re
 from flask import (
     Blueprint, Response, abort, current_app, g, redirect, render_template,
     request, session, stream_with_context, url_for)
-from flask_babelex import get_locale, lazy_gettext as _
+from flask_babelex import get_locale, gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from slugify import slugify
@@ -118,7 +118,7 @@ def participant_list(participant_set_id=0, view=None):
     full_name_term = func.coalesce(
         Participant.full_name_translations.op('->>')(user_locale),
         Participant.full_name_translations.op('->>')(deployment_locale)
-    ).label('full_name')
+    )
     first_name_term = func.coalesce(
         Participant.first_name_translations.op('->>')(user_locale),
         Participant.first_name_translations.op('->>')(deployment_locale)
@@ -275,7 +275,7 @@ def participant_list(participant_set_id=0, view=None):
             first_name_term,
             other_names_term,
             last_name_term,
-        ).alias('full_name_concat')
+        )
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name

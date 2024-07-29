@@ -91,9 +91,8 @@ def get_form_list_menu(**kwargs):
             for form in [f for f in
                          models.Form.query.filter_by(
                              **kwargs
-                         ).join(models.Form.events).filter(
-                             models.Form.events.contains(event),
-                             models.Form.is_hidden == False, # noqa
+                         ).filter(
+                             models.Form.events.contains(event)
                          ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
@@ -115,10 +114,9 @@ def get_checklist_form_dashboard_menu(**kwargs):
              'visible': True}
             for form in [f for f in
                          models.Form.query.filter_by(
-                            **kwargs
-                         ).join(models.Form.events).filter(
-                            models.Form.is_hidden == False, # noqa
-                            models.Form.events.contains(event)
+                             **kwargs
+                         ).filter(
+                             models.Form.events.contains(event)
                          ).order_by(models.Form.name)
                          if Permission(
                             ItemNeed(
@@ -155,7 +153,7 @@ def get_quality_assurance_form_list_menu(form_types):
                          models.Form.query.filter(
                              models.Form.form_type.in_(form_types),
                              models.Form.quality_checks_enabled == True  # noqa
-                         ).join(models.Form.events).filter(
+                         ).filter(
                              models.Form.events.contains(event)
                          ).order_by(models.Form.name)
                          if Permission(
@@ -180,7 +178,7 @@ def get_quality_assurance_form_dashboard_menu(form_types):
                          models.Form.query.filter(
                              models.Form.form_type.in_(form_types),
                              models.Form.quality_checks_enabled == True  # noqa
-                         ).join(models.Form.events).filter(
+                         ).filter(
                              models.Form.events.contains(event)
                          ).order_by(models.Form.name)
                          if Permission(

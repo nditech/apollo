@@ -3,7 +3,7 @@ from functools import partial
 
 from flask import (
     Blueprint, abort, g, redirect, render_template, request, url_for, session)
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 from sqlalchemy import false
@@ -53,18 +53,13 @@ def main_dashboard(form_id=None):
 
     event = get_event()
     if not form_id:
-        form = Form.query.join(
-            Form.events
-        ).filter(
+        form = Form.query.filter(
             Form.events.contains(event),
             Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.is_hidden == False, # noqa
         ).order_by('name').first()
     else:
-        form = Form.query.join(
-            Form.events
-        ).filter(
-            Form.is_hidden == False, # noqa
+        form = Form.query.filter(
             Form.events.contains(event),
             Form.form_type.in_(['CHECKLIST', 'SURVEY']),
             Form.id == form_id).first_or_404()

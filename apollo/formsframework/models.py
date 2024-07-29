@@ -5,7 +5,7 @@ import logging
 from operator import itemgetter
 import re
 
-from flask_babelex import gettext, lazy_gettext as _
+from flask_babelex import gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from marshmallow import Schema, fields, validate
@@ -113,7 +113,7 @@ class Form(Resource):
     events = db.relationship('Event', backref='forms', secondary=events_forms)
 
     def __str__(self):
-        return gettext('Form - %(name)s', name=self.name)
+        return _('Form - %(name)s', name=self.name)
 
     def _populate_field_cache(self):
         if self.data:
@@ -245,7 +245,7 @@ class Form(Resource):
         model.append(phone_number_bind)
 
         if self.form_type == 'SURVEY':
-            description = gettext('Form Serial Number')
+            description = _('Form Serial Number')
             path = '/data/form_serial'
             data.append(etree.Element('form_serial'))
             model.append(E.bind(nodeset=path, type='string'))
@@ -323,7 +323,7 @@ class Form(Resource):
                     grp_element.append(field_element)
                 body.append(grp_element)
 
-        description = gettext('Location')
+        description = _('Location')
         path = '/data/location'
         data.append(etree.Element('location'))
         model.append(E.bind(nodeset=path, type='geopoint'))
@@ -451,8 +451,8 @@ class FormBuilderSerializer(object):
             if data['fields'][0]['component'] != 'group':
                 # no group was created, create a default
                 group = {
-                    'name': gettext('SMS 1'),
-                    'slug': slugify(gettext('SMS 1')),
+                    'name': _('SMS 1'),
+                    'slug': slugify(_('SMS 1')),
                     'fields': []
                 }
                 groups.append(group)

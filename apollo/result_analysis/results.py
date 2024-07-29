@@ -1,6 +1,6 @@
 from operator import attrgetter
 from flask import abort, render_template, request, current_app, g, url_for
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from sqlalchemy import not_
 
 import math

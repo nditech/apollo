@@ -29,7 +29,7 @@ class EventItemResource(MethodResource):
             id=event_id, deployment_id=deployment_id).first_or_404()
 
 
-@use_kwargs(EVENT_LIST_QUERY_MAP, locations=['query'])
+@use_kwargs(EVENT_LIST_QUERY_MAP, location='query')
 class EventListResource(BaseListResource):
     schema = EventSchema()
 

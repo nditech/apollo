@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext, lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
 from wtforms.fields import SelectField
@@ -28,7 +28,7 @@ def _validate_mappings(form):
         if lt_values:
             if '{}_code'.format(location_type.id) not in lt_values:
                 errors.append(
-                    gettext(
+                    _(
                         'Properties for %(loc_type_name)s were mapped, '
                         'but no code was specified',
                         loc_type_name=location_type.name))

@@ -5,7 +5,7 @@ from datetime import datetime
 from functools import partial
 
 from flask import g
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_wtf import FlaskForm as SecureForm
 from flask_wtf.file import FileField
 import wtforms
