@@ -2144,7 +2144,7 @@ msgstr ""
 #: apollo/locations/models.py:109
 #, fuzzy, python-format
 msgid "%(location_type)s Group"
-msgstr "%(loc_type)s"
+msgstr ""
 
 #: apollo/locations/models.py:113
 #, python-format
