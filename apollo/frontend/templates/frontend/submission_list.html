@@ -328,7 +328,6 @@ $(function () {
       },
       removeItem: function (index) {
         this.terms.splice(index, 1);
-        this.bus.$emit('destroy-dropdown');
       }
     },
     el: '#filter-app',
