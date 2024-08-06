@@ -24,7 +24,7 @@
   <div class="p-2 mb-1" :class="cardStyle">
     <div class="d-flex justify-content-around">
       <div class="input-group">
-        <custom-dropdown v-model="term.field" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :bus="bus" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
+        <custom-dropdown v-model="term.field" ref="lhs" :selected="term.field ? term.field.tag : ''" :options="fieldOptions" :field-map="fieldMap" :bus="bus" :blank-option="{label: '{{ _('Select field')}}', value: ''}"></custom-dropdown>
         <select class="form-control custom-select" v-model="term.operator" v-if="term.field !== null">
           <option disabled value="">{{ _('Select operator') }}</option>
           <option value="=">=</option>
@@ -240,6 +240,9 @@ $(function () {
   });
 
   const expressionBuilder = Vue.component('expression-builder', {
+    beforeDestroy: function () {
+      this.destroyDropdowns(this.index);
+    },
     computed: {
       cardStyle: function () {
         if (!this.isEmpty(this.term.field) && !this.isEmpty(this.term.operator) && !this.isEmpty(this.term.value))
@@ -261,6 +264,14 @@ $(function () {
     },
     delimiters: ['[[', ']]'],
     methods: {
+      destroyDropdowns: function (index) {
+        if (index === this.index) {
+          this.$refs.lhs.destroyDropdown();
+          if (this.$refs.valueDropdown) {
+            this.$refs.valueDropdown.destroyDropdown();
+          }
+        }
+      },
       isEmpty: function (val) {
         return (val === null) || (val === undefined) || (val === "");
       },
@@ -269,6 +280,7 @@ $(function () {
       },
       removeItem: function () {
         this.$emit('remove-item', this.index);
+        this.destroyDropdowns(this.index);
       },
       getSortedOptions: function (options) {
         if (options === undefined)
