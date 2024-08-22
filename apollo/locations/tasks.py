@@ -445,7 +445,7 @@ def import_locations(self, upload_id, mappings, location_set_id, channel=None):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first()
 
-    engine = db.session.get_bind()
+    engine = db.get_engine()
     with engine.begin() as connection:
         update_locations(
             connection,
