@@ -10,6 +10,7 @@ from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babelex import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_security.decorators import login_required
+from marshmallow import ValidationError
 from slugify import slugify
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm.exc import NoResultFound
@@ -227,9 +228,10 @@ def submission():
 
     # validate payload
     schema_class = form.create_schema()
-    data, errors = schema_class().load(payload)
-    if errors:
-        error_fields = sorted(errors.keys())
+    try:
+        data = schema_class().load(payload)
+    except ValidationError as ex:
+        error_fields = sorted(ex.messages.keys())
         response_body = {
             'message': gettext('Invalid value(s) for: %(fields)s',
                                fields=','.join(error_fields)),
