@@ -15,6 +15,7 @@ from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models
 from apollo.core import BooleanFilter, CharFilter, ChoiceFilter, FilterSet
+from apollo.dal import utils
 from apollo.helpers import _make_choices
 from apollo.settings import TIMEZONE
 from apollo.submissions.models import FLAG_CHOICES
@@ -63,9 +64,7 @@ def make_submission_sample_filter(
             super().__init__(*args, **kwargs)
 
         def filter_by_locations(self, query, value):
-            joined_classes = [
-                mapper.class_ for mapper in query._join_entities]
-            if models.Location in joined_classes:
+            if utils.has_model(query, models.Location):
                 query1 = query
             else:
                 query1 = query.join(models.Submission.location)
