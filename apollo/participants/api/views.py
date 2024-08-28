@@ -270,7 +270,7 @@ def get_forms():
 
     forms, serials = _get_form_data(participant)
 
-    form_data = FormSchema(many=True).dump(forms).data
+    form_data = FormSchema(many=True).dump(forms)
 
     response_body = {
         'data': {
