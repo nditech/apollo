@@ -7,6 +7,11 @@ from apollo.dal.models import BaseModel
 
 
 def has_model(query: Query, model: BaseModel) -> bool:
+    '''
+    This function goes over the select statement for a query
+    and checks to see if the model class `model` is joined
+    in the query.
+    '''
     # thanks to the very helpful poster who posted on SO:
     # https://stackoverflow.com/a/66855484
     for visitor in visitors.iterate(query.statement):
