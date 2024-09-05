@@ -238,7 +238,8 @@ $(function () {
     props: ['blankOption', 'bus', 'fieldMap', 'options', 'selected', 'value'],
     template: '#custom-dropdown',
   });
-
+  
+  /*
   const expressionBuilder = Vue.component('expression-builder', {
     beforeDestroy: function () {
       this.destroyDropdowns(this.index);
@@ -350,6 +351,52 @@ $(function () {
     },
     components: {
       'expression-builder': expressionBuilder,
+    }
+  });
+  */
+
+  const app = new Vue({
+    computed: {
+      expressions() {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`);
+      },
+      serializedExpressions() {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`).join(',');
+      },
+    },
+    data: {
+      schema: formSchema,
+      terms: [...initialData]
+    },
+    delimiters: ['[[', ']]'],
+    el: '#filter-app',
+    methods: {
+      addNewTerm() {
+        this.terms.push({
+          field: null,
+          operator: null,
+          value: null,
+          source: null
+        });
+      },
+      isComplete(term) {
+        return !this.isEmpty(term.field) && !this.isEmpty(term.operator) && !this.isEmpty(term.value);
+      },
+      isEmpty(val) {
+        return (val === null) || (val === undefined) || (val === "");
+      },
+      removeItem(index) {
+        this.terms.splice(index, 1);
+      }
+    },
+    mounted() {
+      if (this.terms.length === 0) {
+        this.addNewTerm();
+      }
     }
   });
 

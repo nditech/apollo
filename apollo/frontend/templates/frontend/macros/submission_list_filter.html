@@ -85,13 +85,37 @@
                     </div>
                 </div>
                 {%- endif %}
-                <div class="col-12 col-lg-12 mb-2" id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
-                    <div class="row mb-1">
-                        <div class="col">
-                            <a class="btn btn-info text-white" @click="addNewTerm">{{ _('Add search term') }}</a>
+                <div class="col-12 col-lg-12 mb-2"  id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                    <div class="input-group d-flex mb-2" v-for="(term, index) in terms">
+                        <select class="form-control custom-select">
+                            <option disabled :value="null">{{ _('Select Field') }}</option>
+                            <option value="AD">{{ _('AD') }}</option>
+                            <option value="AE">{{ _('AE') }}</option>
+                            <option value="AF">{{ _('AF') }}</option>
+                            <option value="AG">{{ _('AG') }}</option>
+                        </select>
+                        <select class="form-control custom-select">
+                            <option disabled :value="null">{{ _('Select Operator') }}</option>
+                            <option value="=">=</option>
+                            <option value="<>">&lt;&gt;</option>
+                            <option value="<">&lt;</option>
+                            <option value="<=">&lt;=</option>
+                            <option value=">">&gt;</option>
+                            <option value=">=">&gt;=</option>
+                        </select>
+                        <select class="form-control custom-select">
+                            <option disabled :value="null">{{ _('Select Value') }}</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+
+                        <div class="input-group-append">
+                            <button class="btn btn-success" @click.prevent="addNewTerm" aria-label="{{ _('Add Search Term') }}" v-if="index === (terms.length - 1)"><i class="fa fa-plus-circle"></i></button>
+                            <button class="btn btn-danger" @click.prevent="removeItem(index)" aria-label="{{ _('Delete Search Term') }}"><i class="fa fa-minus-circle"></i></button>
                         </div>
                     </div>
-                    <expression-builder v-for="(term, index) in terms" @remove-item="removeItem" :bus="bus" :index="index" :key="index" :schema="schema" :term.sync="term"></expression-builder>
                     <input type="hidden" name="{{ filter_form.values.name }}" id="{{ filter_form.values.id }}" :value="serializedExpressions">
                 </div>
                 <div class="col-12 col-md-6 col-lg-2 mb-2">
