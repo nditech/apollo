@@ -362,6 +362,14 @@ $(function () {
         const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
         return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`);
       },
+      fieldMap() {
+        return usableFields;
+      },
+      fieldOptions() {
+        return Object.keys(usableFields).sort().map(i => {
+          return {label: i, value: usableFields[i]};
+        });
+      },
       serializedExpressions() {
         const thisRef = this;
         const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
@@ -381,6 +389,22 @@ $(function () {
           operator: null,
           value: null,
           source: null
+        });
+      },
+      getSortedOptions(options) {
+        if (options === undefined)
+          return [];
+
+        const pairs = Object.entries(options).toSorted((a, b) => a[1] - b[1]);
+        return pairs;
+      },
+      getValueFields(index) {
+        const thisRef = this;
+        if (!thisRef.terms[index].field || thisRef.terms[index].field.type !== 'integer') return [];
+
+        const tags = thisRef.schema.filter(f => f.tag !== thisRef.terms[index].field.tag && f.type === 'integer').map(f => f.tag);
+        return tags.filter(f => f !== thisRef.terms[index].field.tag).map(f => {
+          return {label: f, value: f};
         });
       },
       isComplete(term) {
