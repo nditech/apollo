@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 {%- endif %}
-                <div class="col-12 col-lg-12 mb-2"  id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                <div class="col-12 col-lg-12"  id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
                     <div class="input-group d-flex mb-2" v-for="(term, index) in terms">
                         <select class="form-control custom-select" v-model="term.field">
                             <option disabled :value="null">{{ _('Select Field') }}</option>
@@ -101,7 +101,7 @@
                             <option value=">=" v-if="term.field && term.field.type === 'integer'">&gt;=</option>
                         </select>
                         <select class="form-control custom-select" v-model="term.source" v-if="term.field !== null && term.field.type === 'integer'">
-                            <option disabled value="">{{ _('Select source') }}</option>
+                            <option disabled value="">{{ _('Select Source') }}</option>
                             <option value="field">Field</option>
                             <option value="value">Value</option>
                         </select>
