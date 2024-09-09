@@ -27,6 +27,7 @@ from werkzeug.datastructures import MultiDict
 
 from apollo import models, services, utils
 from apollo.core import db, docs
+from apollo.dal import utils
 from apollo.frontend import route, permissions
 from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
@@ -215,8 +216,7 @@ def submission_list(form_id):
                 models.Submission.form == form,
                 models.Submission.event == event,
             )
-            joined_classes = [mapper.class_ for mapper in query._join_entities]
-            if models.Location in joined_classes:
+            if utils.has_model(queryset, models.Location):
                 queryset = queryset.order_by(models.Location.code)
             else:
                 queryset = queryset.join(
@@ -231,8 +231,7 @@ def submission_list(form_id):
                 models.Submission.form == form,
                 models.Submission.event == event,
             )
-            joined_classes = [mapper.class_ for mapper in query._join_entities]
-            if models.Location not in joined_classes:
+            if not utils.has_model(queryset, models.Location):
                 queryset = queryset.join(models.Submission.location)
             queryset = queryset.join(
                 models.Participant,
