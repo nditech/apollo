@@ -6,6 +6,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/selectize.bootstrap4.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('datetimepicker.css') }}">
 <link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 <style>
@@ -14,13 +15,205 @@
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ohm.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/selectize.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/browser-file-storage.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('datetimepicker.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
+  // initialize the parser
+  const formSchema = JSON.parse(document.querySelector('#valuesWrapper').dataset.formSchema);
+
+  const choiceFields = formSchema.filter(f => f.type === 'select').reduce((accumulator, f) => {
+    accumulator[f.tag] = f;
+    return accumulator
+  }, {});
+
+  const integerFields = formSchema.filter(f => f.type === 'integer').reduce((accumulator, f) => {
+    accumulator[f.tag] = f;
+    return accumulator
+  }, {});
+
+  const usableFields = {...choiceFields, ...integerFields};
+
+  let choiceFieldsGrammar, integerFieldsGrammar, choiceActions, intActions, choiceSemantics, intSemantics;
+  if (Object.keys(choiceFields).length > 0) {
+    choiceFieldsGrammar = ohm.grammar(`
+      QueryItem {
+        expression = field spaces operator spaces number
+        number = digit+
+        operator = "=" | "!=" | "<>"
+        field = ${Object.keys(choiceFields).map(f => `"${f}"`).join(" | ")}
+      }
+    `);
+    choiceActions = {
+      expression(field, _1, operator, _2, number) {
+        return {
+          field: choiceFields[field.eval()],
+          operator: operator.eval(),
+          value: number.eval(),
+          source: "value"
+        };
+      },
+      operator(o) {
+        return o.sourceString;
+      },
+      field(f) {
+        return f.sourceString;
+      },
+      number(digits) {
+        return parseInt(digits.sourceString);
+      }
+    };
+    choiceSemantics = choiceFieldsGrammar.createSemantics();
+    choiceSemantics.addOperation('eval', choiceActions);
+  }
+
+  if (Object.keys(integerFields).length > 0) {
+    integerFieldsGrammar = ohm.grammar(`
+      QueryItem {
+        expression = field spaces operator spaces entity
+        entity = field | number
+        number = digit+
+        operator = "=" | "!=" | "<>" | ">=" | ">" | "<=" | "<"
+        field = ${Object.keys(integerFields).map(f => `"${f}"`).join(" | ")}
+      }
+    `);
+  
+    intActions = {
+      expression(field, _1, operator, _2, entity) {
+        data = {
+          field: integerFields[field.eval()],
+          operator: operator.eval(),
+          value: entity.eval()
+        };
+  
+        if (typeof data["value"] === "number")
+          data["source"] = "value";
+        else
+          data["source"] = "field";
+  
+        return data;
+      },
+      entity(e) {
+        return e.eval();
+      },
+      operator(o) {
+        return o.sourceString;
+      },
+      field(f) {
+        return f.sourceString;
+      },
+      number(digits) {
+        return parseInt(digits.sourceString);
+      }
+    };
+  
+    intSemantics = integerFieldsGrammar.createSemantics();
+    intSemantics.addOperation('eval', intActions);
+  }
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const valueParams = queryParams.get('values');
+  const expressions = (valueParams || '').split(',');
+
+  let choiceData, integerData;
+
+  if (choiceFieldsGrammar) {
+    choiceData = expressions.filter(
+      e => choiceFieldsGrammar.match(e).succeeded()
+    ).map(
+      e => choiceSemantics(choiceFieldsGrammar.match(e)).eval()
+    );
+  } else {
+    choiceData = [];
+  }
+
+  if (integerFieldsGrammar) {
+    integerData = expressions.filter(
+      e => integerFieldsGrammar.match(e).succeeded()
+    ).map(
+      e => intSemantics(integerFieldsGrammar.match(e)).eval()
+    );
+  } else {
+    integerData = [];
+  }
+
+  const initialData = [...choiceData, ...integerData];
+
+  const app = new Vue({
+    computed: {
+      expressions() {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`);
+      },
+      fieldMap() {
+        return usableFields;
+      },
+      fieldOptions() {
+        return Object.keys(usableFields).sort().map(i => {
+          return {label: i, value: usableFields[i]};
+        });
+      },
+      serializedExpressions() {
+        const thisRef = this;
+        const completeTerms = this.terms.filter(term => thisRef.isComplete(term));
+        return completeTerms.map(term => `${term.field.tag}${term.operator}${term.value}`).join(',');
+      },
+    },
+    data: {
+      schema: formSchema,
+      terms: [...initialData]
+    },
+    delimiters: ['[[', ']]'],
+    el: '#filter-app',
+    methods: {
+      addNewTerm() {
+        this.terms.push({
+          field: null,
+          operator: null,
+          value: null,
+          source: null
+        });
+      },
+      getSortedOptions(options) {
+        if (options === undefined)
+          return [];
+
+        const pairs = Object.entries(options).toSorted((a, b) => a[1] - b[1]);
+        return pairs;
+      },
+      getValueFields(index) {
+        const thisRef = this;
+        if (!thisRef.terms[index].field || thisRef.terms[index].field.type !== 'integer') return [];
+
+        const tags = thisRef.schema.filter(f => f.tag !== thisRef.terms[index].field.tag && f.type === 'integer').map(f => f.tag);
+        return tags.filter(f => f !== thisRef.terms[index].field.tag).map(f => {
+          return {label: f, value: f};
+        });
+      },
+      isComplete(term) {
+        return !this.isEmpty(term.field) && !this.isEmpty(term.operator) && !this.isEmpty(term.value);
+      },
+      isEmpty(val) {
+        return (val === null) || (val === undefined) || (val === "");
+      },
+      removeItem(index) {
+        this.terms.splice(index, 1);
+      }
+    },
+    mounted() {
+      if (this.terms.length === 0) {
+        this.addNewTerm();
+      }
+    }
+  });
+
   // initialize the toast
   $('#notification-toast').toast();
 

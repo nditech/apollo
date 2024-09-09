@@ -1,5 +1,5 @@
 {% macro render_filter_form(form, filter_form, location) %}
-<div class="card border-light bg-light mb-3">
+<div class="card border-light bg-light mb-3" id="filter-app">
     <div class="card-header">
         <form class="mb-n2 ml-n2 mr-n2">
         {% if form.show_map %}<input type="hidden" id="v" name="v" value="{{ request.args.v }}">{% endif %}
@@ -85,6 +85,42 @@
                     </div>
                 </div>
                 {%- endif %}
+                <div class="col-12 col-lg-12"  id="valuesWrapper" data-form-schema='{{ form.response_fields|tojson }}'>
+                    <div class="input-group d-flex mb-2" v-for="(term, index) in terms">
+                        <select class="form-control custom-select" v-model="term.field">
+                            <option disabled :value="null">{{ _('Select Field') }}</option>
+                            <option v-for="(field, idx) in fieldOptions" :key="idx" :value="field.value">[[ field.label ]]</option>
+                        </select>
+                        <select class="form-control custom-select" v-model="term.operator">
+                            <option disabled :value="null">{{ _('Select Operator') }}</option>
+                            <option value="=">=</option>
+                            <option value="<>">&lt;&gt;</option>
+                            <option value="<" v-if="term.field && term.field.type === 'integer'">&lt;</option>
+                            <option value="<=" v-if="term.field && term.field.type === 'integer'">&lt;=</option>
+                            <option value=">" v-if="term.field && term.field.type === 'integer'">&gt;</option>
+                            <option value=">=" v-if="term.field && term.field.type === 'integer'">&gt;=</option>
+                        </select>
+                        <select class="form-control custom-select" v-model="term.source" v-if="term.field !== null && term.field.type === 'integer'">
+                            <option disabled value="">{{ _('Select Source') }}</option>
+                            <option value="field">Field</option>
+                            <option value="value">Value</option>
+                        </select>
+                        <input type="number" class="form-control" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'value'">
+                        <select class="form-control custom-select" v-model="term.value" v-if="term.field !== null && term.field.type === 'integer' && term.source === 'field'">
+                            <option disabled :value="null">{{ _('Select Field') }}</option>
+                            <option :value="fi.value" v-for="(fi, indx) in getValueFields(index)" :key="indx">[[ fi.label ]]</option>
+                        </select>
+                        <select class="form-control custom-select" v-model="term.value" v-if="term.field && term.field.type === 'select'">
+                            <option disabled :value="null">{{ _('Select Value') }}</option>
+                            <option v-for="[key, value] in getSortedOptions(term.field.options)" :value="value" :key="value">[[ value ]]</option>
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-success" @click.prevent="addNewTerm" aria-label="{{ _('Add Search Term') }}" v-if="index === (terms.length - 1)"><i class="fa fa-plus-circle"></i></button>
+                            <button class="btn btn-danger" @click.prevent="removeItem(index)" aria-label="{{ _('Delete Search Term') }}" v-if="terms.length > 1"><i class="fa fa-minus-circle"></i></button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="{{ filter_form.values.name }}" id="{{ filter_form.values.id }}" :value="serializedExpressions">
+                </div>
                 <div class="col-12 col-md-6 col-lg-2 mb-2">
                     <div class="d-flex flex-row">
                         <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>

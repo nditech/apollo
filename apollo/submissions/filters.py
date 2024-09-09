@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+from cgi import escape
 from itertools import chain
 from operator import itemgetter
 
-from cgi import escape
 from dateutil.parser import parse
 from dateutil.tz import gettz, UTC
 from flask_babelex import gettext as _
@@ -640,6 +640,26 @@ class SubmissionDateFilter(CharFilter):
         return queryset
 
 
+class SubmissionValuesFilter(CharFilter):
+    def __init__(self, name=None, widget=None, **kwargs):
+        self.form = kwargs.pop('questionnaire', None)
+        super().__init__(name, widget, **kwargs)
+    
+    def queryset_(self, queryset, value, **kwargs):
+        if value:
+            if self.form is None:
+                return queryset.filter(false())
+
+            try:
+                parsed = value.split(',')
+                terms = [generate_qa_query(item, self.form)[0] for item in parsed]
+            except Exception:
+                return queryset.filter(false())
+            
+            return queryset.filter(*terms)
+        return super().queryset_(queryset, value, **kwargs)
+
+
 def make_submission_location_filter(location_set_id):
     class AJAXLocationFilter(ChoiceFilter):
         field_class = LocationQuerySelectField
@@ -749,6 +769,7 @@ def make_submission_list_filter(event, form, filter_on_locations=False):
     attributes['fsn'] = FormSerialNumberFilter()
     attributes['participant_role'] = make_participant_role_filter(
         event.participant_set_id)()
+    attributes['values'] = SubmissionValuesFilter(questionnaire=form)
 
     return type(
         'SubmissionFilterSet',
