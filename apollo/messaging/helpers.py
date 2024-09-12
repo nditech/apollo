@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from flask_babel import gettext
+from flask_babel import force_locale, gettext
 from werkzeug.datastructures import MultiDict
 
 from apollo import services
-from apollo.core import force_locale
 from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import (
     get_unsent_codes,
-    parse_text,
     parse_responses,
+    parse_text,
 )
 from apollo.participants import models
 

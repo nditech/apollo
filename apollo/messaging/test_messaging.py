@@ -4,15 +4,15 @@ from datetime import datetime
 from unittest import TestCase
 
 import flask_babel as babel
+from flask_babel import force_locale
 from flask_testing import TestCase as FlaskTestCase
 from mimesis import Generic, locales
 
 from apollo import services
-from apollo.core import db, force_locale
+from apollo.core import db
 from apollo.formsframework.models import Form
 from apollo.messaging.helpers import lookup_participant
-from apollo.messaging.utils import (
-    get_unsent_codes, parse_responses, parse_text)
+from apollo.messaging.utils import get_unsent_codes, parse_responses, parse_text
 from apollo.testutils import factory, fixtures
 
 DEFAULT_FIXTURES_PATH = pathlib.Path(__file__).parent / 'fixtures'
