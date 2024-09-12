@@ -1034,6 +1034,23 @@ dev = ["coverage", "pre-commit", "pytest", "pytest-mock"]
 tests = ["coverage", "pytest", "pytest-mock"]
 
 [[package]]
+name = "flask-reuploaded"
+version = "1.4.0"
+description = "Flexible and efficient upload handling for Flask"
+optional = false
+python-versions = ">= 3.8"
+files = [
+    {file = "Flask-Reuploaded-1.4.0.tar.gz", hash = "sha256:2f04e788b925e7c2110c9451ea5993955607b01de272a9b041c6923000b58c7b"},
+    {file = "Flask_Reuploaded-1.4.0-py3-none-any.whl", hash = "sha256:020af6cdcbbe9f9484a72007c0cdc39599c1076cd321d7dff56062dd8f58f7a3"},
+]
+
+[package.dependencies]
+Flask = ">=1.0.4"
+
+[package.extras]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "flask-script"
 version = "2.0.6"
 description = "Scripting support for Flask"
@@ -1115,19 +1132,6 @@ files = [
 
 [package.dependencies]
 Flask = "*"
-
-[[package]]
-name = "flask-uploads"
-version = "0.2.1"
-description = "Flexible and efficient upload handling for Flask"
-optional = false
-python-versions = "*"
-files = [
-    {file = "Flask-Uploads-0.2.1.tar.gz", hash = "sha256:53ecbd6033667d50ae02b63adebbaa33c7fc56c09e5293025810cf9d841ecb02"},
-]
-
-[package.dependencies]
-Flask = ">=0.8.0"
 
 [[package]]
 name = "flask-webpack"
@@ -3366,4 +3370,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "9c66e69ff3554ded2d86c66cba7717db64c7fa2fe55dea24d497207b15cd58a1"
+content-hash = "a57b9e3343d4fc692a2419a37c7c778e3573d0d94c838ab9b3a12b5ed9749f3a"

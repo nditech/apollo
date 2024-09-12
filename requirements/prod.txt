@@ -292,6 +292,9 @@ flask-principal==0.4.0 ; python_full_version >= "3.11.10" and python_full_versio
 flask-redis==0.4.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:8d79eef4eb1217095edab603acc52f935b983ae4b7655ee7c82c0dfd87315d17 \
     --hash=sha256:e1fccc11e7ea35c2a4d68c0b9aa58226a098e45e834d615c7b6c4928b01ddd6c
+flask-reuploaded==1.4.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
+    --hash=sha256:020af6cdcbbe9f9484a72007c0cdc39599c1076cd321d7dff56062dd8f58f7a3 \
+    --hash=sha256:2f04e788b925e7c2110c9451ea5993955607b01de272a9b041c6923000b58c7b
 flask-script==2.0.6 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65
 flask-security==5.5.2 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
@@ -302,8 +305,6 @@ flask-sqlalchemy==2.4.0 ; python_full_version >= "3.11.10" and python_full_versi
     --hash=sha256:8631bbea987bc3eb0f72b1f691d47bd37ceb795e73b59ab48586d76d75a7c605
 flask-sslify==0.1.4 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:8e972fcd45827c7c1b93b945924b611c7996907446cb65f2b9054eecf721c111
-flask-uploads==0.2.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:53ecbd6033667d50ae02b63adebbaa33c7fc56c09e5293025810cf9d841ecb02
 flask-webpack==0.1.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:aa56bf97253a07e09514e2ff6ff67497d8654a66a17c208394687a64528ddc74
 flask-wtf==1.2.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
