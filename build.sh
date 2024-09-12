@@ -1,5 +1,9 @@
 #!/bin/bash
 
+install_dependencies () {
+  apt install -y libgeos-dev
+}
+
 install_chrome () {
   mkdir /etc/apt/keyrings
 
@@ -21,9 +25,12 @@ EOF
   # # They'll auto-install their key globally daily, but we don't want it there.
   ln --symbolic /dev/null /etc/apt/trusted.gpg.d/google-chrome.gpg
 
-  apt update
   apt install -y google-chrome-stable
 }
+
+apt update
+
+install_dependencies
 
 if [ "${ENV}" = "DEV" ]; then
   install_chrome
