@@ -3,7 +3,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 
 import six
-from authlib.flask.client import OAuth
+from authlib.integrations.flask_client import OAuth
 from flask import _request_ctx_stack, redirect, url_for
 from flask_admin import Admin, AdminIndexView, expose
 from flask_apispec import FlaskApiSpec

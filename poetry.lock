@@ -115,18 +115,17 @@ tests-mypy = ["mypy (>=1.11.1)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "authlib"
-version = "0.11"
-description = "The ultimate Python library in building OAuth and OpenID Connect servers."
+version = "1.3.2"
+description = "The ultimate Python library in building OAuth and OpenID Connect servers and clients."
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 files = [
-    {file = "Authlib-0.11-py2.py3-none-any.whl", hash = "sha256:3a226f231e962a16dd5f6fcf0c113235805ba206e294717a64fa8e04ae3ad9c4"},
-    {file = "Authlib-0.11.tar.gz", hash = "sha256:9741db6de2950a0a5cefbdb72ec7ab12f7e9fd530ff47219f1530e79183cbaaf"},
+    {file = "Authlib-1.3.2-py2.py3-none-any.whl", hash = "sha256:ede026a95e9f5cdc2d4364a52103f5405e75aa156357e831ef2bfd0bc5094dfc"},
+    {file = "authlib-1.3.2.tar.gz", hash = "sha256:4b16130117f9eb82aa6eec97f6dd4673c3f960ac0283ccdae2897ee4bc030ba2"},
 ]
 
 [package.dependencies]
 cryptography = "*"
-requests = "*"
 
 [[package]]
 name = "autopep8"
@@ -1573,17 +1572,18 @@ files = [
 
 [[package]]
 name = "loginpass"
-version = "0.3"
+version = "0.5"
 description = "Social connections powered by Authlib for Flask and Django"
 optional = false
 python-versions = "*"
 files = [
-    {file = "loginpass-0.3-py2.py3-none-any.whl", hash = "sha256:2e6c51e89950b51386dd9d6e8b6b777b2d9595543c173ef20d56819644eff8a5"},
-    {file = "loginpass-0.3.tar.gz", hash = "sha256:be04ce2a9b06a1e260e2c6a9b5cdfaa23e94eaf45c9df1b591b10e9104519b9d"},
+    {file = "loginpass-0.5-py2.py3-none-any.whl", hash = "sha256:24137ef5a3169f4b2873063f766dc90e34f2dc48de9130d58dafad767d0aabf1"},
+    {file = "loginpass-0.5.tar.gz", hash = "sha256:cf6a1e8129c632cfaa51dbeeeae10629b4678a65072935c7015fecae01a4e8fc"},
 ]
 
 [package.dependencies]
-Authlib = ">=0.11"
+Authlib = ">=0.14.3"
+requests = "*"
 
 [[package]]
 name = "lxml"
@@ -3370,4 +3370,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "a57b9e3343d4fc692a2419a37c7c778e3573d0d94c838ab9b3a12b5ed9749f3a"
+content-hash = "4455b0f09fad327e4ff6b90193e4e06c7aa7d49121ca60ce12bdd9fc8c6f73f6"
