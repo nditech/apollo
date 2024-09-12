@@ -6,8 +6,7 @@ import random
 import string
 
 from flask import render_template_string
-from flask_babelex import gettext
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 import pandas as pd
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
@@ -162,7 +161,7 @@ def update_participants(dataframe, header_map, participant_set, task):
         try:
             participant_id = int(participant_id)
         except (TypeError, ValueError):
-            message = gettext(
+            message = _(
                 'Invalid (non-numeric) participant ID (%(p_id)s)',
                 p_id=participant_id)
             errors.add(
@@ -257,7 +256,7 @@ def update_participants(dataframe, header_map, participant_set, task):
                 try:
                     loc_code = int(loc_code)
                 except (TypeError, ValueError):
-                    message = gettext(
+                    message = _(
                         'Invalid (non-numeric) location ID (%(loc_id)s)',
                         loc_id=loc_code)
                     errors.add((participant_id, message))
@@ -275,13 +274,13 @@ def update_participants(dataframe, header_map, participant_set, task):
         except MultipleResultsFound:
             errors.add((
                 participant_id,
-                gettext('Invalid location id (%(loc_id)s)',
+                _('Invalid location id (%(loc_id)s)',
                         loc_id=record[LOCATION_ID_COL])
             ))
             error_records += 1
             error_log.append({
                 'label': 'ERROR',
-                'message': gettext(
+                'message': _(
                     'Location code %(loc_id)s for row %(row)d is not unique',
                     loc_id=record[LOCATION_ID_COL], row=(idx + 1)),
             })
@@ -289,13 +288,13 @@ def update_participants(dataframe, header_map, participant_set, task):
         except NoResultFound:
             warnings.add((
                 participant_id,
-                gettext('Location with id %(loc_id)s not found',
+                _('Location with id %(loc_id)s not found',
                         loc_id=record[LOCATION_ID_COL])
             ))
             warning_records += 1
             error_log.append({
                 'label': 'WARNING',
-                'message': gettext(
+                'message': _(
                     'Location code %(loc_id)s for row %(row)d with '
                     'participant ID %(part_id)s not found',
                     loc_id=record[LOCATION_ID_COL], row=(idx + 1),
@@ -443,13 +442,13 @@ def update_participants(dataframe, header_map, participant_set, task):
             participant.delete()
             errors.add((
                 participant_id,
-                gettext(
+                _(
                     'Supervisor with ID %(id)s not found', id=supervisor_id)))
             processed_records -= 1
             error_records += 1
             error_log.append({
                 'label': 'ERROR',
-                'message': gettext(
+                'message': _(
                     'Supervisor ID %(sup_id)s specified for '
                     'participant ID %(part_id)s not found',
                     sup_id=supervisor_id, part_id=participant_id)

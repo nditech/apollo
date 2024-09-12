@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flask import (
     Blueprint, jsonify, make_response, render_template, send_from_directory)
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 
 from apollo import settings
 from apollo.frontend import route

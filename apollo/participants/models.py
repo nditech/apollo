@@ -2,7 +2,7 @@
 import re
 
 import sqlalchemy_utils
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from sqlalchemy import false, func
 from sqlalchemy.dialects.postgresql import JSONB
 

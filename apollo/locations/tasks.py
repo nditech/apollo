@@ -7,8 +7,8 @@ from hashlib import sha256
 from itertools import chain
 
 from flask import render_template_string
-from flask_babelex import gettext
-from flask_babelex import gettext as _
+from flask_babel import gettext
+from flask_babel import gettext as _
 from pandas import isnull, to_numeric
 from slugify import slugify
 from sqlalchemy import and_, exists, func

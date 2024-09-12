@@ -3,7 +3,7 @@ import csv
 from io import StringIO
 import re
 
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 
 from apollo import constants
 from apollo.dal.service import Service

@@ -6,7 +6,7 @@ from io import BytesIO
 from flask import (
     abort, Blueprint, flash, g, jsonify, redirect, request, send_file, session,
     url_for)
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_security import current_user
 from slugify import slugify
 

@@ -5,7 +5,7 @@ from operator import itemgetter
 
 from dateutil.parser import parse
 from dateutil.tz import gettz, UTC
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from sqlalchemy import Integer, and_, false, or_, true
 from sqlalchemy.dialects.postgresql import array
 from wtforms import Form, fields, widgets

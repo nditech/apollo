@@ -2,7 +2,7 @@
 import codecs
 from operator import itemgetter
 
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 
 from apollo.settings import LANGUAGES
 

@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from uuid import uuid4
 
 from flask import g
-from flask_babelex import get_locale, gettext as _
+from flask_babel import get_locale, gettext as _
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import TranslationHybrid

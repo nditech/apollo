@@ -6,7 +6,7 @@ import os
 
 from flask import (Blueprint, Response, abort, current_app, flash, g, redirect,
                    request, send_file, session, stream_with_context, url_for)
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_security import current_user
 from slugify import slugify
 from sqlalchemy import not_, or_

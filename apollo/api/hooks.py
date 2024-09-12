@@ -2,7 +2,7 @@
 from http import HTTPStatus
 
 from flask import jsonify
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 
 from apollo.core import red
 

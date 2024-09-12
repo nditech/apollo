@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from flask import Blueprint, g, make_response, render_template, request
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 import pytz

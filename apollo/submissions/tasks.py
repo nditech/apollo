@@ -6,7 +6,7 @@ from apollo import models, helpers
 from apollo.core import uploads
 from apollo.factory import create_celery_app
 from apollo.participants.models import Participant
-from flask_babelex import gettext
+from flask_babel import gettext
 from ..models import Submission
 from ..users.models import UserUpload
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from geoalchemy2 import Geometry
 import networkx as nx
 from sqlalchemy import and_, false, func

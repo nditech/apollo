@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_wtf import FlaskForm
 from sqlalchemy.sql import and_, exists
 from wtforms import fields, validators, widgets

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from flask_babelex import gettext
+from flask_babel import gettext
 from werkzeug.datastructures import MultiDict
 
 from apollo import services

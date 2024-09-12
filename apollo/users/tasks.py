@@ -2,7 +2,7 @@
 import os
 
 import pandas as pd
-from flask_babelex import gettext
+from flask_babel import gettext
 from sqlalchemy import func
 
 from apollo import helpers

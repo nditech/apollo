@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dateutil.parser import parse
 from dateutil.tz import gettz, UTC
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from sqlalchemy import or_
 from sqlalchemy.orm import aliased
 from wtforms import Form as WTForm, fields

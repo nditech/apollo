@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
-from flask_babelex import gettext
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from geoalchemy2 import Geometry  # noqa
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
@@ -174,7 +173,7 @@ class Submission(BaseModel):
                 error_records += 1
                 error_log.append({
                     'label': 'ERROR',
-                    'message': gettext(
+                    'message': _(
                         'Participant ID %(part_id)s has no location',
                         part_id=participant.participant_id)
                 })

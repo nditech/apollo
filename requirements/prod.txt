@@ -262,9 +262,9 @@ flask-apispec==0.11.4 ; python_full_version >= "3.11.10" and python_full_version
 flask-assets==2.1.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:a56c476b15f84701712cc3b4b4a001ebbe62b1dcbe81c23f96fbe6f261b75324 \
     --hash=sha256:f84d6532ffe59c9ff352885e8740ff4da25c0bcfacd805f0a806815e44354813
-flask-babelex==0.9.4 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:39a59ccee9386a9d52d80b9101224402036aedc2c7873b11deef6e4e21cace27 \
-    --hash=sha256:f744d0557cb04cafed733cfa96e7373b46263d4cf79a2c5988c65085f360d873
+flask-babel==4.0.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
+    --hash=sha256:638194cf91f8b301380f36d70e2034c77ee25b98cb5d80a1626820df9a6d4625 \
+    --hash=sha256:dbeab4027a3f4a87678a11686496e98e1492eb793cbdd77ab50f4e9a2602a593
 flask-cors==5.0.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:5aadb4b950c4e93745034594d9f3ea6591f734bb3662e16e255ffbf5e89c88ef \
     --hash=sha256:b9e307d082a9261c100d8fb0ba909eec6a228ed1b60a8315fd85f783d61910bc
@@ -1136,8 +1136,6 @@ six==1.11.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0
 smmap==5.0.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:dceeb6c0028fdb6734471eb07c0cd2aae706ccaecab45965ee83f11c8d3b1f62 \
     --hash=sha256:e6d8668fa5f93e706934a62d7b4db19c8d9eb8cf2adbb75ef1b675aa332b69da
-speaklater==1.3 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:59fea336d0eed38c1f0bf3181ee1222d0ef45f3a9dd34ebe65e6bfffdd6a65a9
 sqlalchemy-json==0.2.3 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:d17952e771eecd9023c0f683d2a6aaa27ce1a6dbf57b0fe2bf4d5aef4c5dad1c
 sqlalchemy-utils==0.39.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \

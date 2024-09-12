@@ -8,7 +8,7 @@ from importlib import import_module
 from celery import Celery
 from depot.manager import DepotManager
 from flask import Flask, request
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_security import SQLAlchemyUserDatastore, current_user
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads

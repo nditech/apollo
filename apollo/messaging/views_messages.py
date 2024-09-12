@@ -8,7 +8,7 @@ from dateutil.tz import gettz
 from flask import (
     Blueprint, Response, current_app, g, render_template, request,
     stream_with_context)
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 import pandas as pd

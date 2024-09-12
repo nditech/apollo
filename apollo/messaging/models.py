@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 import sqlalchemy as sa
 from sqlalchemy_utils import ChoiceType
 

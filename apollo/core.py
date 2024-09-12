@@ -7,7 +7,7 @@ from authlib.flask.client import OAuth
 from flask import _request_ctx_stack, redirect, url_for
 from flask_admin import Admin, AdminIndexView, expose
 from flask_apispec import FlaskApiSpec
-from flask_babelex import Babel
+from flask_babel import Babel
 from flask_cors import CORS
 
 try:

@@ -5,7 +5,7 @@ import logging
 from operator import itemgetter
 import re
 
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from marshmallow import Schema, fields, validate

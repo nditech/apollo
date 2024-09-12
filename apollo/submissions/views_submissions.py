@@ -9,7 +9,7 @@ from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
     redirect, render_template, request, stream_with_context, url_for, session
 )
-from flask_babelex import get_locale, gettext as _
+from flask_babel import get_locale, gettext as _
 from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required

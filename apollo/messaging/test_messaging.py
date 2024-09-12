@@ -3,7 +3,7 @@ import pathlib
 from datetime import datetime
 from unittest import TestCase
 
-import flask_babelex as babel
+import flask_babel as babel
 from flask_testing import TestCase as FlaskTestCase
 from mimesis import Generic, locales
 

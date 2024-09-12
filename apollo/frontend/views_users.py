@@ -4,7 +4,7 @@ import os
 from flask import (
     Blueprint, abort, json, jsonify, redirect, render_template, request,
     session, url_for)
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import hash_password
 from apollo import utils

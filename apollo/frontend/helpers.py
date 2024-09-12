@@ -2,7 +2,7 @@
 from urllib.parse import urlparse
 
 from flask import session, request, g, url_for, abort
-from flask_babelex import get_locale
+from flask_babel import get_locale
 from flask_login import current_user
 from flask_principal import Permission, ItemNeed, RoleNeed
 from sqlalchemy import func
