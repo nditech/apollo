@@ -1,32 +1,30 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
-from flask import (
-    g, redirect, render_template, request, session, url_for
-)
+from flask import g, redirect, render_template, request, session, url_for
 from flask_admin import AdminIndexView
 from flask_jwt_extended import (
-    create_access_token, get_jwt_identity, get_jwt, set_access_cookies)
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    set_access_cookies,
+)
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import current_user
 from flask_security.utils import login_user, url_for_security
-from loginpass import create_flask_blueprint, Facebook, Google
-from werkzeug.urls import url_encode
+from loginpass import Facebook, Google, create_flask_blueprint
 from whitenoise import WhiteNoise
 
-from apollo import assets, models, services, settings, utils
+from apollo import assets, factory, models, services, settings, utils
+from apollo.core import admin, csrf, docs, gravatar, menu, oauth, webpack
 from apollo.frontend import permissions, template_filters
-from apollo.core import (
-    admin, csrf, docs, gravatar, menu, oauth, webpack
-)
 from apollo.prometheus.flask import monitor
-from .frontend.helpers import set_request_presets
 
-from apollo import factory
+from .frontend.helpers import set_request_presets
 
 custom_filters = {
     'checklist_question_summary': template_filters.checklist_question_summary,
@@ -152,7 +150,6 @@ def create_app(settings_override=None):
                 email=user_info['email']).first()
             if user:
                 login_user(user)
-                userdatastore.commit()
                 return redirect(app.config.get('SECURITY_POST_LOGIN_VIEW'))
 
         return redirect(url_for_security('login'))
@@ -167,7 +164,7 @@ def create_app(settings_override=None):
             else:
                 args[k] = v
 
-        return '{}?{}'.format(request.path, url_encode(args))
+        return '{}?{}'.format(request.path, urlencode(args))
 
     facebook_bp = create_flask_blueprint(Facebook, oauth, handle_authorize)
     google_bp = create_flask_blueprint(Google, oauth, handle_authorize)
