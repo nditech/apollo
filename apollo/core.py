@@ -14,7 +14,6 @@ try:
     fdt_available = True
 except ImportError:
     fdt_available = False
-from flask_gravatar import Gravatar
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_menu import Menu
@@ -50,7 +49,6 @@ migrate = Migrate()
 oauth = OAuth()
 red = FlaskRedis()
 security = Security()
-gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CSRFProtect()
 debug_toolbar = DebugToolbarExtension() if fdt_available else None

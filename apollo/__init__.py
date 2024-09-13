@@ -20,7 +20,7 @@ from loginpass import Facebook, Google, create_flask_blueprint
 from whitenoise import WhiteNoise
 
 from apollo import assets, factory, models, services, settings, utils
-from apollo.core import admin, csrf, docs, gravatar, menu, oauth, webpack
+from apollo.core import admin, csrf, docs, menu, oauth, webpack
 from apollo.frontend import permissions, template_filters
 from apollo.prometheus.flask import monitor
 
@@ -62,7 +62,6 @@ def create_app(settings_override=None):
 
     oauth.init_app(app)
     menu.init_app(app)
-    gravatar.init_app(app)
 
     # initialize the OpenAPI extension
     spec = APISpec(

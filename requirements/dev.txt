@@ -320,9 +320,6 @@ flask-cors==5.0.0 ; python_full_version >= "3.11.10" and python_full_version < "
 flask-debugtoolbar==0.10.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:3d9657bc0c3633ace429e3ff451742bb59d1b7a7b95c9eb23a65ac9be2812959 \
     --hash=sha256:ec810083123aae0632eb32ba11e1cb4cdace81e7ce6c5009dd06c5204afbce52
-flask-gravatar==0.5.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:60665f31c2c612891db68ff801e93ed3a0881c6c8ec346abc64d2a9923f562e1 \
-    --hash=sha256:93be048a58cef92345e7bfc78e918e7f4c729b3a33646510b71948c024e7f591
 flask-httpauth==2.7.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:f779799a74994cd047569785becd3a3a1c95032aa5aefecb1819faf3becb008b
 flask-jwt-extended==4.6.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
