@@ -26,7 +26,7 @@ Flask-HTTPAuth = "2.7.0"
 Flask-JWT-Extended = "^4.6.0"
 Flask-Mail = "^0.10.0"
 flask-menu = {git = "https://github.com/marvinscham/flask-menu.git", rev = "2405838c455b16bc77c99af991e763d21b8c6bb9"}
-Flask-Migrate = "2.1.1"
+Flask-Migrate = "^4.0.7"
 Flask-Principal = "0.4.0"
 flask-redis = "0.4.0"
 Flask-Script = "2.0.6"
