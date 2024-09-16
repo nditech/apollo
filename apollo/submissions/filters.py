@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from cgi import escape
+from html import escape
 from itertools import chain
 from operator import itemgetter
 
 from dateutil.parser import parse
-from dateutil.tz import gettz, UTC
+from dateutil.tz import UTC, gettz
 from flask_babel import gettext as _
+from markupsafe import Markup
 from sqlalchemy import Integer, and_, false, or_, true
 from sqlalchemy.dialects.postgresql import array
 from wtforms import Form, fields, widgets
-from wtforms.compat import text_type
-from wtforms.widgets import html_params, HTMLString
+from wtforms.widgets import html_params
 from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models
@@ -19,9 +19,7 @@ from apollo.dal import utils
 from apollo.helpers import _make_choices
 from apollo.settings import TIMEZONE
 from apollo.submissions.models import FLAG_CHOICES
-from apollo.submissions.qa.query_builder import (
-    build_expression, generate_qa_query
-)
+from apollo.submissions.qa.query_builder import build_expression, generate_qa_query
 
 APP_TZ = gettz(TIMEZONE)
 
@@ -407,14 +405,14 @@ class LocationSelectWidget(widgets.Select):
         if selected:
             options['selected'] = True
         if hasattr(label, 'location_type'):
-            return HTMLString('<option %s>%s · %s</option>' % (
+            return Markup('<option %s>%s · %s</option>' % (
                 html_params(**options),
-                escape(text_type(label.name)),
-                escape(text_type(label.location_type))))
+                escape(str(label.name)),
+                escape(str(label.location_type))))
         else:
-            return HTMLString('<option %s>%s</option>' % (
+            return Markup('<option %s>%s</option>' % (
                 html_params(**options),
-                escape(text_type(label))))
+                escape(str(label))))
 
 
 class ParticipantSelectWidget(widgets.Select):
@@ -424,14 +422,14 @@ class ParticipantSelectWidget(widgets.Select):
         if selected:
             options['selected'] = True
         if hasattr(label, 'participant_id'):
-            return HTMLString('<option %s>%s · %s</option>' % (
+            return Markup('<option %s>%s · %s</option>' % (
                 html_params(**options),
-                escape(text_type(label.participant_id)),
-                escape(text_type(label.name))))
+                escape(str(label.participant_id)),
+                escape(str(label.name))))
         else:
-            return HTMLString('<option %s>%s</option>' % (
+            return Markup('<option %s>%s</option>' % (
                 html_params(**options),
-                escape(text_type(label))))
+                escape(str(label))))
 
 
 class LocationQuerySelectField(QuerySelectField):

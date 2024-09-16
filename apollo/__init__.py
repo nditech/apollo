@@ -20,7 +20,7 @@ from loginpass import Facebook, Google, create_flask_blueprint
 from whitenoise import WhiteNoise
 
 from apollo import assets, factory, models, services, settings, utils
-from apollo.core import admin, csrf, docs, menu, oauth, webpack
+from apollo.core import admin, csrf, docs, oauth, webpack
 from apollo.frontend import permissions, template_filters
 from apollo.prometheus.flask import monitor
 
@@ -51,6 +51,7 @@ def init_admin(admin, app):
 
 def create_app(settings_override=None):
     """Returns the frontend application instance"""
+    # TODO: refactor out the need to use a factory
     app = factory.create_app(__name__, __path__, settings_override)
 
     app.wsgi_app = WhiteNoise(
@@ -61,7 +62,6 @@ def create_app(settings_override=None):
     webpack.init_app(app)
 
     oauth.init_app(app)
-    menu.init_app(app)
 
     # initialize the OpenAPI extension
     spec = APISpec(

@@ -10,11 +10,11 @@ from depot.manager import DepotManager
 from flask import Flask, request
 from flask_babel import gettext as _
 from flask_login import current_user
-from flask_security import SQLAlchemyUserDatastore, MailUtil
+from flask_security import MailUtil, SQLAlchemyUserDatastore
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
-from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from apollo import models, settings
 from apollo.api import hooks as jwt_hooks
@@ -26,6 +26,7 @@ from apollo.core import (
     fdt_available,
     jwt_manager,
     mail,
+    menu,
     migrate,
     red,
     security,
@@ -179,6 +180,7 @@ def create_app(
     register_blueprints(app, package_name, package_path)
 
     if register_all_blueprints:
+        menu.init_app(app)
         for configured_app in app.config.get('APPLICATIONS'):
             register_blueprints(
                 app, configured_app, import_module(configured_app).__path__)

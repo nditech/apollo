@@ -2,13 +2,6 @@
 import re
 import wtforms
 
-WTF_MAJOR_VERSION = int(wtforms.__version__[0])
-
-if WTF_MAJOR_VERSION == 1:
-    unset_value = wtforms.fields.core._unset_value
-elif WTF_MAJOR_VERSION == 2:
-    unset_value = wtforms.utils.unset_value
-
 
 class IntegerSplitterField(wtforms.IntegerField):
     pattern = re.compile(r'\d{1}')
@@ -18,7 +11,7 @@ class IntegerSplitterField(wtforms.IntegerField):
         super(wtforms.IntegerField, self).__init__(label, validators, **kwargs)
         self.choices = choices
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=wtforms.utils.unset_value):
         super(wtforms.IntegerField, self).process(formdata, data)
 
         temp = IntegerSplitterField.pattern.findall(str(self.data))
