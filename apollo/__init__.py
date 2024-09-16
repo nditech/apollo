@@ -165,12 +165,9 @@ def create_app(settings_override=None):
 
         return '{}?{}'.format(request.path, urlencode(args))
 
-    facebook_bp = create_flask_blueprint(Facebook, oauth, handle_authorize)
-    google_bp = create_flask_blueprint(Google, oauth, handle_authorize)
-
     if app.config.get('ENABLE_SOCIAL_LOGIN', False):
-        app.register_blueprint(facebook_bp, url_prefix='/facebook')
-        app.register_blueprint(google_bp, url_prefix='/google')
+        bp = create_flask_blueprint([Facebook, Google], oauth, handle_authorize)
+        app.register_blueprint(bp, url_prefix='/social')
 
     return app
 

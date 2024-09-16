@@ -38,7 +38,9 @@ def monitor(app):
 
     app.before_request(before_request)
     app.after_request(after_request)
-    app.before_first_request(before_first_request)
+
+    with app.app_context():
+        before_first_request()
 
     if app.config.get('PROMETHEUS_SECRET'):
         app.add_url_rule(

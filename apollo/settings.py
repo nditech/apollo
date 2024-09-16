@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-from datetime import timedelta
-import git
 import os
-from pathlib import Path
 import string
+from datetime import timedelta
+from pathlib import Path
 
+import git
 import numpy
+from flask_security import uia_email_mapper, uia_username_mapper
 from prettyconf import config
 
-VERSION = config('VERSION', default='v3.1.1')
+VERSION = config('VERSION', default='2024.9')
 try:
     repo = git.Repo(search_parent_directories=True)
     COMMIT = repo.head.object.hexsha[:8]
@@ -69,9 +70,10 @@ SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
-SECURITY_USER_IDENTITY_ATTRIBUTES = config(
-    'USER_IDENTITY_ATTRIBUTES', cast=config.tuple,
-    default=('email,username'))
+SECURITY_USER_IDENTITY_ATTRIBUTES = [
+    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}},
+    {"username": {"mapper": uia_username_mapper, "case_insensitive": True}}
+]
 APOLLO_FIELD_COORDINATOR_EMAIL = config(
     'APOLLO_FIELD_COORDINATOR_EMAIL', default='fc@example.com')
 
