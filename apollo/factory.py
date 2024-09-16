@@ -1,28 +1,38 @@
 # -*- coding: utf-8 -*-
 import json
 import typing
-
-from cachetools import cached
 from importlib import import_module
 
-from celery import Celery
+import sentry_sdk
+from cachetools import cached
+from celery import Celery, signals
 from depot.manager import DepotManager
 from flask import Flask, request
 from flask_babel import gettext as _
-from flask_security import SQLAlchemyUserDatastore, current_user
+from flask_login import current_user
+from flask_security import SQLAlchemyUserDatastore, MailUtil
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
-from raven.base import Client
-from raven.contrib.celery import register_signal, register_logger_signal
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 from apollo import models, settings
 from apollo.api import hooks as jwt_hooks
 from apollo.core import (
-    babel, db, cors, debug_toolbar, fdt_available, jwt_manager,
-    mail, migrate, red, security, sentry, uploads)
+    babel,
+    cors,
+    db,
+    debug_toolbar,
+    fdt_available,
+    jwt_manager,
+    mail,
+    migrate,
+    red,
+    security,
+    uploads,
+)
 from apollo.helpers import register_blueprints
 from apollo.security_ext_forms import DeploymentLoginForm
-
 
 TASK_DESCRIPTIONS = {
     'apollo.locations.tasks.import_locations': _('Import Locations'),
@@ -90,28 +100,52 @@ def create_app(
     app.config.from_object('apollo.settings')
     app.config.from_object(settings_override)
 
-    sentry.init_app(app)
-    babel.init_app(app)
+    class ApolloMailUtil(MailUtil):
+        def send_mail(self, template, subject, recipient, sender, body, html, **kwargs):
+            from apollo.tasks import send_email
+
+            send_email.delay(
+                subject=subject,
+                sender=sender,
+                recipients=[recipient],
+                body=body
+            )
+
+    def _before_send(event, hint):
+        with app.app_context():
+            if current_user and not current_user.is_anonymous:
+                deployment = current_user.deployment
+                current_event = getattr(current_user, 'event', None)
+            else:
+                deployment = None
+                current_event = None
+
+            extra = event.setdefault("extra", {})
+            extra.setdefault("deployment", getattr(deployment, "name", "N/A"))
+            extra.setdefault("event", getattr(current_event, "name", "N/A"))
+
+        return event
+
     cors.init_app(app)
     db.init_app(app)
     jwt_manager.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
     red.init_app(app)
-
+    sentry_sdk.init(
+        dsn=app.config.get("SENTRY_DSN"),
+        debug=app.config.get("DEBUG"),
+        release=app.config.get("VERSION"),
+        send_default_pii=True,
+        integrations=[
+            FlaskIntegration(transaction_style="url")
+        ],
+        before_send=_before_send
+    )
     user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
-    security_ctx = security.init_app(
-        app, user_datastore, login_form=DeploymentLoginForm,
+    security.init_app(
+        app, user_datastore, mail_util_cls=ApolloMailUtil, login_form=DeploymentLoginForm,
         register_blueprint=register_all_blueprints)
-
-    @security_ctx.send_mail_task
-    def delay_flask_security_mail(msg):
-        from apollo.tasks import send_email
-
-        send_email.delay(
-            subject=msg.subject, sender=msg.sender, recipients=msg.recipients,
-            body=msg.body)
-
     configure_uploads(app, uploads)
 
     # set up JWT callbacks
@@ -127,24 +161,21 @@ def create_app(
     if app.config.get('DEBUG') and fdt_available:
         debug_toolbar.init_app(app)
 
-    # don't reregister the locale selector
-    # if we already have one
-    if babel.locale_selector_func is None:
-        @babel.localeselector
-        def get_locale():
-            # get a list of available language codes,
-            # starting from the current user's selected
-            # language
-            language_codes = set()
-            if not current_user.is_anonymous:
-                if current_user.locale:
-                    return current_user.locale
+    def get_locale():
+        # get a list of available language codes,
+        # starting from the current user's selected
+        # language
+        language_codes = set()
+        if not current_user.is_anonymous:
+            if current_user.locale:
+                return current_user.locale
 
-            language_codes.update(app.config.get('LANGUAGES', {}).keys())
+        language_codes.update(app.config.get('LANGUAGES', {}).keys())
 
-            return request.accept_languages \
-                .best_match(language_codes)
+        return request.accept_languages \
+            .best_match(language_codes)
 
+    babel.init_app(app, locale_selector=get_locale)
     register_blueprints(app, package_name, package_path)
 
     if register_all_blueprints:
@@ -164,9 +195,18 @@ def create_celery_app(app=None):
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
 
     # configure exception logging
-    client = Client(app.config.get('SENTRY_DSN', ''))
-    register_logger_signal(client)
-    register_signal(client)
+    @signals.celeryd_init.connect
+    def init_sentry(**_kwargs):
+        sentry_sdk.init(
+            dsn=app.config.get("SENTRY_DSN"),
+            debug=app.config.get("DEBUG"),
+            release=app.config.get("VERSION"),
+            integrations=[
+                CeleryIntegration(
+                    propagate_traces=True
+                )
+            ]
+        )
 
     celery.conf.update(app.config)
     TaskBase = celery.Task

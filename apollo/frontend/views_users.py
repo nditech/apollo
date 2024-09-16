@@ -2,14 +2,23 @@
 import os
 
 from flask import (
-    Blueprint, abort, json, jsonify, redirect, render_template, request,
-    session, url_for)
+    Blueprint,
+    abort,
+    json,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_babel import gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import hash_password
-from apollo import utils
+from sentry_sdk import capture_exception
 
-from apollo.core import red, sentry, uploads
+from apollo import utils
+from apollo.core import red, uploads
 from apollo.frontend import route
 from apollo.frontend.forms import file_upload_form
 from apollo.users import forms, tasks
@@ -89,7 +98,7 @@ def import_headers(upload_id: int):
         with open(filepath, 'rb') as source_file:
             mapping_form_class = forms.make_import_mapping_form(source_file)
     except Exception:
-        sentry.captureException()
+        capture_exception()
 
         os.remove(filepath)
         upload.delete()

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from cgi import escape
+from html import escape
 
 from flask_babel import gettext as _
+from markupsafe import Markup
 from sqlalchemy import func, or_, text, true
 from wtforms import widgets
-from wtforms.compat import text_type
-from wtforms.widgets import html_params, HTMLString
+from wtforms.widgets import html_params
 from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models, services
@@ -13,8 +13,13 @@ from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.locations.models import Location, LocationPath
 
-from .models import Participant, ParticipantRole, ParticipantPartner
-from .models import PhoneContact, Sample
+from .models import (
+    Participant,
+    ParticipantPartner,
+    ParticipantRole,
+    PhoneContact,
+    Sample,
+)
 
 
 class ParticipantIDFilter(CharFilter):
@@ -153,10 +158,10 @@ class LocationSelectWidget(widgets.Select):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s · %s</option>' % (
+        return Markup('<option %s>%s · %s</option>' % (
             html_params(**options),
-            escape(text_type(label.name)),
-            escape(text_type(label.location_type))))
+            escape(str(label.name)),
+            escape(str(label.location_type))))
 
 
 class LocationQuerySelectField(QuerySelectField):

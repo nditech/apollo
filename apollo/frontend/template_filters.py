@@ -4,7 +4,7 @@ import re
 
 from babel.numbers import format_number
 from datetime import date, datetime
-from flask import Markup
+from markupsafe import Markup
 from flask_babel import get_locale, gettext as _
 from geoalchemy2.shape import to_shape
 import pandas as pd

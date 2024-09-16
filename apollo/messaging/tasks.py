@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from flask_mail import Message
-from apollo import models, services, settings
-from apollo.core import mail, sentry
-from apollo.messaging.outgoing import gateway_factory
-from apollo.factory import create_celery_app
+from sentry_sdk import capture_exception, capture_message
 
+from apollo import models, services, settings
+from apollo.core import mail
+from apollo.factory import create_celery_app
+from apollo.messaging.outgoing import gateway_factory
 
 celery = create_celery_app()
 
@@ -39,7 +40,7 @@ def send_messages(event, message, recipients, sender=""):
 @celery.task
 def send_email(subject, body, recipients, sender=None):
     if not (settings.MAIL_SERVER or settings.MAIL_PORT or settings.MAIL_USERNAME):
-        sentry.captureMessage('No email server configured')
+        capture_message('No email server configured')
         return
 
     if not sender:
@@ -51,4 +52,4 @@ def send_email(subject, body, recipients, sender=None):
     except Exception:
         # still log the exception to Sentry,
         # but don't let it be uncaught
-        sentry.captureException()
+        capture_exception()

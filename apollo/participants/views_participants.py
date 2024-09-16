@@ -1,33 +1,49 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 import logging
 import os
 import re
+from datetime import datetime
 
 from flask import (
-    Blueprint, Response, abort, current_app, g, redirect, render_template,
-    request, session, stream_with_context, url_for)
-from flask_babel import get_locale, gettext as _
+    Blueprint,
+    Response,
+    abort,
+    current_app,
+    g,
+    redirect,
+    render_template,
+    request,
+    session,
+    stream_with_context,
+    url_for,
+)
+from flask_babel import get_locale
+from flask_babel import gettext as _
 from flask_menu import register_menu
 from flask_security import current_user, login_required
+from sentry_sdk import capture_exception
 from slugify import slugify
 from sqlalchemy import BigInteger, case, desc, func
 from sqlalchemy.orm import joinedload
 
 from apollo import models, services, utils
-from apollo.core import docs, sentry, uploads, db
+from apollo.core import db, docs, uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
 from apollo.participants import filters, forms, tasks
 from apollo.participants.api import views as api_views
 
-from .models import Participant, ParticipantSet, ParticipantRole
-from .models import ParticipantPartner, PhoneContact
 from ..locations.models import Location
 from ..submissions.models import Submission
 from ..users.models import UserUpload
-
+from .models import (
+    Participant,
+    ParticipantPartner,
+    ParticipantRole,
+    ParticipantSet,
+    PhoneContact,
+)
 
 phone_number_cleaner = re.compile(r'[^0-9]')
 
@@ -588,7 +604,7 @@ def participant_headers(upload_id, participant_set_id=0, view=None):
         # delete loaded file
         os.remove(filepath)
         upload.delete()
-        sentry.captureException()
+        capture_exception()
         return abort(400)
 
     form = mapping_form_class()

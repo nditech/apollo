@@ -1,30 +1,51 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from io import BytesIO
 import json
 import os
+from datetime import datetime
+from io import BytesIO
 
-from flask import (Blueprint, Response, abort, current_app, flash, g, redirect,
-                   request, send_file, session, stream_with_context, url_for)
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    current_app,
+    flash,
+    g,
+    redirect,
+    request,
+    send_file,
+    session,
+    stream_with_context,
+    url_for,
+)
 from flask_babel import gettext as _
 from flask_security import current_user
+from sentry_sdk import capture_exception
 from slugify import slugify
 from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
+import apollo.locations.api.views as api_views
 from apollo import services, utils
-from apollo.core import db, docs, sentry, uploads
+from apollo.core import db, docs, uploads
 from apollo.frontend import permissions
 from apollo.frontend.forms import (
-    file_upload_form, generate_location_edit_form,
-    DummyForm)
+    DummyForm,
+    file_upload_form,
+    generate_location_edit_form,
+)
 from apollo.locations import filters, forms, tasks
-import apollo.locations.api.views as api_views
 from apollo.locations.utils import import_graph
-from .models import LocationSet, LocationType, Location, LocationTranslations
-from .models import LocationTypePath, LocationDataField
-from ..users.models import UserUpload
 
+from ..users.models import UserUpload
+from .models import (
+    Location,
+    LocationDataField,
+    LocationSet,
+    LocationTranslations,
+    LocationType,
+    LocationTypePath,
+)
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -175,7 +196,7 @@ def locations_headers(view, location_set_id, upload_id):
                 source_file, location_set)
     except Exception:
         # log exception (if Sentry is enabled)
-        sentry.captureException()
+        capture_exception()
 
         # delete loaded file
         os.remove(filepath)

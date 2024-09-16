@@ -21,7 +21,7 @@ from flask_babel import gettext as _
 from flask_security import current_user, login_required, roles_required
 from flask_security.utils import hash_password, url_for_security
 from flask_wtf.file import FileField
-from jinja2 import contextfunction
+from jinja2 import pass_context
 from slugify import slugify
 from sqlalchemy import func
 from wtforms import (
@@ -475,7 +475,7 @@ class EventAdminView(HiddenObjectMixin, BaseAdminView):
         event.end = event.end.astimezone(app_time_zone)
         return event
 
-    @contextfunction
+    @pass_context
     def get_list_value(self, context, model, name):
         if name in ['start', 'end']:
             attribute = getattr(model, name, None)
