@@ -276,9 +276,7 @@ flask-login==0.6.3 ; python_full_version >= "3.11.10" and python_full_version < 
 flask-mail==0.10.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:44083e7b02bbcce792209c06252f8569dd5a325a7aaa76afe7330422bd97881d \
     --hash=sha256:a451e490931bb3441d9b11ebab6812a16bfa81855792ae1bf9c1e1e22c4e51e7
-flask-menu==0.7.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:02adee99456f70fcf4472c5ce04a65a083bce78d39144e4daa38e79a123da7e8 \
-    --hash=sha256:d54f604b2d93d1d7bb95c78d9188b5855b54af399f8cd9e64b2feabd138608bf
+flask-menu @ git+https://github.com/marvinscham/flask-menu.git@2405838c455b16bc77c99af991e763d21b8c6bb9 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0"
 flask-migrate==2.1.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:493f9b3795985b9b4915bf3b7d16946697f027b73545384e7d9e3a79f989d2fe \
     --hash=sha256:b709ca8642559c3c5a81a33ab10839fa052177accd5ba821047a99db635255ed

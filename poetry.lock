@@ -935,24 +935,24 @@ flask = "*"
 
 [[package]]
 name = "flask-menu"
-version = "0.7.0"
-description = "Flask-Menu is a Flask extension that adds support for generating menus."
+version = "1.0.2"
+description = "\"Flask-Menu is a Flask extension that adds support for generating menus.\""
 optional = false
-python-versions = "*"
-files = [
-    {file = "Flask-Menu-0.7.0.tar.gz", hash = "sha256:02adee99456f70fcf4472c5ce04a65a083bce78d39144e4daa38e79a123da7e8"},
-    {file = "Flask_Menu-0.7.0-py3-none-any.whl", hash = "sha256:d54f604b2d93d1d7bb95c78d9188b5855b54af399f8cd9e64b2feabd138608bf"},
-]
+python-versions = ">=3.7"
+files = []
+develop = false
 
 [package.dependencies]
-Flask = ">=0.10.1"
-six = ">=1.7.2"
+Flask = ">=3.0.0"
 
 [package.extras]
-all = ["check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "flask-classy (>=0.6.10)", "flask-classy (>=0.6.10)", "flask-classy (>=0.6.10)", "flask-classy (>=0.6.10)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "sphinx (>=1.3)", "sphinx (>=1.3)"]
-classy = ["flask-classy (>=0.6.10)"]
-docs = ["sphinx (>=1.3)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "flask-classy (>=0.6.10)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["check-manifest (>=0.49)", "pytest-black-ng (>=0.3.0)", "pytest-cov (>=4.1.0)", "pytest-flask (>=1.2.0)", "pytest-isort (>=3.1.0)", "pytest-pydocstyle (>=2.3.2)", "sphinx (>=4.5)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/marvinscham/flask-menu.git"
+reference = "2405838c455b16bc77c99af991e763d21b8c6bb9"
+resolved_reference = "2405838c455b16bc77c99af991e763d21b8c6bb9"
 
 [[package]]
 name = "flask-migrate"
@@ -3455,4 +3455,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "375bd9797ce32f46a6cb0ab22c9ef028da3442ed679e3ceac90c3d4fb7cded35"
+content-hash = "a8c81c5091ac04cb28440a9d6d8bba54858b7733dea443ce050885c7a60eadb3"
