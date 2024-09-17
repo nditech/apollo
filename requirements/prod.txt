@@ -29,6 +29,9 @@ backports-csv==1.0.7 ; python_full_version >= "3.11.10" and python_full_version 
 billiard==4.2.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:07aa978b308f334ff8282bd4a746e681b3513db5c9a514cbdd810cbbdc19714d \
     --hash=sha256:9a3c3184cb275aa17a732f93f65b20c525d3d9f253722d26a82194803ade5a2c
+bleach==6.1.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
+    --hash=sha256:0a31f1837963c41d46bbf1331b8778e1308ea0791db03cc4e7357b97cf42a8fe \
+    --hash=sha256:3225f354cfc436b9789c66c4ee030194bee0568fbf9cbdad3bc8b5c26c5f12b6
 blinker==1.8.2 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:1779309f71bf239144b9399d06ae925637cf6634cf6bd131104184531bf67c01 \
     --hash=sha256:8f77b09d3bf7c795e969e9486f39c2c5e9c39d4ee07424be2bc594ece9642d83
@@ -1223,6 +1226,9 @@ webargs==8.6.0 ; python_full_version >= "3.11.10" and python_full_version < "3.1
 webassets==2.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:167132337677c8cedc9705090f6d48da3fb262c8e0b2773b29f3352f050181cd \
     --hash=sha256:a31a55147752ba1b3dc07dee0ad8c8efff274464e08bbdb88c1fd59ffd552724
+webencodings==0.5.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
+    --hash=sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78 \
+    --hash=sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923
 werkzeug==3.0.4 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:02c9eb92b7d6c06f31a782811505d2157837cea66aaede3e217c7c27c039476c \
     --hash=sha256:34f2371506b250df4d4f84bfe7b0921e4762525762bbd936614909fe25cd7306

@@ -59,6 +59,7 @@ DEFAULT_EMAIL_SENDER = config('DEFAULT_EMAIL_SENDER', default='root@localhost')
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
+SECURITY_USERNAME_ENABLE = True
 SECURITY_POST_LOGOUT_VIEW = '/accounts/login'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
 SECURITY_FORGOT_PASSWORD_TEMPLATE = 'frontend/forgot_password.html'
@@ -71,7 +72,6 @@ SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 SECURITY_USER_IDENTITY_ATTRIBUTES = [
-    {"email": {"mapper": uia_email_mapper, "case_insensitive": True}},
     {"username": {"mapper": uia_username_mapper, "case_insensitive": True}}
 ]
 APOLLO_FIELD_COORDINATOR_EMAIL = config(
