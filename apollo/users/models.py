@@ -79,8 +79,8 @@ class User(BaseModel, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
             'deployment.id', ondelete='CASCADE'), nullable=False)
-    email = db.Column(db.String, nullable=False, unique=True)
-    username = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String)
     first_name = db.Column(db.String)
