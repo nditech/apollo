@@ -1216,8 +1216,9 @@ six==1.11.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0
 smmap==5.0.1 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:dceeb6c0028fdb6734471eb07c0cd2aae706ccaecab45965ee83f11c8d3b1f62 \
     --hash=sha256:e6d8668fa5f93e706934a62d7b4db19c8d9eb8cf2adbb75ef1b675aa332b69da
-sqlalchemy-json==0.2.3 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
-    --hash=sha256:d17952e771eecd9023c0f683d2a6aaa27ce1a6dbf57b0fe2bf4d5aef4c5dad1c
+sqlalchemy-json==0.7.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
+    --hash=sha256:27881d662ca18363a4ac28175cc47ea2a6f2bef997ae1159c151026b741818e6 \
+    --hash=sha256:620d0b26f648f21a8fa9127df66f55f83a5ab4ae010e5397a5c6989a08238561
 sqlalchemy-utils==0.39.0 ; python_full_version >= "3.11.10" and python_full_version < "3.12.0" \
     --hash=sha256:9da26a9b20c6979167772ba5dc2a1d01265648f18c82995f082279a399ea308b \
     --hash=sha256:b37240917d81c14fe1b6e5096a402bace472b179121384e47c10d854dbf5af92

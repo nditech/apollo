@@ -2956,18 +2956,20 @@ sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
 name = "sqlalchemy-json"
-version = "0.2.3"
+version = "0.7.0"
 description = "JSON type with nested change tracking for SQLAlchemy"
 optional = false
-python-versions = "*"
+python-versions = ">= 3.6"
 files = [
-    {file = "sqlalchemy-json-0.2.3.tar.gz", hash = "sha256:d17952e771eecd9023c0f683d2a6aaa27ce1a6dbf57b0fe2bf4d5aef4c5dad1c"},
+    {file = "sqlalchemy-json-0.7.0.tar.gz", hash = "sha256:620d0b26f648f21a8fa9127df66f55f83a5ab4ae010e5397a5c6989a08238561"},
+    {file = "sqlalchemy_json-0.7.0-py3-none-any.whl", hash = "sha256:27881d662ca18363a4ac28175cc47ea2a6f2bef997ae1159c151026b741818e6"},
 ]
 
 [package.dependencies]
-six = "*"
 sqlalchemy = ">=0.7"
-sqlalchemy_utils = "*"
+
+[package.extras]
+dev = ["pytest"]
 
 [[package]]
 name = "sqlalchemy-utils"
@@ -3456,4 +3458,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "b7ee6f361ab714ded3485197e3e37e1f871bd29e447b424f07b061ab4376cdd3"
+content-hash = "9e4a55f1528b3746f9bca6aedd9fedea45e68a4a61ab32842394936fd2948733"
