@@ -15,7 +15,9 @@ services:
 
   web:
     restart: always
-    build: .
+    build:
+      context: .
+      target: ${ENV:-production}
     links:
       - postgres
       - redis
@@ -32,7 +34,9 @@ services:
 
   worker:
     restart: always
-    build: .
+    build:
+      context: .
+      target: ${ENV:-production}
     links:
       - postgres
       - redis

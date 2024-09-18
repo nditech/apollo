@@ -2,18 +2,19 @@
 import os
 import string
 from datetime import timedelta
+from importlib import metadata
 from pathlib import Path
 
 import git
 import numpy
-from flask_security import uia_email_mapper, uia_username_mapper
+from flask_security import uia_username_mapper
 from prettyconf import config
 
-VERSION = config('VERSION', default='2024.9')
+VERSION = metadata.version("apollo")
 try:
     repo = git.Repo(search_parent_directories=True)
     COMMIT = repo.head.object.hexsha[:8]
-except git.exc.InvalidGitRepositoryError:
+except (git.exc.InvalidGitRepositoryError, git.exc.GitCommandNotFound):
     COMMIT = config('COMMIT', default='')
 
 postgres_password = Path('/run/secrets/postgres_password')
@@ -28,7 +29,6 @@ try:
 except KeyError:
     raise KeyError('A SECRET_KEY value must be defined in the environment.')
 
-DEBUG = config('DEBUG', cast=config.boolean, default=False)
 PAGE_SIZE = config('PAGE_SIZE', cast=int, default=25)
 API_PAGE_SIZE = config('API_PAGE_SIZE', cast=int, default=100)
 
@@ -87,7 +87,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
-CACHE_TYPE = 'simple' if DEBUG else 'redis'
+CACHE_TYPE = 'simple' #if DEBUG else 'redis'
 CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
     host=config('REDIS_HOSTNAME', default='redis'),
     database=config('REDIS_DATABASE', default='0'))
