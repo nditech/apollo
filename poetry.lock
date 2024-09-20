@@ -2253,13 +2253,16 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "prettyconf"
-version = "1.2.3"
+version = "2.2.1"
 description = "Separation of settings from code."
 optional = false
 python-versions = "*"
 files = [
-    {file = "prettyconf-1.2.3.tar.gz", hash = "sha256:83a23f3e01a2bb3c42c938c7823e61dcaf2eab47b27f5ed1e9fb76b2afe2023e"},
+    {file = "prettyconf-2.2.1.tar.gz", hash = "sha256:2478d16bc2596c9863e93dd182ca70b71f636f0e169ab23288906c53147cfdbc"},
 ]
+
+[package.extras]
+aws = ["boto3"]
 
 [[package]]
 name = "prometheus-client"
@@ -3487,4 +3490,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "43d31bd501a493964ecd5207069a5bf217d2ee16a71f7913f8bb9763244fcebd"
+content-hash = "7395e195962bbc4a2bf3588509a726cf3197e4a4ce8a3d6b1a7ee8e2a96e9e2b"
