@@ -86,7 +86,7 @@ loginpass = "^0.5"
 sentry-sdk = {extras = ["celery", "flask"], version = "^2.14.0"}
 bleach = "^6.1.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 autopep8 = "~=1.4.4"
 coverage = "~=4.5.3"
 flake8 = "~=3.7.7"
