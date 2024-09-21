@@ -25,7 +25,7 @@ from sqlalchemy.orm import joinedload
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
-from apollo import models, services, utils
+from apollo import models, services, utils as autils
 from apollo.core import db, docs
 from apollo.dal import utils
 from apollo.frontend import route, permissions
@@ -43,7 +43,6 @@ from apollo.submissions.aggregation import (
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.qa.query_builder import generate_qa_queries
 from apollo.submissions.utils import make_submission_dataframe
-from apollo.utils import current_timestamp
 
 
 auth = HTTPBasicAuth()
@@ -550,7 +549,7 @@ def submission_create(form_id):
             deployment_id=event.deployment_id,
             form=questionnaire_form,
             submission_type='O',
-            created=utils.current_timestamp(),
+            created=autils.current_timestamp(),
             participant=submission_form.participant.data,
             location=submission_form.location.data or submission_form.participant.data.location,  # noqa
             incident_description=submission_form.description.data,
@@ -1020,7 +1019,7 @@ def submission_edit(submission_id):
                             update_params['overridden_fields'] = []
 
                         extra_data = master_submission.extra_data or {}
-                        now = current_timestamp().isoformat()
+                        now = autils.current_timestamp().isoformat()
 
                         # set the 'voting_timestamp' extra data attribute to
                         # the current timestamp only if a voting share was
@@ -1188,7 +1187,7 @@ def submission_edit(submission_id):
                         update_params['data'] = data
                         submission.update_group_timestamps(data)
                         extra_data = submission.extra_data or {}
-                        now = current_timestamp().isoformat()
+                        now = autils.current_timestamp().isoformat()
 
                         # set the 'voting_timestamp' extra data attribute to
                         # the current timestamp only if a voting share was
@@ -1269,7 +1268,7 @@ def comment_create_view():
         submission=submission,
         user=current_user._get_current_object(),
         comment=comment,
-        submit_date=utils.current_timestamp(),
+        submit_date=autils.current_timestamp(),
         deployment_id=submission.deployment_id
     )
 
