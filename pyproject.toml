@@ -99,6 +99,7 @@ selenium = "~=3.141.0"
 chromedriver-autoinstaller = "~=0.6.2"
 pytest-flask = "1.2.0"
 ruff = "^0.6.6"
+pre-commit = "^3.8.0"
 
 [tool.ruff]
 line-length = 120
@@ -119,7 +120,7 @@ ignore = [
     "W191",  # indentation contains tabs
     "D401",  # imperative mood
     "D100",  # missing docstring in public module
-    "D101",  # missing docstring in public class 
+    "D101",  # missing docstring in public class
     "D102",  # missing docstring in public method
     "N802"  # function name should be lower case
 ]
