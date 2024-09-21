@@ -40,7 +40,9 @@ class FormListResource(BaseListResource):
         else:
             deployment_id = None
 
-        query = Form.query.filter_by(deployment_id=deployment_id)
+        query = Form.query.filter_by(
+            deployment_id=deployment_id, is_hidden=False
+        )
 
         form_type = kwargs.get('form_type')
         if form_type:
