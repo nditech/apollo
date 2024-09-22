@@ -7,7 +7,8 @@ from flask_babelex import gettext
 from flask_jwt_extended import (
     create_access_token, get_jwt, get_jwt_identity, jwt_required,
     set_access_cookies, unset_access_cookies)
-from sqlalchemy import bindparam, func, or_, text, true
+from sqlalchemy import and_, bindparam, func, or_, text, true
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound
 from webargs import fields
 
@@ -214,37 +215,44 @@ def logout():
     return response
 
 
-def _get_form_data(participant):
+def _get_form_data(participant: Participant):
+    EventAlias = aliased(Event, flat=True)
+    FormAlias = aliased(Form, flat=True)
+
     # get incident forms
-    incident_forms = Form.query.join(Form.events).filter(
-        Event.participant_set_id == participant.participant_set_id,
+    incident_forms = Form.query.join(EventAlias, Form.events).filter(
+        EventAlias.participant_set_id == participant.participant_set_id,
         Form.form_type == 'INCIDENT',
         Form.is_hidden == False,
     ).with_entities(Form).order_by(Form.name, Form.id)
 
     # get participant submissions
-    participant_submissions = Submission.query.filter(
-        Submission.participant_id == participant.id
-    ).join(Submission.form)
+    participant_submissions = Submission.query.join(
+        EventAlias,
+        and_(
+            EventAlias.participant_set_id == participant.participant_set_id,
+            Submission.event_id == EventAlias.id
+        )
+    ).join(FormAlias, Submission.form_id == FormAlias.id)
 
     # get checklist and survey forms based on the available submissions
     non_incident_forms = participant_submissions.with_entities(
-        Form).distinct(Form.id)
+        FormAlias).distinct(FormAlias.id)
     checklist_forms = non_incident_forms.filter(
-        Form.form_type == 'CHECKLIST', Form.is_hidden == False
+        FormAlias.form_type == 'CHECKLIST', FormAlias.is_hidden == False
     )
     survey_forms = non_incident_forms.filter(
-        Form.form_type == 'SURVEY', Form.is_hidden == False
+        FormAlias.form_type == 'SURVEY', FormAlias.is_hidden == False
     )
 
     # get form serial numbers
     form_ids_with_serials = participant_submissions.filter(
-        Form.form_type == 'SURVEY'
+        FormAlias.form_type == 'SURVEY'
     ).with_entities(
-        Form.id, Submission.serial_no
+        FormAlias.id, Submission.serial_no
     ).distinct(
-        Form.id, Submission.serial_no
-    ).order_by(Form.id, Submission.serial_no)
+        FormAlias.id, Submission.serial_no
+    ).order_by(FormAlias.id, Submission.serial_no)
 
     all_forms = checklist_forms.all() + incident_forms.all() + \
         survey_forms.all()
