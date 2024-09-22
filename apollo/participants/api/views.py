@@ -218,7 +218,8 @@ def _get_form_data(participant):
     # get incident forms
     incident_forms = Form.query.join(Form.events).filter(
         Event.participant_set_id == participant.participant_set_id,
-        Form.form_type == 'INCIDENT'
+        Form.form_type == 'INCIDENT',
+        Form.is_hidden == False,
     ).with_entities(Form).order_by(Form.name, Form.id)
 
     # get participant submissions
@@ -229,8 +230,12 @@ def _get_form_data(participant):
     # get checklist and survey forms based on the available submissions
     non_incident_forms = participant_submissions.with_entities(
         Form).distinct(Form.id)
-    checklist_forms = non_incident_forms.filter(Form.form_type == 'CHECKLIST')
-    survey_forms = non_incident_forms.filter(Form.form_type == 'SURVEY')
+    checklist_forms = non_incident_forms.filter(
+        Form.form_type == 'CHECKLIST', Form.is_hidden == False
+    )
+    survey_forms = non_incident_forms.filter(
+        Form.form_type == 'SURVEY', Form.is_hidden == False
+    )
 
     # get form serial numbers
     form_ids_with_serials = participant_submissions.filter(
