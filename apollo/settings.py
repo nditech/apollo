@@ -107,16 +107,31 @@ CHARACTER_TRANSLATIONS = (
 )
 PUNCTUATIONS = [s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + [" "]
 TRANS_TABLE = {ord(char_from): ord(char_to) for char_from, char_to in CHARACTER_TRANSLATIONS}
-MESSAGING_OUTGOING_GATEWAY = config(
-    "MESSAGING_OUTGOING_GATEWAY",
-    cast=config.eval,
-    default="""{
-        'type': 'kannel',
-        'gateway_url': 'http://localhost:13013/cgi-bin/sendsms',
-        'username': 'foo',
-        'password': 'bar'
-    }""",
-)
+
+MESSAGING_OUTGOING_GATEWAY = {}
+_gateway_types = {"kannel": "kannel", "telerivet": "telerivet"}
+_gateway_type = config("MESSAGING_OUTGOING_GATEWAY_TYPE", default="kannel", cast=config.option(_gateway_types))
+
+MESSAGING_OUTGOING_GATEWAY["type"] = _gateway_type
+
+if _gateway_type == _gateway_types["kannel"]:
+    MESSAGING_OUTGOING_GATEWAY["gateway_url"] = config(
+        "MESSAGING_OUTGOING_GATEWAY_URL", default="http://localhost:13013/cgi-bin/sendsms"
+    )
+    MESSAGING_OUTGOING_GATEWAY["username"] = config("MESSAGING_OUTGOING_GATEWAY_USERNAME")
+    MESSAGING_OUTGOING_GATEWAY["password"] = config("MESSAGING_OUTGOING_GATEWAY_PASSWORD")
+    MESSAGING_OUTGOING_GATEWAY["sender"] = config("MESSAGING_OUTGOING_GATEWAY_SENDER", default="")
+    MESSAGING_OUTGOING_GATEWAY["smsc"] = config("MESSAGING_OUTGOING_GATEWAY_SMSC", default=None)
+    MESSAGING_OUTGOING_GATEWAY["charset"] = config("MESSAGING_OUTGOING_GATEWAY_CHARSET", default=None)
+    MESSAGING_OUTGOING_GATEWAY["coding"] = config("MESSAGING_OUTGOING_GATEWAY_CODING", default=None)
+
+elif _gateway_type == _gateway_types["telerivet"]:
+    _project_id = config("MESSAGING_OUTGOING_GATEWAY_PROJECT_ID")
+    MESSAGING_OUTGOING_GATEWAY["gateway_url"] = f"https://api.telerivet.com/v1/projects/{_project_id}/messages/send"
+    MESSAGING_OUTGOING_GATEWAY["api_key"] = config("MESSAGING_OUTGOING_GATEWAY_API_KEY")
+    MESSAGING_OUTGOING_GATEWAY["route_id"] = config("MESSAGING_OUTGOING_GATEWAY_ROUTE_ID", default=None)
+    MESSAGING_OUTGOING_GATEWAY["priority"] = config("MESSAGING_OUTGOING_GATEWAY_PRIORITY", default=None)
+
 MESSAGING_CC = config("MESSAGING_CC", cast=config.tuple, default=())
 MESSAGING_SECRET = config("MESSAGING_SECRET", default=None)
 
