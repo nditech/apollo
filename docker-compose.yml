@@ -27,7 +27,6 @@ services:
       - ./.env
     volumes:
       - upload_data:/app/uploads
-      - ./settings.ini:/app/settings.ini
     ports:
       - "5000:5000"
     command: ['./wait-for-it.sh', 'postgres:5432', '--', './manage.py', 'gunicorn', '-c', 'gunicorn.conf']
@@ -46,7 +45,6 @@ services:
       - ./.env
     volumes:
       - upload_data:/app/uploads
-      - ./settings.ini:/app/settings.ini
     command: ['./wait-for-it.sh', 'postgres:5432', '--', './manage.py', 'worker']
 
 volumes:
