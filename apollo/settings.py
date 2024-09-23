@@ -118,8 +118,8 @@ if _gateway_type == _gateway_types["kannel"]:
     MESSAGING_OUTGOING_GATEWAY["gateway_url"] = config(
         "MESSAGING_OUTGOING_GATEWAY_URL", default="http://localhost:13013/cgi-bin/sendsms"
     )
-    MESSAGING_OUTGOING_GATEWAY["username"] = config("MESSAGING_OUTGOING_GATEWAY_USERNAME")
-    MESSAGING_OUTGOING_GATEWAY["password"] = config("MESSAGING_OUTGOING_GATEWAY_PASSWORD")
+    MESSAGING_OUTGOING_GATEWAY["username"] = config("MESSAGING_OUTGOING_GATEWAY_USERNAME", default="")
+    MESSAGING_OUTGOING_GATEWAY["password"] = config("MESSAGING_OUTGOING_GATEWAY_PASSWORD", default="")
     MESSAGING_OUTGOING_GATEWAY["sender"] = config("MESSAGING_OUTGOING_GATEWAY_SENDER", default="")
     MESSAGING_OUTGOING_GATEWAY["smsc"] = config("MESSAGING_OUTGOING_GATEWAY_SMSC", default=None)
     MESSAGING_OUTGOING_GATEWAY["charset"] = config("MESSAGING_OUTGOING_GATEWAY_CHARSET", default=None)
