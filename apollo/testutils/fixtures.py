@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def load_sql_fixture(fixture):
+    """Utility method for loading a fixture using SQL queries in a file."""
     source_file = pathlib.Path(fixture)
     if source_file.exists() and source_file.is_file():
         query_text = text(source_file.read_text())
@@ -18,7 +19,7 @@ def load_sql_fixture(fixture):
             # create connection and start transation
             with db.engine.begin() as conn:
                 conn.execute(query_text)
-        except Exception as ex:
-            logger.exception('Error occurred executing fixture statement(s)')
+        except Exception:
+            logger.exception("Error occurred executing fixture statement(s)")
     else:
-        warnings.warn(f'Invalid fixture specified: {source_file}')
+        warnings.warn(f"Invalid fixture specified: {source_file}", stacklevel=2)

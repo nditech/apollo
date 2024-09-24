@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import codecs
-import os
-import warnings
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -9,31 +7,13 @@ from PIL import Image
 from pytz import utc
 
 
-def read_env(env_path=None):
-    if not os.path.exists(env_path):
-        warnings.warn('No environment file found. Skipping load.')
-        return
-
-    for k, v in parse_env(env_path):
-        os.environ.setdefault(k, v)
-
-
-def parse_env(env_path):
-    with open(env_path) as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith('#') or '=' not in line:
-                continue
-            k, v = line.split('=', 1)
-            v = v.strip('"').strip("'")
-            yield k, v
-
-
 def current_timestamp():
+    """Gets the current timestamp with the timezone information."""
     return utc.localize(datetime.utcnow())
 
 
 def validate_uuid(uuid_string):
+    """Validates a uuid4 string."""
     try:
         UUID(uuid_string, version=4)
         return True
@@ -41,26 +21,8 @@ def validate_uuid(uuid_string):
         return False
 
 
-def remove_bom_in_place(path):
-    buffer_size = 4096
-    bom_length = len(codecs.BOM_UTF8)
-
-    with open(path, 'r+b') as fp:
-        chunk = fp.read(buffer_size)
-        if chunk.startswith(codecs.BOM_UTF8):
-            i = 0
-            chunk = chunk[bom_length:]
-            while chunk:
-                fp.seek(i)
-                fp.write(chunk)
-                i += len(chunk)
-                fp.seek(bom_length, os.SEEK_CUR)
-                chunk = fp.read(buffer_size)
-            fp.seek(-bom_length, os.SEEK_CUR)
-            fp.truncate()
-
-
 def strip_bom_header(fileobj):
+    """Strips the byte-order mark from the header of a file."""
     chunk_size = 512
     chunk = fileobj.read(chunk_size)
 
@@ -73,13 +35,16 @@ def strip_bom_header(fileobj):
 
 
 def generate_identifier():
-    val = int(uuid4()) % 100000000000000
-    return hex(val)[2:-1]
+    """Generate an identifier with a maximum value of 0xffffffffffff."""
+    val = int(uuid4()) % 281474976710656
+    padded = f"{val:#012x}"
+    return padded[2:]
 
 
 def resize_image(pil_image: Image, new_size: int) -> Image:
+    """Resizes a given image."""
     background_color = (255, 255, 255, 0)
-    image_mode = 'RGBA'
+    image_mode = "RGBA"
 
     width, height = pil_image.size
     if width == height:
