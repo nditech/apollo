@@ -245,7 +245,7 @@ def get_daily_progress(query, event):
     """Generates the data for the dashboard progress histogram."""
     query_with_entities = query.with_entities(Submission.participant_updated)
     df = pd.read_sql(
-        query_with_entities.selectable.compile(compile_kwargs={"literal_binds": True}).string,
+        query_with_entities.selectable,
         query_with_entities.session.get_bind(),
         index_col="participant_updated",
         parse_dates=["participant_updated"],
@@ -314,7 +314,7 @@ def get_stratified_daily_progress(query, event, location_type):
         )
 
         df = pd.read_sql(
-            _query.selectable.compile(compile_kwargs={"literal_binds": True}).string,
+            _query.selectable,
             _query.session.get_bind(),
             index_col=["participant_updated"],
             parse_dates=["participant_updated"],

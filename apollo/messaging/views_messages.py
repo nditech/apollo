@@ -113,11 +113,11 @@ def message_list():
                 sa.or_(
                     sa.or_(
                         Message.text.ilike(f"%{value}%"),
-                        Message.text.op("@@")(sa.func.plainto_tsquery("english", value)),
+                        Message.text.op("@@")(sa.func.plainto_tsquery(sa.literal_column("'english'"), value)),
                     ),
                     sa.or_(
                         OutboundMsg.text.ilike(f"%{value}%"),
-                        OutboundMsg.text.op("@@")(sa.func.plainto_tsquery("english", value)),
+                        OutboundMsg.text.op("@@")(sa.func.plainto_tsquery(sa.literal_column("'english'"), value)),
                     ),
                 )
             )
@@ -175,9 +175,9 @@ def message_time_series(message_queryset):
     # DOS attacks
     query = message_queryset.filter(
         Message.direction == "IN", Message.received >= lower_bound, Message.received <= upper_bound
-    ).with_entities(Message.received)
+    ).with_entities(Message.received.label("received"))
 
-    df = pd.read_sql(query.selectable.compile(compile_kwargs={"literal_binds": True}).string, query.session.get_bind())
+    df = pd.read_sql(query.selectable, query.session.get_bind())
 
     # set a marker for each message
     df["marker"] = 1

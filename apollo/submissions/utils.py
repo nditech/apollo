@@ -90,7 +90,7 @@ def make_submission_dataframe(query, form, selected_tags=None, excluded_tags=Non
     )
 
     df = pd.read_sql(
-        dataframe_query.selectable.compile(compile_kwargs={"literal_binds": True}).string,
+        dataframe_query.selectable,
         dataframe_query.session.get_bind(),
     ).astype(type_coercions)
 
@@ -180,7 +180,7 @@ def make_turnout_dataframe(query, form):  # noqa
     )
 
     df = pd.read_sql(
-        dataframe_query.selectable.compile(compile_kwargs={"literal_binds": True}).string,
+        dataframe_query.selectable,
         dataframe_query.session.get_bind(),
     ).astype(type_coercions)
 
