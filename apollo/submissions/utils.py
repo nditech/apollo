@@ -198,13 +198,13 @@ def valid_turnout_dataframe(dataframe: pd.DataFrame, form: object, turnout_field
     if turnout_rv_field:
         return dataframe[
             (dataframe[rv_field_label] > 0)
-            & (dataframe[rv_field_label] != turnout_rv_field.get("null_value", pd.np.nan))  # noqa
+            & (dataframe[rv_field_label] != turnout_rv_field.get("null_value", np.nan))  # noqa
             & dataframe[turnout_field["tag"]].notna()
-            & (dataframe[turnout_field["tag"]] != turnout_field.get("null_value", pd.np.nan))  # noqa
+            & (dataframe[turnout_field["tag"]] != turnout_field.get("null_value", np.nan))  # noqa
         ]
     else:
         return dataframe[
             (dataframe[rv_field_label] > 0)
             & dataframe[turnout_field["tag"]].notna()
-            & (dataframe[turnout_field["tag"]] != turnout_field.get("null_value", pd.np.nan))  # noqa
+            & (dataframe[turnout_field["tag"]] != turnout_field.get("null_value", np.nan))  # noqa
         ]
