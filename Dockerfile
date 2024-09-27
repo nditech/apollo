@@ -46,7 +46,7 @@ RUN apt-get install --no-install-recommends -y \
         build-essential
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
-# The --mount will mount the buildx cache directory to where 
+# The --mount will mount the buildx cache directory to where
 # Poetry and Pip store their cache so that they can re-use it
 RUN --mount=type=cache,target=/root/.cache \
     curl -sSL https://install.python-poetry.org | python3 -
@@ -96,9 +96,9 @@ WORKDIR $PYSETUP_PATH
 RUN --mount=type=cache,target=/root/.cache \
     poetry install --with=dev
 
-CMD ["flask", "--app", "apollo.wsgi", "run", "--reload", "--host", "[::]", "--port", "8000"]
+CMD ["flask", "--app", "apollo.wsgi", "run", "--reload", "--debug", "--host", "[::]", "--port", "5000"]
 
-EXPOSE 8000
+EXPOSE 5000
 
 
 ## PRODUCTION
@@ -110,6 +110,6 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR $PYSETUP_PATH
 
-CMD ["gunicorn","-c","gunicorn.conf","--bind=[::]:5000","apollo.wsgi:application"]
+CMD ["gunicorn","-c","gunicorn.conf","apollo.wsgi"]
 
 EXPOSE 5000

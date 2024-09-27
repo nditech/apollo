@@ -29,7 +29,7 @@ services:
       - upload_data:/app/uploads
     ports:
       - "5000:5000"
-    command: ['./wait-for-it.sh', 'postgres:5432', '--', './manage.py', 'gunicorn', '-c', 'gunicorn.conf']
+    command: ['./wait-for-it.sh', 'postgres:5432', '--', 'gunicorn', '-c', 'gunicorn.conf']
 
   worker:
     restart: always
