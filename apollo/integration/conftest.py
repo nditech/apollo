@@ -7,22 +7,26 @@ from sqlalchemy_utils import create_database, database_exists, drop_database
 from apollo.testutils.factory import create_test_app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app():
+    """Flask app fixture."""
     app = create_test_app()
+
+    if database_exists(app.config.get("SQLALCHEMY_DATABASE_URI")):
+        drop_database(app.config.get("SQLALCHEMY_DATABASE_URI"))
+    create_database(app.config.get("SQLALCHEMY_DATABASE_URI"))
+
     with app.app_context():
-        if database_exists(app.config.get('SQLALCHEMY_DATABASE_URI')):
-            drop_database(app.config.get('SQLALCHEMY_DATABASE_URI'))
-        create_database(app.config.get('SQLALCHEMY_DATABASE_URI'))
         upgrade()
 
     yield app
 
-    with app.app_context():
-        drop_database(app.config.get('SQLALCHEMY_DATABASE_URI'))
+    drop_database(app.config.get("SQLALCHEMY_DATABASE_URI"))
+
 
 @pytest.fixture(scope="session")
 def driver():
+    """Chromedriver setup."""
     chromedriver_autoinstaller.install()
 
     options = webdriver.ChromeOptions()
