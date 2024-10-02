@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "apollo"
-version = "2024.9"
+version = "2024.10"
 description = "A robust data collection and analysis tool to document political processes"
 authors = ["Tim Akinbo <takinbo@timbaobjects.com>"]
 license = "GPL-3.0-only"
