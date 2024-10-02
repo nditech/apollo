@@ -5,7 +5,8 @@ from datetime import datetime
 import flask_babel as babel
 import pytest
 from flask_babel import force_locale
-from mimesis import Generic, locales
+from mimesis import Generic
+from mimesis.locales import Locale
 
 from apollo import services
 from apollo.formsframework.models import Form
@@ -107,7 +108,7 @@ def test_parse_comment_message(locale):
     # test with comments in the locales below
     # we're using Farsi instead of Arabic
     # as mimesis doesn't support Arabic yet ):
-    current_locale = getattr(locales, locale)
+    current_locale = getattr(Locale, locale)
     test_participant_id = faker.person.identifier("######")
 
     with faker.text.override_locale(current_locale):
