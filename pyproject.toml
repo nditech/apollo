@@ -85,10 +85,7 @@ bleach = "^6.1.0"
 prometheus-flask-exporter = "^0.23.1"
 
 [tool.poetry.group.dev.dependencies]
-autopep8 = "~=1.4.4"
-coverage = "~=4.5.3"
-flake8 = "~=3.7.7"
-Flask-DebugToolbar = "0.10.1"
+Flask-DebugToolbar = "^0.16.0"
 mimesis = "^18.0.0"
 pytest = "^8.3.3"
 selenium = "^4.25.0"

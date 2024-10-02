@@ -33,7 +33,6 @@ except (git.exc.InvalidGitRepositoryError, git.exc.GitCommandNotFound):
     COMMIT = config("COMMIT", default="")
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
-config.starting_path = PROJECT_ROOT
 
 try:
     SECRET_KEY = config("SECRET_KEY")
@@ -184,6 +183,8 @@ IMAGE_UPLOAD_PATH = Path(config("IMAGES_STORAGE_PATH", default=BASE_UPLOAD_PATH.
 ATTACHMENTS_USE_S3 = config("ATTACHMENTS_USE_S3", cast=config.boolean, default=False)
 
 # WTF_CSRF_CHECK_DEFAULT = False
+
+DEBUG_TB_ENABLED = False
 
 _environment = os.environ.get("FLASK_ENV", "").lower()
 
