@@ -1,18 +1,20 @@
 version: 2.1
 orbs:
   browser-tools: circleci/browser-tools@1.4.8
+  python: circleci/python@2.1.1
 
 jobs:
   build:
     docker:
-      - image: cimg/python:3.6.15-browsers
+      - image: cimg/python:3.11.10-browsers
         environment:
-          - TEST_DATABASE_HOSTNAME: localhost
-          - TEST_DATABASE_USERNAME: circleci
-          - SECRET_KEY: notasecret
-          - REDIS_HOSTNAME: localhost
-          - SSL_REQUIRED: False
+          - DATABASE_HOSTNAME: localhost
+          - DATABASE_NAME: apollo_testing
+          - DATABASE_USERNAME: circleci
+          - FLASK_ENV: testing
           - MESSAGING_SECRET: notasecret
+          - REDIS_HOSTNAME: localhost
+          - SECRET_KEY: notasecret
 
       - image: cimg/postgres:12.11-postgis
         environment:
@@ -21,6 +23,7 @@ jobs:
 
       - image: cimg/redis:7.0
 
+    executor: python/default
     steps:
       - checkout
       - browser-tools/install-chrome
@@ -28,15 +31,16 @@ jobs:
       - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
       - run: psql -h localhost -d apollo_testing -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-      - restore_cache:
-          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
-      - run: pip install --user --require-hashes --no-deps -r requirements/dev.txt
-      - save_cache:
-          key: deps-v3-1663187796-{{ checksum "requirements/dev.txt" }}
-          paths:
-            - "/home/circleci/.local"
-      - run: pybabel compile -f -d apollo/translations/
-      - run: pytest -v apollo/
+      - python/install-packages:
+          pkg-manager: poetry
+      - run:
+          command: |
+            poetry run pybabel compile -f -d apollo/translations/
+          name: Compile translations
+      - run:
+          command: |
+            FLASK_ENV=testing poetry run pytest -v apollo/
+          name: Run tests
     resource_class: large
 
 workflows:
