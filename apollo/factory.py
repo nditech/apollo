@@ -27,6 +27,7 @@ from apollo.core import (
     jwt_manager,
     mail,
     menu,
+    metrics,
     migrate,
     red,
     security,
@@ -147,6 +148,16 @@ def create_app(package_name, package_path, settings_override=None, register_all_
         register_blueprint=register_all_blueprints,
     )
     configure_uploads(app, uploads)
+
+    # Prometheus Exporter
+    if app.config.get("PROMETHEUS_SECRET"):
+        metrics.path = f"/metrics/{app.config.get('PROMETHEUS_SECRET')}"
+        metrics.init_app(app)
+        try:
+            metrics.info("app_info", "Apollo", version=app.config.get("COMMIT") or app.config.get("VERSION"))
+        except ValueError:
+            # ignore double registration of the metric
+            pass
 
     # set up JWT callbacks
     jwt_manager.expired_token_loader(jwt_hooks.process_expired_token)

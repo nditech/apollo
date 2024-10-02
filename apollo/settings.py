@@ -154,6 +154,9 @@ MAX_CONTENT_LENGTH = config("MAX_UPLOAD_SIZE_MB", cast=int, default=100) * 1024 
 DEFAULT_UPLOAD_PATH = os.path.join(PROJECT_ROOT, "uploads")
 UPLOADS_DEFAULT_DEST = config("UPLOADS_DIR", default=DEFAULT_UPLOAD_PATH)
 
+# Defines the secret to append to the /metrics/ endpoint
+# to enable a prometheus exporter for metrics from the app
+# if this is not defined, the exporter is disabled.
 PROMETHEUS_SECRET = config("PROMETHEUS_SECRET", default="")
 
 WEBPACK_MANIFEST_PATH = Path(PROJECT_ROOT, "apollo/static/dist/manifest.json")
