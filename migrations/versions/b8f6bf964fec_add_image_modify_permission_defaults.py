@@ -1,10 +1,11 @@
-"""add image modify permission defaults
+"""add image modify permission defaults.
 
 Revision ID: b8f6bf964fec
 Revises: 690fb1fe46b4
 Create Date: 2022-09-14 21:36:55.605913
 
 """
+
 import itertools
 import uuid
 
@@ -19,6 +20,7 @@ depends_on = None
 
 
 def upgrade():
+    """Upgrade migration script."""
     connection = op.get_bind()
     permission_name = "modify_images"
 
@@ -46,7 +48,7 @@ def upgrade():
             """
         )
         permission_id = connection.execute(
-            select_query, name=permission_name, deployment_id=deployment_id
+            select_query, {"name": permission_name, "deployment_id": deployment_id}
         ).scalar()
         if permission_id is None:
             permission_id = connection.execute(
@@ -80,10 +82,7 @@ def upgrade():
                 """
             )
             permission_id_alt = connection.execute(
-                select_query_alt,
-                deployment_id=deployment_id,
-                permission_id=permission_id,
-                role=role,
+                select_query_alt, {"deployment_id": deployment_id, "permission_id": permission_id, "role": role}
             )
             if permission_id_alt is None:
                 connection.execute(
@@ -95,4 +94,5 @@ def upgrade():
 
 
 def downgrade():
+    """Downgrade migration script."""
     pass
