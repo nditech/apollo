@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
+from celery import shared_task
 from flask_mail import Message
 from sentry_sdk import capture_exception, capture_message
 
 from apollo import models, services, settings
 from apollo.core import mail
-from apollo.factory import create_celery_app
 from apollo.messaging.outgoing import gateway_factory
 
-celery = create_celery_app()
 
-
-@celery.task
+@shared_task()
 def send_message(event, message, recipient, sender=""):
-    """
-    Task for sending outgoing messages using the configured gateway
+    """Task for sending outgoing messages using the configured gateway.
 
     :param message: The string for the contents of the message to be sent
     :param recipient: The recipient of the text message
@@ -23,24 +20,30 @@ def send_message(event, message, recipient, sender=""):
     if gateway:
         services.messages.log_message(
             event=models.Event.query.filter_by(id=event).one(),
-            recipient=recipient, sender=sender, text=message, direction='OUT')
+            recipient=recipient,
+            sender=sender,
+            text=message,
+            direction="OUT",
+        )
         return gateway.send(message, recipient, sender)
 
 
-@celery.task
+@shared_task()
 def send_messages(event, message, recipients, sender=""):
-    if hasattr(recipients, '__iter__'):
-        items = [(event, message, recipient, sender)
-                 for recipient in set(recipients)]
+    """Send an outgoing message."""
+    try:
+        _ = iter(recipients)
+        items = [(event, message, recipient, sender) for recipient in set(recipients)]
         send_message.chunks(items, 100).delay()
-    else:
+    except TypeError:
         send_message.delay(event, message, recipients, sender)
 
 
-@celery.task
+@shared_task()
 def send_email(subject, body, recipients, sender=None):
+    """Send an outgoing email."""
     if not (settings.MAIL_SERVER or settings.MAIL_PORT or settings.MAIL_USERNAME):
-        capture_message('No email server configured')
+        capture_message("No email server configured")
         return
 
     if not sender:

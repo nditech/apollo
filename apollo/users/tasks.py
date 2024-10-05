@@ -2,24 +2,23 @@
 import os
 
 import pandas as pd
+from celery import shared_task
 from flask_babel import gettext
 from sqlalchemy import func
 
 from apollo import helpers
 from apollo.core import uploads
-from apollo.factory import create_celery_app
 from apollo.settings import LANGUAGES
 from apollo.users.models import Role, User, UserUpload
-
-celery = create_celery_app()
 
 
 def _is_valid(item):
     return not pd.isnull(item) and item
 
 
-@celery.task(bind=True)
+@shared_task(bind=True)
 def import_users(task, upload_id: int, mappings: dict, channel: str = None):
+    """Import user accounts."""
     upload = UserUpload.query.filter(UserUpload.id == upload_id).first()
 
     if not upload:
@@ -30,7 +29,7 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
         upload.delete()
         return
 
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         dataframe = helpers.load_source_file(f)
 
     total_records = dataframe.shape[0]
@@ -39,13 +38,13 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
     warning_records = 0
     error_log = []
 
-    USERNAME_COL = mappings.get('username')
-    EMAIL_COL = mappings.get('email')
-    PASSWORD_COL = mappings.get('password')
-    ROLE_COL = mappings.get('role')
-    LOCALE_COL = mappings.get('lang')
-    FIRST_NAME_COL = mappings.get('first_name')
-    LAST_NAME_COL = mappings.get('last_name')
+    USERNAME_COL = mappings.get("username")
+    EMAIL_COL = mappings.get("email")
+    PASSWORD_COL = mappings.get("password")
+    ROLE_COL = mappings.get("role")
+    LOCALE_COL = mappings.get("lang")
+    FIRST_NAME_COL = mappings.get("first_name")
+    LAST_NAME_COL = mappings.get("last_name")
     VALID_LANGUAGE_CODES = set(LANGUAGES.keys())
 
     for idx in dataframe.index:
@@ -60,10 +59,12 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         # email is required
         if not _is_valid(email):
-            error_log.append({
-                'label': 'ERROR',
-                'message': gettext('No valid email found'),
-            })
+            error_log.append(
+                {
+                    "label": "ERROR",
+                    "message": gettext("No valid email found"),
+                }
+            )
             error_records += 1
             continue
 
@@ -81,10 +82,12 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         # password is required for a new user
         if not _is_valid(password) and user.id is None:
-            error_log.append({
-                'label': 'ERROR',
-                'message': gettext('New user has no password set'),
-            })
+            error_log.append(
+                {
+                    "label": "ERROR",
+                    "message": gettext("New user has no password set"),
+                }
+            )
             error_records += 1
             continue
         user.set_password(str(password))
@@ -99,18 +102,21 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         if _is_valid(first_name):
             user.first_name = str(first_name)
-        
+
         if _is_valid(last_name):
             user.last_name = str(last_name)
 
         user.save()
         processed_records += 1
-        task.update_task_info(
-            total_records=total_records,
-            processed_records=processed_records,
-            error_records=error_records,
-            warning_records=warning_records,
-            error_log=error_log,
+        task.update_state(
+            state="PROGRESS",
+            meta={
+                "total_records": total_records,
+                "processed_records": processed_records,
+                "error_records": error_records,
+                "warning_records": warning_records,
+                "error_log": error_log,
+            },
         )
 
     os.remove(file_path)
