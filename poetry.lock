@@ -120,17 +120,6 @@ dev = ["cogapp", "pre-commit", "pytest", "wheel"]
 tests = ["pytest"]
 
 [[package]]
-name = "argparse"
-version = "1.4.0"
-description = "Python command-line parsing library"
-optional = false
-python-versions = "*"
-files = [
-    {file = "argparse-1.4.0-py2.py3-none-any.whl", hash = "sha256:c31647edb69fd3d465a847ea3157d37bed1f95f19760b11a47aa91c04b666314"},
-    {file = "argparse-1.4.0.tar.gz", hash = "sha256:62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4"},
-]
-
-[[package]]
 name = "arpeggio"
 version = "1.7.1"
 description = "Packrat parser interpreter"
@@ -1221,20 +1210,6 @@ wtforms = "*"
 email = ["email-validator"]
 
 [[package]]
-name = "formencode"
-version = "2.1.0"
-description = "\"HTML form validation, generation, and conversion package\""
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "FormEncode-2.1.0-py3-none-any.whl", hash = "sha256:94369669e3d73cd6a5bbd31face5ff054831f2c5dd5ece2c7be4b4e26623e384"},
-    {file = "FormEncode-2.1.0.tar.gz", hash = "sha256:eb74d223078a28cf015fa88966c6e34f2d18d75127318d65c144bed9afc4263f"},
-]
-
-[package.extras]
-testing = ["dnspython (>=2)", "pycountry", "pytest"]
-
-[[package]]
 name = "geoalchemy2"
 version = "0.15.2"
 description = "Using SQLAlchemy with Spatial Databases"
@@ -1576,17 +1551,6 @@ files = [
 ]
 
 [[package]]
-name = "jdcal"
-version = "1.4.1"
-description = "Julian dates from proleptic Gregorian and Julian calendars."
-optional = false
-python-versions = "*"
-files = [
-    {file = "jdcal-1.4.1-py2.py3-none-any.whl", hash = "sha256:1abf1305fce18b4e8aa248cf8fe0c56ce2032392bc64bbd61b5dff2a19ec8bba"},
-    {file = "jdcal-1.4.1.tar.gz", hash = "sha256:472872e096eb8df219c23f2689fc336668bdb43d194094b5cc1707e1640acfc8"},
-]
-
-[[package]]
 name = "jinja2"
 version = "3.1.4"
 description = "A very fast and expressive template engine."
@@ -1646,17 +1610,6 @@ sqlalchemy = ["sqlalchemy (>=1.4.48,<2.1)"]
 sqs = ["boto3 (>=1.26.143)", "pycurl (>=7.43.0.5)", "urllib3 (>=1.26.16)"]
 yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=2.8.0)"]
-
-[[package]]
-name = "linecache2"
-version = "1.0.0"
-description = "Backports of the linecache module"
-optional = false
-python-versions = "*"
-files = [
-    {file = "linecache2-1.0.0-py2.py3-none-any.whl", hash = "sha256:e78be9c0a0dfcbac712fe04fbf92b96cddae80b1b842f24248214c8496f006ef"},
-    {file = "linecache2-1.0.0.tar.gz", hash = "sha256:4b26ff4e7110db76eeb6f5a7b64a82623839d595c2038eeda662f2a2db78e97c"},
-]
 
 [[package]]
 name = "loginpass"
@@ -2107,17 +2060,17 @@ defusedxml = "*"
 
 [[package]]
 name = "openpyxl"
-version = "2.5.0"
+version = "3.1.3"
 description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = ">=3.6"
 files = [
-    {file = "openpyxl-2.5.0.tar.gz", hash = "sha256:0ff2e0c2c85cbf42e82dd223e7f2401a62dc73c18cd9e5dd7763dc6c8014ebde"},
+    {file = "openpyxl-3.1.3-py2.py3-none-any.whl", hash = "sha256:25071b558db709de9e8782c3d3e058af3b23ffb2fc6f40c8f0c45a154eced2c3"},
+    {file = "openpyxl-3.1.3.tar.gz", hash = "sha256:8dd482e5350125b2388070bb2477927be2e8ebc27df61178709bc8c8751da2f9"},
 ]
 
 [package.dependencies]
-et_xmlfile = "*"
-jdcal = "*"
+et-xmlfile = "*"
 
 [[package]]
 name = "outcome"
@@ -2696,13 +2649,13 @@ files = [
 
 [[package]]
 name = "python-magic"
-version = "0.4.15"
+version = "0.4.27"
 description = "File type identification using libmagic"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 files = [
-    {file = "python-magic-0.4.15.tar.gz", hash = "sha256:f3765c0f582d2dfc72c15f3b5a82aecfae9498bd29ca840d72f37d7bd38bfcd5"},
-    {file = "python_magic-0.4.15-py2.py3-none-any.whl", hash = "sha256:f2674dcfad52ae6c49d4803fa027809540b130db1dec928cfbb9240316831375"},
+    {file = "python-magic-0.4.27.tar.gz", hash = "sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b"},
+    {file = "python_magic-0.4.27-py2.py3-none-any.whl", hash = "sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3"},
 ]
 
 [[package]]
@@ -2718,20 +2671,22 @@ files = [
 
 [[package]]
 name = "pyxform"
-version = "0.11.5"
+version = "2.1.0"
 description = "A Python package to create XForms for ODK Collect."
 optional = false
-python-versions = "*"
+python-versions = ">=3.10"
 files = [
-    {file = "pyxform-0.11.5-py2.py3-none-any.whl", hash = "sha256:28c8aec5adba35f9a688b455f5d4e9e20d316d6b848897948cbbea748acae393"},
-    {file = "pyxform-0.11.5.tar.gz", hash = "sha256:b7d964e89657a8623d99303f56dcf4586a8f624354fd53c0fd8e883c599e87c4"},
+    {file = "pyxform-2.1.0-py3-none-any.whl", hash = "sha256:16c2eaafa4a68c9a757e316fa65fbf45f340820ab5d868dec9c57126d404492c"},
+    {file = "pyxform-2.1.0.tar.gz", hash = "sha256:c71a11f58051a132a23b9e710501c6013f253e23a15dff82f481a419eb2b79d3"},
 ]
 
 [package.dependencies]
-formencode = "*"
-unicodecsv = ">=0.14.1"
-unittest2 = "*"
-xlrd = ">=1.1.0"
+defusedxml = "0.7.1"
+openpyxl = "3.1.3"
+xlrd = "2.0.1"
+
+[package.extras]
+dev = ["formencode (==2.1.0)", "lxml (==5.3.0)", "psutil (==6.0.0)", "ruff (==0.6.4)"]
 
 [[package]]
 name = "pyyaml"
@@ -3347,20 +3302,6 @@ xlwt = "*"
 pandas = ["pandas"]
 
 [[package]]
-name = "traceback2"
-version = "1.4.0"
-description = "Backports of the traceback module"
-optional = false
-python-versions = "*"
-files = [
-    {file = "traceback2-1.4.0-py2.py3-none-any.whl", hash = "sha256:8253cebec4b19094d67cc5ed5af99bf1dba1285292226e98a31929f87a5d6b23"},
-    {file = "traceback2-1.4.0.tar.gz", hash = "sha256:05acc67a09980c2ecfedd3423f7ae0104839eccb55fc645773e1caa0951c3030"},
-]
-
-[package.dependencies]
-linecache2 = "*"
-
-[[package]]
 name = "trio"
 version = "0.26.2"
 description = "A friendly Python library for async concurrency and I/O"
@@ -3417,16 +3358,6 @@ files = [
 ]
 
 [[package]]
-name = "unicodecsv"
-version = "0.14.1"
-description = "Python2's stdlib csv module is nice, but it doesn't support unicode. This module is a drop-in replacement which *does*."
-optional = false
-python-versions = "*"
-files = [
-    {file = "unicodecsv-0.14.1.tar.gz", hash = "sha256:018c08037d48649a0412063ff4eda26eaa81eff1546dbffa51fa5293276ff7fc"},
-]
-
-[[package]]
 name = "unidecode"
 version = "0.04.21"
 description = "ASCII transliterations of Unicode text"
@@ -3436,22 +3367,6 @@ files = [
     {file = "Unidecode-0.04.21-py2.py3-none-any.whl", hash = "sha256:61f807220eda0203a774a09f84b4304a3f93b5944110cc132af29ddb81366883"},
     {file = "Unidecode-0.04.21.tar.gz", hash = "sha256:280a6ab88e1f2eb5af79edff450021a0d3f0448952847cd79677e55e58bad051"},
 ]
-
-[[package]]
-name = "unittest2"
-version = "1.1.0"
-description = "The new features in unittest backported to Python 2.4+."
-optional = false
-python-versions = "*"
-files = [
-    {file = "unittest2-1.1.0-py2.py3-none-any.whl", hash = "sha256:13f77d0875db6d9b435e1d4f41e74ad4cc2eb6e1d5c824996092b3430f088bb8"},
-    {file = "unittest2-1.1.0.tar.gz", hash = "sha256:22882a0e418c284e1f718a822b3b022944d53d2d908e1690b319a9d3eb2c0579"},
-]
-
-[package.dependencies]
-argparse = "*"
-six = ">=1.4"
-traceback2 = "*"
 
 [[package]]
 name = "urllib3"
@@ -3778,14 +3693,19 @@ timezone = ["python-dateutil"]
 
 [[package]]
 name = "xlrd"
-version = "1.1.0"
-description = "Library for developers to extract data from Microsoft Excel (tm) spreadsheet files"
+version = "2.0.1"
+description = "Library for developers to extract data from Microsoft Excel (tm) .xls spreadsheet files"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 files = [
-    {file = "xlrd-1.1.0-py2.py3-none-any.whl", hash = "sha256:83a1d2f1091078fb3f65876753b5302c5cfb6a41de64b9587b74cefa75157148"},
-    {file = "xlrd-1.1.0.tar.gz", hash = "sha256:8a21885513e6d915fe33a8ee5fdfa675433b61405ba13e2a69e62ee36828d7e2"},
+    {file = "xlrd-2.0.1-py2.py3-none-any.whl", hash = "sha256:6a33ee89877bd9abc1158129f6e94be74e2679636b8a205b43b85206c3f0bbdd"},
+    {file = "xlrd-2.0.1.tar.gz", hash = "sha256:f72f148f54442c6b056bf931dbc34f986fd0c3b0b6b5a58d013c9aef274d0c88"},
 ]
+
+[package.extras]
+build = ["twine", "wheel"]
+docs = ["sphinx"]
+test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "xlwt"
@@ -3870,4 +3790,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "21516e4721f520b9c06cc1f9e0ba9f2826993164eff6e8412b0332079f1a9859"
+content-hash = "c81ea8000685a76cc3060d91fad5157774fe76084d22526c517b512afef1997e"
