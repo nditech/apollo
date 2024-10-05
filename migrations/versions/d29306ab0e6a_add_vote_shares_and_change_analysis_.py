@@ -90,7 +90,7 @@ def downgrade():
         sa.Column("data", JSONB(astext_type=sa.Text())),
         sa.Column("vote_shares", JSONB(astext_type=sa.Text())),
     )
-    statement = sa.sql.select([form_table.c.id, form_table.c.vote_shares])
+    statement = sa.sql.select(form_table.c.id, form_table.c.vote_shares)
 
     for row in connection.execute(statement):
         vote_shares = row[form_table.c.vote_shares]
