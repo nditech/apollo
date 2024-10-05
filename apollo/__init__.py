@@ -163,7 +163,9 @@ def create_app(settings_override=None):
         bp = create_flask_blueprint([Facebook, Google], oauth, handle_authorize)
         app.register_blueprint(bp, url_prefix="/social")
 
-    return app
+    celery = factory.make_celery(app)
+
+    return app, celery
 
 
 def clear_session(app, user):

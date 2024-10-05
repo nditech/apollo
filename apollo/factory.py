@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import json
 import typing
 from importlib import import_module
 
 import sentry_sdk
-from cachetools import cached
-from celery import Celery, signals
+from celery import Celery, Task
 from depot.manager import DepotManager
-from flask import Flask, request
+from flask import Flask, has_request_context, request
 from flask_babel import gettext as _
 from flask_login import current_user
 from flask_security import MailUtil, SQLAlchemyUserDatastore
@@ -112,7 +110,7 @@ def create_app(package_name, package_path, settings_override=None, register_all_
 
     def _before_send(event, hint):
         with app.app_context():
-            if current_user and not current_user.is_anonymous:
+            if current_user and current_user.is_anonymous is False:
                 deployment = current_user.deployment
                 current_event = getattr(current_user, "event", None)
             else:
@@ -136,7 +134,7 @@ def create_app(package_name, package_path, settings_override=None, register_all_
         debug=app.config.get("DEBUG"),
         release=app.config.get("VERSION"),
         send_default_pii=True,
-        integrations=[FlaskIntegration(transaction_style="url")],
+        integrations=[FlaskIntegration(transaction_style="url"), CeleryIntegration(propagate_traces=True)],
         before_send=_before_send,
     )
     user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
@@ -176,13 +174,14 @@ def create_app(package_name, package_path, settings_override=None, register_all_
         # starting from the current user's selected
         # language
         language_codes = set()
-        if not current_user.is_anonymous:
+        if current_user and current_user.is_anonymous is False:
             if current_user.locale:
                 return current_user.locale
 
         language_codes.update(app.config.get("LANGUAGES", {}).keys())
 
-        return request.accept_languages.best_match(language_codes)
+        if has_request_context():
+            return request.accept_languages.best_match(language_codes)
 
     babel.init_app(app, locale_selector=get_locale)
     register_blueprints(app, package_name, package_path)
@@ -198,85 +197,16 @@ def create_app(package_name, package_path, settings_override=None, register_all_
     return app
 
 
-@cached(cache={})
-def create_celery_app(app=None):
-    """Instantiate the Flask application for Celery."""
-    app = app or create_app("apollo", None, register_all_blueprints=False)
-    celery = Celery(__name__, broker=app.config["CELERY_BROKER_URL"])
+def make_celery(app: Flask) -> Celery:
+    """Initialize the celery application."""
 
-    # configure exception logging
-    @signals.celeryd_init.connect
-    def init_sentry(**_kwargs):
-        sentry_sdk.init(
-            dsn=app.config.get("SENTRY_DSN"),
-            debug=app.config.get("DEBUG"),
-            release=app.config.get("VERSION"),
-            integrations=[CeleryIntegration(propagate_traces=True)],
-        )
-
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        abstract = True
-        task_info = {}
-        track_started = True
-
-        def __call__(self, *args, **kwargs):
+    class FlaskTask(Task):
+        def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
-                return celery.Task.__call__(self, *args, **kwargs)
+                return self.run(*args, **kwargs)
 
-        def on_failure(self, exc, task_id, args, kwargs, einfo):
-            with app.app_context():
-                channel = kwargs.get("channel")
-                payload = {
-                    "id": task_id,
-                    "status": _("FAILED"),
-                    "progress": self.task_info,
-                    "description": TASK_DESCRIPTIONS.get(self.request.task, _("Task")),
-                    "quit": True,
-                }
-
-                if channel is not None:
-                    red.publish(channel, json.dumps(payload))
-
-                    # leave result in Redis and set/renew the expiration
-                    red.lpush(channel, json.dumps(payload))
-                    red.expire(channel, app.config.get("TASK_STATUS_TTL"))
-
-        def on_success(self, retval, task_id, args, kwargs):
-            with app.app_context():
-                channel = kwargs.get("channel")
-                payload = {
-                    "id": task_id,
-                    "status": _("COMPLETED"),
-                    "progress": self.task_info,
-                    "description": TASK_DESCRIPTIONS.get(self.request.task, _("Task")),
-                    "quit": True,
-                }
-
-                if channel is not None:
-                    red.publish(channel, json.dumps(payload))
-
-                    # leave result in Redis and set/renew the expiration
-                    red.lpush(channel, json.dumps(payload))
-                    red.expire(channel, app.config.get("TASK_STATUS_TTL"))
-
-        def update_task_info(self, **kwargs):
-            request = self.request
-            channel = request.kwargs.get("channel")
-            self.task_info.update(**kwargs)
-            self.update_state(meta=self.task_info)
-
-            task_metadata = self.backend.get_task_meta(request.id)
-            payload = {
-                "id": request.id,
-                "status": _("RUNNING"),
-                "progress": task_metadata.get("result"),
-                "description": TASK_DESCRIPTIONS.get(self.request.task, _("Task")),
-            }
-
-            if channel is not None:
-                red.publish(channel, json.dumps(payload))
-
-    celery.Task = ContextTask
+    celery = Celery(app.name, task_cls=FlaskTask)
+    celery.config_from_object(app.config["CELERY"])
+    celery.set_default()
+    app.extensions["celery"] = celery
     return celery

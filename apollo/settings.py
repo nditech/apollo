@@ -69,11 +69,14 @@ DEFAULT_EMAIL_SENDER = config("DEFAULT_EMAIL_SENDER", default="root@localhost")
 REDIS_HOSTNAME = config("REDIS_HOSTNAME", default="redis")
 REDIS_DATABASE = config("REDIS_DATABASE", default="0")
 
-CELERY_BROKER_URL = f"redis://{REDIS_HOSTNAME}/{REDIS_DATABASE}"
-CELERY_RESULT_BACKEND = f"redis://{REDIS_HOSTNAME}/{REDIS_DATABASE}"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ["json"]
+CELERY = {
+    "broker_url": f"redis://{REDIS_HOSTNAME}/{REDIS_DATABASE}",
+    "result_backend": f"redis://{REDIS_HOSTNAME}/{REDIS_DATABASE}",
+    "task_track_started": True,
+    "enable_utc": True,
+    "timezone": TIMEZONE,
+    "worker_send_task_events": True,
+}
 
 CACHE_TYPE = "simple"
 CACHE_REDIS_URL = f"redis://{REDIS_HOSTNAME}/{REDIS_DATABASE}"

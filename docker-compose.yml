@@ -29,13 +29,14 @@ services:
       - redis
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
+      FLASK_ENV: ${ENV:-production}
     env_file:
       - ./.env
     volumes:
       - upload_data:/app/uploads
     ports:
       - "5000:5000"
-    command: ['gunicorn', '-c', 'gunicorn.conf']
+    command: ['gunicorn', '-c', 'gunicorn.conf', 'apollo.runner']
 
   worker:
     restart: always
@@ -53,11 +54,12 @@ services:
       - redis
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
+      FLASK_ENV: ${ENV:-production}
     env_file:
       - ./.env
     volumes:
       - upload_data:/app/uploads
-    command: ['./manage.py', 'worker']
+    command: ['celery', '--app=apollo.runner', 'worker', '--beat', '--loglevel=INFO', '--concurrency=2', '--without-gossip', '--without-mingle', '--optimization=fair']
 
 volumes:
   postgres_data:

@@ -12,6 +12,6 @@ def create_test_app():
     """Create the test application."""
     test_config = TestConfig()
 
-    app = create_app(test_config)
+    app, _ = create_app(test_config)
 
     return app

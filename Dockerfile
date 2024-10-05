@@ -96,7 +96,7 @@ WORKDIR $PYSETUP_PATH
 RUN --mount=type=cache,target=/root/.cache \
     poetry install --with=dev
 
-CMD ["flask", "--app", "apollo.wsgi", "run", "--reload", "--debug", "--host", "[::]", "--port", "5000"]
+CMD ["flask", "--app", "apollo.runner", "run", "--reload", "--debug", "--host", "[::]", "--port", "5000"]
 
 EXPOSE 5000
 
@@ -110,6 +110,6 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR $PYSETUP_PATH
 
-CMD ["gunicorn","-c","gunicorn.conf","apollo.wsgi"]
+CMD ["gunicorn", "-c", "gunicorn.conf", "apollo.runner"]
 
 EXPOSE 5000
