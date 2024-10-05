@@ -1,17 +1,46 @@
 services:
   postgres:
     restart: always
-    build:
-      context: ./postgis
+    image: postgis/postgis:12-3.0
     environment:
       POSTGRES_DB: ${DATABASE_NAME:-apollo}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      PGUSER: ${DATABASE_USERNAME:-postgres}
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+      start_interval: 1s
 
   redis:
     restart: always
     image: redis:7
+
+  migration:
+    restart: no
+    build:
+      context: .
+      target: ${ENV:-production}
+    depends_on:
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    links:
+      - postgres
+      - redis
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME:-apollo}
+      FLASK_ENV: ${ENV:-production}
+      FLASK_APP: apollo.runner
+    env_file:
+      - ./.env
+    command: ['flask', 'db', 'upgrade']
 
   web:
     restart: always
@@ -24,6 +53,8 @@ services:
       postgres:
         condition: service_healthy
         restart: true
+      migration:
+        condition: service_completed_successfully
     links:
       - postgres
       - redis
@@ -36,7 +67,7 @@ services:
       - upload_data:/app/uploads
     ports:
       - "5000:5000"
-    command: ['gunicorn', '-c', 'gunicorn.conf', 'apollo.runner']
+    command: ['gunicorn', '-c', 'gunicorn.py', 'apollo.runner']
 
   worker:
     restart: always
@@ -49,6 +80,8 @@ services:
       postgres:
         condition: service_healthy
         restart: true
+      migration:
+        condition: service_completed_successfully
     links:
       - postgres
       - redis
@@ -59,7 +92,7 @@ services:
       - ./.env
     volumes:
       - upload_data:/app/uploads
-    command: ['celery', '--app=apollo.runner', 'worker', '--beat', '--loglevel=INFO', '--concurrency=2', '--without-gossip', '--without-mingle', '--optimization=fair']
+    command: ['celery', '--app=apollo.runner', 'worker', '--beat', '--loglevel=WARNING', '--concurrency=2', '--without-gossip', '--without-mingle', '--optimization=fair']
 
 volumes:
   postgres_data:

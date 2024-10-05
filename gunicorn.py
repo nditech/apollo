@@ -1,0 +1,8 @@
+import multiprocessing
+
+workers = multiprocessing.cpu_count() * 2 + 1
+worker_class = "gevent"
+pidfile = "gunicorn.pid"
+bind = "[::]:5000"
+timeout = 180
+loglevel = "warning"

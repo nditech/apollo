@@ -55,12 +55,12 @@ RUN --mount=type=cache,target=/root/.cache \
 WORKDIR $PYSETUP_PATH
 
 COPY poetry.lock pyproject.toml $PYSETUP_PATH
+COPY . $PYSETUP_PATH
 
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN --mount=type=cache,target=/root/.cache \
     poetry install --without=dev
 
-COPY . $PYSETUP_PATH
 RUN make babel-compile
 
 
