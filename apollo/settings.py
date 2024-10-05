@@ -76,6 +76,7 @@ CELERY = {
     "enable_utc": True,
     "timezone": TIMEZONE,
     "worker_send_task_events": True,
+    "broker_connection_retry_on_startup": True,
 }
 
 CACHE_TYPE = "simple"
