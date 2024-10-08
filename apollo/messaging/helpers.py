@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from contextlib import nullcontext
+
 from flask import g
 from flask_babel import force_locale, gettext
 from werkzeug.datastructures import MultiDict
@@ -23,11 +25,12 @@ def _get_response_locale(message: str, sender: str, submission, event) -> str:
             locale = participant.locale
         else:
             locale = ""
-    
+
     return locale
 
 
 def parse_message(form):
+    """Parses an incoming message."""
     message = form.get_message()
     submission = None
     had_errors = False
@@ -42,8 +45,7 @@ def parse_message(form):
         comment,
     ) = parse_text(message["text"])
     event = g.event
-    locale = _get_response_locale(
-        message["text"], message["sender"], submission, event)
+    locale = _get_response_locale(message["text"], message["sender"], submission, event)
     if prefix and participant_id and responses:
         form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
@@ -64,10 +66,10 @@ def parse_message(form):
             if questionnaire.validate():
                 submission = questionnaire.save()
                 event = submission.event if submission else event
-                locale = _get_response_locale(
-                    message["text"], message["sender"], submission, event)
+                locale = _get_response_locale(message["text"], message["sender"], submission, event)
 
-                with force_locale(locale):
+                cm = force_locale(locale) if locale else nullcontext()
+                with cm:
                     # if submission returns empty, then the participant
                     # was not meant to send this text.
                     if submission is None:
@@ -80,14 +82,10 @@ def parse_message(form):
                     # switch to the participant's locale if valid,
                     # or use the default
                     # check if there were extra fields sent in
-                    diff = set(response_dict.keys()).difference(
-                        set(questionnaire.data.keys())
-                    )
+                    diff = set(response_dict.keys()).difference(set(questionnaire.data.keys()))
                     if not diff and not extra:
                         # check that the data sent was not partial
-                        unused_tags = get_unsent_codes(
-                            form_doc, response_dict.keys()
-                        )
+                        unused_tags = get_unsent_codes(form_doc, response_dict.keys())
                         if (
                             unused_tags
                             and getattr(g, "deployment", False)
@@ -98,8 +96,7 @@ def parse_message(form):
                             )
                         ):
                             reply = gettext(
-                                "Thank you, but your message may be missing "
-                                "%(unused_codes)s. You sent: %(text)s",
+                                "Thank you, but your message may be missing " "%(unused_codes)s. You sent: %(text)s",
                                 unused_codes=", ".join(unused_tags),
                                 text=message.get("text", ""),
                             )
@@ -107,8 +104,7 @@ def parse_message(form):
                             return reply, submission, had_errors
                         return (
                             gettext(
-                                "Thank you! Your report was received!"
-                                " You sent: %(text)s",
+                                "Thank you! Your report was received!" " You sent: %(text)s",
                                 text=message.get("text", ""),
                             ),
                             submission,
@@ -119,8 +115,7 @@ def parse_message(form):
                         had_errors = True
                         return (
                             gettext(
-                                'Unknown question codes: "%(questions)s". '
-                                "You sent: %(text)s",
+                                'Unknown question codes: "%(questions)s". ' "You sent: %(text)s",
                                 questions=", ".join(sorted(diff)),
                                 text=message.get("text", ""),
                             ),
@@ -131,8 +126,7 @@ def parse_message(form):
                         had_errors = True
                         return (
                             gettext(
-                                'Invalid text sent: "%(extra)s". '
-                                "You sent: %(text)s",
+                                'Invalid text sent: "%(extra)s". ' "You sent: %(text)s",
                                 extra=extra,
                                 text=message.get("text", ""),
                             ),
@@ -142,14 +136,13 @@ def parse_message(form):
             else:
                 had_errors = True
                 event = submission.event if submission else event
-                locale = _get_response_locale(
-                    message["text"], message["sender"], submission, event)
-                with force_locale(locale):
+                locale = _get_response_locale(message["text"], message["sender"], submission, event)
+                cm = force_locale(locale) if locale else nullcontext()
+                with cm:
                     if "participant" in questionnaire.errors:
                         return (
                             gettext(
-                                "Observer ID not found. Please resend with valid "
-                                "Observer ID. You sent: %(text)s",
+                                "Observer ID not found. Please resend with valid " "Observer ID. You sent: %(text)s",
                                 text=message.get("text", ""),
                             ),
                             submission,
@@ -160,11 +153,8 @@ def parse_message(form):
                         submission = questionnaire.save()
                         return (
                             gettext(
-                                "Invalid response(s) for question(s):"
-                                ' "%(questions)s". You sent: %(text)s',
-                                questions=", ".join(
-                                    sorted(questionnaire.errors.keys())
-                                ),
+                                "Invalid response(s) for question(s):" ' "%(questions)s". You sent: %(text)s',
+                                questions=", ".join(sorted(questionnaire.errors.keys())),
                                 text=message.get("text", ""),
                             ),
                             submission,
@@ -172,7 +162,8 @@ def parse_message(form):
                         )
 
     had_errors = True
-    with force_locale(locale):
+    cm = force_locale(locale) if locale else nullcontext()
+    with cm:
         return (
             gettext(
                 "Invalid message: %(text)s. Please check and resend!",
@@ -183,37 +174,37 @@ def parse_message(form):
         )
 
 
-def lookup_participant(message: str, sender: str, event=None):
-    '''
-    Looks up a participant given a message text, a sender number and an event
-    Arguments:
-        - message: a message string
-        - sender: a message sender (a phone number, likely in E.164 format)
-        - event: an event instance. if it's None, no participant will be
-                 returned
+def lookup_participant(message: str, sender: str, event: models.Event = None) -> models.Participant:
+    """Looks up a participant given a message text, a sender number and an event.
 
-    Returns a participant or None
-    '''
+    Args:
+        message: a message string
+        sender: a message sender (a phone number, likely in E.164 format)
+        event: an event instance. if it's None, no participant will be returned
+
+    Returns:
+        a participant or None
+    """
     participant = None
-    unused, participant_id, unused, unused, unused, unused = parse_text(
-        message)
+    unused, participant_id, unused, unused, unused, unused = parse_text(message)
 
     participant_set_id = event.participant_set_id if event else None
 
     if participant_id:
         participant = services.participants.find(
-            participant_set_id=participant_set_id,
-            participant_id=participant_id
+            participant_set_id=participant_set_id, participant_id=participant_id
         ).first()
 
     if not participant:
-        clean_number = sender.replace('+', '')
-        participant = services.participants.query.join(
-            models.PhoneContact,
-            models.Participant.id == models.PhoneContact.participant_id
-        ).filter(
-            models.Participant.participant_set_id == participant_set_id,
-            models.PhoneContact.number == clean_number
-        ).first()
+        clean_number = sender.replace("+", "")
+        participant = (
+            services.participants.query.join(
+                models.PhoneContact, models.Participant.id == models.PhoneContact.participant_id
+            )
+            .filter(
+                models.Participant.participant_set_id == participant_set_id, models.PhoneContact.number == clean_number
+            )
+            .first()
+        )
 
     return participant
