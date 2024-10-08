@@ -6,6 +6,7 @@ from flask_babel import force_locale, gettext
 from werkzeug.datastructures import MultiDict
 
 from apollo import services
+from apollo.deployments.models import Event
 from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import (
@@ -13,7 +14,7 @@ from apollo.messaging.utils import (
     parse_responses,
     parse_text,
 )
-from apollo.participants import models
+from apollo.participants.models import Participant, PhoneContact
 
 
 def _get_response_locale(message: str, sender: str, submission, event) -> str:
@@ -174,7 +175,7 @@ def parse_message(form):
         )
 
 
-def lookup_participant(message: str, sender: str, event: models.Event = None) -> models.Participant:
+def lookup_participant(message: str, sender: str, event: Event = None) -> Participant:
     """Looks up a participant given a message text, a sender number and an event.
 
     Args:
@@ -198,12 +199,8 @@ def lookup_participant(message: str, sender: str, event: models.Event = None) ->
     if not participant:
         clean_number = sender.replace("+", "")
         participant = (
-            services.participants.query.join(
-                models.PhoneContact, models.Participant.id == models.PhoneContact.participant_id
-            )
-            .filter(
-                models.Participant.participant_set_id == participant_set_id, models.PhoneContact.number == clean_number
-            )
+            services.participants.query.join(PhoneContact, Participant.id == PhoneContact.participant_id)
+            .filter(Participant.participant_set_id == participant_set_id, PhoneContact.number == clean_number)
             .first()
         )
 
