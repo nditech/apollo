@@ -163,7 +163,7 @@ def create_app(package_name, package_path, settings_override=None, register_all_
     jwt_manager.revoked_token_loader(jwt_hooks.process_revoked_token)
     jwt_manager.token_in_blocklist_loader(jwt_hooks.check_if_token_is_blocklisted)
 
-    if app.config.get("SSL_REQUIRED"):
+    if app.config.get("PREFERRED_URL_SCHEME") == "https":
         SSLify(app)
 
     if app.config.get("DEBUG") and fdt_available:

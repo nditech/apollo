@@ -45,7 +45,10 @@ API_PAGE_SIZE = config("API_PAGE_SIZE", cast=int, default=100)
 # default to UTC for prior deployments
 TIMEZONE = config("TIMEZONE", default="UTC")
 
-SSL_REQUIRED = config("SSL_REQUIRED", cast=config.boolean, default=True)
+SERVER_NAME = config("SERVER_NAME", default=None)
+APPLICATION_ROOT = config("APPLICATION_ROOT", default="/")
+PREFERRED_URL_SCHEME = config("PREFERRED_URL_SCHEME", default="https")
+
 ENABLE_MOE = config("ENABLE_MOE", cast=config.boolean, default=True)
 X_FRAME_OPTIONS = config("X_FRAME_OPTIONS", default="DENY")
 
@@ -214,7 +217,7 @@ SECURITY_EMAIL_SENDER = DEFAULT_EMAIL_SENDER
 SECURITY_SEND_REGISTER_EMAIL = config("SECURITY_SEND_REGISTER_EMAIL", cast=config.boolean, default=False)
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
-SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
+SESSION_COOKIE_SECURE = True if PREFERRED_URL_SCHEME == "https" else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 SECURITY_USER_IDENTITY_ATTRIBUTES = [{"username": {"mapper": uia_username_mapper, "case_insensitive": True}}]
 APOLLO_FIELD_COORDINATOR_EMAIL = config("APOLLO_FIELD_COORDINATOR_EMAIL", default="fc@example.com")

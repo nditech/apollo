@@ -5,7 +5,7 @@ FLASK_DEBUG = True
 DEBUG = True
 SENTRY_DSN = None
 SQLALCHEMY_ECHO = config("SQLALCHEMY_ECHO", cast=config.boolean, default=True)
-SSL_REQUIRED = False
+PREFERRED_URL_SCHEME = "http"
 
 # Flask-DebugToolbar settings
 DEBUG_TB_ENABLED = config("DEBUG_TB_ENABLED", cast=config.boolean, default=True)
