@@ -22,7 +22,7 @@ from loginpass import Facebook, Google, create_flask_blueprint
 from whitenoise import WhiteNoise
 
 from apollo import assets, factory, models, services, settings, utils
-from apollo.cli import users_cli
+from apollo.cli import messages_cli, users_cli
 from apollo.core import admin, csrf, docs, oauth, webpack
 from apollo.frontend import permissions, template_filters
 
@@ -74,6 +74,7 @@ def create_app(settings_override=None):
     csrf.init_app(app)
     init_admin(admin, app)
     app.cli.add_command(users_cli)
+    app.cli.add_command(messages_cli)
 
     # Register custom error handlers
     if not app.debug:
