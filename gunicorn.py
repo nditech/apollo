@@ -5,4 +5,3 @@ worker_class = "gevent"
 pidfile = "gunicorn.pid"
 bind = "[::]:5000"
 timeout = 180
-loglevel = "warning"
