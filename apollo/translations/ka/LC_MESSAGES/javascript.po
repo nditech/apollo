@@ -1,34 +1,39 @@
-# Georgian translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Translations template for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
+# Translators:
+# NDItech, 2021
+# Tim Akinbo <takinbo@timbaobjects.com>, 2024
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2024-09-25 15:37+0100\n"
-"PO-Revision-Date: 2021-08-04 03:45+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ka\n"
-"Language-Team: ka <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"PO-Revision-Date: 2020-10-28 20:14+0000\n"
+"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2024\n"
+"Language-Team: Georgian (https://app.transifex.com/nditech/teams/114236/ka/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+"Language: ka\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: apollo/static/js/angular-form-builder-components.js:6
 msgid "Section"
-msgstr "განყოფილება"
+msgstr "სექცია"
 
 #: apollo/static/js/angular-form-builder-components.js:30
 msgid "Numeric Question"
-msgstr "რიცხვითი კითხვა"
+msgstr "რაოდენობრივი შეკითხვა"
 
 #: apollo/static/js/angular-form-builder-components.js:94
 msgid "Single Choice Question"
-msgstr "ერთჯერადი არჩევანის კითხვა"
+msgstr "ერთ პასუხიანი შეკითხვა / აირჩიეთ მხოლოდ ერთი"
 
 #: apollo/static/js/angular-form-builder-components.js:97
 #: apollo/static/js/angular-form-builder-components.js:192
@@ -42,7 +47,7 @@ msgstr "ვარიანტი 2"
 
 #: apollo/static/js/angular-form-builder-components.js:141
 msgid "Yes/No Question"
-msgstr "დიახ / არა კითხვა"
+msgstr "დიახ/არა შეკითხვა"
 
 #: apollo/static/js/angular-form-builder-components.js:144
 msgid "Yes"
@@ -54,16 +59,15 @@ msgstr "არა"
 
 #: apollo/static/js/angular-form-builder-components.js:189
 msgid "Multiple Choice Question"
-msgstr ""
+msgstr "რამდენიმე პასუხიანი შეკითხვა / აირჩიეთ რამდენიმე"
 
 #: apollo/static/js/angular-form-builder-components.js:234
-#, fuzzy
 msgid "Text Question"
-msgstr "კომენტარი კითხვა"
+msgstr "ტექსტური ტიპის შეკითხვა"
 
 #: apollo/static/js/angular-form-builder-components.js:274
 msgid "Image Attachment"
-msgstr ""
+msgstr "მიმაგრებული ფოტო"
 
 #: apollo/static/js/angular-form-builder.js:24
 #: apollo/static/js/angular-form-builder.js:28
@@ -74,11 +78,11 @@ msgstr "არარის ანალიზი"
 #: apollo/static/js/angular-form-builder.js:25
 #: apollo/static/js/angular-form-builder.js:31
 msgid "Frequency Table"
-msgstr ""
+msgstr "სიხშირის ცხრილი"
 
 #: apollo/static/js/angular-form-builder.js:29
 msgid "Target"
-msgstr ""
+msgstr "სამიზნე"
 
 #: apollo/static/js/angular-form-builder.js:30
 #: apollo/static/js/angular-form-builder.js:36
@@ -99,7 +103,7 @@ msgstr "გაუქმება"
 
 #: apollo/static/js/angular-form-builder.js:53
 msgid "Save"
-msgstr "Save"
+msgstr "შენახვა"
 
 #: apollo/static/js/angular-form-builder.js:54
 msgid "Name"
@@ -111,7 +115,7 @@ msgstr "აღწერა"
 
 #: apollo/static/js/angular-form-builder.js:56
 msgid "Options"
-msgstr "პარამეტრები"
+msgstr "ვარიანტები"
 
 #: apollo/static/js/angular-form-builder.js:57
 msgid "Analysis"
@@ -119,15 +123,15 @@ msgstr "ანალიზი"
 
 #: apollo/static/js/angular-form-builder.js:58
 msgid "Minimum"
-msgstr "მინიმალური"
+msgstr "მინიმუმი"
 
 #: apollo/static/js/angular-form-builder.js:59
 msgid "Maximum"
-msgstr "მაქსიმალური"
+msgstr "მაქსიმუმი"
 
 #: apollo/static/js/angular-form-builder.js:60
 msgid "Null Value"
-msgstr ""
+msgstr "ნულოვანი მნიშვნელობა"
 
 #: apollo/static/js/angular-form-builder.js:61
 msgid "Type"
@@ -143,23 +147,13 @@ msgstr "ვალიდაცია"
 
 #: apollo/static/js/formbuilder-duplicates.js:33
 msgid "The question code <strong>%2</strong> has been used more than once"
-msgid_plural "The question codes <strong>%2</strong> have been used more than once"
-msgstr[0] ""
+msgid_plural ""
+"The question codes <strong>%2</strong> have been used more than once"
+msgstr[0] "კითხვის კოდი <strong>%2</strong> გამოყენებულია არაერთხელ"
+msgstr[1] "კითხვების კოდები <strong>%2</strong> გამოყენებულია არაერთხელ"
 
 #: apollo/static/js/formbuilder-duplicates.js:46
 msgid "The section <strong>%2</strong> has been used more than once"
 msgid_plural "The sections <strong>%2</strong> have been used more than once"
-msgstr[0] ""
-
-#~ msgid "Multiple Choices Question"
-#~ msgstr "მრავალჯერადი არჩევანი კითხვა"
-
-#~ msgid "Histogram"
-#~ msgstr "ჰისტოგრამა"
-
-#~ msgid "Categorical"
-#~ msgstr "კატეგორიული"
-
-#~ msgid "Expected Value"
-#~ msgstr "მოსალოდნელი ღირებულების"
-
+msgstr[0] "სექცია <strong>%2</strong> გამოყენებულია არაერთხელ"
+msgstr[1] "სექციები <strong>%2</strong> გამოყენებულია არაერთხელ"
