@@ -13,6 +13,7 @@ from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from apollo import models, settings
 from apollo.api import hooks as jwt_hooks
@@ -130,11 +131,16 @@ def create_app(package_name, package_path, settings_override=None, register_all_
     mail.init_app(app)
     red.init_app(app)
     sentry_sdk.init(
+        auto_enabling_integrations=False,
         dsn=app.config.get("SENTRY_DSN"),
         debug=app.config.get("DEBUG"),
         release=app.config.get("VERSION"),
         send_default_pii=True,
-        integrations=[FlaskIntegration(transaction_style="url"), CeleryIntegration(propagate_traces=True)],
+        integrations=[
+            FlaskIntegration(transaction_style="url"),
+            CeleryIntegration(propagate_traces=True),
+            SqlalchemyIntegration(),
+        ],
         before_send=_before_send,
     )
     user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
