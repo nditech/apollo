@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from dateutil.parser import parse
-from dateutil.tz import gettz, UTC
-from flask_babel import gettext as _
+from dateutil.tz import UTC, gettz
+from flask_babel import lazy_gettext as _
 from sqlalchemy import or_
 from sqlalchemy.orm import aliased
-from wtforms import Form as WTForm, fields
+from wtforms import Form as WTForm
+from wtforms import fields
 
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.formsframework.models import Form
@@ -17,10 +18,8 @@ APP_TZ = gettz(TIMEZONE)
 
 
 def make_submission_type_field_choices():
-    choices = [
-        ('', _('Form Type')),
-        ('Invalid', _('Invalid Form'))
-    ]
+    """Submission type choices."""
+    choices = [("", _("Form Type")), ("Invalid", _("Invalid Form"))]
 
     choices.extend(Form.FORM_TYPES)
 
@@ -30,13 +29,8 @@ def make_submission_type_field_choices():
 class MobileFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
-            query_val = f'%{value}%'
-            return query.filter(
-                or_(
-                    Message.sender.ilike(query_val),
-                    Message.recipient.ilike(query_val)
-                )
-            )
+            query_val = f"%{value}%"
+            return query.filter(or_(Message.sender.ilike(query_val), Message.recipient.ilike(query_val)))
 
         return query
 
@@ -44,7 +38,7 @@ class MobileFilter(CharFilter):
 class TextFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
-            query_val = f'%{value}%'
+            query_val = f"%{value}%"
             return query.filter(Message.text.ilike(query_val))
 
         return query
@@ -59,15 +53,10 @@ class DateFilter(CharFilter):
                 return query.filter(False)
 
             dt = dt.replace(tzinfo=APP_TZ)
-            upper_bound = dt.replace(hour=23, minute=59, second=59).astimezone(
-                UTC).replace(tzinfo=None)
-            lower_bound = dt.replace(hour=0, minute=0, second=0).astimezone(
-                UTC).replace(tzinfo=None)
+            upper_bound = dt.replace(hour=23, minute=59, second=59).astimezone(UTC).replace(tzinfo=None)
+            lower_bound = dt.replace(hour=0, minute=0, second=0).astimezone(UTC).replace(tzinfo=None)
 
-            return query.filter(
-                Message.received >= lower_bound,
-                Message.received <= upper_bound
-            )
+            return query.filter(Message.received >= lower_bound, Message.received <= upper_bound)
 
         return query
 
@@ -76,13 +65,14 @@ class SubmissionFormTypeFilter(ChoiceFilter):
     field_class = fields.SelectField
 
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = make_submission_type_field_choices()
+        """Initiallize the filter."""
+        kwargs["choices"] = make_submission_type_field_choices()
 
         super().__init__(*args, **kwargs)
 
     def queryset_(self, query, value):
         if value:
-            if value == 'Invalid':
+            if value == "Invalid":
                 return query.filter(Message.submission_id == None)  # noqa
             else:
                 return query.filter(Form.form_type == value)
@@ -101,5 +91,4 @@ class MessageFilterForm(WTForm):
     mobile = fields.StringField()
     text = fields.StringField()
     date = fields.StringField()
-    form_type = fields.SelectField(
-        choices=make_submission_type_field_choices())
+    form_type = fields.SelectField(choices=make_submission_type_field_choices())

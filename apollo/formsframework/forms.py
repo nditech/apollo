@@ -6,7 +6,7 @@ from functools import partial
 
 import wtforms
 from flask import g
-from flask_babel import gettext as _
+from flask_babel import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
 from flask_wtf.file import FileField
 from wtforms_alchemy.fields import QuerySelectMultipleField

@@ -2,7 +2,7 @@
 import sqlalchemy as sa
 from depot.fields.specialized.image import UploadedImageWithThumb
 from depot.fields.sqlalchemy import UploadedFileField
-from flask_babel import gettext as _
+from flask_babel import lazy_gettext as _
 from geoalchemy2 import Geometry
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
