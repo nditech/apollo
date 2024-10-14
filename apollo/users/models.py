@@ -7,84 +7,69 @@ from apollo.core import db
 from apollo.dal.models import BaseModel
 from apollo.utils import current_timestamp
 
-
 roles_users = db.Table(
-    'roles_users',
-    db.Column('user_id', db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('role_id', db.Integer, db.ForeignKey(
-        'role.id', ondelete='CASCADE'), primary_key=True))
+    "roles_users",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("role_id", db.Integer, db.ForeignKey("role.id", ondelete="CASCADE"), primary_key=True),
+)
 
 
 roles_permissions = db.Table(
-    'roles_permissions',
-    db.Column('role_id', db.Integer, db.ForeignKey(
-        'role.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('permission_id', db.Integer, db.ForeignKey(
-        'permission.id', ondelete='CASCADE'), primary_key=True))
+    "roles_permissions",
+    db.Column("role_id", db.Integer, db.ForeignKey("role.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("permission_id", db.Integer, db.ForeignKey("permission.id", ondelete="CASCADE"), primary_key=True),
+)
 
 users_permissions = db.Table(
-    'users_permissions',
-    db.Column('user_id', db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('permission_id', db.Integer, db.ForeignKey(
-        'permission.id', ondelete='CASCADE'), primary_key=True))
+    "users_permissions",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("permission_id", db.Integer, db.ForeignKey("permission.id", ondelete="CASCADE"), primary_key=True),
+)
 
 role_resource_permissions = db.Table(
-    'role_resource_permissions',
-    db.Column('role_id', db.Integer, db.ForeignKey(
-        'role.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('resource_id', db.Integer, db.ForeignKey(
-        'resource.resource_id', ondelete='CASCADE'), primary_key=True))
+    "role_resource_permissions",
+    db.Column("role_id", db.Integer, db.ForeignKey("role.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("resource_id", db.Integer, db.ForeignKey("resource.resource_id", ondelete="CASCADE"), primary_key=True),
+)
 
 user_resource_permissions = db.Table(
-    'user_resource_permissions',
-    db.Column('user_id', db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'), primary_key=True),
-    db.Column('resource_id', db.Integer, db.ForeignKey(
-        'resource.resource_id', ondelete='CASCADE'), primary_key=True))
+    "user_resource_permissions",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("resource_id", db.Integer, db.ForeignKey("resource.resource_id", ondelete="CASCADE"), primary_key=True),
+)
 
 
 class Role(BaseModel, RoleMixin):
-    __tablename__ = 'role'
-    __table_args__ = (
-        db.UniqueConstraint('deployment_id', 'name'),
-    )
+    __tablename__ = "role"
+    __table_args__ = (db.UniqueConstraint("deployment_id", "name"),)
 
     id = db.Column(db.Integer, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-            'deployment.id', ondelete='CASCADE'), nullable=False)
-    name = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)
-    deployment = db.relationship(
-        'Deployment',
-        backref=db.backref('roles', cascade='all, delete',
-                           passive_deletes=True))
-    permissions = db.relationship(
-        'Permission', backref='roles', secondary=roles_permissions)
+    deployment = db.relationship("Deployment", backref=db.backref("roles", cascade="all, delete", passive_deletes=True))
+    permissions = db.relationship("Permission", backref="roles", secondary=roles_permissions)
 
     def __str__(self):
-        return self.name or ''
+        """String representation."""
+        return self.name or ""
 
     @classmethod
     def get_by_name(cls, name):
-        return cls.query.filter(
-            func.lower(cls.name) == func.lower(name)
-        ).first()
+        return cls.query.filter(func.lower(cls.name) == func.lower(name)).first()
 
 
 class User(BaseModel, UserMixin):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-            'deployment.id', ondelete='CASCADE'), nullable=False)
-    email = db.Column(db.String, nullable=False)
-    username = db.Column(db.String, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
+    email = db.Column(db.String, nullable=False, unique=True)
+    username = db.Column(db.String(64), nullable=True, unique=True)
+    password = db.Column(db.String, nullable=True)
     last_name = db.Column(db.String)
     first_name = db.Column(db.String)
-    active = db.Column(db.Boolean, default=True)
+    active = db.Column(db.Boolean, default=True, nullable=False)
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
     locale = db.Column(db.String)
     confirmed_at = db.Column(db.DateTime)
@@ -93,19 +78,16 @@ class User(BaseModel, UserMixin):
     current_login_ip = db.Column(db.String)
     last_login_ip = db.Column(db.String)
     login_count = db.Column(db.Integer)
-    deployment = db.relationship(
-        'Deployment',
-        backref=db.backref('users', cascade='all, delete',
-                           passive_deletes=True))
-    roles = db.relationship(
-        'Role', backref='users', secondary=roles_users)
-    permissions = db.relationship(
-        'Permission', backref='users', secondary=users_permissions)
+    deployment = db.relationship("Deployment", backref=db.backref("users", cascade="all, delete", passive_deletes=True))
+    roles = db.relationship("Role", backref="users", secondary=roles_users)
+    permissions = db.relationship("Permission", backref="users", secondary=users_permissions)
 
     def is_admin(self):
-        role = Role.query.join(Role.users).filter(
-            Role.deployment == self.deployment, Role.name == 'admin',
-            Role.users.contains(self)).first()
+        role = (
+            Role.query.join(Role.users)
+            .filter(Role.deployment == self.deployment, Role.name == "admin", Role.users.contains(self))
+            .first()
+        )
         return bool(role)
 
     def set_password(self, new_password: str) -> None:
@@ -113,20 +95,14 @@ class User(BaseModel, UserMixin):
 
 
 class UserUpload(BaseModel):
-    __tablename__ = 'user_upload'
+    __tablename__ = "user_upload"
 
     id = db.Column(db.Integer, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey("deployment.id", ondelete="CASCADE"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     created = db.Column(db.DateTime, default=current_timestamp)
     upload_filename = db.Column(db.String)
     deployment = db.relationship(
-        'Deployment',
-        backref=db.backref('user_uploads', cascade='all, delete',
-                           passive_deletes=True))
-    user = db.relationship(
-        'User',
-        backref=db.backref('uploads', cascade='all, delete',
-                           passive_deletes=True))
+        "Deployment", backref=db.backref("user_uploads", cascade="all, delete", passive_deletes=True)
+    )
+    user = db.relationship("User", backref=db.backref("uploads", cascade="all, delete", passive_deletes=True))
