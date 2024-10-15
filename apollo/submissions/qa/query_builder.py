@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-'''Query builder module for checklist QA'''
+"""Query builder module for checklist QA."""
 
 import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import (
-    BigInteger, Integer, String, and_, case, cast, false, func, null, or_)
+from sqlalchemy import BigInteger, Integer, String, and_, case, cast, false, func, null, or_
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql.operators import concat_op
 
@@ -23,7 +22,7 @@ from apollo.submissions.models import QUALITY_STATUSES
 # to the Python syntax. Other advantages of the Python
 # syntax include case-insensitivty for regex and string
 # matches
-GRAMMAR = r'''
+GRAMMAR = r"""
 number = r'\d+\.{0,1}\d*'
 variable = r'[A-Z]+'
 name = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -38,38 +37,38 @@ concat = sum (("|") sum)*
 comparison = concat (("<>" / ">=" / ">" / "<=" / "<" / "=" / "!=") concat)*
 expression = comparison (("&&" / "||") comparison)*
 qa = expression+ EOF
-'''
+"""
 
 # There's no entry for '^' because Arpeggio doesn't return
 # terminals if they are not a choice of options when visiting
 OPERATIONS = {
-    '+': op.iadd,
-    '-': op.isub,
-    '*': op.imul,
-    '/': op.itruediv,
-    '>=': op.ge,
-    '>': op.gt,
-    '<=': op.le,
-    '<': op.lt,
-    '=': op.eq,
-    '!=': op.ne,
-    '<>': op.ne,
-    '&&': op.and_,
-    '||': op.or_
+    "+": op.iadd,
+    "-": op.isub,
+    "*": op.imul,
+    "/": op.itruediv,
+    ">=": op.ge,
+    ">": op.gt,
+    "<=": op.le,
+    "<": op.lt,
+    "=": op.eq,
+    "!=": op.ne,
+    "<>": op.ne,
+    "&&": op.and_,
+    "||": op.or_,
 }
 
 FIELD_TYPE_CASTS = {
-    'select': Integer,
-    'string': String,
+    "select": Integer,
+    "string": String,
 }
 
 
 def _get_cast_type(field):
-    if field['type'] in FIELD_TYPE_CASTS:
-        return FIELD_TYPE_CASTS.get(field['type'])
+    if field["type"] in FIELD_TYPE_CASTS:
+        return FIELD_TYPE_CASTS.get(field["type"])
 
-    if field['type'] == 'integer':
-        if len(str(field['max'])) > 9 or len(str(field['min'])) > 9:
+    if field["type"] == "integer":
+        if len(str(field["max"])) > 9 or len(str(field["min"])) > 9:
             return BigInteger
 
         return Integer
@@ -79,7 +78,7 @@ def _get_cast_type(field):
 
 class BaseVisitor(PTNodeVisitor):
     def __init__(self, defaults=True, **kwargs):
-
+        """Constructor for BaseVisitor."""
         super().__init__(defaults, **kwargs)
 
     def visit_number(self, node, children):
@@ -91,7 +90,7 @@ class BaseVisitor(PTNodeVisitor):
     def visit_factor(self, node, children):
         if len(children) == 1:
             return children[0]
-        multiplier = -1 if children[0] == '-' else 1
+        multiplier = -1 if children[0] == "-" else 1
         return multiplier * children[-1]
 
     def visit_value(self, node, children):
@@ -126,24 +125,22 @@ class BaseVisitor(PTNodeVisitor):
         return operand
 
     def visit_comparison(self, node, children):
-        if getattr(self, 'uses_concat', False):
-            comparison = func.cast(children[0], String) \
-                if children[0] != 'NULL' else None
+        if getattr(self, "uses_concat", False):
+            comparison = func.cast(children[0], String) if children[0] != "NULL" else None
         else:
-            comparison = children[0] if children[0] != 'NULL' else None
+            comparison = children[0] if children[0] != "NULL" else None
         for i in range(2, len(children), 2):
             sign = children[i - 1]
-            if getattr(self, 'uses_concat', False):
-                item = func.cast(children[i], String) \
-                    if children[i] != 'NULL' else None
+            if getattr(self, "uses_concat", False):
+                item = func.cast(children[i], String) if children[i] != "NULL" else None
             else:
-                item = children[i] if children[i] != 'NULL' else None
+                item = children[i] if children[i] != "NULL" else None
             comparison = OPERATIONS[sign](comparison, item)
 
         return comparison
 
     def visit_expression(self, node, children):
-        expression = children[0] if children[0] != 'NULL' else None
+        expression = children[0] if children[0] != "NULL" else None
         for i in range(2, len(children), 2):
             sign = children[i - 1]
             expression = OPERATIONS[sign](expression, children[i])
@@ -153,28 +150,29 @@ class BaseVisitor(PTNodeVisitor):
 
 class InlineQATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
-        self.form = kwargs.pop('form')
-        self.submission = kwargs.pop('submission')
+        """Constructor for InlineQATreeVisitor."""
+        self.form = kwargs.pop("form")
+        self.submission = kwargs.pop("submission")
         super().__init__(defaults, **kwargs)
 
     def visit_variable(self, node, children):
         var_name = node.value
         if var_name not in self.form.tags:
-            return 'NULL'
+            return "NULL"
 
         field = self.form.get_field_by_tag(var_name)
-        if field['type'] == 'multiselect':
-            return 'NULL'
+        if field["type"] == "multiselect":
+            return "NULL"
 
-        return self.submission.data.get(var_name, 'NULL')
+        return self.submission.data.get(var_name, "NULL")
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
 
-        if top_level_attr in ['location', 'participant']:
+        if top_level_attr in ["location", "participant"]:
             attribute = getattr(self.submission, top_level_attr)
 
-            if symbol == '.':
+            if symbol == ".":
                 return getattr(attribute, name)
             else:
                 return attribute.extra_data.get(name)
@@ -188,38 +186,39 @@ class InlineQATreeVisitor(BaseVisitor):
             right = children[2]
             if isinstance(left, str) and isinstance(right, str):
                 # both sides are NULL
-                return 'NULL'
+                return "NULL"
         return super().visit_comparison(node, children)
-    
+
     def visit_exponent(self, node, children):
         if len(children) == 1:
             return children[0]
-        
+
         exponent = children[0]
         for i in children[1:]:
             exponent **= i
-        
+
         return exponent
 
 
 class QATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
+        """Constructor for QATreeVisitor."""
         self.prev_cast_type = None
         self.lock_null = False
-        self.form = kwargs.pop('form')
+        self.form = kwargs.pop("form")
         self.variables = set()
         super().__init__(defaults, **kwargs)
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
 
-        if top_level_attr == 'location':
-            if symbol == '.':
+        if top_level_attr == "location":
+            if symbol == ".":
                 return getattr(Location, name).cast(BigInteger)
             else:
                 return Location.extra_data[name].astext.cast(BigInteger)
-        elif top_level_attr == 'participant':
-            if symbol == '.':
+        elif top_level_attr == "participant":
+            if symbol == ".":
                 return getattr(Participant, name).cast(BigInteger)
             else:
                 return Participant.extra_data[name].astext.cast(BigInteger)
@@ -238,7 +237,7 @@ class QATreeVisitor(BaseVisitor):
         # with other types
         field = self.form.get_field_by_tag(var_name)
 
-        if field['type'] == 'multiselect':
+        if field["type"] == "multiselect":
             self.lock_null = True
             return null()
 
@@ -253,41 +252,35 @@ class QATreeVisitor(BaseVisitor):
         # occurring by tracking the types and whenever it notices there's
         # a difference, it would start outputting nulls so the query
         # returns no result.
-        if (
-            (
-                self.prev_cast_type is not None and
-                (self.prev_cast_type != cast_type)
-            ) or self.lock_null
-        ):
+        if (self.prev_cast_type is not None and (self.prev_cast_type != cast_type)) or self.lock_null:
             self.lock_null = True
             return null()
         else:
             self.prev_cast_type = cast_type
             if cast_type in (BigInteger, Integer):
-                return cast(
-                    func.nullif(Submission.data[var_name].astext, ''),
-                    cast_type)
+                return cast(func.nullif(Submission.data[var_name].astext, ""), cast_type)
             elif cast_type is not None:
                 return Submission.data[var_name].astext.cast(cast_type)
             return Submission.data[var_name]
-    
+
     def visit_exponent(self, node, children):
         if len(children) == 1:
             return children[0]
-        
+
         exponent = children[0]
         for i in children[1:]:
             exponent = func.pow(exponent, i)
-        
+
         return exponent
 
 
 def generate_qa_query(expression, form):
+    """Create a parser based on the given expression."""
     # short-circuit for empty expressions
-    if expression == '' or expression == "=":
+    if expression == "" or expression == "=":
         return null(), set()
 
-    parser = ParserPEG(GRAMMAR, 'qa')
+    parser = ParserPEG(GRAMMAR, "qa")
     tree = parser.parse(expression)
 
     visitor = QATreeVisitor(form=form)
@@ -296,12 +289,13 @@ def generate_qa_query(expression, form):
 
 
 def generate_qa_queries(form):
+    """Retrieve and generate parsers for all form QA expressions."""
     subqueries = []
     tag_groups = []
     if form.quality_checks:
         for check in form.quality_checks:
             expression = build_expression(check)
-            uses_null = 'null' in expression.lower()
+            uses_null = "null" in expression.lower()
 
             # evaluate every expression, including empty ones
             subquery, used_tags = generate_qa_query(expression, form)
@@ -309,20 +303,27 @@ def generate_qa_queries(form):
             tags = array(used_tags)
 
             if used_tags:
-                null_query = or_(*[
-                    Submission.data[tag] == None for tag in used_tags   # noqa
-                ]) if not uses_null else false()
-                case_query = case([
-                    (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), 'Flagged'),  # noqa
-                    (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), 'Verified'),   # noqa
-                    (and_(null_query == False, subquery == False), 'OK'), # noqa
-                    (or_(null_query == True, subquery == None), 'Missing')   # noqa
-                ]).label(check['name'])
+                null_query = (
+                    or_(
+                        *[
+                            Submission.data[tag] == None  # noqa
+                            for tag in used_tags
+                        ]
+                    )
+                    if not uses_null
+                    else false()
+                )
+                case_query = case(
+                    (and_(null_query == False, subquery == True, ~Submission.verified_fields.has_all(tags)), "Flagged"),  # noqa
+                    (and_(null_query == False, subquery == True, Submission.verified_fields.has_all(tags)), "Verified"),  # noqa
+                    (and_(null_query == False, subquery == False), "OK"),  # noqa
+                    (or_(null_query == True, subquery == None), "Missing"),  # noqa
+                ).label(check["name"])
             else:
-                case_query = case([
-                    (subquery == True, 'Flagged'),   # noqa
-                    (subquery == False, 'OK')   # noqa
-                ]).label(check['name'])
+                case_query = case(
+                    (subquery == True, "Flagged"),  # noqa
+                    (subquery == False, "OK"),  # noqa
+                ).label(check["name"])
 
             subqueries.append(case_query)
             tag_groups.append(sorted(used_tags))
@@ -331,49 +332,60 @@ def generate_qa_queries(form):
 
 
 def get_logical_check_stats(query, form, condition):
+    """Compute QA metrics."""
     complete_expression = build_expression(condition)
     # short-circuit for empty QA
-    if complete_expression == '':
-        return [('Missing', query.count())]
+    if complete_expression == "":
+        return [("Missing", query.count())]
 
     qa_query, question_codes = generate_qa_query(complete_expression, form)
 
     # add joins as necessary
-    if '$location' in complete_expression:
+    if "$location" in complete_expression:
         query = query.join(Location, Location.id == Submission.location_id)
 
-    if '$participant' in complete_expression:
-        query = query.join(
-            Participant, Participant.id == Submission.participant_id)
+    if "$participant" in complete_expression:
+        query = query.join(Participant, Participant.id == Submission.participant_id)
 
-    if 'null' in complete_expression.lower():
-        null_query = or_(*[
-            Submission.data[tag] == None    # noqa
-            for tag in question_codes
-        ]) if question_codes else false()
+    if "null" in complete_expression.lower():
+        null_query = (
+            or_(
+                *[
+                    Submission.data[tag] == None  # noqa
+                    for tag in question_codes
+                ]
+            )
+            if question_codes
+            else false()
+        )
     else:
         null_query = false()
 
     if question_codes:
-        qa_case_query = case([
-            (and_(null_query == False, qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
-            (and_(null_query == False, qa_query == True, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
-            (and_(null_query == False, qa_query == False), 'OK'),   # noqa
-            (or_(null_query == False, qa_query == None), 'Missing') # noqa
-        ])
+        qa_case_query = case(
+            (
+                and_(null_query == False, qa_query == True, ~Submission.verified_fields.has_all(array(question_codes))),  # noqa
+                "Flagged",
+            ),  # noqa
+            (
+                and_(null_query == False, qa_query == True, Submission.verified_fields.has_all(array(question_codes))),  # noqa
+                "Verified",
+            ),  # noqa
+            (and_(null_query == False, qa_query == False), "OK"),  # noqa
+            (or_(null_query == False, qa_query == None), "Missing"),  # noqa
+        )
     else:
-        qa_case_query = case([
-            (qa_query == True, 'Flagged'),  # noqa
-            (qa_query == False, 'OK')
-        ])
+        qa_case_query = case(
+            (qa_query == True, "Flagged"),  # noqa
+            (qa_query == False, "OK"),  # noqa
+        )
 
-    return query.with_entities(
-        qa_case_query.label('status'),
-        func.count(qa_case_query)).group_by('status').all()
+    return query.with_entities(qa_case_query.label("status"), func.count(qa_case_query)).group_by("status").all()
 
 
 class TagVisitor(PTNodeVisitor):
     def __init__(self, *args, **kwargs):
+        """Constructor for TagVisitor."""
         self.variables = set()
         super().__init__(*args, **kwargs)
 
@@ -382,13 +394,14 @@ class TagVisitor(PTNodeVisitor):
 
 
 def get_inline_qa_status(submission, condition):
+    """QA status for inline rendering."""
     control_expression = build_expression(condition)
 
     # short-circuit for empty expression
-    if control_expression == '':
+    if control_expression == "":
         return None, set()
 
-    parser = ParserPEG(GRAMMAR, 'qa')
+    parser = ParserPEG(GRAMMAR, "qa")
     tree = parser.parse(control_expression)
 
     var_visitor = TagVisitor()
@@ -409,28 +422,30 @@ def get_inline_qa_status(submission, condition):
 
 
 def build_expression(logical_check):
-    if 'criteria' in logical_check:
-        control_expression = ''
+    """QA expression builder."""
+    if "criteria" in logical_check:
+        control_expression = ""
 
-        for index, cond in enumerate(logical_check['criteria']):
+        for index, cond in enumerate(logical_check["criteria"]):
             if index:
-                control_expression += '{conjunction} {lvalue} {comparator} {rvalue} '.format(**cond)  # noqa
+                control_expression += "{conjunction} {lvalue} {comparator} {rvalue} ".format(**cond)  # noqa
             else:
-                control_expression += '{lvalue} {comparator} {rvalue} '.format(**cond)  # noqa
+                control_expression += "{lvalue} {comparator} {rvalue} ".format(**cond)  # noqa
     else:
-        control_expression = '{lvalue} {comparator} {rvalue} '.format(**logical_check)  # noqa
+        control_expression = "{lvalue} {comparator} {rvalue} ".format(**logical_check)  # noqa
 
     return control_expression.strip()
 
 
 def qa_status(submission, check):
+    """Returns the QA status for a particular QA condition."""
     result, tags = get_inline_qa_status(submission, check)
     verified_fields = submission.verified_fields or set()
     if result is True and not tags.issubset(verified_fields):
-        return QUALITY_STATUSES['FLAGGED']
+        return QUALITY_STATUSES["FLAGGED"]
     elif result is True and tags.issubset(verified_fields):
-        return QUALITY_STATUSES['VERIFIED']
+        return QUALITY_STATUSES["VERIFIED"]
     elif result is False:
-        return QUALITY_STATUSES['OK']
+        return QUALITY_STATUSES["OK"]
     else:
         return None

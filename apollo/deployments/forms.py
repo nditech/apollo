@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_security import current_user
 from flask_wtf import FlaskForm
 from wtforms import SelectField, validators

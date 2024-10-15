@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
-from contextlib import contextmanager
 
 import six
-from authlib.flask.client import OAuth
-from flask import _request_ctx_stack, redirect, url_for
+from authlib.integrations.flask_client import OAuth
+from flask import redirect, url_for
 from flask_admin import Admin, AdminIndexView, expose
 from flask_apispec import FlaskApiSpec
-from flask_babelex import Babel
+from flask_babel import Babel
 from flask_cors import CORS
 
 try:
     from flask_debugtoolbar import DebugToolbarExtension
+
     fdt_available = True
 except ImportError:
     fdt_available = False
-from flask_gravatar import Gravatar
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_menu import Menu
@@ -26,42 +25,40 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import DEFAULTS, UploadSet
 from flask_webpack import Webpack
 from flask_wtf.csrf import CSRFProtect
-from raven.contrib.flask import Sentry
+from prometheus_flask_exporter import NO_PREFIX, PrometheusMetrics
 from sqlalchemy import and_, or_
 from wtforms import Form, fields
 
-from apollo.sentry_ext import ApolloRavenClient
-
 
 class AdminHome(AdminIndexView):
-    @expose('/')
+    @expose("/")
     def index(self):
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for("dashboard.index"))
 
 
-admin = Admin(
-    name='Apollo', index_view=AdminHome(name='Dashboard'))
+admin = Admin(name="Apollo", index_view=AdminHome(name="Dashboard"))
 babel = Babel()
 cors = CORS()
-db = SQLAlchemy(session_options={'expire_on_commit': False})
+db = SQLAlchemy(session_options={"expire_on_commit": False})
 jwt_manager = JWTManager()
 mail = Mail()
 menu = Menu()
+metrics = PrometheusMetrics.for_app_factory(defaults_prefix=NO_PREFIX)
 migrate = Migrate()
 oauth = OAuth()
 red = FlaskRedis()
 security = Security()
-gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
-sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CSRFProtect()
 debug_toolbar = DebugToolbarExtension() if fdt_available else None
-uploads = UploadSet('uploads', DEFAULTS)
+uploads = UploadSet("uploads", DEFAULTS)
 webpack = Webpack()
 docs = FlaskApiSpec()
 
 
 class Filter(object):
-    """Enables filtering a queryset on one parameter. Several filters
+    """Enables filtering a queryset on one parameter.
+
+    Several filters
     can (and should) be combined into a `class`FilterSet, which can be
     used to generate a form for receiving the necessary parameters for
     filtering.
@@ -72,10 +69,12 @@ class Filter(object):
 
     This is a subset of what django-filter offers.
     """
+
     creation_counter = 0
     field_class = fields.Field
 
     def __init__(self, name=None, widget=None, **kwargs):
+        """Initializer."""
         self.extra = kwargs
         self.name = name
         self.widget = widget
@@ -91,9 +90,8 @@ class Filter(object):
 
     @property
     def field(self):
-        """A HTML form field for receiving input for this `class`Filter.
-        """
-        if not hasattr(self, '_field'):
+        """A HTML form field for receiving input for this `class`Filter."""
+        if not hasattr(self, "_field"):
             self._field = self.field_class(widget=self.widget, **self.extra)
         return self._field
 
@@ -111,34 +109,33 @@ class BooleanFilter(Filter):
 
 
 def get_declared_filters(bases, attrs, use_base_filters=True):
-    """Creates an ordered dictionary of all `class`Filter instances
-    declared in a `class`FilterSet, and optionally assigns a name to
-    each one that doesn't have one explicitly set. Used by
-    `class`FilterSetMetaclass to create the `class`FilterSet class
-    object."""
+    """Creates an ordered dictionary of all `class`Filter instances declared in a `class`FilterSet.
+
+    Also optionally assigns a name to each one that doesn't have one explicitly set. Used by
+    `class`FilterSetMetaclass to create the `class`FilterSet class object.
+    """
     filters = []
     for filter_name, obj in list(attrs.items()):
         if isinstance(obj, Filter):
-            if getattr(obj, 'name', None) is None:
+            if getattr(obj, "name", None) is None:
                 obj.name = filter_name
             filters.append((filter_name, obj))
     filters.sort(key=lambda x: x[1].creation_counter)
 
     if use_base_filters:
         for base in bases[::-1]:
-            if hasattr(base, 'declared_filters'):
+            if hasattr(base, "declared_filters"):
                 filters = list(base.declared_filters.items()) + filters
 
     return OrderedDict(filters)
 
 
 class FilterSetMetaclass(type):
-    """Metaclass for `class`FilterSet"""
+    """Metaclass for `class`FilterSet."""
 
     def __new__(cls, name, bases, attrs):
         declared_filters = get_declared_filters(bases, attrs)
-        new_class = super(FilterSetMetaclass, cls).__new__(
-            cls, name, bases, attrs)
+        new_class = super(FilterSetMetaclass, cls).__new__(cls, name, bases, attrs)
         new_class.declared_filters = declared_filters
 
         return new_class
@@ -146,12 +143,16 @@ class FilterSetMetaclass(type):
 
 class BaseFilterSet(object):
     """This class serves as a container for `class`Filter instances.
+
     Users should subclass `class`FilterSet and add `class`Filter
     instances as class attributes. This class has a cached form property
     that can be used to render a HTML form for filtering a relevant
     queryset. When processing user data using the form, invalid
-    inputs do not affect the filtering process."""
-    def __init__(self, queryset, data=None, prefix=''):
+    inputs do not affect the filtering process.
+    """
+
+    def __init__(self, queryset, data=None, prefix=""):
+        """Initialize."""
         self.queryset = queryset
         self.data = data
         self.is_bound = data is not None
@@ -159,18 +160,10 @@ class BaseFilterSet(object):
 
     @property
     def form(self):
-        """Generates a HTML form that can be used to receive user input
-        for filtering the queryset.
-        """
-        if not hasattr(self, '_form'):
-            fields = OrderedDict(
-                ((name, filter_.field) for name, filter_ in six.iteritems(
-                    self.declared_filters)))
-            form_class = type(
-                str('{}Form'.format(self.__class__.__name__)),
-                (Form,),
-                fields
-            )
+        """Generates a HTML form that can be used to receive user input for filtering the queryset."""
+        if not hasattr(self, "_form"):
+            fields = OrderedDict(((name, filter_.field) for name, filter_ in six.iteritems(self.declared_filters)))
+            form_class = type(str("{}Form".format(self.__class__.__name__)), (Form,), fields)
             if self.is_bound:
                 self._form = form_class(self.data, prefix=self.prefix)
             else:
@@ -179,10 +172,8 @@ class BaseFilterSet(object):
 
     @property
     def qs(self):
-        """A cached queryset that is generated by filtering the initial
-        queryset based on the valid form values set.
-        """
-        if not hasattr(self, '_qs'):
+        """A cached queryset that is generated by filtering the initial queryset based on the valid form values set."""
+        if not hasattr(self, "_qs"):
             qs = self.queryset
             constraints_and = []
             constraints_or = []
@@ -196,16 +187,14 @@ class BaseFilterSet(object):
 
                 qs = filter_.queryset_(qs, field.data)
 
-                and_constraint, or_constraint = filter_.filter(
-                    qs, field.data, form=self.form)
+                and_constraint, or_constraint = filter_.filter(qs, field.data, form=self.form)
 
                 if and_constraint is not None:
                     constraints_and.append(and_constraint)
                 if or_constraint is not None:
                     constraints_or.append(or_constraint)
 
-            self._qs = qs.filter(
-                and_(*constraints_and)).filter(or_(*constraints_or))
+            self._qs = qs.filter(and_(*constraints_and)).filter(or_(*constraints_or))
 
         return self._qs
 
@@ -214,42 +203,27 @@ class FilterSet(six.with_metaclass(FilterSetMetaclass, BaseFilterSet)):
     pass
 
 
-# copied from the main flask-babel source
-# TODO: maybe replace flask-babelex with flask-babel? tough job though
-@contextmanager
-def force_locale(locale: str):
-    """Temporarily overrides the selected locale. Sometimes
-    it is useful to switch the current locale to a different one, do
-    some tasks and then revert back to the original one. For example,
-    if the user uses German on the web site, but you want to send
-    them an email in English, you can use this function as a context
-    manager::
-
-        with force_locale('en_US'):
-            send_email(gettext('Hello!'), ...)
-    """
-    ctx = _request_ctx_stack.top
-    if ctx is None:
-        yield
-        return
-
-    languages = ctx.app.config.get('LANGUAGES', {})
-    if locale not in languages.keys():
-        yield
-        return
-
-    babel = ctx.app.extensions['babel']
-    orig_locale_selector_func = babel.locale_selector_func
-    orig_attrs = {}
-    for key in ('babel_translations', 'babel_locale'):
-        orig_attrs[key] = getattr(ctx, key, None)
-
-    try:
-        babel.locale_selector_func = lambda: locale
-        for key in orig_attrs:
-            setattr(ctx, key, None)
-        yield
-    finally:
-        babel.locale_selector_func = orig_locale_selector_func
-        for key, value in orig_attrs.items():
-            setattr(ctx, key, value)
+__all__ = [
+    "admin",
+    "babel",
+    "BooleanFilter",
+    "CharFilter",
+    "ChoiceFilter",
+    "cors",
+    "csrf",
+    "db",
+    "debug_toolbar",
+    "docs",
+    "fdt_available",
+    "FilterSet",
+    "jwt_manager",
+    "mail",
+    "menu",
+    "metrics",
+    "migrate",
+    "oauth",
+    "red",
+    "security",
+    "uploads",
+    "webpack",
+]

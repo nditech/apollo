@@ -3,7 +3,7 @@ from datetime import datetime
 
 from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
-from flask_babelex import gettext
+from flask_babel import gettext
 from sqlalchemy import and_, false, or_
 from sqlalchemy.dialects.postgresql import ARRAY
 

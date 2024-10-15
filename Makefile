@@ -14,12 +14,7 @@ babel-init:
 babel-update:
 	pybabel update -i apollo/translations/messages.pot -d apollo/translations/
 	pybabel update -i apollo/translations/javascript.pot -D javascript -d apollo/translations/
-deps:
-	poetry export --output requirements/prod.txt
-	poetry export --dev --output requirements/dev.txt
 po2json:
 	./convert-po2json
-version:
-	./update_version.sh
-docker: version
+docker:
 	docker-compose build

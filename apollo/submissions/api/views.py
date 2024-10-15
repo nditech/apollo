@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_security.decorators import login_required
 from marshmallow import ValidationError

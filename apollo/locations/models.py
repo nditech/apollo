@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from geoalchemy2 import Geometry
 import networkx as nx
 from sqlalchemy import and_, false, func
@@ -128,14 +128,6 @@ class LocationSet(BaseModel):
             fields.update(lt_data)
 
         return fields
-
-    @property
-    def events(self):
-        return {
-            event
-            for participant_set in self.participant_sets
-            for event in participant_set.events
-        }
 
 
 locations_groups = db.Table(

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "apollo"
-version = "3.2.0"
+version = "2024.10"
 description = "A robust data collection and analysis tool to document political processes"
 authors = ["Tim Akinbo <takinbo@timbaobjects.com>"]
 license = "GPL-3.0-only"
@@ -9,105 +9,116 @@ repository = "https://github.com/nditech/apollo"
 keywords = ["elections", "political-parties", "election-quick-count", "pvt", "election-analysis",  "election-data", "elections-toolkit"]
 
 [tool.poetry.dependencies]
-python = "~3.6.15"
+python = "~3.11.10"
 aniso8601 = "0.82"
 Arpeggio = "1.7.1"
 awesome-slugify = "1.6.5"
 boto3 = "1.16.8"
-cachetools = "1.1.5"
-celery = "4.1.1"
-email-validator = "1.1.3"
+cachetools = "^5.5.0"
+celery = {extras = ["redis"], version = "^5.4.0"}
 filedepot = "0.8.0"
-Flask = "1.0"
-Flask-Admin = "~1.5.3"
+Flask = "^3.0.3"
+Flask-Admin = "^1.6.1"
 flask-apispec = "^0.11.4"
-Flask-Assets = "0.12"
-Flask-BabelEx = "0.9.4"
-Flask-Cors = "3.0.10"
-Flask-Gravatar = "0.5.0"
+Flask-Assets = "^2.1.0"
+Flask-Cors = "^5.0.0"
 Flask-HTTPAuth = "2.7.0"
-Flask-JWT-Extended = "4.0.2"
-Flask-Login = "0.4.1"
-Flask-Mail = "0.9.1"
-flask-menu = "0.7.0"
-Flask-Migrate = "2.1.1"
+Flask-JWT-Extended = "^4.6.0"
+Flask-Mail = "^0.10.0"
+flask-menu = {git = "https://github.com/marvinscham/flask-menu.git", rev = "2405838c455b16bc77c99af991e763d21b8c6bb9"}
+Flask-Migrate = "^4.0.7"
 Flask-Principal = "0.4.0"
 flask-redis = "0.4.0"
 Flask-Script = "2.0.6"
-Flask-Security = "3.0.0"
-Flask-SQLAlchemy = "2.4.0"
+Flask-Security = {extras = ["common"], version = "^5.5.2"}
+Flask-SQLAlchemy = "^3.1.1"
 Flask-SSLify = "0.1.4"
-Flask-Uploads = "0.2.1"
 Flask-Webpack = "0.1.0"
-Flask-WTF = "0.15.1"
-GeoAlchemy2 = "0.6.3"
-geojson = "2.5.0"
-gevent = "1.4.0"
-GitPython = "3.1.8"
-gunicorn = "19.7.1"
-honcho = "1.0.1"
-itsdangerous = "0.24"
-Jinja2 = "2.11.3"
-loginpass = "0.3"
-lxml = "4.6.3"
-Mako = "1.0.7"
-MarkupSafe = "1.1.1"
+Flask-WTF = "^1.2.1"
+GeoAlchemy2 = "^0.15.2"
+geojson = "^3.1.0"
+gevent = "^24.2.1"
+GitPython = "^3.1.43"
+gunicorn = "^23.0.0"
+lxml = "^5.3.0"
 marshmallow-sqlalchemy = "^0.27.0"
 netifaces = "0.10.9"
-networkx = "2.1"
-numpy = "1.16.0"
-openpyxl = "2.5.0"
-pandas = "0.23.4"
-parsimonious = "0.8.0"
+networkx = "^3.3"
+numpy = "^2.1.1"
+pandas = "^2.2.2"
+parsimonious = "^0.10.0"
 Parsley = "1.3"
-passlib = "1.7.1"
-pillow = "8.3.2"
-prettyconf = "1.2.3"
-prometheus-client = "0.6.0"
+pillow = "^10.4.0"
+prettyconf = "^2.2.1"
 psutil = "5.6.6"
-psycopg2-binary = "2.8.3"
-python-dateutil = "2.7.2"
+psycopg2-binary = "^2.9.9"
+python-dateutil = "^2.9.0.post0"
 python-editor = "1.0.3"
-python-magic = "0.4.15"
-pytz = "2018.4"
+python-magic = "^0.4.27"
+pytz = "^2024.2"
 qrcode = "6.1"
-raven = "6.6.0"
-redis = "3.2.1"
-regex = "2018.2.3"
-requests = "2.25.1"
-shapely = "1.6.4.post2"
+requests = "^2.32.3"
+shapely = "^2.0.6"
 six = "1.11.0"
-SQLAlchemy = "^1.3.4"
-sqlalchemy-json = "0.2.3"
-SQLAlchemy-Utils = "^0.39.0"
+sqlalchemy-json = "^0.7.0"
+SQLAlchemy-Utils = "^0.41.2"
 tablib = "0.13.0"
 Unidecode = "0.4.21"
-webassets = "0.12.1"
-Werkzeug = "0.15.3"
 whitenoise = "3.3.1"
-wrapt = "1.12.1"
-WTForms = "2.3.3"
-WTForms-Alchemy = "0.16.6"
-xlrd = "1.1.0"
+wrapt = "^1.16.0"
+WTForms = "^3.1.2"
+WTForms-Alchemy = "^0.18.0"
 xlwt = "1.3.0"
-greenlet = "0.4.15"
-pyxform = "~=0.11.1"
-Authlib = "0.11"
-cryptography = "3.3.2"
+greenlet = "^3.1.0"
+pyxform = "^2.1.0"
+Authlib = "^1.3.2"
+cryptography = "^43.0.1"
 apispec = "^4.0.0"
+flask-babel = "^4.0.0"
+flask-reuploaded = "^1.4.0"
+loginpass = "^0.5"
+sentry-sdk = {extras = ["celery", "flask"], version = "^2.14.0"}
+bleach = "^6.1.0"
+prometheus-flask-exporter = "^0.23.1"
 
-[tool.poetry.dev-dependencies]
-autopep8 = "~=1.4.4"
-coverage = "~=4.5.3"
-flake8 = "~=3.7.7"
-Flask-DebugToolbar = "0.10.1"
-Flask-Testing = "0.8.1"
-mimesis = "~=3.2.0"
-pip-tools = "~=4.1.0"
-pytest = "7.0.1"
-selenium = "~=3.141.0"
-chromedriver-autoinstaller = "~=0.6.2"
-pytest-flask = "1.2.0"
+[tool.poetry.group.dev.dependencies]
+Flask-DebugToolbar = "^0.16.0"
+mimesis = "^18.0.0"
+pytest = "^8.3.3"
+selenium = "^4.25.0"
+chromedriver-autoinstaller = "^0.6.4"
+pytest-flask = "^1.3.0"
+ruff = "^0.6.6"
+pre-commit = "^3.8.0"
+pytest-mock = "^3.14.0"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "N",  # PEP8 naming convetions
+    "D"  # pydocstyle
+]
+ignore = [
+    "C901",  # too complex
+    "W191",  # indentation contains tabs
+    "D401",  # imperative mood
+    "D100",  # missing docstring in public module
+    "D101",  # missing docstring in public class
+    "D102",  # missing docstring in public method
+    "N802",  # function name should be lower case
+    "N806"  # variable name should be lower case
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [build-system]
 requires = ["poetry-core"]

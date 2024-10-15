@@ -1,48 +1,50 @@
 # -*- coding: utf-8 -*-
+"""Apollo root module."""
+
 from datetime import datetime, timedelta
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
-from flask import (
-    g, redirect, render_template, request, session, url_for
-)
+from flask import g, redirect, render_template, request, session, url_for
 from flask_admin import AdminIndexView
 from flask_jwt_extended import (
-    create_access_token, get_jwt_identity, get_jwt, set_access_cookies)
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    set_access_cookies,
+)
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import current_user
 from flask_security.utils import login_user, url_for_security
-from loginpass import create_flask_blueprint, Facebook, Google
-from werkzeug.urls import url_encode
+from loginpass import Facebook, Google, create_flask_blueprint
 from whitenoise import WhiteNoise
 
-from apollo import assets, models, services, settings, utils
+from apollo import assets, factory, models, services, settings, utils
+from apollo.cli import messages_cli, users_cli
+from apollo.core import admin, csrf, docs, oauth, webpack
 from apollo.frontend import permissions, template_filters
-from apollo.core import (
-    admin, csrf, docs, gravatar, menu, oauth, webpack
-)
-from apollo.prometheus.flask import monitor
+
 from .frontend.helpers import set_request_presets
 
-from apollo import factory
-
 custom_filters = {
-    'checklist_question_summary': template_filters.checklist_question_summary,
-    'get_location_for_type': template_filters.get_location_for_type,
-    'pagelist': template_filters.gen_page_list,
-    'percent_of': template_filters.percent_of,
-    'timestamp': template_filters.mkunixtimestamp,
-    'mean_filter': template_filters.mean_filter,
-    'reverse_dict': template_filters.reverse_dict,
-    'qa_status': template_filters.qa_status,
-    'longitude': template_filters.longitude,
-    'latitude': template_filters.latitude
+    "checklist_question_summary": template_filters.checklist_question_summary,
+    "get_location_for_type": template_filters.get_location_for_type,
+    "pagelist": template_filters.gen_page_list,
+    "percent_of": template_filters.percent_of,
+    "timestamp": template_filters.mkunixtimestamp,
+    "mean_filter": template_filters.mean_filter,
+    "reverse_dict": template_filters.reverse_dict,
+    "qa_status": template_filters.qa_status,
+    "longitude": template_filters.longitude,
+    "latitude": template_filters.latitude,
 }
 
 
 def init_admin(admin, app):
+    """Initialize flask-admin."""
+
     class AdminIndex(AdminIndexView):
         def is_accessible(self):
             return current_user.is_admin()
@@ -52,35 +54,27 @@ def init_admin(admin, app):
 
 
 def create_app(settings_override=None):
-    """Returns the frontend application instance"""
+    """Returns the frontend application instance."""
+    # TODO: refactor out the need to use a factory
     app = factory.create_app(__name__, __path__, settings_override)
 
-    app.wsgi_app = WhiteNoise(
-        app.wsgi_app, root=app.static_folder, prefix='static/')
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root=app.static_folder, prefix="static/")
 
     # Init assets
     assets.init_app(app)
     webpack.init_app(app)
 
     oauth.init_app(app)
-    menu.init_app(app)
-    gravatar.init_app(app)
 
     # initialize the OpenAPI extension
-    spec = APISpec(
-        title='Apollo',
-        version='1.0.0',
-        openapi_version='3.0.2',
-        plugins=[MarshmallowPlugin()]
-    )
-    app.config.update({
-        'APISPEC_SPEC': spec
-    })
+    spec = APISpec(title="Apollo", version="1.0.0", openapi_version="3.0.2", plugins=[MarshmallowPlugin()])
+    app.config.update({"APISPEC_SPEC": spec})
     docs.init_app(app)
 
     csrf.init_app(app)
     init_admin(admin, app)
-    monitor(app)
+    app.cli.add_command(users_cli)
+    app.cli.add_command(messages_cli)
 
     # Register custom error handlers
     if not app.debug:
@@ -107,35 +101,36 @@ def create_app(settings_override=None):
 
     @app.context_processor
     def inject_permissions():
-        ga_key = app.config.get('GOOGLE_ANALYTICS_KEY')
-        gtm_key = app.config.get('GOOGLE_TAG_MANAGER_KEY')
-        return dict(perms=permissions, ga_key=ga_key, gtm_key=gtm_key)
+        ga_key = app.config.get("GOOGLE_ANALYTICS_KEY")
+        gtm_key = app.config.get("GOOGLE_TAG_MANAGER_KEY")
+        return {"perms": permissions, "ga_key": ga_key, "gtm_key": gtm_key}
 
     # clickjacking protection
     @app.after_request
     def frame_buster(response):
-        response.headers['X-Frame-Options'] = app.config.get(
-            'X_FRAME_OPTIONS', 'DENY')
+        response.headers["X-Frame-Options"] = app.config.get("X_FRAME_OPTIONS", "DENY")
         return response
 
     # content security policy
     @app.after_request
     def content_security_policy(response):
-        sentry_dsn = settings.SENTRY_DSN or ''
-        sentry_host = urlparse(sentry_dsn).netloc.split('@')[-1]
-        response.headers['Content-Security-Policy'] = "default-src 'self' blob: " + \
-            "*.googlecode.com *.google-analytics.com fonts.gstatic.com fonts.googleapis.com " + \
-            "*.googletagmanager.com " + \
-            "cdn.heapanalytics.com heapanalytics.com " + \
-            "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:; " + \
-            f"connect-src 'self' {sentry_host}; "
+        sentry_dsn = settings.SENTRY_DSN or ""
+        sentry_host = urlparse(sentry_dsn).netloc.split("@")[-1]
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self' blob: "
+            + "*.googlecode.com *.google-analytics.com fonts.gstatic.com fonts.googleapis.com "
+            + "*.googletagmanager.com "
+            + "cdn.heapanalytics.com heapanalytics.com "
+            + "'unsafe-inline' 'unsafe-eval' data:; img-src * data: blob:; "
+            + f"connect-src 'self' {sentry_host}; "
+        )
         return response
 
     # automatic token refresh
     @app.after_request
     def refresh_expiring_jwts(response):
         try:
-            expiration_timestamp = get_jwt()['exp']
+            expiration_timestamp = get_jwt()["exp"]
             now = utils.current_timestamp()
             target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
             if target_timestamp > expiration_timestamp:
@@ -147,15 +142,13 @@ def create_app(settings_override=None):
             return response
 
     def handle_authorize(remote, token, user_info):
-        if user_info and 'email' in user_info:
-            user = models.User.query.filter_by(
-                email=user_info['email']).first()
+        if user_info and "email" in user_info:
+            user = models.User.query.filter_by(email=user_info["email"]).first()
             if user:
                 login_user(user)
-                userdatastore.commit()
-                return redirect(app.config.get('SECURITY_POST_LOGIN_VIEW'))
+                return redirect(app.config.get("SECURITY_POST_LOGIN_VIEW"))
 
-        return redirect(url_for_security('login'))
+        return redirect(url_for_security("login"))
 
     @app.template_global()
     def modify_query(**values):
@@ -167,34 +160,34 @@ def create_app(settings_override=None):
             else:
                 args[k] = v
 
-        return '{}?{}'.format(request.path, url_encode(args))
+        return "{}?{}".format(request.path, urlencode(args))
 
-    facebook_bp = create_flask_blueprint(Facebook, oauth, handle_authorize)
-    google_bp = create_flask_blueprint(Google, oauth, handle_authorize)
+    if app.config.get("ENABLE_SOCIAL_LOGIN", False):
+        bp = create_flask_blueprint([Facebook, Google], oauth, handle_authorize)
+        app.register_blueprint(bp, url_prefix="/social")
 
-    if app.config.get('ENABLE_SOCIAL_LOGIN', False):
-        app.register_blueprint(facebook_bp, url_prefix='/facebook')
-        app.register_blueprint(google_bp, url_prefix='/google')
+    celery = factory.make_celery(app)
 
-    return app
+    return app, celery
 
 
 def clear_session(app, user):
-    # clear session
+    """Clears the session."""
     session.clear()
 
     # pop request globals
-    delattr(g, 'deployment')
-    delattr(g, 'event')
-    delattr(g, 'locale')
+    delattr(g, "deployment")
+    delattr(g, "event")
+    delattr(g, "locale")
 
 
 def handle_error(e):
-    code = getattr(e, 'code', 500)
+    """Error handler."""
+    code = getattr(e, "code", 500)
     if code == 403:
-        session['redirected_from'] = request.url
-        return redirect(url_for('security.login'))
+        session["redirected_from"] = request.url
+        return redirect(url_for("security.login"))
     elif code == 404:
-        return render_template('404.html'), code
+        return render_template("404.html"), code
     else:
-        return render_template('500.html'), 500
+        return render_template("500.html"), 500

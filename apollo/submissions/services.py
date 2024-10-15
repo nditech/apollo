@@ -4,7 +4,7 @@ from io import StringIO
 
 import sqlalchemy as sa
 from dateutil.parser import isoparse
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from geoalchemy2.shape import to_shape
 
 from apollo import constants

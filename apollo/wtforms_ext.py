@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # from https://github.com/industrydive/wtforms_extended_selectfield
+from markupsafe import Markup
 from wtforms.fields import SelectField, SelectMultipleField
 from wtforms.validators import ValidationError
-from wtforms.widgets import HTMLString, html_params
-from wtforms.widgets import Select
+from wtforms.widgets import Select, html_params
 
 # very loosely based on https://gist.github.com/playpauseandstop/1590178
 
@@ -35,7 +35,7 @@ class ExtendedSelectWidget(Select):
                 label = item2
                 html.append(self.render_option(val, label, val == field.data))
         html.append('</select>')
-        return HTMLString(''.join(html))
+        return Markup(''.join(html))
 
 
 class ExtendedSelectField(SelectField):

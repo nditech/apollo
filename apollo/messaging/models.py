@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from flask_babelex import gettext as _
 import sqlalchemy as sa
+from flask_babel import gettext as _
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
@@ -60,6 +60,6 @@ class Message(BaseModel):
     __table_args__ = (
         db.Index(
             'ix_text_tsv',
-            sa.func.to_tsvector('english', text),
+            sa.func.to_tsvector(sa.literal_column("'english'"), text),
             postgresql_using='gin'),
     )

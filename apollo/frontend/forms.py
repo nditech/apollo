@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField
 from geoalchemy2.shape import to_shape

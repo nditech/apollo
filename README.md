@@ -47,7 +47,7 @@ After downloading, configure a settings file in the main folder called `settings
 ```
 [settings]
 SECRET_KEY=sD2av35FAg43rfsDa
-SSL_REQUIRED=False
+PREFERRED_URL_SCHEME=http
 ```
 
 ### Build and Deploy
@@ -135,7 +135,7 @@ You should now be able to log in to your site by navigating to the IP or URL for
 
 ### Application Configuration Settings
 
-Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. The syntax is for each setting to use the header listed below with an equal sign and then its value, for example `SSL_REQUIRED=False` or `TIMEZONE=Africa/Lagos`. Here are a collection of settings parameters and sample values together with an explanation of what they do.
+Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. The syntax is for each setting to use the header listed below with an equal sign and then its value, for example `PREFERRED_URL_SCHEME=https` or `TIMEZONE=Africa/Lagos`. Here are a collection of settings parameters and sample values together with an explanation of what they do.
 
 **SECRET_KEY**
 (e.g. LBZyd8EY80mALqb7bl8o3da8)
@@ -143,10 +143,10 @@ Each deployment installation can be further customized by modifying the contents
 The secret key contains a random string of characters, numbers and symbols and is used internally for signing and encrypting cookies and other security-related tokens. Best security practice requires that you set the value to a random value before starting the containers. Note that if this value is changed after the application is already fully configured, then user logins will stop working as the application would not be able to decrypt stored passwords. So this should remain the same throughout the lifetime of the application. This is a compulsory configuration option.
 
 
-**SSL_REQUIRED**
-(e.g. False)
+**PREFERRED_URL_SCHEME**
+(e.g. http or https)
 
-This parameter determines whether the application server will explicitly check if all requests are being served over a secure (https) connection. By setting this value to True, you effectively turn this check on and all connections must be secure before access is granted.
+This parameter determines whether the application server will explicitly check if all requests are being served over a secure (https) connection. By setting this value to https, you effectively turn this check on and all connections must be secure before access is granted.
 
 
 **TIMEZONE**
@@ -159,7 +159,7 @@ The timezone parameter configures the timezone that the application server uses 
 (e.g. GTM-1234567)
 
 
-For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
+For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo.
 
 If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed. To enable Tag Manager, modify the `settings-docker.ini` file. Add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
 
@@ -249,7 +249,7 @@ The `API_KEY` setting enables external API access to the artefacts exposed by Ap
 
 An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation and Deployment*.
 
-#### Building the Docker Images 
+#### Building the Docker Images
 
 Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
 

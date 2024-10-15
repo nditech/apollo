@@ -147,7 +147,7 @@
     <div class="{{ kwargs.get('column_class', 'col-9') }}  {{- ' rtl' if g.locale.text_direction == 'rtl' else '' }}">
       {%- if field.type == 'DateTimeField' %}
         <div class="input-group date" id="{{ field.id }}" data-target-input="nearest">
-          <input id="{{ field.id }}" name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#{{ field.id }}" data-toggle="datetimepicker" value="{{ field.data.strftime(field.format) }}">
+          <input id="{{ field.id }}" name="{{ field.name }}" type="text" class="form-control datetimepicker-input" data-target="#{{ field.id }}" data-toggle="datetimepicker" value="{{ field.data.strftime(field.format[0]) }}">
           <div class="input-group-append" data-target="#{{ field.id }}" data-toggle="datetimepicker">
             <div class="input-group-text"><i class="far fa-calendar"></i></div>
           </div>

@@ -6,7 +6,7 @@ from functools import partial
 from io import StringIO
 from itertools import chain
 
-from flask_babelex import gettext as _
+from flask_babel import gettext as _
 import numpy as np
 import pandas as pd
 

@@ -12,6 +12,7 @@
 apollo-*.tar.gz
 assets/
 bin/
+celerybeat-schedule
 gunicorn.pid
 include/
 lib/

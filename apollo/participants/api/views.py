@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
-from flask_babelex import gettext
+from flask_babel import gettext
 from flask_jwt_extended import (
     create_access_token, get_jwt, get_jwt_identity, jwt_required,
     set_access_cookies, unset_access_cookies)

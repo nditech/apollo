@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict
+from html import escape
 
-from cgi import escape
 from dateutil.parser import parse
-from dateutil.tz import gettz, UTC
-from flask_babelex import gettext as _
+from dateutil.tz import UTC, gettz
+from flask_babel import gettext as _
+from markupsafe import Markup
 from sqlalchemy import or_
-from wtforms import widgets, fields
-from wtforms.compat import text_type
-from wtforms.widgets import html_params, HTMLString
+from wtforms import fields, widgets
+from wtforms.widgets import html_params
 from wtforms_alchemy.fields import QuerySelectField
 
-from apollo import services, models
+from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.frontend.helpers import get_event
 from apollo.helpers import _make_choices
@@ -35,10 +35,10 @@ class LocationSelectWidget(widgets.Select):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s · %s</option>' % (
+        return Markup('<option %s>%s · %s</option>' % (
             html_params(**options),
-            escape(text_type(label.name)),
-            escape(text_type(label.location_type))))
+            escape(str(label.name)),
+            escape(str(label.location_type))))
 
 
 class SupervisorSelectWidget(widgets.Select):
@@ -48,14 +48,14 @@ class SupervisorSelectWidget(widgets.Select):
         if selected:
             options['selected'] = True
         if hasattr(label, 'participant_id'):
-            return HTMLString('<option %s>%s · %s</option>' % (
+            return Markup('<option %s>%s · %s</option>' % (
                 html_params(**options),
-                escape(text_type(label.participant_id)),
-                escape(text_type(label.name))))
+                escape(str(label.participant_id)),
+                escape(str(label.name))))
         else:
-            return HTMLString('<option %s>%s</option>' % (
+            return Markup('<option %s>%s</option>' % (
                 html_params(**options),
-                escape(text_type(label))))
+                escape(str(label))))
 
 
 class LocationQuerySelectField(QuerySelectField):
