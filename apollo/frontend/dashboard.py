@@ -247,8 +247,8 @@ def get_daily_progress(query, event):
     df = pd.read_sql(
         query_with_entities.selectable,
         query_with_entities.session.get_bind(),
-        index_col="participant_updated",
-        parse_dates=["participant_updated"],
+        index_col="submission_participant_updated",
+        parse_dates=["submission_participant_updated"],
     ).tz_localize(TIMEZONE)
     df["count"] = 1
 
@@ -256,9 +256,13 @@ def get_daily_progress(query, event):
     start = tz.localize(datetime.combine(event.start.astimezone(tz), datetime.min.time()))
     end = tz.localize(datetime.combine(event.end.astimezone(tz), datetime.min.time()))
     df_resampled = (
-        df.loc[df.index.notnull()]
-        .append(pd.DataFrame({"count": 0}, index=[start]))
-        .append(pd.DataFrame({"count": 0}, index=[end]))
+        pd.concat(
+            [
+                df.loc[df.index.notnull()],
+                pd.DataFrame({"count": 0}, index=[start]),
+                pd.DataFrame({"count": 0}, index=[end]),
+            ]
+        )
         .resample("D")
         .sum()
     )
@@ -316,8 +320,8 @@ def get_stratified_daily_progress(query, event, location_type):
         df = pd.read_sql(
             _query.selectable,
             _query.session.get_bind(),
-            index_col=["participant_updated"],
-            parse_dates=["participant_updated"],
+            index_col=["submission_participant_updated"],
+            parse_dates=["submission_participant_updated"],
         ).tz_localize(TIMEZONE)
         df["count"] = 1
         tz = timezone(TIMEZONE)
@@ -330,11 +334,14 @@ def get_stratified_daily_progress(query, event, location_type):
 
         for location in locations:
             if location.name not in df.loc[df.index.notnull()]["getter"].unique():  # noqa
-                df = df.append(
-                    pd.DataFrame(
-                        {"getter": location.name, "count": 0, "code": location.code},  # noqa
-                        index=[start],
-                    )
+                df = pd.concat(
+                    [
+                        df,
+                        pd.DataFrame(
+                            {"getter": location.name, "count": 0, "code": location.code},  # noqa
+                            index=[start],
+                        ),
+                    ]
                 )
 
         df2 = df.loc[df.index.notnull()].groupby(["getter", "code"]).resample("D").sum()  # noqa
@@ -343,9 +350,13 @@ def get_stratified_daily_progress(query, event, location_type):
 
         for location in df2.index.get_level_values(0).unique():  # noqa
             df_resampled = (
-                df2.loc[location]
-                .append(pd.DataFrame({"count": 0}, index=[start]))
-                .append(pd.DataFrame({"count": 0}, index=[end]))
+                pd.concat(
+                    [
+                        df2.loc[location],
+                        pd.DataFrame({"count": 0}, index=[start]),
+                        pd.DataFrame({"count": 0}, index=[end]),
+                    ]
+                )
                 .resample("D")
                 .sum()
             )
