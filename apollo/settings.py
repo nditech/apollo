@@ -191,6 +191,7 @@ ATTACHMENTS_USE_S3 = config("ATTACHMENTS_USE_S3", cast=config.boolean, default=F
 
 # WTF_CSRF_CHECK_DEFAULT = False
 
+DEBUG = False
 DEBUG_TB_ENABLED = False
 
 _environment = os.environ.get("FLASK_ENV", "").lower()

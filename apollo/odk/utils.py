@@ -55,7 +55,7 @@ def generate_config_qr_code(participant=None):
     img = qr_code.make_image(fill_color="black", back_color="white")
 
     thumb_size = (256, 256)
-    img.thumbnail(thumb_size, Image.ANTIALIAS)
+    img.thumbnail(thumb_size, Image.LANCZOS)
 
     img.save(img_buffer, format="PNG")
     img_buffer.seek(0)

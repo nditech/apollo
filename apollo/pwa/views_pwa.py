@@ -1,67 +1,44 @@
 # -*- coding: utf-8 -*-
-from configparser import ConfigParser, Error
-from pathlib import Path
 
-from flask import (
-    Blueprint, jsonify, make_response, render_template, send_from_directory)
+from flask import Blueprint, current_app, jsonify, make_response, render_template, send_from_directory
 from flask_babel import gettext as _
 
-from apollo import settings
 from apollo.frontend import route
 
-
-blueprint = Blueprint('pwa', __name__, static_folder='static',
-                      template_folder='templates', url_prefix='/pwa')
+blueprint = Blueprint("pwa", __name__, static_folder="static", template_folder="templates", url_prefix="/pwa")
 
 
-@route(blueprint, '/')
+@route(blueprint, "/")
 def index():
-    version_file_path = Path(settings.PROJECT_ROOT).joinpath('version.ini')
-    if version_file_path.exists():
-        parser = ConfigParser()
-        parser.read([version_file_path])
+    """Index view for the PWA."""
+    commit = current_app.config["COMMIT"] or current_app.config["VERSION"]
 
-        try:
-            commit = parser.get('settings', 'commit')
-        except Error:
-            commit = 'unknown'
-    else:
-        commit = 'unknown'
+    trace_errors = current_app.config["DEBUG"]
+    sentry_dsn = current_app.config["SENTRY_DSN"] or ""
 
-    trace_errors = settings.DEBUG
-    sentry_dsn = settings.SENTRY_DSN or ''
-
-    context = {'commit': commit, 'trace_errors': trace_errors}
+    context = {"commit": commit, "trace_errors": trace_errors}
     if trace_errors:
         context.update(dsn=sentry_dsn)
-    page_title = _('Apollo')
-    template_name = 'pwa/index.html'
+    page_title = _("Apollo")
+    template_name = "pwa/index.html"
 
-    context['page_title'] = page_title
+    context["page_title"] = page_title
 
     return render_template(template_name, **context)
 
 
-@route(blueprint, '/serviceworker.js')
+@route(blueprint, "/serviceworker.js")
 def service_worker():
-    response = make_response(send_from_directory(
-        blueprint.static_folder, filename='js/serviceworker.js'))
-    response.headers['Content-Type'] = 'application/javascript'
+    """Serve the service worker."""
+    response = make_response(send_from_directory(blueprint.static_folder, path="js/serviceworker.js"))
+    response.headers["Content-Type"] = "application/javascript"
     return response
 
 
-@route(blueprint, '/versioncheck')
+@route(blueprint, "/versioncheck")
 def version_check():
-    version_file_path = Path(settings.PROJECT_ROOT).joinpath('version.ini')
-    if version_file_path.exists():
-        parser = ConfigParser()
-        parser.read([version_file_path])
+    """Version check endpoint for the PWA."""
+    version = current_app.config["VERSION"]
+    commit = current_app.config["COMMIT"] or version
 
-        try:
-            version_info = dict(parser['settings'])
-
-            return jsonify(version_info)
-        except (KeyError, TypeError):
-            pass
-
-    return jsonify({'version': 'unknown', 'commit': 'unknown'})
+    return jsonify({"version": version, "commit": commit})
