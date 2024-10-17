@@ -16,7 +16,7 @@ awesome-slugify = "1.6.5"
 boto3 = "1.16.8"
 cachetools = "^5.5.0"
 celery = {extras = ["redis"], version = "^5.4.0"}
-filedepot = "0.8.0"
+filedepot = "^0.11.0"
 Flask = "^3.0.3"
 Flask-Admin = "^1.6.1"
 flask-apispec = "^0.11.4"

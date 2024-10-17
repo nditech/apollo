@@ -44,6 +44,17 @@ files = [
 ]
 
 [[package]]
+name = "anyascii"
+version = "0.3.2"
+description = "Unicode to ASCII transliteration"
+optional = false
+python-versions = ">=3.3"
+files = [
+    {file = "anyascii-0.3.2-py3-none-any.whl", hash = "sha256:3b3beef6fc43d9036d3b0529050b0c48bfad8bc960e9e562d7223cfb94fe45d4"},
+    {file = "anyascii-0.3.2.tar.gz", hash = "sha256:9d5d32ef844fe225b8bc7cba7f950534fae4da27a9bf3a6bea2cb0ea46ce4730"},
+]
+
+[[package]]
 name = "apispec"
 version = "4.7.1"
 description = "A pluggable API specification generator. Currently supports the OpenAPI Specification (f.k.a. the Swagger specification)."
@@ -789,16 +800,19 @@ files = [
 
 [[package]]
 name = "filedepot"
-version = "0.8.0"
+version = "0.11.0"
 description = "Toolkit for storing files and attachments in web applications"
 optional = false
 python-versions = "*"
 files = [
-    {file = "filedepot-0.8.0.tar.gz", hash = "sha256:25316ecd352e16524b4d321dbad08e9beb563d5de5447f3ed312daec5d011849"},
+    {file = "filedepot-0.11.0.tar.gz", hash = "sha256:26d4ca647383f08fb4dbdba4d1f92bd699a0dd1c230d90cf0766eb3b6aadc195"},
 ]
 
+[package.dependencies]
+anyascii = "*"
+
 [package.extras]
-testing = ["TurboGears2", "WebTest", "boto", "boto3", "coverage", "flaky", "ming", "mock", "pillow", "requests", "sqlalchemy"]
+testing = ["WebTest", "boto", "boto3", "coverage", "flaky", "google-cloud-storage", "ming", "mock", "pillow", "requests", "sqlalchemy"]
 
 [[package]]
 name = "filelock"
@@ -3790,4 +3804,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.10"
-content-hash = "c81ea8000685a76cc3060d91fad5157774fe76084d22526c517b512afef1997e"
+content-hash = "50dda62c7a89ff6eefd6dc134d285eeaa4841ce8ce4c6110508908bfb2e9f94b"
