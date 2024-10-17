@@ -5,7 +5,7 @@ from importlib import import_module
 import sentry_sdk
 from celery import Celery, Task
 from depot.manager import DepotManager
-from flask import Flask, has_request_context, request
+from flask import Flask, Response, has_request_context, request
 from flask_babel import gettext as _
 from flask_login import current_user
 from flask_security import MailUtil, SQLAlchemyUserDatastore
@@ -199,6 +199,10 @@ def create_app(package_name, package_path, settings_override=None, register_all_
 
     # set up processing for attachments
     setup_attachment_storages()
+
+    @app.route("/robots.txt")
+    def robots():
+        return Response("User-agent: *\nDisallow: /", mimetype="text/plain")
 
     return app
 
