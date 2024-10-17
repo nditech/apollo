@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import codecs
 from datetime import datetime
+from urllib.parse import urlparse
 from uuid import UUID, uuid4
 
+from flask import current_app
 from PIL import Image
 from pytz import utc
+from werkzeug.exceptions import MethodNotAllowed, NotFound
 
 
 def current_timestamp():
@@ -58,3 +61,16 @@ def resize_image(pil_image: Image, new_size: int) -> Image:
         result = Image.new(image_mode, (height, height), background_color)
         result.paste(pil_image, ((height - width) // 2, 0))
         return result.resize((new_size, new_size), Image.LANCZOS)
+
+
+def safe_next_url(url: str, fallback: str | None = None) -> str:
+    """Returns an endpoint or the root endpoint if url is unknown."""
+    url_info = urlparse(url)
+    uri = url_info._replace(netloc="", scheme="").geturl()
+    url_adapter = current_app.url_map.bind("")
+
+    try:
+        url_adapter.match(url_info.path, query_args=url_info.query)
+        return uri
+    except (MethodNotAllowed, NotFound):
+        return fallback or "/"

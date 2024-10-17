@@ -795,7 +795,12 @@ def submission_edit(submission_id):
                     update_submission_version(submission)
 
                 if request.form.get("next"):
-                    return redirect(request.form.get("next"))
+                    return redirect(
+                        autils.safe_next_url(
+                            request.form.get("next"),
+                            url_for("submissions.submission_list", form_id=str(submission.form.id)),
+                        )
+                    )
                 else:
                     return redirect(url_for("submissions.submission_list", form_id=str(submission.form.id)))
             else:
@@ -1068,7 +1073,12 @@ def submission_edit(submission_id):
 
             if no_error:
                 if request.form.get("next"):
-                    return redirect(request.form.get("next"))
+                    return redirect(
+                        autils.safe_next_url(
+                            request.form.get("next"),
+                            url_for("submissions.submission_list", form_id=str(questionnaire_form.id)),
+                        )
+                    )
                 else:
                     return redirect(url_for("submissions.submission_list", form_id=str(questionnaire_form.id)))
             else:

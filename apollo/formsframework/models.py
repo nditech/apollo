@@ -99,7 +99,7 @@ class Form(Resource):
 
     def __str__(self):
         """String representation."""
-        return _("Form - %(name)s", name=self.name)
+        return self.name
 
     def _populate_field_cache(self):
         if self.data:
