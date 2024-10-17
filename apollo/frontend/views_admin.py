@@ -585,6 +585,8 @@ class UserAdminView(BaseAdminView):
         return models.User.query.filter_by(deployment=user.deployment)
 
     def build_new_instance(self):
+        # TODO: change this implementation to completely
+        # use the datastore to generate the user
         user = super().build_new_instance()
         security.datastore.set_uniquifier(user)
         return user
