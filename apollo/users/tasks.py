@@ -4,10 +4,11 @@ import os
 import pandas as pd
 from celery import shared_task
 from flask_babel import gettext
+from flask_security.utils import hash_password
 from sqlalchemy import func
 
 from apollo import helpers
-from apollo.core import uploads
+from apollo.core import security, uploads
 from apollo.settings import LANGUAGES
 from apollo.users.models import Role, User, UserUpload
 
@@ -59,12 +60,10 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
 
         # email is required
         if not _is_valid(email):
-            error_log.append(
-                {
-                    "label": "ERROR",
-                    "message": gettext("No valid email found"),
-                }
-            )
+            error_log.append({
+                "label": "ERROR",
+                "message": gettext("No valid email found"),
+            })
             error_records += 1
             continue
 
@@ -74,39 +73,59 @@ def import_users(task, upload_id: int, mappings: dict, channel: str = None):
             func.lower(User.email) == func.lower(str(email)),
         ).first()
         if user is None:
-            user = User(deployment_id=upload.deployment_id, email=email)
+            creation_kwargs = {
+                "email": email,
+                "deployment_id": upload.deployment_id,
+            }
 
         # update username if exists
-        if _is_valid(username):
+        if _is_valid(username) and user is not None:
             user.username = str(username)
+        elif _is_valid(username) and user is None:
+            creation_kwargs["username"] = username
 
         # password is required for a new user
-        if not _is_valid(password) and user.id is None:
-            error_log.append(
-                {
-                    "label": "ERROR",
-                    "message": gettext("New user has no password set"),
-                }
-            )
+        if not _is_valid(password) and user is None:
+            error_log.append({
+                "label": "ERROR",
+                "message": gettext("New user has no password set"),
+            })
             error_records += 1
             continue
-        user.set_password(str(password))
+        elif _is_valid(password) and user is not None:
+            user.set_password(str(password))
+        elif _is_valid(password) and user is None:
+            creation_kwargs["password"] = hash_password(password)
 
         if _is_valid(role_name):
             role = Role.get_by_name(str(role_name))
-            if role is not None:
+            if role is not None and user is not None:
                 user.roles = [role]
+            elif role is not None and user is None:
+                creation_kwargs["roles"] = [role]
 
         if _is_valid(locale) and str(locale) in VALID_LANGUAGE_CODES:
-            user.locale = str(locale)
+            if user is not None:
+                user.locale = str(locale)
+            else:
+                creation_kwargs["locale"] = str(locale)
 
         if _is_valid(first_name):
-            user.first_name = str(first_name)
+            if user is not None:
+                user.first_name = str(first_name)
+            else:
+                creation_kwargs["first_name"] = str(first_name)
 
         if _is_valid(last_name):
-            user.last_name = str(last_name)
+            if user is not None:
+                user.last_name = str(last_name)
+            else:
+                creation_kwargs["last_name"] = str(last_name)
 
-        user.save()
+        if user is not None:
+            user.save()
+        else:
+            security.datastore.create_user(**creation_kwargs)
         processed_records += 1
         task.update_state(
             state="PROGRESS",

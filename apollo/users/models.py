@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from uuid import uuid4
-
 from flask_security import RoleMixin, UserMixin
 from flask_security.utils import hash_password
 from sqlalchemy import func
@@ -8,11 +6,6 @@ from sqlalchemy import func
 from apollo.core import db
 from apollo.dal.models import BaseModel
 from apollo.utils import current_timestamp
-
-
-def _generate_fs_uniquifier() -> str:
-    return uuid4().hex
-
 
 roles_users = db.Table(
     "roles_users",
@@ -77,7 +70,7 @@ class User(BaseModel, UserMixin):
     last_name = db.Column(db.String)
     first_name = db.Column(db.String)
     active = db.Column(db.Boolean, default=True, nullable=False)
-    fs_uniquifier = db.Column(db.String(64), unique=True, default=_generate_fs_uniquifier, nullable=False)
+    fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
     locale = db.Column(db.String)
     confirmed_at = db.Column(db.DateTime)
     current_login_at = db.Column(db.DateTime)
