@@ -27,7 +27,7 @@ from wtforms import BooleanField, PasswordField, SelectField, SelectMultipleFiel
 
 from apollo import models, services, settings
 from apollo.constants import LANGUAGE_CHOICES
-from apollo.core import admin, db
+from apollo.core import admin, db, security
 from apollo.deployments.serializers import EventArchiveSerializer
 from apollo.formsframework.views_forms import (
     checklist_init,
@@ -583,6 +583,13 @@ class UserAdminView(BaseAdminView):
     def get_query(self):
         user = current_user._get_current_object()
         return models.User.query.filter_by(deployment=user.deployment)
+
+    def build_new_instance(self):
+        # TODO: change this implementation to completely
+        # use the datastore to generate the user
+        user = super().build_new_instance()
+        security.datastore.set_uniquifier(user)
+        return user
 
     def on_model_change(self, form, model, is_created):
         if form.password2.data:

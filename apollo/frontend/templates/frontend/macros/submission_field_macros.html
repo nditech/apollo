@@ -1,6 +1,6 @@
 {% macro render_field(form_field, field_type, klass_, perms, disabled=false) %}
 {% if field_type == 'multiselect' %}
-{% for value, label, selected in form_field.iter_choices() | sort %}
+{% for value, label, selected, render_kw in form_field.iter_choices() | sort %}
 <div class="custom-control custom-checkbox">
 <input type="checkbox" name="{{ form_field.name }}" id="{{ form_field.id }}_{{ loop.index }}" class="custom-control-input" value="{{ value }}" {% if selected %}checked{% endif %} {%- if disabled %} disabled{% endif %}>
 <label for="{{ form_field.id }}_{{ loop.index }}" class="custom-control-label">{{ label }}</label>
