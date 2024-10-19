@@ -269,10 +269,10 @@ def get_daily_progress(query, event):
 
     progress = df_resampled.truncate(before=start, after=end)
     progress.loc[progress.index == start.strftime("%Y-%m-%d"), "count"] = int(
-        df_resampled[df_resampled.index <= start].sum()
+        df_resampled[df_resampled.index <= start].sum().iloc[0]
     )
     progress.loc[progress.index == end.strftime("%Y-%m-%d"), "count"] = int(
-        df_resampled[df_resampled.index >= end].sum()
+        df_resampled[df_resampled.index >= end].sum().iloc[0]
     )
 
     dp = {idx.date(): int(progress.loc[idx]["count"]) for idx in progress.index}
@@ -362,10 +362,10 @@ def get_stratified_daily_progress(query, event, location_type):
             )
             progress = df_resampled.truncate(before=start, after=end)
             progress.loc[progress.index == start.strftime("%Y-%m-%d"), "count"] = int(
-                df_resampled[df_resampled.index <= start].sum()
+                df_resampled[df_resampled.index <= start].sum().iloc[0]
             )
             progress.loc[progress.index == end.strftime("%Y-%m-%d"), "count"] = int(
-                df_resampled[df_resampled.index >= end].sum()
+                df_resampled[df_resampled.index >= end].sum().iloc[0]
             )
             dp = {idx.date(): int(progress.loc[idx]["count"]) for idx in progress.index}
             dp.update({"total": progress["count"].sum()})
