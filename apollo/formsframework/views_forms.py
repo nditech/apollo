@@ -488,12 +488,12 @@ def export_form(id):
     workbook = utils.export_form(form)
     workbook.save(memory_file)
     memory_file.seek(0)
-    current_timestamp = datetime.utcnow()
+    now = current_timestamp()
     filename = slugify(
-        f'{form.name}-{current_timestamp:%Y %m %d %H%M%S}') + '.xls'
+        f'{form.name}-{now:%Y %m %d %H%M%S}') + '.xls'
 
     return send_file(
-        memory_file, attachment_filename=filename,
+        memory_file, download_name=filename,
         as_attachment=True, mimetype='application/vnd.ms-excel')
 
 
