@@ -355,6 +355,7 @@ def submission():
 
     if data != payload2:
         data.update(payload2)
+        submission.participant_updated = current_timestamp()
         submission.update_group_timestamps(data)
         geopoint = 'SRID=4326; POINT({lon:f} {lat:f})'.format(
             lat=location_data[1],
