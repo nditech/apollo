@@ -21,7 +21,7 @@ from apollo.frontend.forms import (
     make_checklist_init_form, make_survey_init_form)
 from apollo.submissions.tasks import init_submissions, init_survey_submissions
 from apollo.users.models import UserUpload
-from apollo.utils import generate_identifier, strip_bom_header
+from apollo.utils import current_timestamp, generate_identifier, strip_bom_header
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
