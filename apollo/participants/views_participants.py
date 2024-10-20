@@ -264,12 +264,7 @@ def participant_list(participant_set_id=0, view=None):
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
-        order_term = case(
-            [
-                (condition1, full_name_concat),
-                (condition2, full_name_term),
-            ]
-        )
+        order_term = case((condition1, full_name_concat), (condition2, full_name_term))
         if request.args.get("sort_direction") == "desc":
             queryset = queryset.order_by(desc(order_term))
         else:
