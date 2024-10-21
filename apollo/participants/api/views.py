@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
+import random
+import string
 from http import HTTPStatus
 
-from flask import g, jsonify, request
+from flask import g, jsonify, make_response, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babel import gettext
 from flask_jwt_extended import (
-    create_access_token, get_jwt, get_jwt_identity, jwt_required,
-    set_access_cookies, unset_access_cookies)
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    jwt_required,
+    set_access_cookies,
+    unset_access_cookies,
+)
 from sqlalchemy import and_, bindparam, func, or_, text, true
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound
@@ -20,12 +27,21 @@ from apollo.deployments.models import Event
 from apollo.formsframework.api.schema import FormSchema
 from apollo.formsframework.models import Form
 from apollo.locations.models import Location
+from apollo.messaging.tasks import send_message
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
-    Participant, ParticipantFirstNameTranslations,
-    ParticipantFullNameTranslations, ParticipantLastNameTranslations,
-    ParticipantOtherNamesTranslations, ParticipantRole, ParticipantSet)
+    Participant,
+    ParticipantFirstNameTranslations,
+    ParticipantFullNameTranslations,
+    ParticipantLastNameTranslations,
+    ParticipantOtherNamesTranslations,
+    ParticipantRole,
+    ParticipantSet,
+)
 from apollo.submissions.models import Submission
+
+OTP_LENGTH = 6
+OTP_LIFETIME = 5 * 60
 
 
 @marshal_with(ParticipantSchema)
@@ -158,6 +174,13 @@ def login():
 
         return response
 
+    if getattr(settings, "PWA_TWO_FACTOR", False):
+        return _process_2fa_login(participant)
+    else:
+        return _process_login(participant)
+
+
+def _process_login(participant: Participant):
     access_token = create_access_token(
         identity=str(participant.uuid), fresh=True)
 
@@ -174,7 +197,7 @@ def login():
                 'other_names': participant.other_names,
                 'last_name': participant.last_name,
                 'full_name': participant.full_name,
-                'participant_id': participant_id,
+                'participant_id': participant.participant_id,
                 'location': participant.location.name,
                 'locale': participant.locale,
             },
@@ -192,6 +215,75 @@ def login():
     set_access_cookies(resp, access_token)
 
     return resp
+
+
+def _generate_or_retrieve_otp(key: str) -> str | None:
+    client = red._redis_client
+    if client:
+        res: bytes | None = client.get(key)
+        if res is not None:
+            return res.decode()
+
+        random.seed()
+        otp_code = "".join(random.choice(string.digits) for i in range(OTP_LENGTH))
+        client.set(key, otp_code, ex=OTP_LIFETIME)
+        return otp_code
+
+
+def _process_2fa_login(participant: Participant):
+    key = f"2fa:{participant.uuid}"
+    result = _generate_or_retrieve_otp(key)
+    if result:
+        response = jsonify({"status": "ok", "data": {"uid": str(participant.uuid), "twoFactor": True}})
+        message = gettext("Please use this OTP code: %(code)s", code=result)
+        # send_message.delay(g.event.id, message, participant.primary_phone)
+        print(f"OTP message: {message}. To: {participant.primary_phone}")
+        return response
+    else:
+        response = jsonify({"status": "error", "message": gettext("Please contact the administrator")})
+        return response
+
+
+@csrf.exempt
+def resend_otp():
+    request_data = request.json
+    uid = request_data.get("uid")
+    participant: Participant | None = Participant.query.where(Participant.uuid == uid).one_or_none()
+    if not participant:
+        response = jsonify({"status": "error", "message": "Not found"})
+        response.status_code = HTTPStatus.NOT_FOUND
+        return response
+
+    return _process_2fa_login(participant)
+
+
+@csrf.exempt
+def verify_otp():
+    request_data = request.json
+    uid = request_data.get("uid")
+    entered_otp = request_data.get("otp")
+    client = red._redis_client
+    if client:
+        key = f"2fa:{uid}"
+        result: bytes = client.get(key)
+        if result is None:
+            response = jsonify({"status": "error", "message": gettext("Verification failed.")})
+            response.status_code = HTTPStatus.FORBIDDEN
+            return response
+        saved_otp = result.decode()
+        if entered_otp == saved_otp:
+            participant = Participant.query.filter(Participant.uuid == uid).first()
+            if not participant:
+                response = jsonify({"status": "error", "message": gettext("Verification failed.")})
+                return response
+            return _process_login(participant)
+        else:
+            response = jsonify({"status": "error", "message": gettext("Verification failed.")})
+            response.status_code = HTTPStatus.FORBIDDEN
+            return response
+    else:
+        response = jsonify({"status": "error", "message": gettext("Please contact the administrator")})
+        return response
 
 
 @csrf.exempt
@@ -320,7 +412,7 @@ def get_participant_count(**kwargs):
         participants = participants.join(
             Location, Participant.location_id == Location.id
         ).filter(Location.location_type_id == level_id)
-    
+
     if role_id:
         participants = participants.join(
             ParticipantRole, Participant.role_id == ParticipantRole.id
