@@ -236,8 +236,7 @@ def _process_2fa_login(participant: Participant):
     if result:
         response = jsonify({"status": "ok", "data": {"uid": str(participant.uuid), "twoFactor": True}})
         message = gettext("Please use this OTP code: %(code)s", code=result)
-        # send_message.delay(g.event.id, message, participant.primary_phone)
-        print(f"OTP message: {message}. To: {participant.primary_phone}")
+        send_message.delay(g.event.id, message, participant.primary_phone)
         return response
     else:
         response = jsonify({"status": "error", "message": gettext("Please contact the administrator")})
