@@ -2627,7 +2627,7 @@ msgstr "თუ არასწორ გვერდზე მოხვდით
 
 #: apollo/pwa/templates/pwa/index.html:109
 msgid "click here"
-msgstr "დააწკაპუნეთ აქ"
+msgstr "გამოსასვლელად დააჭირეთ აქ"
 
 #: apollo/pwa/templates/pwa/index.html:115
 msgid "Allow app to access my location when needed"
