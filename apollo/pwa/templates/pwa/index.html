@@ -34,7 +34,8 @@
       <div class="row h-75 align-items-center">
         <div class="col-sm-8 offset-sm-2 mt-6">
           <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-            <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
+            <login-form v-if="participant === null && uid === null" @authenticated="authenticationSuccess" @prompt-verify="promptVerify" :navigator-online="navigatorOnline"></login-form>
+            <verify-form v-if="participant === null && uid !== null" :uid="uid" @authenticated="authenticationSuccess"></verify-form>
             <div v-else>
               <div class="mb-3">
                 <participant-info :global-status="globalStatus()" :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
