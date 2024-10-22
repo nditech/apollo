@@ -61,6 +61,7 @@ services:
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
       FLASK_ENV: ${ENV:-production}
+      FLASK_APP: apollo.runner
     env_file:
       - ./.env
     volumes:
@@ -88,6 +89,7 @@ services:
     environment:
       DATABASE_NAME: ${DATABASE_NAME:-apollo}
       FLASK_ENV: ${ENV:-production}
+      FLASK_APP: apollo.runner
     env_file:
       - ./.env
     volumes:
