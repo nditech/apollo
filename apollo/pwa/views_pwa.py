@@ -13,7 +13,7 @@ def index():
     """Index view for the PWA."""
     commit = current_app.config["COMMIT"] or current_app.config["VERSION"]
 
-    trace_errors = current_app.config["DEBUG"]
+    trace_errors = current_app.config["SENTRY_CAPTURE_FRONTEND"]
     sentry_dsn = current_app.config["SENTRY_DSN"] or ""
 
     context = {"commit": commit, "trace_errors": trace_errors}

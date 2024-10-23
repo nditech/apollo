@@ -289,7 +289,7 @@
     </span>
   </template>
   {% if trace_errors %}
-  <script src="{{ url_for('pwa.static', filename='vendor/sentry/bundle.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/sentry/bundle.tracing.min.js') }}"></script>
   {% endif %}
   <script src="{{ url_for('pwa.static', filename='vendor/popper.js/popper.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/autocomplete/autocomplete.min.js') }}"></script>
