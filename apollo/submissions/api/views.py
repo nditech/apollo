@@ -10,6 +10,7 @@ from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babel import gettext
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_security.decorators import login_required
+from loguru import logger
 from marshmallow import ValidationError
 from slugify import slugify
 from sqlalchemy.exc import ProgrammingError
@@ -140,6 +141,7 @@ def checklist_qa_status(uuid):
             'status': 'error'
         }
 
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -152,7 +154,7 @@ def checklist_qa_status(uuid):
             'message': gettext('Invalid checklist'),
             'status': 'error'
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -182,7 +184,7 @@ def submission():
             'message': gettext('Invalid data sent'),
             'status': 'error'
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -198,7 +200,7 @@ def submission():
             'message': gettext('Invalid form'),
             'status': 'error'
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -210,7 +212,7 @@ def submission():
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -221,7 +223,7 @@ def submission():
             'message': gettext('Invalid participant'),
             'status': 'error'
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -238,7 +240,7 @@ def submission():
             'status': 'error',
             'errorFields': error_fields,
         }
-
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -294,6 +296,7 @@ def submission():
             'message': gettext('Could not update data. Please check your ID'),
             'status': 'error'
         }
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.BAD_REQUEST
         return response
@@ -435,6 +438,7 @@ def submission():
 def get_image_manifest(**kwargs):
     if not permissions.export_submissions.can():
         response_body = {'images': [], 'status': 'error'}
+        logger.debug(response_body)
         response = jsonify(response_body)
         response.status_code = HTTPStatus.FORBIDDEN
         return response
@@ -496,6 +500,7 @@ def get_image_manifest(**kwargs):
             'images': [],
             'status': 'error',
         })
+        logger.debug(response_body)
         response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
 
         return response
