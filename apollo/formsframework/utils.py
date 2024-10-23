@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
 import re
+from collections import OrderedDict
 from io import BytesIO, IOBase
+from typing import List
 
+import xlrd
 from pyxform import xls2json
 from pyxform.errors import PyXFormError
+from pyxform.xls2json_backends import get_definition_data
 from slugify import slugify
 from xlwt import Workbook
 
@@ -206,6 +211,43 @@ def _process_qa_worksheet(qa_data):
     return quality_checks
 
 
+def format_cell_value(cell, datemode):
+    """Format the cell value based on its type."""
+    if cell.ctype == xlrd.XL_CELL_BOOLEAN:
+        return "TRUE" if cell.value else "FALSE"
+    elif cell.ctype == xlrd.XL_CELL_NUMBER:
+        if int(cell.value) == cell.value:
+            return str(int(cell.value))
+        else:
+            return str(cell.value)
+    elif cell.ctype == xlrd.XL_CELL_DATE:
+        datetime_or_time_only = xlrd.xldate_as_datetime(cell.value, datemode)
+        if datetime_or_time_only[:3] == (0, 0, 0):
+            return str(datetime.time(*datetime_or_time_only[3:]))
+        return str(datetime.datetime(*datetime_or_time_only))
+    else:
+        return str(cell.value).replace(chr(160), " ")
+
+
+def worksheet_to_dict(worksheet, datemode) -> List[OrderedDict]:
+    """Converts a worksheet data into a list of dicts using the first row as the header."""
+    columns = []
+    records = []
+    for row_ix in range(worksheet.nrows):
+        if row_ix == 0:  # first row
+            columns = [format_cell_value(column, datemode) for column in worksheet.row(0)]
+        else:
+            records.append(
+                OrderedDict(
+                    {
+                        column_name: format_cell_value(worksheet.row(row_ix)[column_ix], datemode)
+                        for column_ix, column_name in enumerate(columns)
+                    }
+                )
+            )
+    return records
+
+
 def import_form(sourcefile: bytes | BytesIO | IOBase):
     """Import the form schema."""
     try:
@@ -214,11 +256,18 @@ def import_form(sourcefile: bytes | BytesIO | IOBase):
         logger.exception("Error parsing Excel schema file")
         raise
 
+    # TODO: This is hacky, very fragile and likely to break. We either completely
+    # breakaway from using pyxform or we find a way to get the library to parse all
+    # the worksheets in the file.
+    sourcefile.seek(0)  # reset the read pointer to the beginning of the file
+    definition = get_definition_data(sourcefile)
+    workbook = xlrd.open_workbook(file_contents=definition.data.getvalue())
+
     survey_data = file_data.get("survey")
     choices_data = file_data.get("choices")
-    analysis_data = file_data.get("analysis")
-    metadata = file_data.get("metadata")
-    qa_data = file_data.get("quality_checks")
+    analysis_data = worksheet_to_dict(workbook.sheet_by_name("analysis"), workbook.datemode)
+    metadata = worksheet_to_dict(workbook.sheet_by_name("metadata"), workbook.datemode)
+    qa_data = worksheet_to_dict(workbook.sheet_by_name("quality_checks"), workbook.datemode)
 
     if not (survey_data and metadata):
         return
