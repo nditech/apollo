@@ -3,7 +3,7 @@ import random
 import string
 from http import HTTPStatus
 
-from flask import g, jsonify, make_response, request
+from flask import g, jsonify, request
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babel import gettext
 from flask_jwt_extended import (
