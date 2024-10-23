@@ -64,9 +64,9 @@ def load_source_file(source_file):
     elif mimetype in EXCEL_MIMETYPES:
         # likely an Excel spreadsheet, read all data as strings
         xl = pd.ExcelFile(source_file)
-        ncols = xl.book.sheet_by_index(0).ncols
-        df = xl.parse(0, converters={i: str for i in range(ncols)}).fillna('')
+        num_columns = xl.book.worksheets[0].max_column
+        df = xl.parse(0, converters={i: str for i in range(num_columns)}).fillna('')
     else:
-        raise RuntimeError('Unknown file type')
+        raise RuntimeError("Unknown file type")
 
     return df
