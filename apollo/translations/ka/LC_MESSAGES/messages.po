@@ -27,8 +27,7 @@ msgstr ""
 msgid "(None)"
 msgstr "(არცერთი)"
 
-#: apollo/factory.py:39
-#: apollo/templates/admin/locations_list.html:33
+#: apollo/factory.py:39 apollo/templates/admin/locations_list.html:33
 #: apollo/templates/admin/locations_list.html:90
 #: apollo/templates/admin/locations_list.html:135
 msgid "Import Locations"
@@ -42,20 +41,17 @@ msgstr "ლოკაციების იმპორტი"
 msgid "Import Participants"
 msgstr "მონაწილეთა იმპორტი"
 
-#: apollo/factory.py:41
-#: apollo/templates/admin/form_list.html:25
+#: apollo/factory.py:41 apollo/templates/admin/form_list.html:25
 #: apollo/templates/admin/form_list.html:124
 #: apollo/templates/admin/form_list.html:134
 msgid "Generate Checklists"
 msgstr "ჩეკლისტების გენერირება"
 
-#: apollo/factory.py:42
-#: apollo/templates/admin/user_list.html:17
+#: apollo/factory.py:42 apollo/templates/admin/user_list.html:17
 msgid "Import Users"
 msgstr "მომხმარებელთა იმპორტი"
 
-#: apollo/factory.py:43
-#: apollo/templates/admin/form_list.html:26
+#: apollo/factory.py:43 apollo/templates/admin/form_list.html:26
 #: apollo/templates/admin/form_list.html:146
 #: apollo/templates/admin/form_list.html:156
 msgid "Generate Surveys"
@@ -65,9 +61,7 @@ msgstr "კითხვარების გენერირება"
 msgid "FAILED"
 msgstr "შეუმდგარი"
 
-#: apollo/factory.py:224
-#: apollo/factory.py:242
-#: apollo/factory.py:264
+#: apollo/factory.py:224 apollo/factory.py:242 apollo/factory.py:264
 msgid "Task"
 msgstr "დავალება"
 
@@ -83,15 +77,12 @@ msgstr "შესრულებაშია"
 msgid "Not a valid choice!"
 msgstr "არასწორი არჩევანია!"
 
-#: apollo/formsframework/custom_fields.py:26
-#: apollo/wtforms_ext.py:122
+#: apollo/formsframework/custom_fields.py:26 apollo/wtforms_ext.py:122
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr "'%(value)s' არ არის სწორი არჩევანი ამ ველისთვის"
 
-#: apollo/api/hooks.py:12
-#: apollo/api/hooks.py:21
-#: apollo/api/hooks.py:30
+#: apollo/api/hooks.py:12 apollo/api/hooks.py:21 apollo/api/hooks.py:30
 msgid "error"
 msgstr "შეცდომა"
 
@@ -194,8 +185,7 @@ msgid "Users can delete or replace submission images"
 msgstr ""
 "მომხმარებლებს შეუძლიათ წაშალონ ან შეცვალონ შემოსული ინფორმაციის სურათები"
 
-#: apollo/deployments/forms.py:35
-#: apollo/frontend/forms.py:318
+#: apollo/deployments/forms.py:35 apollo/frontend/forms.py:318
 #: apollo/frontend/forms.py:351
 #: apollo/frontend/templates/frontend/event_selection.html:6
 #: apollo/frontend/views_dashboard.py:320
@@ -213,36 +203,29 @@ msgstr "ღონისძიება - %(name)s"
 msgid "English"
 msgstr "ინგლისური"
 
-#: apollo/formsframework/forms.py:138
-#: apollo/submissions/forms.py:42
+#: apollo/formsframework/forms.py:138 apollo/submissions/forms.py:42
 #, python-format
 msgid "Number must be at least %(min)s."
 msgstr "რიცხვი უნდა იყოს მინიმუმ %(min)s."
 
-#: apollo/formsframework/forms.py:141
-#: apollo/submissions/forms.py:44
+#: apollo/formsframework/forms.py:141 apollo/submissions/forms.py:44
 #, python-format
 msgid "Number must be at most %(max)s."
 msgstr "რიცხვი არ უნდა აღემატებოდეს %(max)s."
 
-#: apollo/formsframework/forms.py:144
-#: apollo/submissions/forms.py:46
+#: apollo/formsframework/forms.py:144 apollo/submissions/forms.py:46
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
 msgstr "რიცხვი უნდა იყოს %(min)s და %(max)s შორის."
 
-#: apollo/formsframework/forms.py:430
-#: apollo/frontend/forms.py:35
+#: apollo/formsframework/forms.py:430 apollo/frontend/forms.py:35
 #: apollo/frontend/templates/frontend/macros/participant_list_filter.html:12
 #: apollo/frontend/templates/frontend/participant_list.html:106
 #: apollo/frontend/templates/frontend/participant_list.html:108
 #: apollo/frontend/templates/frontend/participant_list.html:111
-#: apollo/frontend/views_admin.py:242
-#: apollo/frontend/views_admin.py:304
-#: apollo/frontend/views_admin.py:416
-#: apollo/frontend/views_admin.py:643
-#: apollo/frontend/views_admin.py:687
-#: apollo/frontend/views_admin.py:747
+#: apollo/frontend/views_admin.py:242 apollo/frontend/views_admin.py:304
+#: apollo/frontend/views_admin.py:416 apollo/frontend/views_admin.py:643
+#: apollo/frontend/views_admin.py:687 apollo/frontend/views_admin.py:747
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:44
 #: apollo/submissions/services.py:98
 #: apollo/templates/admin/administrative_divisions.html:25
@@ -265,8 +248,7 @@ msgid "What code to identify this form in text messages."
 msgstr ""
 "რომელი კოდი გამოიყენება ამ ფორმის გამოსავლენად ტექსტურ შეტყობინებებში."
 
-#: apollo/formsframework/forms.py:435
-#: apollo/frontend/filters.py:185
+#: apollo/formsframework/forms.py:435 apollo/frontend/filters.py:185
 #: apollo/messaging/filters.py:21
 msgid "Form Type"
 msgstr "ფორმის ტიპი"
@@ -408,8 +390,7 @@ msgstr "ფორმა - %(name)s"
 msgid "Form Serial Number"
 msgstr "ფორმის სერიული ნომერი"
 
-#: apollo/formsframework/models.py:326
-#: apollo/frontend/filters.py:106
+#: apollo/formsframework/models.py:326 apollo/frontend/filters.py:106
 #: apollo/frontend/forms.py:85
 #: apollo/frontend/templates/frontend/dashboard.html:101
 #: apollo/frontend/templates/frontend/dashboard.html:239
@@ -431,10 +412,8 @@ msgstr "ფორმის სერიული ნომერი"
 #: apollo/frontend/templates/frontend/submission_list.html:631
 #: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:36
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:48
-#: apollo/pwa/templates/pwa/index.html:105
-#: apollo/submissions/forms.py:98
-#: apollo/submissions/forms.py:100
-#: apollo/submissions/services.py:102
+#: apollo/pwa/templates/pwa/index.html:105 apollo/submissions/forms.py:98
+#: apollo/submissions/forms.py:100 apollo/submissions/services.py:102
 #: apollo/templates/admin/participant_list.html:91
 #: apollo/templates/admin/participant_list.html:93
 #: apollo/templates/admin/participant_list.html:96
@@ -442,8 +421,7 @@ msgstr "ფორმის სერიული ნომერი"
 msgid "Location"
 msgstr "ლოკაცია"
 
-#: apollo/formsframework/models.py:454
-#: apollo/formsframework/models.py:455
+#: apollo/formsframework/models.py:454 apollo/formsframework/models.py:455
 msgid "SMS 1"
 msgstr "SMS 1"
 
@@ -484,8 +462,7 @@ msgstr "კითხვარები არ შექმნილა"
 #: apollo/formsframework/views_forms.py:183
 #: apollo/formsframework/views_forms.py:222
 #: apollo/formsframework/views_forms.py:278
-#: apollo/formsframework/views_forms.py:351
-#: apollo/frontend/views_admin.py:893
+#: apollo/formsframework/views_forms.py:351 apollo/frontend/views_admin.py:893
 msgid "Forms"
 msgstr "ფორმები"
 
@@ -505,13 +482,11 @@ msgstr "ფორმის შექმნა"
 msgid "Edit Form"
 msgstr "ფორმის რედაქტირება"
 
-#: apollo/formsframework/views_forms.py:232
-#: apollo/frontend/views_admin.py:208
+#: apollo/formsframework/views_forms.py:232 apollo/frontend/views_admin.py:208
 msgid "Hide Archived"
 msgstr "დაარქივებულის დამალვა"
 
-#: apollo/formsframework/views_forms.py:235
-#: apollo/frontend/views_admin.py:214
+#: apollo/formsframework/views_forms.py:235 apollo/frontend/views_admin.py:214
 msgid "Show All"
 msgstr "ყველას ჩვენება"
 
@@ -534,10 +509,8 @@ msgstr "ხარისხის უზრუნველყოფის რე�
 msgid "Add Quality Assurance"
 msgstr "ხარისხის უზრუნველყოფის დამატება"
 
-#: apollo/frontend/filters.py:123
-#: apollo/participants/filters.py:141
-#: apollo/participants/models.py:49
-#: apollo/submissions/filters.py:61
+#: apollo/frontend/filters.py:123 apollo/participants/filters.py:141
+#: apollo/participants/models.py:49 apollo/submissions/filters.py:61
 msgid "Sample"
 msgstr "ნიმუში"
 
@@ -554,85 +527,70 @@ msgstr "არასწორი"
 #: apollo/frontend/templates/frontend/submission_edit.html:446
 #: apollo/frontend/templates/frontend/submission_edit.html:634
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:49
-#: apollo/submissions/models.py:35
-#: apollo/submissions/services.py:116
+#: apollo/submissions/models.py:35 apollo/submissions/services.py:116
 msgid "Status"
 msgstr "სტატუსი"
 
-#: apollo/frontend/filters.py:284
-#: apollo/frontend/forms.py:174
+#: apollo/frontend/filters.py:284 apollo/frontend/forms.py:174
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:168
 #: apollo/frontend/templates/frontend/submission_edit.html:470
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:66
-#: apollo/submissions/forms.py:84
-#: apollo/submissions/models.py:56
+#: apollo/submissions/forms.py:84 apollo/submissions/models.py:56
 #: apollo/submissions/models.py:458
 msgid "Unmarked"
 msgstr "მოხსნილი"
 
-#: apollo/frontend/filters.py:285
-#: apollo/frontend/forms.py:175
+#: apollo/frontend/filters.py:285 apollo/frontend/forms.py:175
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:111
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:162
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:177
 #: apollo/frontend/templates/frontend/submission_edit.html:464
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:62
-#: apollo/submissions/forms.py:85
-#: apollo/submissions/models.py:58
+#: apollo/submissions/forms.py:85 apollo/submissions/models.py:58
 #: apollo/submissions/models.py:64
 msgid "Confirmed"
 msgstr "დადასტურდა"
 
-#: apollo/frontend/filters.py:285
-#: apollo/frontend/forms.py:176
+#: apollo/frontend/filters.py:285 apollo/frontend/forms.py:176
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:164
 #: apollo/frontend/templates/frontend/submission_edit.html:466
 #: apollo/process_analysis/templates/process_analysis/critical_incidents_locations.html:64
-#: apollo/submissions/forms.py:86
-#: apollo/submissions/models.py:18
+#: apollo/submissions/forms.py:86 apollo/submissions/models.py:18
 #: apollo/submissions/models.py:59
 msgid "Rejected"
 msgstr "უარყოფილია"
 
-#: apollo/frontend/filters.py:286
-#: apollo/frontend/forms.py:177
+#: apollo/frontend/filters.py:286 apollo/frontend/forms.py:177
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:166
 #: apollo/frontend/templates/frontend/submission_edit.html:468
-#: apollo/submissions/forms.py:87
-#: apollo/submissions/models.py:57
+#: apollo/submissions/forms.py:87 apollo/submissions/models.py:57
 msgid "Citizen Report"
 msgstr "მოქალაქის ანგარიში"
 
-#: apollo/frontend/forms.py:36
-#: apollo/submissions/services.py:102
+#: apollo/frontend/forms.py:36 apollo/submissions/services.py:102
 msgid "Latitude"
 msgstr "გრძედი"
 
-#: apollo/frontend/forms.py:37
-#: apollo/submissions/services.py:102
+#: apollo/frontend/forms.py:37 apollo/submissions/services.py:102
 msgid "Longitude"
 msgstr "გრძედი"
 
-#: apollo/frontend/forms.py:55
-#: apollo/participants/models.py:61
+#: apollo/frontend/forms.py:55 apollo/participants/models.py:61
 #, python-format
 msgid "Full Name (%(language)s)"
 msgstr "სრული სახელი (%(language)s)"
 
-#: apollo/frontend/forms.py:60
-#: apollo/participants/models.py:64
+#: apollo/frontend/forms.py:60 apollo/participants/models.py:64
 #, python-format
 msgid "First Name (%(language)s)"
 msgstr "სახელი (%(language)s)"
 
-#: apollo/frontend/forms.py:65
-#: apollo/participants/models.py:67
+#: apollo/frontend/forms.py:65 apollo/participants/models.py:67
 #, python-format
 msgid "Other Names (%(language)s)"
 msgstr "სხვა სახელები (%(language)s)"
 
-#: apollo/frontend/forms.py:70
-#: apollo/participants/models.py:70
+#: apollo/frontend/forms.py:70 apollo/participants/models.py:70
 #, python-format
 msgid "Last Name (%(language)s)"
 msgstr "გვარი (%(language)s)"
@@ -641,26 +599,22 @@ msgstr "გვარი (%(language)s)"
 #: apollo/frontend/templates/frontend/participant_list.html:126
 #: apollo/frontend/templates/frontend/participant_list.html:128
 #: apollo/frontend/templates/frontend/participant_list.html:131
-#: apollo/participants/models.py:55
-#: apollo/participants/services.py:42
+#: apollo/participants/models.py:55 apollo/participants/services.py:42
 #: apollo/templates/admin/participant_list.html:121
 #: apollo/templates/admin/participant_list.html:123
 #: apollo/templates/admin/participant_list.html:126
 msgid "Gender"
 msgstr "სქესი"
 
-#: apollo/frontend/forms.py:75
-#: apollo/frontend/forms.py:326
+#: apollo/frontend/forms.py:75 apollo/frontend/forms.py:326
 #: apollo/frontend/templates/frontend/participant_list.html:138
 #: apollo/frontend/templates/frontend/participant_list.html:140
 #: apollo/frontend/templates/frontend/participant_list.html:143
 #: apollo/frontend/templates/frontend/submission_edit.html:118
-#: apollo/participants/models.py:48
-#: apollo/participants/services.py:37
+#: apollo/participants/models.py:48 apollo/participants/services.py:37
 #: apollo/templates/admin/participant_list.html:133
 #: apollo/templates/admin/participant_list.html:135
-#: apollo/templates/admin/participant_list.html:138
-#: apollo/users/forms.py:77
+#: apollo/templates/admin/participant_list.html:138 apollo/users/forms.py:77
 msgid "Role"
 msgstr "როლი"
 
@@ -680,13 +634,11 @@ msgstr "ზედამხედველი"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:60
 #: apollo/frontend/templates/frontend/participant_edit.html:76
 #: apollo/frontend/templates/frontend/submission_edit.html:78
-#: apollo/submissions/forms.py:91
-#: apollo/submissions/forms.py:93
+#: apollo/submissions/forms.py:91 apollo/submissions/forms.py:93
 msgid "Participant"
 msgstr "მონაწილე"
 
-#: apollo/frontend/forms.py:90
-#: apollo/participants/models.py:53
+#: apollo/frontend/forms.py:90 apollo/participants/models.py:53
 #: apollo/participants/services.py:37
 msgid "Partner"
 msgstr "პარტნიორი"
@@ -714,17 +666,14 @@ msgstr "ტელეფონი"
 #: apollo/frontend/templates/frontend/login_user.html:70
 #: apollo/frontend/templates/frontend/reset_password.html:66
 #: apollo/frontend/templates/frontend/reset_password.html:68
-#: apollo/participants/models.py:57
-#: apollo/participants/services.py:42
+#: apollo/participants/models.py:57 apollo/participants/services.py:42
 #: apollo/pwa/templates/pwa/index.html:76
-#: apollo/pwa/templates/pwa/index.html:79
-#: apollo/users/forms.py:18
+#: apollo/pwa/templates/pwa/index.html:79 apollo/users/forms.py:18
 #: apollo/users/forms.py:76
 msgid "Password"
 msgstr "პაროლი"
 
-#: apollo/frontend/forms.py:94
-#: apollo/participants/models.py:58
+#: apollo/frontend/forms.py:94 apollo/participants/models.py:58
 msgid "Preferred Language"
 msgstr "სასურველი ენა"
 
@@ -740,27 +689,23 @@ msgstr "მონაწილე და მდებარეობა არ �
 msgid "Data File"
 msgstr "მონაცემთა ფაილი"
 
-#: apollo/frontend/forms.py:317
-#: apollo/frontend/forms.py:350
+#: apollo/frontend/forms.py:317 apollo/frontend/forms.py:350
 #: apollo/frontend/views_admin.py:429
 msgid "Event"
 msgstr "ღონისძიება"
 
-#: apollo/frontend/forms.py:321
-#: apollo/frontend/forms.py:354
+#: apollo/frontend/forms.py:321 apollo/frontend/forms.py:354
 #: apollo/frontend/templates/frontend/submission_edit.html:444
 msgid "Form"
 msgstr "ფორმა"
 
-#: apollo/frontend/forms.py:322
-#: apollo/frontend/forms.py:355
+#: apollo/frontend/forms.py:322 apollo/frontend/forms.py:355
 #: apollo/templates/admin/form_list.html:213
 #: apollo/templates/admin/form_list.html:323
 msgid "Choose Form"
 msgstr "აირჩიეთ ფორმა"
 
-#: apollo/frontend/forms.py:327
-#: apollo/templates/admin/form_list.html:222
+#: apollo/frontend/forms.py:327 apollo/templates/admin/form_list.html:222
 msgid "Choose Role"
 msgstr "აირჩიეთ როლი"
 
@@ -768,13 +713,11 @@ msgstr "აირჩიეთ როლი"
 msgid "Location Type"
 msgstr "ლოკაციის ტიპი"
 
-#: apollo/frontend/forms.py:332
-#: apollo/templates/admin/form_list.html:231
+#: apollo/frontend/forms.py:332 apollo/templates/admin/form_list.html:231
 msgid "Choose Location Type"
 msgstr "აირჩიეთ ლოკაციის ტიპი"
 
-#: apollo/frontend/forms.py:358
-#: apollo/templates/admin/form_list.html:178
+#: apollo/frontend/forms.py:358 apollo/templates/admin/form_list.html:178
 #: apollo/templates/admin/form_list.html:333
 msgid "Choose File"
 msgstr "აირჩიეთ ფაილი"
@@ -797,26 +740,21 @@ msgstr "აირჩიეთ ფაილი"
 msgid "N/A"
 msgstr "N/A"
 
-#: apollo/frontend/views_admin.py:166
-#: apollo/frontend/views_admin.py:418
-#: apollo/frontend/views_admin.py:435
-#: apollo/templates/admin/form_list.html:20
+#: apollo/frontend/views_admin.py:166 apollo/frontend/views_admin.py:418
+#: apollo/frontend/views_admin.py:435 apollo/templates/admin/form_list.html:20
 msgid "Archive"
 msgstr "არქივი"
 
-#: apollo/frontend/views_admin.py:166
-#: apollo/frontend/views_admin.py:435
+#: apollo/frontend/views_admin.py:166 apollo/frontend/views_admin.py:435
 msgid "Are you sure you want to archive the selected items?"
 msgstr "დარწმუნებული ხართ, რომ გსურთ არჩეული ერთეულების დაარქივება?"
 
-#: apollo/frontend/views_admin.py:173
-#: apollo/frontend/views_admin.py:442
+#: apollo/frontend/views_admin.py:173 apollo/frontend/views_admin.py:442
 #: apollo/templates/admin/form_list.html:21
 msgid "Unarchive"
 msgstr "არქივი"
 
-#: apollo/frontend/views_admin.py:173
-#: apollo/frontend/views_admin.py:442
+#: apollo/frontend/views_admin.py:173 apollo/frontend/views_admin.py:442
 msgid "Are you sure you want to unarchive the selected items?"
 msgstr "დარწმუნებული ხართ, რომ გსურთ არჩეული ერთეულების გაუქმება?"
 
@@ -933,8 +871,7 @@ msgstr "დაწყება"
 msgid "End"
 msgstr "დასრულება"
 
-#: apollo/frontend/views_admin.py:417
-#: apollo/frontend/views_admin.py:748
+#: apollo/frontend/views_admin.py:417 apollo/frontend/views_admin.py:748
 msgid "Location Set"
 msgstr "ლოკაციის ნაკრები"
 
@@ -958,8 +895,7 @@ msgstr "რა ფორმები უნდა იყოს გააქტ�
 msgid "You cannot delete the last remaining event"
 msgstr "თქვენ არ შეგიძლიათ წაშალოთ ბოლო დარჩენილი ღონისძიება"
 
-#: apollo/frontend/views_admin.py:550
-#: apollo/frontend/views_admin.py:895
+#: apollo/frontend/views_admin.py:550 apollo/frontend/views_admin.py:895
 msgid "Roles"
 msgstr "როლები"
 
@@ -983,8 +919,7 @@ msgstr ""
 msgid "New Password"
 msgstr "ახალი პაროლი"
 
-#: apollo/frontend/views_admin.py:611
-#: apollo/users/forms.py:24
+#: apollo/frontend/views_admin.py:611 apollo/users/forms.py:24
 msgid "Language"
 msgstr "ენა"
 
@@ -1045,8 +980,7 @@ msgstr ""
 "მომხმარებლებს."
 
 #: apollo/frontend/templates/frontend/dashboard.html:26
-#: apollo/frontend/views_admin.py:688
-#: apollo/locations/views_locations.py:302
+#: apollo/frontend/views_admin.py:688 apollo/locations/views_locations.py:302
 msgid "Administrative Divisions"
 msgstr "ადმინისტრაციული განყოფილებები"
 
@@ -1087,13 +1021,11 @@ msgstr "თუ გააქტიურებულია, დაიმალე
 msgid "If enabled, will hide the organization in the participant list."
 msgstr "თუ გააქტიურებულია, დაიმალება ორგანიზაცია მონაწილეთა სიაში."
 
-#: apollo/frontend/views_admin.py:887
-#: apollo/frontend/views_dashboard.py:315
+#: apollo/frontend/views_admin.py:887 apollo/frontend/views_dashboard.py:315
 msgid "Events"
 msgstr "მოვლენები"
 
-#: apollo/frontend/views_admin.py:889
-#: apollo/locations/views_locations.py:94
+#: apollo/frontend/views_admin.py:889 apollo/locations/views_locations.py:94
 #: apollo/locations/views_locations.py:135
 #: apollo/locations/views_locations.py:301
 msgid "Location Sets"
@@ -1293,8 +1225,7 @@ msgstr "სრული"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:121
 #: apollo/frontend/templates/frontend/submission_edit.html:243
 #: apollo/frontend/templates/frontend/submission_edit.html:245
-#: apollo/submissions/filters.py:763
-#: apollo/submissions/filters.py:818
+#: apollo/submissions/filters.py:763 apollo/submissions/filters.py:818
 msgid "No Signal"
 msgstr "სიგნალი არ არის"
 
@@ -1322,10 +1253,8 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/forgot_password.html:63
 #: apollo/frontend/templates/frontend/forgot_password.html:65
-#: apollo/participants/models.py:56
-#: apollo/participants/services.py:42
-#: apollo/users/forms.py:15
-#: apollo/users/forms.py:75
+#: apollo/participants/models.py:56 apollo/participants/services.py:42
+#: apollo/users/forms.py:15 apollo/users/forms.py:75
 msgid "Email"
 msgstr "ელფოსტა"
 
@@ -1440,8 +1369,7 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:67
 #: apollo/frontend/templates/frontend/login_user.html:68
-#: apollo/users/forms.py:13
-#: apollo/users/forms.py:74
+#: apollo/users/forms.py:13 apollo/users/forms.py:74
 msgid "Username"
 msgstr "მომხმარებლის სახელი"
 
@@ -1492,8 +1420,7 @@ msgstr "ტექსტი"
 
 #: apollo/frontend/templates/frontend/message_list.html:25
 #: apollo/frontend/templates/frontend/message_list.html:69
-#: apollo/messaging/services.py:34
-#: apollo/templates/admin/form_list.html:73
+#: apollo/messaging/services.py:34 apollo/templates/admin/form_list.html:73
 #: apollo/templates/admin/locations_list.html:56
 msgid "Type"
 msgstr "ტიპი"
@@ -1574,8 +1501,7 @@ msgstr "ბოლოს ნანახი"
 #: apollo/frontend/templates/frontend/submission_edit.html:99
 #: apollo/frontend/templates/frontend/submission_edit.html:102
 #: apollo/frontend/templates/frontend/submission_edit.html:1252
-#: apollo/submissions/forms.py:188
-#: apollo/submissions/models.py:17
+#: apollo/submissions/forms.py:188 apollo/submissions/models.py:17
 msgid "Verified"
 msgstr "გადამოწმებული"
 
@@ -1744,8 +1670,7 @@ msgstr "დროშით მონიშნული"
 #: apollo/pwa/templates/pwa/index.html:1341
 #: apollo/pwa/templates/pwa/index.html:1349
 #: apollo/pwa/templates/pwa/index.html:1368
-#: apollo/pwa/templates/pwa/index.html:1378
-#: apollo/submissions/models.py:30
+#: apollo/pwa/templates/pwa/index.html:1378 apollo/submissions/models.py:30
 msgid "OK"
 msgstr "კარგი"
 
@@ -1804,15 +1729,13 @@ msgstr "სხვა ტელეფონები"
 #: apollo/frontend/templates/frontend/submission_edit.html:239
 #: apollo/frontend/templates/frontend/submission_edit.html:243
 #: apollo/frontend/templates/frontend/submission_edit.html:245
-#: apollo/submissions/filters.py:762
-#: apollo/submissions/filters.py:817
+#: apollo/submissions/filters.py:762 apollo/submissions/filters.py:817
 msgid "Signal"
 msgstr "სიგნალი"
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:95
 #: apollo/frontend/templates/frontend/submission_edit.html:259
-#: apollo/submissions/filters.py:740
-#: apollo/submissions/filters.py:808
+#: apollo/submissions/filters.py:740 apollo/submissions/filters.py:808
 #: apollo/submissions/services.py:121
 msgid "Quarantine Status"
 msgstr "საკარანტინო სტატუსი"
@@ -2035,11 +1958,9 @@ msgstr "წინა"
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:5
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:7
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:10
-#: apollo/participants/models.py:50
-#: apollo/participants/services.py:36
+#: apollo/participants/models.py:50 apollo/participants/services.py:36
 #: apollo/pwa/templates/pwa/index.html:69
-#: apollo/pwa/templates/pwa/index.html:72
-#: apollo/submissions/services.py:98
+#: apollo/pwa/templates/pwa/index.html:72 apollo/submissions/services.py:98
 msgid "Participant ID"
 msgstr "მონაწილის ID"
 
@@ -2070,8 +1991,7 @@ msgstr "ტელეფონის დადასტურება"
 
 #: apollo/frontend/templates/frontend/macros/quality_assurance_list_macros.html:71
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:37
-#: apollo/submissions/filters.py:761
-#: apollo/submissions/filters.py:816
+#: apollo/submissions/filters.py:761 apollo/submissions/filters.py:816
 msgid "Signal Status"
 msgstr "სიგნალის სტატუსი"
 
@@ -2162,8 +2082,7 @@ msgid "Critical Incidents"
 msgstr "კრიტიკული ინციდენტები"
 
 #: apollo/frontend/templates/frontend/macros/submission_components.html:17
-#: apollo/messaging/views_messages.py:31
-#: apollo/messaging/views_messages.py:40
+#: apollo/messaging/views_messages.py:31 apollo/messaging/views_messages.py:40
 msgid "Messages"
 msgstr "შეტყობინებები"
 
@@ -2272,13 +2191,11 @@ msgstr "სურათი არ არის ატვირთული"
 msgid "All Types"
 msgstr "ყველა სახის"
 
-#: apollo/locations/filters.py:49
-#: apollo/submissions/filters.py:150
+#: apollo/locations/filters.py:49 apollo/submissions/filters.py:150
 msgid "Group"
 msgstr "ჯგუფი"
 
-#: apollo/locations/forms.py:14
-#: apollo/participants/forms.py:12
+#: apollo/locations/forms.py:14 apollo/participants/forms.py:12
 msgid "Import File"
 msgstr "ფაილის იმპორტი"
 
@@ -2385,8 +2302,7 @@ msgstr "თქვენი ცვლილებები შენახულ�
 msgid "Invalid Form"
 msgstr "არასწორი ფორმა"
 
-#: apollo/messaging/helpers.py:76
-#: apollo/messaging/helpers.py:179
+#: apollo/messaging/helpers.py:76 apollo/messaging/helpers.py:179
 #, python-format
 msgid "Invalid message: %(text)s. Please check and resend!"
 msgstr ""
@@ -2440,18 +2356,15 @@ msgstr "შემომავალი"
 msgid "OUTGOING"
 msgstr "გამავალი"
 
-#: apollo/messaging/models.py:19
-#: apollo/submissions/models.py:629
+#: apollo/messaging/models.py:19 apollo/submissions/models.py:629
 msgid "SMS"
 msgstr "SMS"
 
-#: apollo/messaging/models.py:20
-#: apollo/submissions/models.py:631
+#: apollo/messaging/models.py:20 apollo/submissions/models.py:631
 msgid "API"
 msgstr "API"
 
-#: apollo/messaging/models.py:21
-#: apollo/submissions/models.py:632
+#: apollo/messaging/models.py:21 apollo/submissions/models.py:632
 msgid "ODK"
 msgstr "ODK"
 
@@ -2495,8 +2408,7 @@ msgstr "ყველა ორგანიზაცია"
 msgid "Participant ID was not mapped"
 msgstr "მონაწილის ID არ იყო შედგენილი"
 
-#: apollo/participants/models.py:51
-#: apollo/participants/services.py:42
+#: apollo/participants/models.py:51 apollo/participants/services.py:42
 msgid "Supervisor ID"
 msgstr "ზედამხედველის ID"
 
@@ -2532,8 +2444,7 @@ msgstr "სხვა სახელები"
 msgid "Last Name"
 msgstr "გვარი"
 
-#: apollo/participants/services.py:38
-#: apollo/submissions/services.py:102
+#: apollo/participants/services.py:38 apollo/submissions/services.py:102
 msgid "Location Code"
 msgstr "ლოკაციის კოდი"
 
@@ -2612,10 +2523,8 @@ msgstr "შევიდა წარმატებით"
 msgid "Logged out successfully"
 msgstr "გამოვიდა წარმატებით"
 
-#: apollo/participants/api/views.py:276
-#: apollo/submissions/api/views.py:139
-#: apollo/submissions/api/views.py:210
-#: apollo/submissions/api/views.py:221
+#: apollo/participants/api/views.py:276 apollo/submissions/api/views.py:139
+#: apollo/submissions/api/views.py:210 apollo/submissions/api/views.py:221
 msgid "Invalid participant"
 msgstr "არასწორი მონაწილე"
 
@@ -2714,11 +2623,11 @@ msgstr "სრული სახელი"
 
 #: apollo/pwa/templates/pwa/index.html:109
 msgid "If this is not correct, please"
-msgstr "თუ ეს არ არის სწორი, გთხოვთ"
+msgstr "თუ არასწორ გვერდზე მოხვდით"
 
 #: apollo/pwa/templates/pwa/index.html:109
 msgid "click here"
-msgstr "დააწკაპუნეთ აქ"
+msgstr "გამოსასვლელად დააჭირეთ აქ"
 
 #: apollo/pwa/templates/pwa/index.html:115
 msgid "Allow app to access my location when needed"
@@ -3106,13 +3015,11 @@ msgstr "%(group)s დასრულებული"
 msgid "%(group)s Conflict"
 msgstr "%(group)s კონფლიქტი"
 
-#: apollo/submissions/filters.py:741
-#: apollo/submissions/filters.py:810
+#: apollo/submissions/filters.py:741 apollo/submissions/filters.py:810
 msgid "Quarantine All"
 msgstr "საკარანტინო ყველა"
 
-#: apollo/submissions/filters.py:742
-#: apollo/submissions/filters.py:811
+#: apollo/submissions/filters.py:742 apollo/submissions/filters.py:811
 msgid "Quarantine Results"
 msgstr "საკარანტინო შედეგები"
 
@@ -3120,8 +3027,7 @@ msgstr "საკარანტინო შედეგები"
 msgid "Quarantine All + Results"
 msgstr "საკარანტინო ყველა + შედეგი"
 
-#: apollo/submissions/filters.py:744
-#: apollo/submissions/filters.py:809
+#: apollo/submissions/filters.py:744 apollo/submissions/filters.py:809
 msgid "Quarantine None"
 msgstr "საკარანტინო არცერთი"
 
@@ -3153,8 +3059,7 @@ msgstr "ხარისხის შემოწმების მდგომ�
 msgid "Not a valid integer value"
 msgstr "არ არის სწორი მთელი მნიშვნელობა"
 
-#: apollo/submissions/forms.py:72
-#: apollo/submissions/forms.py:74
+#: apollo/submissions/forms.py:72 apollo/submissions/forms.py:74
 msgid "Participant and location cannot both be empty"
 msgstr "მონაწილე და ლოკაცია არ შეიძლება იყოს ცარიელი"
 
@@ -3485,8 +3390,7 @@ msgstr "ჩამოტვირთეთ შაბლონი"
 msgid "Dismiss"
 msgstr "გაუქმება"
 
-#: apollo/templates/admin/layout.html:8
-#: apollo/templates/admin/layout.html:10
+#: apollo/templates/admin/layout.html:8 apollo/templates/admin/layout.html:10
 msgid "menu image"
 msgstr "მენიუს სურათი"
 
@@ -3511,10 +3415,8 @@ msgstr ""
 "ამ მდებარეობის ნაკრებისთვის მიმაგრებული ადმინისტრაციული დაყოფა უნდა "
 "დასრულდეს მდებარეობების იმპორტამდე."
 
-#: apollo/templates/admin/macros.html:4
-#: apollo/templates/admin/macros.html:11
-#: apollo/templates/admin/macros.html:18
-#: apollo/templates/admin/macros.html:25
+#: apollo/templates/admin/macros.html:4 apollo/templates/admin/macros.html:11
+#: apollo/templates/admin/macros.html:18 apollo/templates/admin/macros.html:25
 msgid "Manage"
 msgstr "მართვა"
 
