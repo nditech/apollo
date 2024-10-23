@@ -128,6 +128,7 @@
       $.ajax({
         url: '',
         type: 'POST',
+        dataType: "json",
         data: {postdata: JSON.stringify(vm.control), csrf_token: "{{ csrf_token() }}"}
       }).always(function () {
         window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
@@ -142,6 +143,7 @@
       $.ajax({
         url: '',
         type: 'DELETE',
+        dataType: "json",
         data: {csrf_token: "{{ csrf_token() }}"}
       }).always(function () {
         window.location.href = '{{ url_for('formsview.qc', form_id=form.id) }}';
@@ -176,7 +178,7 @@
             });
           }
         } catch (err) {}
-        
+
         $(this.$el).selectize(options);
       });
     },

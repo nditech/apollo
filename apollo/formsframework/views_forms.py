@@ -359,7 +359,7 @@ def quality_control_edit(view, form_id, qc=None):
 
             form.save()
 
-            if request.is_xhr:
+            if request.accept_mimetypes.accept_json:
                 data = {}
                 return jsonify(data)
             else:
@@ -430,7 +430,7 @@ def quality_control_delete(view, form_id, qc):
     """Quality assurance controls deletion view."""
     form = models.Form.query.filter_by(id=form_id).first_or_404()
 
-    if request.method == "DELETE" and request.is_xhr:
+    if request.method == "DELETE" and request.accept_mimetypes.accept_json:
         if form.quality_checks:
             for i, control in enumerate(form.quality_checks):
                 if control["name"] == qc:

@@ -859,7 +859,7 @@
       imagePresenceLabel.style.cursor = 'default';
       delete imagePresenceLabel.dataset.presenceLabel;
     }
-    
+
     destroySplitView();
   }
 
@@ -923,13 +923,13 @@
         // change delete label
         deleteLabel.classList.add('disabled');
         deleteLabel.style.cursor = 'default';
-  
+
         // change image presence label
         imagePresenceLabel.classList.remove('bg-primary');
         imagePresenceLabel.classList.add('disabled');
         imagePresenceLabel.querySelector('i').classList.remove('fas', 'text-white');
         imagePresenceLabel.querySelector('i').classList.add('far', 'text-dark');
-  
+
         if (galleryItemElement) {
           galleryItemElement.remove();
         }
@@ -1075,7 +1075,7 @@
     } else if (currentTag) {
       const idx = getImageTags().indexOf(startTag);
       if (idx !== -1) {
-        imageViewer.view(idx);  
+        imageViewer.view(idx);
       }
     }
   }, 300);
@@ -1111,7 +1111,7 @@
     rhs.classList.add('overflow-hidden');
     lhs.style.height = rhs.style.height = '80vh';
     lhs.parentElement.classList.add('split');
-    
+
     splitView = Split(['#lhs', '#rhs'], {
       sizes: [50, 50],
       onDragEnd: function(sizes) {
@@ -1120,7 +1120,7 @@
     });
     buildViewer(startTag);
   }
-  
+
   function destroySplitView() {
     if (!splitViewActive) {
       return;
@@ -1205,6 +1205,7 @@
         $.ajax({
           url: "{{ url_for('submissions.comment_create_view') }}",
           type: 'POST',
+          dataType: "json",
           data: {comment: comment, submission: submission},
           beforeSend: function (xhr, settings) {
             $('#comment').attr('disabled', 'disabled');
@@ -1237,6 +1238,7 @@
         $.ajax({
           url: "{{ url_for('participants.toggle_phone_verification') }}",
           type: 'POST',
+          dataType: "json",
           data: {phone: phone, participant: participant, submission: submission},
           beforeSend: function (xhr, settings) {
             $('#toggle_verification_spinner').removeClass('invisible');
@@ -1273,6 +1275,7 @@
       $.ajax({
         url: "{{ url_for('participants.log_call') }}",
         type: 'POST',
+        dataType: "json",
         data: {description: description, participant: participant},
         beforeSend: function (xhr, settings) {
           $('#contactSaveBtn').attr('disabled', 'disabled');
