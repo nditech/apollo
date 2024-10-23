@@ -264,12 +264,7 @@ def participant_list(participant_set_id=0, view=None):
 
         # if the full name is empty, order by the concatenated
         # name, else order by the full name
-        order_term = case(
-            [
-                (condition1, full_name_concat),
-                (condition2, full_name_term),
-            ]
-        )
+        order_term = case((condition1, full_name_concat), (condition2, full_name_term))
         if request.args.get("sort_direction") == "desc":
             queryset = queryset.order_by(desc(order_term))
         else:
@@ -351,7 +346,7 @@ def participant_list(participant_set_id=0, view=None):
 @permissions.edit_participant.require(403)
 def toggle_phone_verification():
     """Toggles phone verification status for a participant phone and submission."""
-    if request.is_xhr:
+    if request.accept_mimetypes.accept_json:
         participant_id = request.form.get("participant")
         phone = request.form.get("phone")
 
@@ -594,7 +589,7 @@ def participant_headers(upload_id, participant_set_id=0, view=None):
 @login_required
 def log_call():
     """Adds a call log for the participant."""
-    if request.is_xhr:
+    if request.accept_mimetypes.accept_json:
         participant_id = request.form.get("participant")
         description = request.form.get("description")
 

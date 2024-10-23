@@ -58,14 +58,14 @@ COPY poetry.lock pyproject.toml $PYSETUP_PATH
 
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN --mount=type=cache,target=/root/.cache \
-    poetry install --without=dev
+    poetry install --no-root --without=dev
 
 COPY . $PYSETUP_PATH
 
 # this allows the installation of the dependencies to be cached separately
 # from that of the project.
 RUN --mount=type=cache,target=/root/.cache \
-    poetry install --without=dev
+    poetry install --only-root
 
 RUN make babel-compile
 
@@ -100,7 +100,7 @@ WORKDIR $PYSETUP_PATH
 
 # quicker install as runtime deps are already installed
 RUN --mount=type=cache,target=/root/.cache \
-    poetry install --with=dev
+    poetry install --no-root --with=dev
 
 CMD ["flask", "--app", "apollo.runner", "run", "--reload", "--debug", "--host", "[::]", "--port", "5000"]
 
