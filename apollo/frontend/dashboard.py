@@ -308,7 +308,11 @@ def get_stratified_daily_progress(query, event, location_type):
             query.join(location_closure, location_closure.descendant_id == Submission.location_id)
             .join(ancestor_location, ancestor_location.id == location_closure.ancestor_id)
             .filter(location_closure.depth == depth_info.depth)
-            .with_entities(ancestor_location.name, ancestor_location.code, Submission.participant_updated)
+            .with_entities(
+                ancestor_location.name.label("getter"),
+                ancestor_location.code.label("code"),
+                Submission.participant_updated,
+            )
             .options(
                 Load(ancestor_location).load_only(
                     ancestor_location.id, ancestor_location.code, ancestor_location.name_translations
@@ -362,10 +366,10 @@ def get_stratified_daily_progress(query, event, location_type):
             )
             progress = df_resampled.truncate(before=start, after=end)
             progress.loc[progress.index == start.strftime("%Y-%m-%d"), "count"] = int(
-                df_resampled[df_resampled.index <= start].sum().iloc[0]
+                df_resampled[df_resampled.index <= start].sum().iloc[2]
             )
             progress.loc[progress.index == end.strftime("%Y-%m-%d"), "count"] = int(
-                df_resampled[df_resampled.index >= end].sum().iloc[0]
+                df_resampled[df_resampled.index >= end].sum().iloc[2]
             )
             dp = {idx.date(): int(progress.loc[idx]["count"]) for idx in progress.index}
             dp.update({"total": progress["count"].sum()})
