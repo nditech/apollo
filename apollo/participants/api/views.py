@@ -3,7 +3,7 @@ import random
 import string
 from http import HTTPStatus
 
-from flask import g, jsonify, request
+from flask import g, jsonify, request, session
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from flask_babel import gettext
 from flask_jwt_extended import (
@@ -14,6 +14,7 @@ from flask_jwt_extended import (
     set_access_cookies,
     unset_access_cookies,
 )
+from passlib import totp
 from sqlalchemy import and_, bindparam, func, or_, text, true
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.exc import NoResultFound
@@ -22,7 +23,7 @@ from webargs import fields
 from apollo import settings
 from apollo.api.common import BaseListResource
 from apollo.api.decorators import protect
-from apollo.core import csrf, red
+from apollo.core import csrf, limiter, red
 from apollo.deployments.models import Event
 from apollo.formsframework.api.schema import FormSchema
 from apollo.formsframework.models import Form
@@ -42,6 +43,14 @@ from apollo.submissions.models import Submission
 
 OTP_LENGTH = 6
 OTP_LIFETIME = 5 * 60
+
+if settings.PWA_TWO_FACTOR:
+    TOTP_INSTANCE = totp.TOTP.using(
+        issuer=settings.SECURITY_TOTP_ISSUER,
+        secrets=settings.SECURITY_TOTP_SECRETS
+    )
+else:
+    TOTP_INSTANCE = None
 
 
 @marshal_with(ParticipantSchema)
@@ -174,6 +183,7 @@ def login():
 
         return response
 
+    session.set("uid", str(participant.uuid))
     if getattr(settings, "PWA_TWO_FACTOR", False):
         return _process_2fa_login(participant)
     else:
@@ -217,22 +227,17 @@ def _process_login(participant: Participant):
     return resp
 
 
-def _generate_or_retrieve_otp(key: str) -> str | None:
-    client = red._redis_client
-    if client:
-        res: bytes | None = client.get(key)
-        if res is not None:
-            return res.decode()
-
-        random.seed()
-        otp_code = "".join(random.choice(string.digits) for i in range(OTP_LENGTH))
-        client.set(key, otp_code, ex=OTP_LIFETIME)
-        return otp_code
+def generate_otp(participant: Participant) -> str:
+    if not participant.totp_secret:
+        participant.totp_secret = TOTP_INSTANCE.new().to_json(encrypt=True)
+        participant.save()
+    result = TOTP_INSTANCE.from_source(participant.totp_secret).generate()
+    return result.token
 
 
 def _process_2fa_login(participant: Participant):
     key = f"2fa:{participant.uuid}"
-    result = _generate_or_retrieve_otp(key)
+    result = generate_otp(key)
     if result:
         response = jsonify({"status": "ok", "data": {"uid": str(participant.uuid), "twoFactor": True}})
         message = gettext("Your Apollo verification code is: %(totp_code)s", totp_code=result)
@@ -245,8 +250,7 @@ def _process_2fa_login(participant: Participant):
 
 @csrf.exempt
 def resend_otp():
-    request_data = request.json
-    uid = request_data.get("uid")
+    uid = session.get("uid")
     participant: Participant | None = Participant.query.where(Participant.uuid == uid).one_or_none()
     if not participant:
         response = jsonify({"status": "error", "message": "Not found"})
@@ -259,30 +263,22 @@ def resend_otp():
 @csrf.exempt
 def verify_otp():
     request_data = request.json
-    uid = request_data.get("uid")
+    uid = session.get("uid")
     entered_otp = request_data.get("otp")
-    client = red._redis_client
-    if client:
-        key = f"2fa:{uid}"
-        result: bytes = client.get(key)
-        if result is None:
-            response = jsonify({"status": "error", "message": gettext("Verification failed.")})
-            response.status_code = HTTPStatus.FORBIDDEN
-            return response
-        saved_otp = result.decode()
-        if entered_otp == saved_otp:
-            participant = Participant.query.filter(Participant.uuid == uid).first()
-            if not participant:
-                response = jsonify({"status": "error", "message": gettext("Verification failed.")})
-                return response
-            return _process_login(participant)
-        else:
-            response = jsonify({"status": "error", "message": gettext("Verification failed.")})
-            response.status_code = HTTPStatus.FORBIDDEN
-            return response
-    else:
-        response = jsonify({"status": "error", "message": gettext("Please contact the administrator")})
+    participant: Participant | None = Participant.query.where(Participant.uuid == uid).one_or_none()
+    if not participant or not participant.totp_secret:
+        response = jsonify({"status": "error", "message": "Not found"})
+        response.status_code = HTTPStatus.NOT_FOUND
         return response
+
+    try:
+        TOTP_INSTANCE.verify(entered_otp, participant.totp_secret)
+    except Exception:
+        response = jsonify({"status": "error", "message": gettext("Verification failed.")})
+        response.status_code = HTTPStatus.FORBIDDEN
+        return response
+
+    return _process_login(participant)
 
 
 @csrf.exempt

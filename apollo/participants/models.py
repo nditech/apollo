@@ -205,6 +205,7 @@ class Participant(BaseModel):
     password = db.Column(db.String)
     extra_data = db.Column(JSONB)
     locale = db.Column(db.String)
+    totp_secret = db.Column(db.String, nullable=True)
 
     full_name = translation_hybrid(full_name_translations)
     first_name = translation_hybrid(first_name_translations)

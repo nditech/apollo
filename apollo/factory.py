@@ -24,6 +24,7 @@ from apollo.core import (
     debug_toolbar,
     fdt_available,
     jwt_manager,
+    limiter,
     mail,
     menu,
     metrics,
@@ -127,6 +128,7 @@ def create_app(package_name, package_path, settings_override=None, register_all_
     cors.init_app(app)
     db.init_app(app)
     jwt_manager.init_app(app)
+    limiter.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
     red.init_app(app)
