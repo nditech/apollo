@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+from urllib.parse import parse_qsl
 
 from flask import Blueprint, current_app, g, make_response, request
 from unidecode import unidecode
+from werkzeug.datastructures import MultiDict
 
 from apollo import services
 
@@ -54,24 +56,28 @@ def kannel_view():
     if secret != current_app.config.get("MESSAGING_SECRET"):
         return ""
 
-    form = KannelForm(request.args)
+    # we need to parse the query string ourselves to preserve the bytes for the text
+    arguments = MultiDict([(k.decode(), v if k == b"text" else v.decode()) for k, v in parse_qsl(request.query_string)])
+    form = KannelForm(arguments)
     if form.validate():
         msg = form.get_message()
 
-        response, submission, had_errors = parse_message(form)
+        reply, submission, had_errors = parse_message(form)
         event = submission.event if submission else get_event()
 
         incoming = services.messages.log_message(
             event=event, sender=msg.get("sender"), text=msg.get("text"), direction="IN", timestamp=msg.get("timestamp")
         )
-        outgoing = services.messages.log_message(
-            event=event, recipient=msg.get("sender"), text=response, direction="OUT"
-        )
+        outgoing = services.messages.log_message(event=event, recipient=msg.get("sender"), text=reply, direction="OUT")
 
         update_datastore(incoming, outgoing, submission, had_errors)
 
         if current_app.config.get("TRANSLITERATE_OUTPUT"):
-            response = unidecode(response)
+            reply = unidecode(reply)
+
+        response = make_response(reply)
+        response.mimetype = "text/plain"
+        response.headers["X-Kannel-Coding"] = 2
 
         return response
     return ""
