@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import jsonify
 from flask_babel import gettext as _
+from loguru import logger
 
 from apollo.core import red
 
@@ -12,6 +13,7 @@ def process_expired_token(jwt_header, jwt_payload):
         'status': _('error'),
         'message': _('Token has expired')
     })
+    logger.debug(response)
     response.status_code = HTTPStatus.UNAUTHORIZED
     return response
 
@@ -21,6 +23,7 @@ def process_invalid_token(reason):
         'status': _('error'),
         'message': _(reason)
     })
+    logger.debug(response)
     response.status_code = HTTPStatus.UNPROCESSABLE_ENTITY
     return response
 
@@ -30,6 +33,7 @@ def process_revoked_token(jwt_header, jwt_payload):
         'status': _('error'),
         'message': _('Token has been revoked')
     })
+    logger.debug(response)
     response.status_code = HTTPStatus.UNAUTHORIZED
     return response
 
