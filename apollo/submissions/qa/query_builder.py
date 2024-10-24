@@ -175,7 +175,7 @@ class InlineQATreeVisitor(BaseVisitor):
             if symbol == ".":
                 return getattr(attribute, name)
             else:
-                return attribute.extra_data.get(name)
+                return attribute.extra_data.get(name) if attribute.extra_data is not None else None
         else:
             return getattr(self.submission, name)
 

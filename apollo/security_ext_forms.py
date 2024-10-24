@@ -13,8 +13,8 @@ class DeploymentLoginForm(LoginForm):
         if not super(DeploymentLoginForm, self).validate(**kwargs):
             participant = (
                 models.Participant.query.filter(
-                    models.Participant.participant_id == self.username.data.strip(),
-                    models.Participant.password == self.password.data.strip(),
+                    models.Participant.participant_id == self.username.data,
+                    models.Participant.password == self.password.data,
                     models.Participant.participant_set == g.event.participant_set,
                 )
                 .join(models.ParticipantRole)
