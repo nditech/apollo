@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import importlib
+import pkgutil
 
-from flask import Blueprint
 import magic
 import pandas as pd
-import pkgutil
+from flask import Blueprint
+from loguru import logger
 
 CSV_MIMETYPES = [
     "text/csv",
@@ -24,8 +25,7 @@ EXCEL_MIMETYPES = [
 
 
 def register_blueprints(app, package_name, package_path):
-    """Register all Blueprint instances on the specified Flask application
-    found in all modules for the specified package.
+    """Register all Blueprint instances on the specified Flask application.
 
     :param app: the Flask application
     :param package_name: the package name
@@ -33,7 +33,7 @@ def register_blueprints(app, package_name, package_path):
     """
     rv = []
     for _, name, _ in pkgutil.iter_modules(package_path):
-        if name.startswith('views_'):
+        if name.startswith("views_"):
             m = importlib.import_module(f"{package_name}.{name}")
             for item in dir(m):
                 item = getattr(m, item)
@@ -44,29 +44,37 @@ def register_blueprints(app, package_name, package_path):
 
 
 def _make_choices(qs, placeholder=None):
-    """Helper method for generating choices for :class:`SelectField`
-    instances.
-    """
+    """Helper method for generating choices for :class:`SelectField` instances."""
     if placeholder:
-        return [['', placeholder]] + [[str(i[0]), i[1]] for i in list(qs)]
+        return [["", placeholder]] + [[str(i[0]), i[1]] for i in list(qs)]
     else:
-        return [['', '']] + [[str(i[0]), i[1]] for i in list(qs)]
+        return [["", ""]] + [[str(i[0]), i[1]] for i in list(qs)]
 
 
 def load_source_file(source_file):
+    """Loads an import file."""
     # peek into file and read first 1kB, then reset pointer
     mimetype = magic.from_buffer(source_file.read(), mime=True)
     source_file.seek(0)
 
     if mimetype in CSV_MIMETYPES:
         # likely a CSV file
-        df = pd.read_csv(source_file, dtype=str).fillna('')
+        try:
+            df = pd.read_csv(source_file, dtype=str).fillna("")
+        except Exception:
+            logger.info("could not parse the CSV file.")
+            df = pd.DataFrame()
     elif mimetype in EXCEL_MIMETYPES:
         # likely an Excel spreadsheet, read all data as strings
-        xl = pd.ExcelFile(source_file)
-        ncols = xl.book.sheet_by_index(0).ncols
-        df = xl.parse(0, converters={i: str for i in range(ncols)}).fillna('')
+        try:
+            xl = pd.ExcelFile(source_file)
+            ncols = xl.book.sheet_by_index(0).ncols
+            df = xl.parse(0, converters={i: str for i in range(ncols)}).fillna("")
+        except Exception:
+            logger.info("could not parse the Excel file.")
+            df = pd.DataFrame()
     else:
-        raise RuntimeError('Unknown file type')
+        logger.info("could not determine the mimetype or an unacceptable file was uploaded.")
+        df = pd.DataFrame()
 
     return df
