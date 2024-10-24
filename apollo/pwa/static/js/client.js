@@ -24,6 +24,30 @@ class APIClient {
       }).then(this._getResult);
   };
 
+  verify = function (uid, otp) {
+    return fetch(this.endpoints.verify, {
+      body: JSON.stringify({
+        uid: uid,
+        otp: otp
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST'
+    }).then(this._getResult);
+  };
+
+  resend = function (uid) {
+    return fetch(this.endpoints.resend, {
+      body: JSON.stringify({
+        uid: uid
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(this._getResult);
+  }
+
   submit = function (formData, csrf_token) {
     return fetch(this.endpoints.submit, {
       body: formData,

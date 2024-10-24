@@ -81,6 +81,8 @@ sentry-sdk = {extras = ["celery", "flask"], version = "^2.14.0"}
 bleach = "^6.1.0"
 prometheus-flask-exporter = "^0.23.1"
 loguru = "^0.7.2"
+phonenumberslite = "^8.13.48"
+flask-limiter = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 Flask-DebugToolbar = "^0.16.0"

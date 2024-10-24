@@ -16,6 +16,8 @@ try:
 except ImportError:
     fdt_available = False
 from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate
@@ -41,6 +43,7 @@ babel = Babel()
 cors = CORS()
 db = SQLAlchemy(session_options={"expire_on_commit": False})
 jwt_manager = JWTManager()
+limiter = Limiter(get_remote_address)
 mail = Mail()
 menu = Menu()
 metrics = PrometheusMetrics.for_app_factory(defaults_prefix=NO_PREFIX)

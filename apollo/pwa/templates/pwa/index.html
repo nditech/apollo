@@ -34,7 +34,8 @@
       <div class="row h-75 align-items-center">
         <div class="col-sm-8 offset-sm-2 mt-6">
           <transition mode="out-in" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
-            <login-form v-if="participant === null" @authenticated="authenticationSuccess" :navigator-online="navigatorOnline"></login-form>
+            <login-form v-if="participant === null && uid === null" @authenticated="authenticationSuccess" @prompt-verify="promptVerify" :navigator-online="navigatorOnline"></login-form>
+            <verify-form v-if="participant === null && uid !== null" :uid="uid" @authenticated="authenticationSuccess"></verify-form>
             <div v-else>
               <div class="mb-3">
                 <participant-info :global-status="globalStatus()" :participant="participant" :pending-submissions="pendingSubmissions" @logged-out="loggedOut" @toggle-location-access="locationAccessToggled" ></participant-info>
@@ -87,6 +88,33 @@
                   <div class="d-grid gap-2">
                     <button class="btn btn-primary" @click.prevent="authenticate" :disabled="!navigatorOnline">{{ _('Login') }}</button>
                   </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="verify-form">
+    <div class="row">
+      <div class="col">
+        <div class="form">
+          <form>
+            <div class="card shadow-sm mt-3">
+              <h5 class="card-header">{{ _('Verify login') }}</h5>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="otp" class="visually-hidden">{{ _('OTP') }}</label>
+                  <input type="number" class="form-control bg-light" id="otp" placeholder="{{ _('OTP') }}" v-model="otp">
+                </div>
+                <div class="mb-3">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-primary" @click.prevent="verifyOTP">{{ _('Verify') }}</button>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <button class="btn btn-secondary" @click.prevent="resendOTP">Resend code</button>
                 </div>
               </div>
             </div>
@@ -297,9 +325,9 @@
   <script src="{{ url_for('pwa.static', filename='vendor/dexie/dexie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/fast-copy/fast-copy.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/image-blob-reduce/image-blob-reduce.min.js') }}"></script>
+  <script src="{{ url_for('pwa.static', filename='vendor/js-cookie/js.cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/luxon/luxon.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/notiflix/notiflix-2.7.0.min.js') }}"></script>
-  <script src="{{ url_for('pwa.static', filename='vendor/tiny-cookie/tiny-cookie.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/tippy.js/tippy.umd.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='vendor/vue/vue.min.js') }}"></script>
   <script src="{{ url_for('pwa.static', filename='js/app.js') }}"></script>
@@ -415,6 +443,8 @@
       logout: "{{ url_for('participants.logout') }}",
       qaStatus: "{{ url_for('submissions.checklist_qa_status', uuid='') }}",
       submit: "{{ url_for('submissions.submission') }}",
+      resend: "{{ url_for('participants.resend_otp') }}",
+      verify: "{{ url_for('participants.verify_otp') }}",
       versionCheck: "{{ url_for('pwa.version_check') }}",
     };
     const client = new APIClient(endpoints);
@@ -615,9 +645,13 @@
               Notiflix.Loading.Remove();
               if (result.status === 200) {
                 result.result.then(data => {
-                  let participant = data.data.participant;
-                  participant.lastLogin = new Date();
-                  instance.$emit('authenticated', participant);
+                  if (data.data.twoFactor) {
+                    instance.$emit('prompt-verify', data.data.uid);
+                  } else {
+                    let participant = data.data.participant;
+                    participant.lastLogin = new Date();
+                    instance.$emit('authenticated', participant);
+                  }
                 });
               } else {
                 Notiflix.Report.Failure(
@@ -643,6 +677,50 @@
       },
       props: ['navigatorOnline'],
       template: '#login-form'
+    });
+
+    // verification form
+    Vue.component('verify-form', {
+      data() {
+        return {otp: ''};
+      },
+      delimiters: ['[[', ']]'],
+      methods: {
+        resendOTP() {
+          client.resend(this.uid).then(result => {
+            if (!result.ok) {
+              Notiflix.Report.Failure(
+                '{{ _("Error") }}',
+                '{{ _("Please contact the administrator") }}',
+                '{{ _("OK") }}'
+              );
+            }
+          });
+        },
+        verifyOTP() {
+          let instance = this;
+          if (instance.otp) {
+            client.verify(instance.uid, instance.otp)
+              .then(result => {
+                if (!result.ok) {
+                  Notiflix.Report.Failure(
+                    '{{ _("Error") }}',
+                    '{{ _("Please contact the administrator") }}',
+                    '{{ _("OK") }}'
+                  );
+                } else {
+                  result.result.then(data => {
+                    let participant = data.data.participant;
+                    participant.lastLogin = new Date();
+                    instance.$emit('authenticated', participant);
+                  });
+                }
+              })
+          }
+        }
+      },
+      props: ['uid'],
+      template: '#verify-form'
     });
 
     // participant-info component
@@ -1081,7 +1159,8 @@
         submissionSyncIntervalHandle: null,
         syncingSubmission: null,
         updateNotificationCleared: true,
-        syncRunning: false
+        syncRunning: false,
+        uid: null
       },
       el: '#app',
       methods: {
@@ -1143,11 +1222,15 @@
             });
         },
         authenticationSuccess(participant) {
+          this.uid = null;
           this.participant = participant;
           this.participant.allowLocationAccess = this.allowLocationAccess;
           this.saveParticipantToDatabase(participant);
           this.refreshForms(false);
           this.loadSubmissionsFromDatabase();
+        },
+        promptVerify(uid) {
+          this.uid = uid;
         },
         formsLoaded(forms) {
           let formsWithParticipantIds = forms.map(form => Object.assign({}, form, {participant_id: this.participant.participant_id}));
@@ -1239,7 +1322,7 @@
           ));
         },
         loggedOut() {
-          client.logout(Cookie.get('csrf_access_token'));
+          client.logout(Cookies.get('csrf_access_token'));
           this.participant = null;
           this.currentForm = null;
           this.currentSubmission = null;
@@ -1346,7 +1429,7 @@
           formData.append('submission', JSON.stringify(subCopy));
 
           try {
-            let result = await client.submit(formData, Cookie.get('csrf_access_token'));
+            let result = await client.submit(formData, Cookies.get('csrf_access_token'));
             let data = await result.result;
             if (result.status === 401) {
               Notiflix.Report.Warning(
