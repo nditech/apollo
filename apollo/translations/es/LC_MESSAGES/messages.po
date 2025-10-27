@@ -1,18 +1,27 @@
-
+# Translations template for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# 
+# Translators:
+# NDItech, 2021
+# Tim Akinbo <takinbo@timbaobjects.com>, 2025
+# 
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2024-09-25 15:37+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: es\n"
-"Language-Team: es <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"PO-Revision-Date: 2020-10-28 19:40+0000\n"
+"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>, 2025\n"
+"Language-Team: Spanish (https://app.transifex.com/nditech/teams/114236/es/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: apollo/constants.py:12
 msgid "(None)"
@@ -39,9 +48,8 @@ msgid "Generate Checklists"
 msgstr ""
 
 #: apollo/factory.py:42 apollo/templates/admin/user_list.html:17
-#, fuzzy
 msgid "Import Users"
-msgstr "Importar archivo"
+msgstr ""
 
 #: apollo/factory.py:43 apollo/templates/admin/form_list.html:26
 #: apollo/templates/admin/form_list.html:146
@@ -54,9 +62,8 @@ msgid "FAILED"
 msgstr "FALLADO"
 
 #: apollo/factory.py:224 apollo/factory.py:242 apollo/factory.py:264
-#, fuzzy
 msgid "Task"
-msgstr "Tareas"
+msgstr ""
 
 #: apollo/factory.py:240
 msgid "COMPLETED"
@@ -100,9 +107,8 @@ msgid "Users can view the message list"
 msgstr ""
 
 #: apollo/dal/models.py:132
-#, fuzzy
 msgid "Users can view the quality assurance list"
-msgstr "Eliminar control de calidad"
+msgstr ""
 
 #: apollo/dal/models.py:133
 msgid "Users can view the process data summary"
@@ -113,9 +119,8 @@ msgid "Users can view the results data summary"
 msgstr ""
 
 #: apollo/dal/models.py:135
-#, fuzzy
 msgid "Users can create critical incidents"
-msgstr "Incidentes críticos"
+msgstr ""
 
 #: apollo/dal/models.py:136
 msgid "Users can modify forms"
@@ -126,9 +131,8 @@ msgid "Users can edit location data"
 msgstr ""
 
 #: apollo/dal/models.py:138
-#, fuzzy
 msgid "Users can edit submissions"
-msgstr "Envío de observador"
+msgstr ""
 
 #: apollo/dal/models.py:139
 msgid "Users can modify observer and location checklists"
@@ -147,9 +151,8 @@ msgid "Users can edit participant data"
 msgstr ""
 
 #: apollo/dal/models.py:143
-#, fuzzy
 msgid "Users can import participant data"
-msgstr "Importar participantes"
+msgstr ""
 
 #: apollo/dal/models.py:144
 msgid "Users can import location data"
@@ -168,9 +171,8 @@ msgid "Users can export messages"
 msgstr ""
 
 #: apollo/dal/models.py:148
-#, fuzzy
 msgid "Users can export submissions"
-msgstr "Envío de observador"
+msgstr ""
 
 #: apollo/dal/models.py:149
 msgid "Users can send participants messages"
@@ -253,8 +255,8 @@ msgstr "No monitorear conflictos de datos"
 
 #: apollo/formsframework/forms.py:441
 msgid ""
-"Whether data conflicts between observers in the same location are tracked"
-" or not."
+"Whether data conflicts between observers in the same location are tracked or"
+" not."
 msgstr ""
 "Si los conflictos de datos entre observadores en la misma ubicación se "
 "monitorean o no."
@@ -289,9 +291,10 @@ msgstr "Mostrar columna de marca de hora"
 
 #: apollo/formsframework/forms.py:453
 msgid ""
-"Enabling this option will show the date and time for the submission in "
-"the list view."
-msgstr "Habilitar esta opción mostrará la fecha y hora para el envío en la lista."
+"Enabling this option will show the date and time for the submission in the "
+"list view."
+msgstr ""
+"Habilitar esta opción mostrará la fecha y hora para el envío en la lista."
 
 #: apollo/formsframework/forms.py:455
 msgid "Show Daily Progress"
@@ -336,19 +339,16 @@ msgid "Fields representing turnout values."
 msgstr ""
 
 #: apollo/formsframework/forms.py:472
-#, fuzzy
 msgid "Partial Turnout Registered Voters Field"
-msgstr "Campo de votantes registrados"
+msgstr ""
 
 #: apollo/formsframework/forms.py:474
-#, fuzzy
 msgid "Result Images"
-msgstr "imagen menu"
+msgstr ""
 
 #: apollo/formsframework/forms.py:475
-#, fuzzy
 msgid "Questions representing election result images."
-msgstr "Preguntas que representan los resultados electorales."
+msgstr ""
 
 #: apollo/formsframework/forms.py:480
 msgid "Import file"
@@ -419,13 +419,14 @@ msgid "SMS 1"
 msgstr "SMS 1"
 
 #: apollo/formsframework/views_forms.py:51
-msgid "Checklists were not created, as the selected Form has no question codes"
+msgid ""
+"Checklists were not created, as the selected Form has no question codes"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:56
 msgid ""
-"Checklists are being created for the Event, Form, Role and Location Type "
-"you selected"
+"Checklists are being created for the Event, Form, Role and Location Type you"
+" selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:72
@@ -438,8 +439,7 @@ msgstr ""
 
 #: apollo/formsframework/views_forms.py:94
 msgid ""
-"Surveys are being created for the Event, Form and Participants you "
-"selected"
+"Surveys are being created for the Event, Form and Participants you selected"
 msgstr ""
 
 #: apollo/formsframework/views_forms.py:115
@@ -472,9 +472,8 @@ msgid "Edit Form"
 msgstr "Editar formulario"
 
 #: apollo/formsframework/views_forms.py:232 apollo/frontend/views_admin.py:208
-#, fuzzy
 msgid "Hide Archived"
-msgstr "Archivar"
+msgstr ""
 
 #: apollo/formsframework/views_forms.py:235 apollo/frontend/views_admin.py:214
 msgid "Show All"
@@ -664,9 +663,8 @@ msgid "Password"
 msgstr "Contraseña"
 
 #: apollo/frontend/forms.py:94 apollo/participants/models.py:58
-#, fuzzy
 msgid "Preferred Language"
-msgstr "Otros idiomas"
+msgstr ""
 
 #: apollo/frontend/forms.py:95
 msgid "Default"
@@ -737,20 +735,17 @@ msgid "Archive"
 msgstr "Archivar"
 
 #: apollo/frontend/views_admin.py:166 apollo/frontend/views_admin.py:435
-#, fuzzy
 msgid "Are you sure you want to archive the selected items?"
-msgstr "¿Seguro que quieres habilitar a los usuarios seleccionados?"
+msgstr ""
 
 #: apollo/frontend/views_admin.py:173 apollo/frontend/views_admin.py:442
 #: apollo/templates/admin/form_list.html:21
-#, fuzzy
 msgid "Unarchive"
-msgstr "Archivar"
+msgstr ""
 
 #: apollo/frontend/views_admin.py:173 apollo/frontend/views_admin.py:442
-#, fuzzy
 msgid "Are you sure you want to unarchive the selected items?"
-msgstr "¿Seguro que quieres habilitar a los usuarios seleccionados?"
+msgstr ""
 
 #: apollo/frontend/views_admin.py:243
 msgid "Label"
@@ -765,7 +760,8 @@ msgid "The display label to use for this field."
 msgstr "La etiqueta que se mostrara para este campo."
 
 #: apollo/frontend/views_admin.py:248
-msgid "Internal name to use for this attribute. Avoid using spaces in the name."
+msgid ""
+"Internal name to use for this attribute. Avoid using spaces in the name."
 msgstr ""
 "Nombre interno a utilizar para este atributo. Evite usar espacios en el "
 "nombre."
@@ -792,12 +788,13 @@ msgstr "Habilitar respuesta parcial para mensajes"
 
 #: apollo/frontend/views_admin.py:310
 msgid "Specifies whether to allow the editing of observer data."
-msgstr "Especifica si se debe permitir los cambios de los datos de observadores."
+msgstr ""
+"Especifica si se debe permitir los cambios de los datos de observadores."
 
 #: apollo/frontend/views_admin.py:311
 msgid ""
-"Specifies whether to show all locations at an administrative division on "
-"the dashboard."
+"Specifies whether to show all locations at an administrative division on the"
+" dashboard."
 msgstr ""
 "Especifica si se mostrarán todas las ubicaciones en una división "
 "administrativa en el Escritorio."
@@ -807,13 +804,13 @@ msgid ""
 "Specifies whether to respond with an error when a partial response is "
 "received for a text message."
 msgstr ""
-"Especifica si se debe responder con un error cuando se recibe una "
-"respuesta parcial para un mensaje de texto."
+"Especifica si se debe responder con un error cuando se recibe una respuesta "
+"parcial para un mensaje de texto."
 
 #: apollo/frontend/views_admin.py:313
 msgid ""
-"An example of a hostname is \"example.com\". Used internally to determine"
-" what deployment to access."
+"An example of a hostname is \"example.com\". Used internally to determine "
+"what deployment to access."
 msgstr ""
 
 #: apollo/frontend/views_admin.py:324
@@ -825,8 +822,10 @@ msgid "Primary Language"
 msgstr "Idioma primario"
 
 #: apollo/frontend/views_admin.py:395
-msgid "Specifies the primary language that will be supported for data uploads."
-msgstr "Especifica el idioma principal que se admitirá para las cargas de datos."
+msgid ""
+"Specifies the primary language that will be supported for data uploads."
+msgstr ""
+"Especifica el idioma principal que se admitirá para las cargas de datos."
 
 #: apollo/frontend/views_admin.py:400
 msgid "Other Languages"
@@ -895,8 +894,8 @@ msgstr "Qué roles se asignan a este usuario."
 
 #: apollo/frontend/views_admin.py:554
 msgid ""
-"Explicitly specifies which non-role permissions (in addition) to assign "
-"to the user."
+"Explicitly specifies which non-role permissions (in addition) to assign to "
+"the user."
 msgstr ""
 "Especifica explícitamente qué permisos sin roles (además) asignar al "
 "usuario."
@@ -1049,9 +1048,8 @@ msgid "Edit Profile"
 msgstr "Editar perfil"
 
 #: apollo/frontend/views_users.py:116
-#, fuzzy
 msgid "Email was not mapped"
-msgstr "Número de identificación de participante no fue mapeado"
+msgstr ""
 
 #: apollo/frontend/templates/403.html:5
 msgid "Forbidden Error"
@@ -1063,9 +1061,9 @@ msgstr "¡Prohibido!"
 
 #: apollo/frontend/templates/403.html:37
 msgid ""
-"We understood your request, but we refuse to honor it! You are seeing "
-"this page because you were snooping around! Now paddle along before the "
-"buzzer goes off!"
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
 msgstr ""
 
 #: apollo/frontend/templates/404.html:5
@@ -1078,11 +1076,10 @@ msgstr "¡Oh no! ¡Parece que estás perdido!"
 
 #: apollo/frontend/templates/404.html:37
 msgid ""
-"Don't freak out, maybe you entered the wrong address or clicked a bad "
-"link! Who knows, this could even be a fluke! :) I recommend you either "
-"verify the address or click the back arrow (&larr;) at the top left "
-"corner of the page, and cross-check the action you were trying to "
-"perform!"
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page,"
+" and cross-check the action you were trying to perform!"
 msgstr ""
 
 #: apollo/frontend/templates/500.html:5
@@ -1095,9 +1092,9 @@ msgstr "Nos equivocamos :("
 
 #: apollo/frontend/templates/500.html:37
 msgid ""
-"You shouldn't be seeing this page but you are because you're a genius and"
-" have found a rare bug in the software. Rest assured, we now know about "
-"it and will fix it ASAP!"
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/dashboard.html:25
@@ -1275,8 +1272,8 @@ msgstr "Errores de validación de datos"
 #: apollo/frontend/templates/frontend/submission_edit.html:189
 #: apollo/frontend/templates/frontend/submission_edit.html:586
 msgid ""
-"The data you entered are not valid. Please check the affected questions "
-"and correct them."
+"The data you entered are not valid. Please check the affected questions and "
+"correct them."
 msgstr ""
 "Los datos que ingresó no son válidos. Por favor revise las preguntas "
 "afectadas y corríjalas."
@@ -1324,9 +1321,8 @@ msgstr ""
 #: apollo/frontend/templates/frontend/layout.html:162
 #: apollo/templates/admin/base.html:102
 msgid ""
-"Please go to <a "
-"href=\"https://feedback.dem.tools\">feedback.dem.tools</a> to submit "
-"feedback or ask for help"
+"Please go to <a href=\"https://feedback.dem.tools\">feedback.dem.tools</a> "
+"to submit feedback or ask for help"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/login_user.html:5
@@ -1335,8 +1331,8 @@ msgstr "Ingreso de usarios"
 
 #: apollo/frontend/templates/frontend/login_user.html:64
 msgid ""
-"The username and password you supplied <strong>do not match</strong> any "
-"of the credentials on this system. Please check both and try again."
+"The username and password you supplied <strong>do not match</strong> any of "
+"the credentials on this system. Please check both and try again."
 msgstr ""
 "\"El nombre de usuario y la contraseña que proporcionó <strong>no "
 "coinciden</strong> con ninguna de las credenciales de este sistema. Por "
@@ -1578,8 +1574,8 @@ msgstr "Finalizar"
 #: apollo/templates/admin/user_list.html:43
 msgid "Click the <strong>Submit</strong> button to begin the import process."
 msgstr ""
-"Haga clic en el botón <strong>Enviar</strong> para comenzar el proceso de"
-" importación."
+"Haga clic en el botón <strong>Enviar</strong> para comenzar el proceso de "
+"importación."
 
 #: apollo/frontend/templates/frontend/participant_list.html:247
 #: apollo/templates/admin/locations_list.html:120
@@ -1587,8 +1583,8 @@ msgstr ""
 #: apollo/templates/admin/user_list.html:49
 msgid "There was a problem submitting the form. Please try again in a minute."
 msgstr ""
-"Hubo un problema enviando el formulario. Por favor intente nuevamente en "
-"un minuto."
+"Hubo un problema enviando el formulario. Por favor intente nuevamente en un "
+"minuto."
 
 #: apollo/frontend/templates/frontend/macros/pagination.html:19
 #: apollo/frontend/templates/frontend/participant_list.html:272
@@ -1779,16 +1775,15 @@ msgstr "Añadir registro de llamadas"
 
 #: apollo/frontend/templates/frontend/submission_edit.html:684
 msgid ""
-"You may (optionally) include details of your call or interaction with the"
-" participant here."
+"You may (optionally) include details of your call or interaction with the "
+"participant here."
 msgstr ""
-"Puede (opcionalmente) incluir detalles de su llamada o interacción con el"
-" participante aquí."
+"Puede (opcionalmente) incluir detalles de su llamada o interacción con el "
+"participante aquí."
 
 #: apollo/frontend/templates/frontend/submission_edit.html:699
-#, fuzzy
 msgid "Delete Image?"
-msgstr "imagen menu"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:709
 #: apollo/pwa/templates/pwa/index.html:315
@@ -1806,16 +1801,14 @@ msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:1151
 msgid ""
-"Are you sure you want to delete the current loaded image for the "
-"following question?"
+"Are you sure you want to delete the current loaded image for the following "
+"question?"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_edit.html:1152
-#, fuzzy
 msgid ""
-"Are you sure you want to delete the saved image for the following "
-"question?"
-msgstr "¿Seguro que quieres habilitar a los usuarios seleccionados?"
+"Are you sure you want to delete the saved image for the following question?"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_list.html:512
 msgid "No Location"
@@ -1864,9 +1857,8 @@ msgid "There are no images to download"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_list.html:598
-#, fuzzy
 msgid "Download Progress"
-msgstr "Descargar archivo"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/submission_list.html:616
 #: apollo/submissions/views_submissions.py:512
@@ -1983,11 +1975,12 @@ msgid "Sending to"
 msgstr "Enviando a"
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:17
-#, fuzzy, python-format
+#, python-format
 msgid "%(counter)s recipient"
 msgid_plural "%(counter)s recipients"
 msgstr[0] "%(counter)s destinatario"
-msgstr[1] ""
+msgstr[1] "%(counter)s destinatarios"
+msgstr[2] "%(counter)s destinatarios"
 
 #: apollo/frontend/templates/frontend/macros/send_message.html:23
 #: apollo/frontend/templates/frontend/macros/send_message.html:55
@@ -2041,11 +2034,12 @@ msgid "Please try sending again"
 msgstr "Intente realizar el envío nuevamente"
 
 #: apollo/frontend/templates/frontend/macros/submission_components.html:6
-#, fuzzy, python-format
+#, python-format
 msgid "%(num)d comment"
 msgid_plural "%(num)d comments"
 msgstr[0] "%(num)d comentario"
-msgstr[1] ""
+msgstr[1] "%(num)d comentarios"
+msgstr[2] "%(num)d comentarios"
 
 #: apollo/frontend/templates/frontend/macros/submission_components.html:11
 msgid "Checklist"
@@ -2078,9 +2072,9 @@ msgstr "Advertencias de control de calidad"
 #: apollo/frontend/templates/frontend/macros/submission_components.html:31
 msgid ""
 "The following quality assurance conditions were flagged while validating "
-"this submission. Please confirm with the participant that the submitted "
-"data is correct. If you find the data to be as reported by the "
-"participant, mark the data point as confirmed."
+"this submission. Please confirm with the participant that the submitted data"
+" is correct. If you find the data to be as reported by the participant, mark"
+" the data point as confirmed."
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:32
@@ -2101,19 +2095,16 @@ msgstr "Todos los estados"
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:91
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:110
-#, fuzzy
 msgid "Select Field"
-msgstr "Eliminado"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:95
-#, fuzzy
 msgid "Select Operator"
-msgstr "Operadores"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:104
-#, fuzzy
 msgid "Select Source"
-msgstr "Fuente"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:114
 msgid "Select Value"
@@ -2124,9 +2115,8 @@ msgid "Add Search Term"
 msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_filter.html:119
-#, fuzzy
 msgid "Delete Search Term"
-msgstr "Eliminar criterio"
+msgstr ""
 
 #: apollo/frontend/templates/frontend/macros/submission_list_macros.html:96
 msgid "Geolocation"
@@ -2178,7 +2168,8 @@ msgstr "Importar archivo"
 
 #: apollo/locations/forms.py:31
 #, python-format
-msgid "Properties for %(loc_type_name)s were mapped, but no code was specified"
+msgid ""
+"Properties for %(loc_type_name)s were mapped, but no code was specified"
 msgstr ""
 
 #: apollo/locations/models.py:103
@@ -2192,9 +2183,9 @@ msgid "%(location_type)s Code"
 msgstr "%(location_type)s Código"
 
 #: apollo/locations/models.py:109
-#, fuzzy, python-format
+#, python-format
 msgid "%(location_type)s Group"
-msgstr "%(location_type)s Código"
+msgstr ""
 
 #: apollo/locations/models.py:113
 #, python-format
@@ -2244,8 +2235,7 @@ msgstr ""
 #: apollo/locations/tasks.py:266
 #, python-format
 msgid ""
-"Invalid number of registered voters for row %(row)d. Data will not be "
-"used."
+"Invalid number of registered voters for row %(row)d. Data will not be used."
 msgstr ""
 
 #: apollo/locations/tasks.py:465
@@ -2260,11 +2250,10 @@ msgstr "Editar ubicación"
 #: apollo/locations/views_locations.py:270
 #, python-format
 msgid ""
-"Administrative level %(name)s has locations assigned and cannot be "
-"deleted."
+"Administrative level %(name)s has locations assigned and cannot be deleted."
 msgstr ""
-"El nivel administrativo %(name)s tiene ubicaciones asignadas y no puede "
-"ser eliminado."
+"El nivel administrativo %(name)s tiene ubicaciones asignadas y no puede ser "
+"eliminado."
 
 #: apollo/locations/views_locations.py:288
 #: apollo/locations/views_locations.py:353
@@ -2278,19 +2267,19 @@ msgstr "Formulario invalido"
 #: apollo/messaging/helpers.py:76 apollo/messaging/helpers.py:179
 #, python-format
 msgid "Invalid message: %(text)s. Please check and resend!"
-msgstr "Mensaje invalido: %(text)s. Por favor verifique y reenvie!"
+msgstr "Mensaje inválido: %(text)s. ¡Por favor verifique y reenvíe!"
 
 #: apollo/messaging/helpers.py:104
 #, python-format
 msgid ""
 "Thank you, but your message may be missing %(unused_codes)s. You sent: "
 "%(text)s"
-msgstr ""
+msgstr "Gracias, pero a su mensaje le falta %(unused_codes)s. Envió: %(text)s"
 
 #: apollo/messaging/helpers.py:112
-#, fuzzy, python-format
+#, python-format
 msgid "Thank you! Your report was received! You sent: %(text)s"
-msgstr "¡Gracias! ¡Su informe ha sido recibido! Envió: {text}"
+msgstr "¡Gracias! ¡Su informe ha sido recibido! Envió: %(text)s"
 
 #: apollo/messaging/helpers.py:125
 #, python-format
@@ -2303,18 +2292,17 @@ msgid "Invalid text sent: \"%(extra)s\". You sent: %(text)s"
 msgstr ""
 
 #: apollo/messaging/helpers.py:153
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "%(text)s"
 msgstr ""
-"No se encontró la ID de observador. Vuelva a realizar el envío con una ID"
-" de observador válida. Envió: {text}"
 
 #: apollo/messaging/helpers.py:168
 #, python-format
 msgid "Invalid response(s) for question(s): \"%(questions)s\". You sent: %(text)s"
 msgstr ""
+"Repuesta(s) inválida(s) para pregunta(s): \"%(questions)s\". Envió: %(text)s"
 
 #: apollo/messaging/models.py:14
 msgid "INCOMING"
@@ -2358,8 +2346,8 @@ msgstr "Formulario no encontrado"
 
 #: apollo/odk/views_odk.py:316
 msgid ""
-"Your submission was received, but you sent it using an outdated form. "
-"Please download a new copy and resend. Thank you."
+"Your submission was received, but you sent it using an outdated form. Please"
+" download a new copy and resend. Thank you."
 msgstr ""
 
 #: apollo/participants/filters.py:88
@@ -2437,8 +2425,7 @@ msgstr ""
 #, python-format
 msgid "Invalid (non-numeric) location ID (%(loc_id)s)"
 msgstr ""
-"Número de identificación de ubicación (%(loc_id)s) es invalido (no "
-"numérico)"
+"Número de identificación de ubicación (%(loc_id)s) es invalido (no numérico)"
 
 #: apollo/participants/tasks.py:277
 #, python-format
@@ -2458,8 +2445,8 @@ msgstr "No se encontró la ubicación con ID %(loc_id)s"
 #: apollo/participants/tasks.py:300
 #, python-format
 msgid ""
-"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s "
-"not found"
+"Location code %(loc_id)s for row %(row)d with participant ID %(part_id)s not"
+" found"
 msgstr ""
 "Codigo de ubicación %(loc_id)s para fila %(row)d con número de "
 "identificación de participante %(part_id)s no fue encontrado."
@@ -2472,11 +2459,10 @@ msgstr "No se encontró el supervisor con ID %(id)s"
 #: apollo/participants/tasks.py:451
 #, python-format
 msgid ""
-"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not "
-"found"
+"Supervisor ID %(sup_id)s specified for participant ID %(part_id)s not found"
 msgstr ""
-"Número de identificación de supervisor %(sup_id)s especificado para "
-"número de identificación de participante %(part_id)s no fue encontrado"
+"Número de identificación de supervisor %(sup_id)s especificado para número "
+"de identificación de participante %(part_id)s no fue encontrado"
 
 #: apollo/participants/tasks.py:525
 msgid "Import report"
@@ -2532,14 +2518,12 @@ msgstr "%(label)s"
 
 #: apollo/process_analysis/templates/process_analysis/checklist_summary.html:56
 #: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:65
-#, fuzzy
 msgid "Available"
-msgstr "No hay datos disponibles"
+msgstr ""
 
 #: apollo/process_analysis/templates/process_analysis/checklist_summary.html:57
-#, fuzzy
 msgid "Not Available"
-msgstr "No hay datos disponibles"
+msgstr ""
 
 #: apollo/process_analysis/templates/process_analysis/checklist_summary.html:59
 #: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:68
@@ -2556,9 +2540,8 @@ msgid "No data available"
 msgstr "No hay datos disponibles"
 
 #: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:66
-#, fuzzy
 msgid "Not available"
-msgstr "No hay datos disponibles"
+msgstr ""
 
 #: apollo/process_analysis/templates/process_analysis/checklist_summary_breakdown.html:105
 #: apollo/process_analysis/templates/process_analysis/critical_incident_summary.html:52
@@ -2720,7 +2703,8 @@ msgstr ""
 msgid "Data was not saved"
 msgstr ""
 
-#: apollo/pwa/templates/pwa/index.html:973 apollo/templates/admin/tasks.html:66
+#: apollo/pwa/templates/pwa/index.html:973
+#: apollo/templates/admin/tasks.html:66
 msgid "Warning"
 msgstr "Advertencia"
 
@@ -2754,8 +2738,8 @@ msgstr ""
 #: apollo/pwa/templates/pwa/index.html:1316
 #: apollo/pwa/templates/pwa/index.html:1377
 msgid ""
-"You are currently offline. Your data will be automatically posted when "
-"you are online again."
+"You are currently offline. Your data will be automatically posted when you "
+"are online again."
 msgstr ""
 
 #: apollo/pwa/templates/pwa/index.html:1339
@@ -2766,7 +2750,8 @@ msgstr ""
 msgid "Please login again to send your data"
 msgstr ""
 
-#: apollo/pwa/templates/pwa/index.html:1367 apollo/submissions/api/views.py:417
+#: apollo/pwa/templates/pwa/index.html:1367
+#: apollo/submissions/api/views.py:417
 msgid "Data successfully submitted"
 msgstr ""
 
@@ -2789,9 +2774,8 @@ msgid "Scatterplot"
 msgstr "Diagrama de dispersión"
 
 #: apollo/result_analysis/templates/result_analysis/results.html:55
-#, fuzzy
 msgid "Export Table"
-msgstr "Importar archivo"
+msgstr ""
 
 #: apollo/result_analysis/templates/result_analysis/results.html:56
 #: apollo/result_analysis/templates/result_analysis/results.html:77
@@ -3093,7 +3077,8 @@ msgstr "Resultados"
 #: apollo/submissions/models.py:176
 #, python-format
 msgid "Participant ID %(part_id)s has no location"
-msgstr "Número de identificación de participante %(part_id)s no tiene ubicación"
+msgstr ""
+"Número de identificación de participante %(part_id)s no tiene ubicación"
 
 #: apollo/submissions/models.py:630
 msgid "Web"
@@ -3120,19 +3105,21 @@ msgid "Registered Voters"
 msgstr ""
 
 #: apollo/submissions/services.py:110
-#, fuzzy, python-format
+#, python-format
 msgid "%(group)s updated"
-msgstr "%(group)s: Completo"
+msgstr ""
 
 #: apollo/submissions/tasks.py:71
 #, python-format
 msgid "Participant ID %(part_id)s was not found"
-msgstr "Número de identificación de participante %(part_id)s no fue encontrado"
+msgstr ""
+"Número de identificación de participante %(part_id)s no fue encontrado"
 
 #: apollo/submissions/tasks.py:89
 #, python-format
 msgid "No form serial number specified on line %(lineno)d"
-msgstr "No se especificó el número de serie del formulario en la línea %(lineno)d"
+msgstr ""
+"No se especificó el número de serie del formulario en la línea %(lineno)d"
 
 #: apollo/submissions/views_submissions.py:103
 #: apollo/submissions/views_submissions.py:106
@@ -3161,14 +3148,12 @@ msgid "Quality Assurance Dashboard"
 msgstr "Escritorio de control de calidad"
 
 #: apollo/submissions/views_submissions.py:1835
-#, fuzzy
 msgid "Image deleted"
-msgstr "Eliminado"
+msgstr ""
 
 #: apollo/submissions/views_submissions.py:1840
-#, fuzzy
 msgid "Image not found"
-msgstr "Página no encontrada"
+msgstr ""
 
 #: apollo/submissions/api/views.py:152
 msgid "Invalid checklist"
@@ -3218,11 +3203,11 @@ msgstr "Mostrar en escritorio y en tablas"
 #: apollo/templates/admin/administrative_divisions.html:43
 #: apollo/templates/admin/administrative_divisions.html:119
 msgid ""
-"Whether to show location data of this division on the dashboard and other"
-" tables."
+"Whether to show location data of this division on the dashboard and other "
+"tables."
 msgstr ""
-"Si se muestran los datos de ubicación de esta división en el escritorio y"
-" otras tablas."
+"Si se muestran los datos de ubicación de esta división en el escritorio y "
+"otras tablas."
 
 #: apollo/templates/admin/administrative_divisions.html:52
 #: apollo/templates/admin/administrative_divisions.html:128
@@ -3231,8 +3216,10 @@ msgstr "Usar en resumen de datos"
 
 #: apollo/templates/admin/administrative_divisions.html:53
 #: apollo/templates/admin/administrative_divisions.html:129
-msgid "Whether to show aggregated data summaries at this administrative level."
-msgstr "Si se muestran resúmenes de datos agregados en este nivel administrativo."
+msgid ""
+"Whether to show aggregated data summaries at this administrative level."
+msgstr ""
+"Si se muestran resúmenes de datos agregados en este nivel administrativo."
 
 #: apollo/templates/admin/administrative_divisions.html:62
 #: apollo/templates/admin/administrative_divisions.html:138
@@ -3245,8 +3232,8 @@ msgid ""
 "Indicates whether your location data will have registered voters at this "
 "administrative level."
 msgstr ""
-"Indica si los datos de ubicación tendrán votantes registrados en este "
-"nivel administrativo."
+"Indica si los datos de ubicación tendrán votantes registrados en este nivel "
+"administrativo."
 
 #: apollo/templates/admin/administrative_divisions.html:72
 #: apollo/templates/admin/administrative_divisions.html:148
@@ -3299,8 +3286,8 @@ msgstr ""
 
 #: apollo/templates/admin/administrative_divisions.html:211
 msgid ""
-" After confirmation, you wouldn't be able to make any further changes to "
-"the structure."
+" After confirmation, you wouldn't be able to make any further changes to the"
+" structure."
 msgstr ""
 
 #: apollo/templates/admin/form_list.html:24
@@ -3331,17 +3318,16 @@ msgid "Only .xls and .xlsx files"
 msgstr "Solo archivos .xls y .xlsx"
 
 #: apollo/templates/admin/form_list.html:237
-#, fuzzy
 msgid "Number of participants"
-msgstr "Participantes"
+msgstr ""
 
 #: apollo/templates/admin/form_list.html:334
 msgid ""
 "Accepts CSV or Excel files with columns for Participant ID (named "
 "PARTICIPANT_ID) and Form Serial (named FORM_SERIAL)."
 msgstr ""
-"Acepta archivos CSV o Excel con columnas para número de identificación de"
-" participante (llamado PARTICIPANT_ID) y formulario de serie (llamado "
+"Acepta archivos CSV o Excel con columnas para número de identificación de "
+"participante (llamado PARTICIPANT_ID) y formulario de serie (llamado "
 "FORM_SERIAL)."
 
 #: apollo/templates/admin/form_list.html:334
@@ -3360,11 +3346,11 @@ msgstr "imagen menu"
 #: apollo/templates/admin/location_headers_errors.html:2
 #: apollo/templates/admin/user_headers_errors.html:2
 msgid ""
-"<strong>There was a problem</strong> with your submission. Please correct"
-" the errors and re-submit."
+"<strong>There was a problem</strong> with your submission. Please correct "
+"the errors and re-submit."
 msgstr ""
-"<strong>Hubo un problema</strong> con su envío. Corrija los errores y "
-"vuelva a enviar."
+"<strong>Hubo un problema</strong> con su envío. Corrija los errores y vuelva"
+" a enviar."
 
 #: apollo/templates/admin/locations_list.html:54
 msgid "Code"
@@ -3395,7 +3381,8 @@ msgstr "Eliminar control de calidad"
 
 #: apollo/templates/admin/quality_assurance_edit.html:42
 msgid "Are you sure you want to delete this quality assurance condition?"
-msgstr "¿Está seguro de que desea eliminar esta condición de control de calidad?"
+msgstr ""
+"¿Está seguro de que desea eliminar esta condición de control de calidad?"
 
 #: apollo/templates/admin/quality_assurance_edit.html:102
 msgid "Fields"
@@ -3488,19 +3475,16 @@ msgid "The email %(email)s is not available"
 msgstr "El correo electrónico %(email)s no está disponible"
 
 #: apollo/users/forms.py:78
-#, fuzzy
 msgid "Language code"
-msgstr "Idioma"
+msgstr ""
 
 #: apollo/users/forms.py:79
-#, fuzzy
 msgid "First name"
-msgstr "Primer nombre"
+msgstr ""
 
 #: apollo/users/forms.py:80
-#, fuzzy
 msgid "Last name"
-msgstr "Apellido"
+msgstr ""
 
 #: apollo/users/tasks.py:65
 msgid "No valid email found"
@@ -3509,579 +3493,3 @@ msgstr ""
 #: apollo/users/tasks.py:86
 msgid "New user has no password set"
 msgstr ""
-
-#~ msgid "Generate checklists"
-#~ msgstr "Crear formularios"
-
-#~ msgid "%(value)s' is not a valid choice for this field"
-#~ msgstr "%(value)s' no es una opción válida para este campo"
-
-#~ msgid "Prefix"
-#~ msgstr "Prefijo"
-
-#~ msgid "\"Checklists are being created for the Event"
-#~ msgstr " Form"
-
-#~ msgid "\"Surveys are being created for the Event"
-#~ msgstr " Form and Participants you selected\""
-
-#~ msgid ""
-#~ "\"An example of a hostname is "
-#~ "\"\"example.com\"\". Used internally to "
-#~ "determine what deployment to access.\""
-#~ msgstr ""
-#~ "\"Un ejemplo de un nombre de host"
-#~ " es \"\"example.com\"\". Se usa "
-#~ "internamente para determinar a qué "
-#~ "despliegue acceder.\""
-
-#~ msgctxt "apollo/frontend/views_admin.py:521"
-#~ msgid "\"If enabled"
-#~ msgstr " will hide the organization in the participant list.\""
-
-#~ msgid "\"We understood your request"
-#~ msgstr ""
-#~ " but we refuse to honor it! "
-#~ "You are seeing this page because "
-#~ "you were snooping around! Now paddle "
-#~ "along before the buzzer goes off!\""
-
-#~ msgid "\"Don't freak out"
-#~ msgstr " maybe you entered the wrong address or clicked a bad link! Who knows"
-
-#~ msgid ""
-#~ "\"You shouldn't be seeing this page "
-#~ "but you are because you're a "
-#~ "genius and have found a rare bug"
-#~ " in the software. Rest assured"
-#~ msgstr " we now know about it and will fix it ASAP!\""
-
-#~ msgid "\"Built with <span class=\"\"text-danger\"\">♥</span> from Lagos\""
-#~ msgstr "\"Desarollado con <span class=\"\"text-danger\"\">♥</span> de Lagos\""
-
-#~ msgid "\"Only .csv"
-#~ msgstr " .xls and .xlsx files\""
-
-#~ msgid "%(num)d comments"
-#~ msgstr "%(num)d comentarios"
-
-#~ msgid ""
-#~ "\"The following quality assurance conditions"
-#~ " were flagged while validating this "
-#~ "submission. Please confirm with the "
-#~ "participant that the submitted data is"
-#~ " correct. If you find the data "
-#~ "to be as reported by the "
-#~ "participant"
-#~ msgstr " mark the data point as confirmed.\""
-
-#~ msgid "%(counter)s recipients"
-#~ msgstr "%(counter)s destinatarios"
-
-#~ msgid "\"Properties for %(loc_type_name)s were mapped"
-#~ msgstr " but no code was specified\""
-
-#~ msgid "No code or name column present for row %(row)d"
-#~ msgstr "No hay columna de código o nombre presente para la fila %(row)d"
-
-#~ msgid "\"Thank you"
-#~ msgstr " but your message may be missing %(unused_codes)s. You sent: %(text)s\""
-
-#~ msgid "\"Unknown question codes: \"\"{questions}\"\". You sent: {text}\""
-#~ msgstr ""
-#~ "\"Códigos de pregunta desconocidos: "
-#~ "\"\"{questions}\"\". Envió: {text}\""
-
-#~ msgid "\"Invalid text sent: \"\"{extra}\"\". You sent: {text}\""
-#~ msgstr "\"Mensaje no válido enviado: \"\"{questions}\"\". Envió: {text}\""
-
-#~ msgid ""
-#~ "\"Invalid response(s) for question(s): "
-#~ "\"\"{questions}\"\". You sent: {text}\""
-#~ msgstr ""
-#~ "\"Respuesta(s) no válida(s) para las "
-#~ "pregunta(s): \"\"{questions}\"\". Envió: {text}\""
-
-#~ msgid "\"Invalid message: \"\"{text}\"\". Please check and resend!\""
-#~ msgstr ""
-#~ "\"Mensaje no válido: \"\"{text}\"\". "
-#~ "¡Verifíquelo y realice el envío "
-#~ "nuevamente!\""
-
-#~ msgid "\"Your submission was received"
-#~ msgstr ""
-#~ " but you sent it using an "
-#~ "outdated form. Please download a new "
-#~ "copy and resend. Thank you.\""
-
-#~ msgid "Location ID"
-#~ msgstr "Número de identificación de ubicación"
-
-#~ msgid "Registered Voters"
-#~ msgstr "Votantes registrados"
-
-#~ msgid "Parents"
-#~ msgstr "Padres"
-
-#~ msgid "Generate surveys"
-#~ msgstr "Crear encuestas"
-
-#~ msgid "Not Applicable"
-#~ msgstr "No aplicable"
-
-#~ msgid ""
-#~ "Require exclamation (!) mark in text "
-#~ "message? (Does not apply to Checklist"
-#~ " Forms)"
-#~ msgstr ""
-#~ "¿Solicitar signo de exclamación (!) en"
-#~ " el mensaje de texto? (No aplicable"
-#~ " para formularios de observación)"
-
-#~ msgid "Accredited Voters"
-#~ msgstr "Votantes autorizados"
-
-#~ msgid "Invalid Votes"
-#~ msgstr "Votos no válidos"
-
-#~ msgid "Blank Votes"
-#~ msgstr "Votos en blanco"
-
-#~ msgid "Permitted Roles"
-#~ msgstr "Roles permitidos"
-
-#~ msgid "Create form"
-#~ msgstr "Crear formulario"
-
-#~ msgid "%(label)s Geopolitical Code"
-#~ msgstr "Código geopolítico de %(label)s"
-
-#~ msgid "%(label)s Other Code"
-#~ msgstr "Otro código de %(label)s"
-
-#~ msgid "Contributor and location cannot both be empty"
-#~ msgstr "Tanto la ubicación como el contribuyente no pueden omitirse"
-
-#~ msgid "Select Event"
-#~ msgstr "Seleccionar evento"
-
-#~ msgid "Roles with access"
-#~ msgstr "Roles con acceso"
-
-#~ msgid "Permissions"
-#~ msgstr "Permisos"
-
-#~ msgid "Add form"
-#~ msgstr "Añadir formulario"
-
-#~ msgid "Invalid file."
-#~ msgstr "Archivo no válido."
-
-#~ msgid "Sign In with Persona"
-#~ msgstr "Ingresar con persona"
-
-#~ msgid "Confidence Level"
-#~ msgstr "Nivel de confianza"
-
-#~ msgid "Observer Submission"
-#~ msgstr "Envío de observador"
-
-#~ msgid "Master Submission"
-#~ msgstr "Envío maestro"
-
-#~ msgid "Form set"
-#~ msgstr "Conjunto de formularios"
-
-#~ msgid "\"Checklists are being created for the form"
-#~ msgstr " role and location type you selected in the current event\""
-
-#~ msgid "Edit %(name)s"
-#~ msgstr "Editar %(name)s"
-
-#~ msgid "Select column"
-#~ msgstr "Seleccionar columna"
-
-#~ msgid "Phone prefix"
-#~ msgstr "Prefijo telefónico"
-
-#~ msgid "Group prefix"
-#~ msgstr "Prefijo de grupo"
-
-#~ msgid "Invalid phone prefix"
-#~ msgstr "Prefijo telefónico no válido"
-
-#~ msgid "Invalid group prefix"
-#~ msgstr "Prefijo de grupo no válido"
-
-#~ msgid "%(label)s Name"
-#~ msgstr "Nombre de %(label)s"
-
-#~ msgid "%(label)s Code"
-#~ msgstr "Código de %(label)s"
-
-#~ msgid "%(label)s Latitude"
-#~ msgstr "Latitud de %(label)s"
-
-#~ msgid "%(label)s Longitude"
-#~ msgstr "Longitud de %(label)s"
-
-#~ msgid "%(label)s Registered Voters"
-#~ msgstr "Votantes registrados de %(label)s"
-
-#~ msgid "Select form"
-#~ msgstr "Seleccione formulario"
-
-#~ msgid "Select role"
-#~ msgstr "Seleccione rol"
-
-#~ msgid "Location type"
-#~ msgstr "Tipo de ubicación"
-
-#~ msgid "Select location type"
-#~ msgstr "Seleccione tipo de ubicación"
-
-#~ msgid "Are you sure you want to disable selected users?"
-#~ msgstr "¿Estás seguro de que deseas deshabilitar a los usuarios seleccionados?"
-
-#~ msgid "Are you sure you want to enable selected users?"
-#~ msgstr "¿Estás seguro de que quieres habilitar a los usuarios seleccionados?"
-
-#~ msgid "Dashboard · %(name)s"
-#~ msgstr "Escritorio · %(name)s"
-
-#~ msgid "Dashboard · %(name)s  · %(group)s"
-#~ msgstr "Escritorio · %(name)s  · %(group)s"
-
-#~ msgid "Add Form"
-#~ msgstr "Añadir formulario"
-
-#~ msgid "Builder"
-#~ msgstr "Creador"
-
-#~ msgid "Checklist form"
-#~ msgstr "Formulario de observación"
-
-#~ msgid "Add division"
-#~ msgstr "Añadir división"
-
-#~ msgid "Administrative Division"
-#~ msgstr "División administrativa"
-
-#~ msgid "Political Division"
-#~ msgstr "División política"
-
-#~ msgid "More Options"
-#~ msgstr "Mas opciones"
-
-#~ msgid "Import admin divisions"
-#~ msgstr "Importar divisiones administrativas"
-
-#~ msgid "Purge Locations"
-#~ msgstr "Eliminar todas ubicaciónes"
-
-#~ msgid ""
-#~ "\"<strong>WARNING:</strong> This will delete "
-#~ "all locations. This means that "
-#~ "everything else &ndash; checklists"
-#~ msgstr " incidents"
-
-#~ msgid "\"Please enter <code id=\"\"compare\"\"></code> below to proceed:\""
-#~ msgstr ""
-#~ "\"Ingrese <code id=\"\"compare\"\"></code> a "
-#~ "continuación para continuar:\""
-
-#~ msgid "\"Yes"
-#~ msgstr " I understand\""
-
-#~ msgid "\"(only .csv"
-#~ msgstr " .xls and .xlsx files)\""
-
-#~ msgid "DELETE"
-#~ msgstr "ELIMINAR"
-
-#~ msgid "Invalid File"
-#~ msgstr "Archivo invalido"
-
-#~ msgid "User Login"
-#~ msgstr "Ingreso de usario"
-
-#~ msgid ""
-#~ "Your username and password <strong>did "
-#~ "not match</strong>. Please try again."
-#~ msgstr ""
-#~ "Su nombre de usario y contraseña "
-#~ "<strong>no coincidían</strong>. Por favor "
-#~ "intente de nuevo."
-
-#~ msgid "Username/Email"
-#~ msgstr "Nombre de usuario / correo electrónico"
-
-#~ msgid "IN"
-#~ msgstr "ENTRADA"
-
-#~ msgid "OUT"
-#~ msgstr "SALIDA"
-
-#~ msgid "Performance Evaluation"
-#~ msgstr "Evaluación de desempeño"
-
-#~ msgid "Purge Participants"
-#~ msgstr "Eliminar todos participantes"
-
-#~ msgid "\"<strong>WARNING:</strong> This will delete all participants"
-#~ msgstr " as well as any data linked to them &ndash; checklists"
-
-#~ msgid "Participant Detail"
-#~ msgstr "Detalle del participante"
-
-#~ msgid "Phone Numbers"
-#~ msgstr "Números de teléfono"
-
-#~ msgid "Messages Sent"
-#~ msgstr "Mensajes enviados"
-
-#~ msgid "Accuracy"
-#~ msgstr "Precisión"
-
-#~ msgid "Completion"
-#~ msgstr "Finalización"
-
-#~ msgid "Rating"
-#~ msgstr "Clasificación"
-
-#~ msgid "History"
-#~ msgstr "Historial"
-
-#~ msgid "Validation Errors!"
-#~ msgstr "Errores de validación!"
-
-#~ msgid "The following conditions were flagged while validating this submission."
-#~ msgstr "Se marcaron las siguientes condiciones al validar este envío."
-
-#~ msgid "Overridden Field"
-#~ msgstr "Campo anulado"
-
-#~ msgid "Verification Status"
-#~ msgstr "Estado de verificación"
-
-#~ msgid "No comment."
-#~ msgstr "Sin comentarios."
-
-#~ msgid "Via"
-#~ msgstr "Mediante"
-
-#~ msgid "Edited by"
-#~ msgstr "Editado por"
-
-#~ msgid "Saved"
-#~ msgstr "Guardado"
-
-#~ msgid "Current"
-#~ msgstr "Actual"
-
-#~ msgid "Observers Data"
-#~ msgstr "Datos de observadores"
-
-#~ msgid "Master Data"
-#~ msgstr "Datos maestros"
-
-#~ msgid "Aggregated Data"
-#~ msgstr "Datos agregados"
-
-#~ msgid "First Page"
-#~ msgstr "Primera página"
-
-#~ msgid "Previous Page"
-#~ msgstr "Página anterior"
-
-#~ msgid "Next Page"
-#~ msgstr "Página siguiente"
-
-#~ msgid "Last Page"
-#~ msgstr "Última página"
-
-#~ msgid "Showing"
-#~ msgstr "Mostrando"
-
-#~ msgid "of"
-#~ msgstr "de"
-
-#~ msgid "Phone Verification"
-#~ msgstr "Verificación de teléfono"
-
-#~ msgid "To"
-#~ msgstr "A"
-
-#~ msgid "complete"
-#~ msgstr "completo"
-
-#~ msgid "partial"
-#~ msgstr "parcial"
-
-#~ msgid "missing"
-#~ msgstr "faltante"
-
-#~ msgid "conflict"
-#~ msgstr "conflicto"
-
-#~ msgid "data present"
-#~ msgstr "Datos presentes"
-
-#~ msgid "%(location_type)s Name"
-#~ msgstr "Nombre %(location_type)s"
-
-#~ msgid "Admin level %(name)s has locations assigned and cannot be deleted"
-#~ msgstr ""
-#~ "El nivel administrativo %(name)s tiene "
-#~ "ubicaciones asignadas y no puede ser "
-#~ "eliminado."
-
-#~ msgid "\"Locations"
-#~ msgstr " Checklists"
-
-#~ msgid "All roles"
-#~ msgstr "Todos roles"
-
-#~ msgid "All partners"
-#~ msgstr "Todos socios"
-
-#~ msgid "Data file"
-#~ msgstr "Archivo de datos"
-
-#~ msgid "Participants Performance"
-#~ msgstr "Desempeño de los participantes"
-
-#~ msgid "Participant Performance"
-#~ msgstr "Desempeño del participante"
-
-#~ msgid "Edit Participant · %(participant_id)s"
-#~ msgstr "Editar participante: %(participant_id)s"
-
-#~ msgid "\"Participants"
-#~ msgstr " Checklists"
-
-#~ msgid "%(form)s Analysis"
-#~ msgstr "Análisis de %(form)s"
-
-#~ msgid "Analyses"
-#~ msgstr "Análisis"
-
-#~ msgid "Process Analysis"
-#~ msgstr "Análisis de proceso"
-
-#~ msgid "Results Analysis"
-#~ msgstr "Análisis de resultados"
-
-#~ msgid "REJECTED"
-#~ msgstr "RECHAZADO"
-
-#~ msgid "Add Submission"
-#~ msgstr "Añadir envío"
-
-#~ msgid "Edit Submission"
-#~ msgstr "Editar envío"
-
-#~ msgid "Allow editing of observer submissions"
-#~ msgstr "Permitir revisión de envíos de observadores"
-
-#~ msgid "Location set"
-#~ msgstr "Conjunto de ubaciones"
-
-#~ msgid "Participant set"
-#~ msgstr "Conjunto de participantes"
-
-#~ msgid "Reset"
-#~ msgstr "Reiniciar"
-
-#~ msgid "%(form)s Summary"
-#~ msgstr "Resumen de %(form)s"
-
-#~ msgid "Table"
-#~ msgstr "Tabla"
-
-#~ msgid "Charts"
-#~ msgstr "Gráficas"
-
-#~ msgid "Observer ID"
-#~ msgstr "ID de observador"
-
-#~ msgid "%(form_name)s Voting Results"
-#~ msgstr "Resultados de votación de %(form_name)s "
-
-#~ msgid "Quality Assurance — %(name)s"
-#~ msgstr "Control de calidad: %(name)s"
-
-#~ msgid ""
-#~ "\"An error occured while attempting to"
-#~ " reset the password for the supplied"
-#~ " account."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Ocurrió un error al intentar restablecer"
-#~ " la contraseña de la cuenta "
-#~ "suministrada. Verifique la dirección de "
-#~ "correo electrónico e intente nuevamente "
-#~ "."
-#~ msgstr ""
-
-#~ msgid "Reset password"
-#~ msgstr "Restablecer contraseña"
-
-#~ msgid "Insufficient Data"
-#~ msgstr "Datos insuficientes"
-
-#~ msgid "Require Exclamation"
-#~ msgstr "Exigir exclamación"
-
-#~ msgid "Track Data Conflicts?"
-#~ msgstr "Monitorear conflictos de datos?"
-
-#~ msgid "Name (%(language)s)"
-#~ msgstr "Nombre (%(language)s)"
-
-#~ msgid "New password"
-#~ msgstr "Nueva contraseña"
-
-#~ msgid "Sender Verification"
-#~ msgstr "Verificacion de remitente"
-
-#~ msgid "Convergence Chart"
-#~ msgstr "Gráfico de convergencia"
-
-#~ msgid "Sender Verified"
-#~ msgstr "Remitente verificado"
-
-#~ msgid "Sender Unverified"
-#~ msgstr "Remitente no verificado"
-
-#~ msgid "Has Registered Voters"
-#~ msgstr "Tiene votantes registrados"
-
-#~ msgid "Import Forms"
-#~ msgstr "Importar formularios"
-
-#~ msgid "Show Moment Column"
-#~ msgstr "Mostrar columna de momento"
-
-#~ msgid "Moment"
-#~ msgstr "Momento"
-
-#~ msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-#~ msgstr ""
-
-#~ msgid "Invalid text sent: \"{extra}\". You sent: {text}"
-#~ msgstr ""
-
-#~ msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
-#~ msgstr ""
-
-#~ msgid "Invalid message: \"{text}\". Please check and resend!"
-#~ msgstr ""
-
-#~ msgid "ParticipantDataField - %(name)s in %(participant_set)s"
-#~ msgstr "ParticipantDataField - %(name)s en %(participant_set)s"
-
-#~ msgid "Save and close"
-#~ msgstr ""
-
