@@ -138,7 +138,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col">
-                <span class="badge" :class="getBadgeClass(form)">[[ form.form_type ]]</span>
+		      <span class="badge" :class="getBadgeClass(form)">[[ form.form_type === 'CHECKLIST' ? '{{ _('Checklist') }}' : form.form_type === 'INCIDENT' ? '{{ _('Incidents') }}' : '{{ _('Surveys') }}' ]]</span>
                 <span class="badge bg-dark" v-if="form.form_type !== 'CHECKLIST'">[[ submissionCount[form.id] || 0 ]]</span>
                 <span v-if="form.form_type === 'CHECKLIST'">[[ formatLastUpdate(submissionGroups[form.id][0]) ]]</span>
               </div>
