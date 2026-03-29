@@ -26,3 +26,8 @@ version.ini
 # Development
 .claude/
 .vscode/
+
+# Terraform Setup
+.terraform/
+*.tfstate
+*.tfstate.*
