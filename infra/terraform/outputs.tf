@@ -82,3 +82,13 @@ output "db_name" {
   description = "Database name for Apollo"
   value       = aws_db_instance.apollo.db_name
 }
+
+output "redis_primary_endpoint_address" {
+  description = "Primary endpoint address of the Apollo Redis replication group"
+  value       = aws_elasticache_replication_group.apollo.primary_endpoint_address
+}
+
+output "redis_port" {
+  description = "Port of the Apollo Redis replication group"
+  value       = aws_elasticache_replication_group.apollo.port
+}

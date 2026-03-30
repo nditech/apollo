@@ -2,6 +2,8 @@
 
 This directory contains the Terraform configuration for Apollo's AWS deployment.
 
+Apollo is expected to run as a Flask/Gunicorn web service plus a separate Celery worker, backed by PostgreSQL/PostGIS, Redis, and S3 attachments.
+
 ## Structure
 
 - `infra/bootstrap/` creates and manages the S3 bucket used for Terraform remote state.
@@ -29,7 +31,7 @@ The main Terraform stack currently creates:
 - one internet gateway
 - one public route table associated to the public subnets
 
-The intended tiering is:
+The intended network tiering is:
 
 - **public subnets** for the load balancer
 - **private app subnets** for ECS tasks
@@ -37,7 +39,7 @@ The intended tiering is:
 
 ### Security model
 
-Security groups are defined for:
+Security groups are defined for the future runtime layout:
 
 - ALB
 - web tasks
@@ -45,7 +47,7 @@ Security groups are defined for:
 - RDS PostgreSQL
 - Redis
 
-The intended traffic flow is:
+The intended traffic flow, once the runtime layer is in place, is:
 
 - internet -> ALB on `443`
 - ALB -> web tasks on the application port
@@ -60,7 +62,13 @@ The worker service is not intended to receive direct inbound traffic.
 - The DB instance is in the private data subnets.
 - The DB is not publicly accessible.
 - The current configuration is tuned for development / early infrastructure bring-up rather than hardened production.
-- Apollo requires PostGIS support.
+- Migrations should ensure the PostGIS extension is enabled as Apollo requires.
+
+### Redis
+
+- Redis runs on Amazon ElastiCache.
+- Redis is in the private data subnets.
+- Redis is intended for Apollo's Celery/background-task queueing.
 
 ## Design priorities
 
@@ -129,13 +137,13 @@ terraform apply
 
 The current stack is not yet complete. Likely next pieces include:
 
-- Redis
+- a one-off application migration task during deployment
 - ECR repository
 - ECS services for web and worker
 - ALB
 - certificate and DNS wiring
-- application-level migration / initialization flow
-- confirmation that PostGIS is enabled as Apollo expects
+- ECS task definitions and runtime configuration for web, worker, and migration
+- confirmation that Apollo migrations enable PostGIS cleanly in the AWS environment
 
 ## Intent of the split between `bootstrap` and `terraform`
 

@@ -87,3 +87,21 @@ variable "db_engine_version" {
   description = "PostgreSQL engine version for Apollo"
   default     = "16"
 }
+
+variable "redis_node_type" {
+  type        = string
+  description = "ElastiCache node type for Apollo Redis"
+  default     = "cache.t4g.micro"
+}
+
+variable "redis_engine_version" {
+  type        = string
+  description = "Redis OSS engine version for Apollo Redis"
+  default     = "7.1"
+}
+
+variable "redis_port" {
+  type        = number
+  description = "Port for Apollo Redis"
+  default     = 6379
+}
