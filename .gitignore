@@ -29,5 +29,6 @@ version.ini
 
 # Terraform Setup
 .terraform/
+infra/terraform/terraform.tfvars
 *.tfstate
 *.tfstate.*
