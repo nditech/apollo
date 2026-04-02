@@ -1,3 +1,8 @@
+# Outputs describing the underlying AWS/Apollo foundation created by this Terraform root.
+# These are designed to be general, not specific to any certain implementation.
+# These values expose the reusable environment building blocks such as network, storage,
+# database, Redis, load balancer, cluster, and IAM identities.
+
 output "name_prefix" {
   description = "Common prefix for resource names"
   value       = local.name_prefix
@@ -118,31 +123,6 @@ output "apollo_task_role_arn" {
   value       = aws_iam_role.apollo_task.arn
 }
 
-output "apollo_migration_task_definition_arn" {
-  description = "ARN of the Apollo migration task definition"
-  value       = aws_ecs_task_definition.apollo_migration.arn
-}
-
-output "apollo_web_task_definition_arn" {
-  description = "ARN of the Apollo web task definition"
-  value       = aws_ecs_task_definition.apollo_web.arn
-}
-
-output "apollo_worker_task_definition_arn" {
-  description = "ARN of the Apollo worker task definition"
-  value       = aws_ecs_task_definition.apollo_worker.arn
-}
-
-output "apollo_secret_key_secret_arn" {
-  description = "ARN of the Apollo SECRET_KEY secret"
-  value       = aws_secretsmanager_secret.apollo_secret_key.arn
-}
-
-output "apollo_db_password_secret_arn" {
-  description = "ARN of the Apollo database password secret"
-  value       = aws_secretsmanager_secret.apollo_db_password.arn
-}
-
 output "apollo_alb_dns_name" {
   description = "DNS name of the Apollo load balancer"
   value       = aws_lb.apollo.dns_name
@@ -151,31 +131,6 @@ output "apollo_alb_dns_name" {
 output "apollo_alb_zone_id" {
   description = "Route 53 zone ID of the Apollo load balancer"
   value       = aws_lb.apollo.zone_id
-}
-
-output "apollo_web_service_name" {
-  description = "Name of the Apollo web ECS service"
-  value       = aws_ecs_service.apollo_web.name
-}
-
-output "apollo_worker_service_name" {
-  description = "Name of the Apollo worker ECS service"
-  value       = aws_ecs_service.apollo_worker.name
-}
-
-output "apollo_public_hostname" {
-  description = "Public hostname for Apollo"
-  value       = aws_route53_record.apollo.fqdn
-}
-
-output "apollo_aws_access_key_id_secret_arn" {
-  description = "ARN of the Apollo AWS access key ID secret"
-  value       = aws_secretsmanager_secret.apollo_aws_access_key_id.arn
-}
-
-output "apollo_aws_secret_access_key_secret_arn" {
-  description = "ARN of the Apollo AWS secret access key secret"
-  value       = aws_secretsmanager_secret.apollo_aws_secret_access_key.arn
 }
 
 output "apollo_s3_iam_username" {
