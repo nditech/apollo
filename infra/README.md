@@ -4,10 +4,13 @@ This directory contains the Terraform configuration for Apollo's AWS deployment.
 
 Apollo is expected to run as a Flask/Gunicorn web service plus a separate Celery worker, backed by PostgreSQL/PostGIS, Redis, and S3 attachments.
 
+The infrastructure now also includes the first ECS/ALB/Route 53 deployment path for bringing that runtime up in AWS.
+
 ## Structure
 
 - `infra/bootstrap/` creates and manages the S3 bucket used for Terraform remote state.
 - `infra/terraform/` contains the main Terraform stack for Apollo infrastructure.
+- `infra/scripts/` contains helper scripts for repeatable infrastructure/deployment tasks such as building and pushing ECS-compatible container images.
 
 ## Current architecture
 
@@ -70,6 +73,25 @@ The worker service is not intended to receive direct inbound traffic.
 - Redis is in the private data subnets.
 - Redis is intended for Apollo's Celery/background-task queueing.
 
+### Application runtime
+
+The current Terraform stack now includes the first ECS runtime layer for Apollo:
+
+- ECS cluster
+- task execution role and task role
+- Secrets Manager secrets for application runtime
+- CloudWatch log groups
+- ECS task definitions for migration, web, and worker
+- ALB and listeners
+- ECS services for web and worker
+- Route 53 alias for the public hostname
+
+Apollo currently uses one Docker image with different commands for three roles:
+
+- **migration**: `flask db upgrade`
+- **web**: `gunicorn -c gunicorn.py apollo.runner`
+- **worker**: `celery --app=apollo.runner worker --beat --loglevel=WARNING --concurrency=2 --without-gossip --without-mingle --optimization=fair`
+
 ## Design priorities
 
 This infrastructure is being built with the following priority order:
@@ -97,6 +119,23 @@ Examples include:
 - RDS `deletion_protection = false`
 - single-AZ database deployment
 - secrets currently simple enough for bootstrapping rather than a final production secret-management pattern
+
+## Deployment-specific configuration choices
+
+Some parts of this stack are reusable AWS/Apollo infrastructure patterns. Others are specific choices for this deployment and should be treated as configuration inputs rather than baked-in assumptions.
+
+Examples of deployment-specific choices currently include:
+
+- public hostname: `witness.cocitizen.com`
+- default sender email: `witness@cocitizen.com`
+- timezone: `America/New_York`
+- ACM certificate for the public hostname
+- Docker image tag/version used for ECS task definitions
+- health check path used by the ALB
+- runtime secrets such as the Flask `SECRET_KEY` and database password
+
+If this stack is reused for another Apollo deployment, these values are among the first things that should be reviewed and changed.
+
 
 ## Working with Terraform
 
@@ -126,6 +165,12 @@ terraform plan
 terraform apply
 ```
 
+### Build and push helper
+
+A helper script for building and pushing ECS-compatible container images lives under `infra/scripts/`.
+
+Because local development may happen on Apple Silicon hardware while ECS is running x86_64 workloads, images intended for ECS should be built for `linux/amd64`.
+
 ## Notes on state
 
 - Terraform state for the main stack is stored remotely in S3.
@@ -133,17 +178,18 @@ terraform apply
 - `.terraform.lock.hcl` should be committed.
 - local `*.tfstate` files should not be committed.
 
-## Near-term expected additions
+## Near-term expected work
 
-The current stack is not yet complete. Likely next pieces include:
+The current stack now includes the first ECS runtime layer, but Apollo is not yet fully proven in this environment.
 
-- a one-off application migration task during deployment
-- ECR repository
-- ECS services for web and worker
-- ALB
-- certificate and DNS wiring
-- ECS task definitions and runtime configuration for web, worker, and migration
-- confirmation that Apollo migrations enable PostGIS cleanly in the AWS environment
+Likely next work includes:
+
+- running the one-off migration task successfully in ECS
+- confirming that Apollo migrations enable PostGIS cleanly in AWS
+- verifying that the web service comes healthy behind the ALB
+- verifying that the worker service starts and remains healthy
+- deciding whether ECS tasks should remain in public subnets for bring-up or move back to private app subnets with NAT or VPC endpoints
+- tightening secret handling and other dev-stage compromises before treating the deployment as production-ready
 
 ## Intent of the split between `bootstrap` and `terraform`
 

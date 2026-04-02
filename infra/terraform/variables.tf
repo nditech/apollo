@@ -109,7 +109,7 @@ variable "redis_port" {
 variable "apollo_image_uri" {
   type        = string
   description = "Apollo container image URI in ECR"
-  default     = "592016371171.dkr.ecr.us-east-1.amazonaws.com/apollo:2026-03-30.1"
+  default     = "592016371171.dkr.ecr.us-east-1.amazonaws.com/apollo:2026-03-31.2"
 }
 
 variable "ecs_task_cpu" {
@@ -158,4 +158,22 @@ variable "health_check_path" {
   type        = string
   description = "HTTP path used by the ALB target group health check"
   default     = "/"
+}
+
+variable "aws_access_key_id" {
+  type        = string
+  description = "AWS access key ID used by Apollo for S3 attachments"
+  sensitive   = true
+}
+
+variable "aws_secret_access_key" {
+  type        = string
+  description = "AWS secret access key used by Apollo for S3 attachments"
+  sensitive   = true
+}
+
+variable "apollo_s3_iam_username" {
+  type        = string
+  description = "IAM username for Apollo's S3 attachment access"
+  default     = "apollo-s3"
 }

@@ -513,6 +513,14 @@ resource "aws_ecs_task_definition" "apollo_migration" {
         {
           name      = "DATABASE_PASSWORD"
           valueFrom = aws_secretsmanager_secret_version.apollo_db_password.arn
+        },
+        {
+          name      = "AWS_ACCESS_KEY_ID"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_access_key_id.arn
+        },
+        {
+          name      = "AWS_SECRET_ACCESS_KEY"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_secret_access_key.arn
         }
       ]
 
@@ -566,6 +574,14 @@ resource "aws_ecs_task_definition" "apollo_web" {
         {
           name      = "DATABASE_PASSWORD"
           valueFrom = aws_secretsmanager_secret_version.apollo_db_password.arn
+        },
+        {
+          name      = "AWS_ACCESS_KEY_ID"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_access_key_id.arn
+        },
+        {
+          name      = "AWS_SECRET_ACCESS_KEY"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_secret_access_key.arn
         }
       ]
 
@@ -611,6 +627,14 @@ resource "aws_ecs_task_definition" "apollo_worker" {
         {
           name      = "DATABASE_PASSWORD"
           valueFrom = aws_secretsmanager_secret_version.apollo_db_password.arn
+        },
+        {
+          name      = "AWS_ACCESS_KEY_ID"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_access_key_id.arn
+        },
+        {
+          name      = "AWS_SECRET_ACCESS_KEY"
+          valueFrom = aws_secretsmanager_secret_version.apollo_aws_secret_access_key.arn
         }
       ]
 
@@ -732,9 +756,9 @@ resource "aws_ecs_service" "apollo_web" {
   deployment_maximum_percent         = 200
 
   network_configuration {
-    subnets          = aws_subnet.private_app[*].id
+    subnets          = aws_subnet.public[*].id
     security_groups  = [aws_security_group.web.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {
@@ -763,12 +787,122 @@ resource "aws_ecs_service" "apollo_worker" {
   deployment_maximum_percent         = 100
 
   network_configuration {
-    subnets          = aws_subnet.private_app[*].id
+    subnets          = aws_subnet.public[*].id
     security_groups  = [aws_security_group.worker.id]
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   tags = merge(local.common_tags, {
     Name = "${local.name_prefix}-worker-service"
   })
+}
+
+data "aws_route53_zone" "cocitizen" {
+  name         = "cocitizen.com"
+  private_zone = false
+}
+
+resource "aws_route53_record" "apollo" {
+  zone_id = data.aws_route53_zone.cocitizen.zone_id
+  name    = var.apollo_hostname
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.apollo.dns_name
+    zone_id                = aws_lb.apollo.zone_id
+    evaluate_target_health = true
+  }
+}
+
+data "aws_iam_policy_document" "ecs_task_execution_secrets" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = [
+      aws_secretsmanager_secret.apollo_secret_key.arn,
+      aws_secretsmanager_secret.apollo_db_password.arn,
+      aws_secretsmanager_secret.apollo_aws_access_key_id.arn,
+      aws_secretsmanager_secret.apollo_aws_secret_access_key.arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "ecs_task_execution_secrets" {
+  name   = "${local.name_prefix}-ecs-task-execution-secrets"
+  role   = aws_iam_role.ecs_task_execution.id
+  policy = data.aws_iam_policy_document.ecs_task_execution_secrets.json
+}
+
+resource "aws_secretsmanager_secret" "apollo_aws_access_key_id" {
+  name = "${local.name_prefix}/apollo/aws-access-key-id"
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-apollo-aws-access-key-id"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "apollo_aws_access_key_id" {
+  secret_id     = aws_secretsmanager_secret.apollo_aws_access_key_id.id
+  secret_string = var.aws_access_key_id
+}
+
+resource "aws_secretsmanager_secret" "apollo_aws_secret_access_key" {
+  name = "${local.name_prefix}/apollo/aws-secret-access-key"
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-apollo-aws-secret-access-key"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "apollo_aws_secret_access_key" {
+  secret_id     = aws_secretsmanager_secret.apollo_aws_secret_access_key.id
+  secret_string = var.aws_secret_access_key
+}
+
+resource "aws_iam_user" "apollo_s3" {
+  name = var.apollo_s3_iam_username
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-apollo-s3-user"
+  })
+}
+
+data "aws_iam_policy_document" "apollo_s3_user_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListAllMyBuckets"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      aws_s3_bucket.apollo_attachments.arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.apollo_attachments.arn}/*"
+    ]
+  }
+}
+
+resource "aws_iam_user_policy" "apollo_s3_user_policy" {
+  name   = "${local.name_prefix}-apollo-s3-user-policy"
+  user   = aws_iam_user.apollo_s3.name
+  policy = data.aws_iam_policy_document.apollo_s3_user_policy.json
 }

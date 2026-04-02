@@ -162,3 +162,28 @@ output "apollo_worker_service_name" {
   description = "Name of the Apollo worker ECS service"
   value       = aws_ecs_service.apollo_worker.name
 }
+
+output "apollo_public_hostname" {
+  description = "Public hostname for Apollo"
+  value       = aws_route53_record.apollo.fqdn
+}
+
+output "apollo_aws_access_key_id_secret_arn" {
+  description = "ARN of the Apollo AWS access key ID secret"
+  value       = aws_secretsmanager_secret.apollo_aws_access_key_id.arn
+}
+
+output "apollo_aws_secret_access_key_secret_arn" {
+  description = "ARN of the Apollo AWS secret access key secret"
+  value       = aws_secretsmanager_secret.apollo_aws_secret_access_key.arn
+}
+
+output "apollo_s3_iam_username" {
+  description = "IAM username for Apollo S3 attachment access"
+  value       = aws_iam_user.apollo_s3.name
+}
+
+output "apollo_s3_iam_user_arn" {
+  description = "ARN of the Apollo S3 IAM user"
+  value       = aws_iam_user.apollo_s3.arn
+}
