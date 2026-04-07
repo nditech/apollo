@@ -3,8 +3,6 @@
 .DS_Store
 .env*
 !.env.example
-settings.ini
-!settings.example.ini
 
 .Python
 .python-version
