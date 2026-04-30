@@ -11,7 +11,7 @@ variable "db_password" {
 variable "apollo_image_uri" {
   type        = string
   description = "Apollo container image URI in ECR"
-  default     = "592016371171.dkr.ecr.us-east-1.amazonaws.com/apollo:2026-03-31.2"
+  default     = "592016371171.dkr.ecr.us-east-1.amazonaws.com/apollo:2026-04-30.1"
 }
 
 variable "ecs_task_cpu" {

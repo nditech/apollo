@@ -171,6 +171,14 @@ resource "aws_ecs_task_definition" "apollo_web" {
         }
       ]
 
+      mountPoints = [
+        {
+          sourceVolume  = "apollo-uploads"
+          containerPath = "/app/uploads"
+          readOnly      = false
+        }
+      ]
+
       environment = local.apollo_common_environment
 
       secrets = [
@@ -203,6 +211,19 @@ resource "aws_ecs_task_definition" "apollo_web" {
     }
   ])
 
+  volume {
+    name = "apollo-uploads"
+
+    efs_volume_configuration {
+      file_system_id     = aws_efs_file_system.apollo_uploads.id
+      transit_encryption = "ENABLED"
+
+      authorization_config {
+        access_point_id = aws_efs_access_point.apollo_uploads.id
+      }
+    }
+  }
+
   tags = merge(local.common_tags, {
     Name = "${local.name_prefix}-web-taskdef"
   })
@@ -225,6 +246,14 @@ resource "aws_ecs_task_definition" "apollo_worker" {
       command   = ["celery", "--app=apollo.runner", "worker", "--beat", "--loglevel=WARNING", "--concurrency=2", "--without-gossip", "--without-mingle", "--optimization=fair"]
 
       environment = local.apollo_common_environment
+
+      mountPoints = [
+        {
+          sourceVolume  = "apollo-uploads"
+          containerPath = "/app/uploads"
+          readOnly      = false
+        }
+      ]
 
       secrets = [
         {
@@ -255,6 +284,19 @@ resource "aws_ecs_task_definition" "apollo_worker" {
       }
     }
   ])
+
+  volume {
+    name = "apollo-uploads"
+
+    efs_volume_configuration {
+      file_system_id     = aws_efs_file_system.apollo_uploads.id
+      transit_encryption = "ENABLED"
+
+      authorization_config {
+        access_point_id = aws_efs_access_point.apollo_uploads.id
+      }
+    }
+  }
 
   tags = merge(local.common_tags, {
     Name = "${local.name_prefix}-worker-taskdef"

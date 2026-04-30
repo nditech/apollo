@@ -71,6 +71,41 @@ resource "aws_vpc_security_group_egress_rule" "worker_all_out" {
   description       = "Allow all outbound traffic"
 }
 
+resource "aws_security_group" "efs" {
+  name        = "${local.name_prefix}-efs-sg"
+  description = "Security group for Apollo shared uploads EFS"
+  vpc_id      = aws_vpc.apollo.id
+
+  tags = merge(local.common_tags, {
+    Name = "${local.name_prefix}-efs-sg"
+  })
+}
+
+resource "aws_vpc_security_group_ingress_rule" "efs_from_web" {
+  security_group_id            = aws_security_group.efs.id
+  referenced_security_group_id = aws_security_group.web.id
+  from_port                    = 2049
+  to_port                      = 2049
+  ip_protocol                  = "tcp"
+  description                  = "Allow NFS from web tasks"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "efs_from_worker" {
+  security_group_id            = aws_security_group.efs.id
+  referenced_security_group_id = aws_security_group.worker.id
+  from_port                    = 2049
+  to_port                      = 2049
+  ip_protocol                  = "tcp"
+  description                  = "Allow NFS from worker tasks"
+}
+
+resource "aws_vpc_security_group_egress_rule" "efs_all_out" {
+  security_group_id = aws_security_group.efs.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+  description       = "Allow all outbound traffic"
+}
+
 resource "aws_security_group" "rds" {
   name        = "${local.name_prefix}-rds-sg"
   description = "Security group for Apollo PostgreSQL"
