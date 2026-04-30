@@ -12,7 +12,14 @@ settings.ini
 **/.env*
 **/.webassets-cache
 **/*.pyc
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
 **/node_modules/
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
 apollo-*.tar.gz
 bin/
 circle.yml
@@ -26,3 +33,8 @@ messages.mo
 share/
 src/
 uploads/
+htmlcov/
+.coverage
+coverage.xml
+dist/
+build/
