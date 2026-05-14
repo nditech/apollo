@@ -82,7 +82,7 @@ variable "db_username" {
 
 variable "db_instance_class" {
   type        = string
-  description = "RDS instance class for Apollo PostgreSQL"
+  description = "RDS instance class for Apollo PostgreSQL/PostGIS. Dev default: db.t4g.micro. Pilot recommendation: db.t4g.medium. Larger live event candidate: db.m7g.large after load testing."
   default     = "db.t4g.micro"
 }
 
@@ -100,7 +100,7 @@ variable "db_engine_version" {
 
 variable "redis_node_type" {
   type        = string
-  description = "ElastiCache node type for Apollo Redis"
+  description = "ElastiCache node type for Apollo Redis/Celery. Dev default: cache.t4g.micro. Pilot default can remain micro unless queueing, Redis CPU, memory, or evictions show pressure."
   default     = "cache.t4g.micro"
 }
 

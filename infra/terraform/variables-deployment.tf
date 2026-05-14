@@ -14,15 +14,51 @@ variable "apollo_image_uri" {
   default     = "592016371171.dkr.ecr.us-east-1.amazonaws.com/apollo:2026-04-30.1"
 }
 
-variable "ecs_task_cpu" {
+variable "migration_task_cpu" {
   type        = number
-  description = "CPU units for Apollo ECS tasks"
+  description = "CPU units for the one-off Apollo migration ECS task. 1024 = 1 vCPU."
   default     = 512
 }
 
-variable "ecs_task_memory" {
+variable "migration_task_memory" {
   type        = number
-  description = "Memory (MiB) for Apollo ECS tasks"
+  description = "Memory in MiB for the one-off Apollo migration ECS task."
+  default     = 1024
+}
+
+variable "web_desired_count" {
+  type        = number
+  description = "Number of Apollo web tasks to run. Use 2+ for pilot/live use so one unhealthy or restarting task does not take down the site."
+  default     = 1
+}
+
+variable "web_task_cpu" {
+  type        = number
+  description = "CPU units for each Apollo web ECS task. 1024 = 1 vCPU. Pilot recommendation: 1024."
+  default     = 512
+}
+
+variable "web_task_memory" {
+  type        = number
+  description = "Memory in MiB for each Apollo web ECS task. Pilot recommendation: 4096."
+  default     = 1024
+}
+
+variable "worker_desired_count" {
+  type        = number
+  description = "Number of Apollo worker tasks. Keep at 1 while the worker command also runs Celery beat, unless beat is split into its own service."
+  default     = 1
+}
+
+variable "worker_task_cpu" {
+  type        = number
+  description = "CPU units for the Apollo worker ECS task. 1024 = 1 vCPU. Pilot recommendation: 1024."
+  default     = 512
+}
+
+variable "worker_task_memory" {
+  type        = number
+  description = "Memory in MiB for the Apollo worker ECS task. Pilot recommendation: 4096 for imports, generation tasks, and other long-running jobs."
   default     = 1024
 }
 

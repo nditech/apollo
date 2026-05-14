@@ -31,6 +31,11 @@ resource "aws_db_instance" "apollo" {
   publicly_accessible = false
   multi_az            = false
 
+  # Set apply_immediately to make any changes upon "terraform apply" 
+  # instead of waiting for the maintenance window.
+  # For routine production-like DB changes, leave this as false.
+  apply_immediately = false
+
   skip_final_snapshot = true
   deletion_protection = false
 

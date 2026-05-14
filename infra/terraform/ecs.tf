@@ -98,8 +98,8 @@ resource "aws_ecs_task_definition" "apollo_migration" {
   family                   = "${local.name_prefix}-migration"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = tostring(var.ecs_task_cpu)
-  memory                   = tostring(var.ecs_task_memory)
+  cpu                      = tostring(var.migration_task_cpu)
+  memory                   = tostring(var.migration_task_memory)
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.apollo_task.arn
 
@@ -151,8 +151,8 @@ resource "aws_ecs_task_definition" "apollo_web" {
   family                   = "${local.name_prefix}-web"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = tostring(var.ecs_task_cpu)
-  memory                   = tostring(var.ecs_task_memory)
+  cpu                      = tostring(var.web_task_cpu)
+  memory                   = tostring(var.web_task_memory)
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.apollo_task.arn
 
@@ -233,8 +233,8 @@ resource "aws_ecs_task_definition" "apollo_worker" {
   family                   = "${local.name_prefix}-worker"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = tostring(var.ecs_task_cpu)
-  memory                   = tostring(var.ecs_task_memory)
+  cpu                      = tostring(var.worker_task_cpu)
+  memory                   = tostring(var.worker_task_memory)
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
   task_role_arn            = aws_iam_role.apollo_task.arn
 
@@ -307,7 +307,7 @@ resource "aws_ecs_service" "apollo_web" {
   name            = "${local.name_prefix}-web"
   cluster         = aws_ecs_cluster.apollo.id
   task_definition = aws_ecs_task_definition.apollo_web.arn
-  desired_count   = 1
+  desired_count   = var.web_desired_count
   launch_type     = "FARGATE"
 
   deployment_minimum_healthy_percent = 50
@@ -338,7 +338,7 @@ resource "aws_ecs_service" "apollo_worker" {
   name            = "${local.name_prefix}-worker"
   cluster         = aws_ecs_cluster.apollo.id
   task_definition = aws_ecs_task_definition.apollo_worker.arn
-  desired_count   = 1
+  desired_count   = var.worker_desired_count
   launch_type     = "FARGATE"
 
   deployment_minimum_healthy_percent = 0
