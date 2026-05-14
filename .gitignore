@@ -2,9 +2,10 @@
 .devcontainer
 .DS_Store
 .env*
+!.env.example
+
 .Python
 .python-version
-.vscode/
 .webassets-cache
 *.pyc
 *.sublime-project
@@ -23,3 +24,13 @@ pip-selfcheck.json
 share/
 uploads/
 version.ini
+
+# Development
+.claude/
+.vscode/
+
+# Terraform Setup
+.terraform/
+infra/terraform/terraform.tfvars
+*.tfstate
+*.tfstate.*
